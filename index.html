@@ -37,7 +37,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 <header><b>🌿 배곧해솔중학교</b><span>정보 학습실</span><div id="who"></div></header>
 <main id="app"></main>
 <script>
-const API='(https://script.google.com/a/macros/goedu.kr/s/AKfycbwSQB5-Go93agfOpB6IOxSOoj8KuUiGzYGvIWOwhu0p9Z2DiUFce13_iklmxN8L5NOD/exec)';
+const API='https://script.google.com/a/macros/goedu.kr/s/AKfycbwSQB5-Go93agfOpB6IOxSOoj8KuUiGzYGvIWOwhu0p9Z2DiUFce13_iklmxN8L5NOD/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null};
 const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -58,7 +58,7 @@ function loginView(msg=''){app.innerHTML=`<div class="box narrow"><h2>로그인<
 <p style="color:var(--sub);font-size:14px">처음 로그인할 때 비밀번호는 학번이에요.</p></div>`;
   const go=async()=>{$('#e').textContent='확인 중...';const r=await api('login',{id:$('#id').value,pw:$('#pw').value});
     if(r.error)return $('#e').textContent=r.error;S.token=r.token;sessionStorage.setItem('t',r.token);S.user=r;start()};
-  $('#go').onclick=go;$('#pw').onkeydown=e=>e.key==='Enter'&&go()}
+  $('#go').onclick=go;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')go()})}
 function start(){setWho();if(S.user.must)return pwView();S.user.role==='관리자'?adminView():langView()}
 function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 만들기</h2><p>처음 로그인했어요. 비밀번호를 바꿔야 계속할 수 있어요.</p>
 <input id="n1" type="password" placeholder="새 비밀번호 (4자 이상)"><input id="n2" type="password" placeholder="한 번 더 입력"><div class="err" id="e"></div><button class="main" id="go">바꾸기</button></div>`;
