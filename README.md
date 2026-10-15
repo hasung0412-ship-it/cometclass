@@ -1,1 +1,141 @@
-# cometclass
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>배곧해솔중학교 정보</title>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#3a4256;--sub:#7b8499;--line:#e8ebf3;--mint:#d4f1e4;--sky:#d6e8fb;--lav:#e5dcf6;--peach:#fde3d6;--butter:#fff3c6;--ok:#bfe8d2;--no:#f9d0d0}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font:16px/1.7 'Gowun Dodum','Malgun Gothic',sans-serif}
+header{display:flex;align-items:center;gap:12px;padding:14px 22px;background:linear-gradient(90deg,var(--sky),var(--lav));position:sticky;top:0;z-index:5}
+header b{font-size:20px}header span{color:var(--sub);font-size:14px}#who{margin-left:auto;display:flex;gap:10px;align-items:center}
+main{max-width:920px;margin:0 auto;padding:26px 18px 60px}
+h2{margin:6px 0 18px}h3{margin:0 0 6px}
+button,input,textarea{font:inherit;color:inherit}
+button{border:0;border-radius:12px;padding:9px 18px;background:var(--lav);cursor:pointer}
+button:hover{filter:brightness(.96)}button.main{background:var(--mint)}button.ghost{background:#fff;border:1px solid var(--line)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #b9cdf5;outline-offset:2px}
+input,textarea{border:1px solid var(--line);border-radius:10px;padding:9px 12px;width:100%;background:#fff}
+textarea{font-family:Consolas,monospace;font-size:14px;min-height:150px;tab-size:4}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.card{border-radius:18px;padding:18px 20px;background:var(--sky);cursor:pointer;text-align:left;border:0;width:100%;display:block}
+.card:nth-child(4n+2){background:var(--mint)}.card:nth-child(4n+3){background:var(--peach)}.card:nth-child(4n){background:var(--butter)}
+.card small{color:var(--sub);display:block}
+.bar{height:7px;border-radius:5px;background:#ffffffa0;margin-top:10px;overflow:hidden}.bar i{display:block;height:100%;background:#7fc8a9}
+.box{border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:16px}
+.narrow{max-width:360px;margin:50px auto;text-align:center}.narrow input{margin:6px 0}
+pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:14px/1.6 Consolas,monospace;margin:8px 0;white-space:pre-wrap}
+.msg{margin-top:8px;padding:8px 12px;border-radius:10px;display:none}.msg.ok{background:var(--ok);display:block}.msg.no{background:var(--no);display:block}
+.err{color:#c25a5a;min-height:24px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.choice{display:block;padding:6px 10px;border-radius:10px;cursor:pointer}.choice:hover{background:#f3f5fb}.choice input{width:auto;margin-right:8px}
+table{border-collapse:collapse;font-size:14px;background:#fff}th,td{border:1px solid var(--line);padding:6px 10px;text-align:center;white-space:nowrap}
+th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:pointer;background:#fafbff}td.l:hover{background:var(--butter)}
+td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
+.wrap{overflow-x:auto;border-radius:12px}
+</style></head><body>
+<header><b>🌿 배곧해솔중학교</b><span>정보 학습실</span><div id="who"></div></header>
+<main id="app"></main>
+<script>
+const API='(https://script.google.com/a/macros/goedu.kr/s/AKfycbwSQB5-Go93agfOpB6IOxSOoj8KuUiGzYGvIWOwhu0p9Z2DiUFce13_iklmxN8L5NOD/exec)';
+const $=s=>document.querySelector(s),app=$('#app');
+const S={token:sessionStorage.getItem('t')||'',user:null,menu:null};
+const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const AN={개념:['📘','개념 학습'],해석:['🔍','코드 해석'],작성:['✍️','코드 작성']};
+async function api(action,d={}){
+  try{const r=await(await fetch(API,{method:'POST',body:JSON.stringify({action,token:S.token,...d})})).json();
+    if(r.error==='auth'){logout();return{error:'다시 로그인해 주세요.'}}return r}
+  catch(e){return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
+function fmt(t){return String(t??'').split('```').map((x,i)=>i%2?`<pre>${esc(x.trim())}</pre>`:esc(x).replace(/\n/g,'<br>')).join('')}
+function bar(d,t){return `<div class="bar"><i style="width:${t?Math.min(100,d/t*100):0}%"></i></div>`}
+function setWho(){$('#who').innerHTML=S.user?`<span>${esc(S.user.name)}</span><button class="ghost" onclick="logout()">로그아웃</button>`:''}
+function logout(){sessionStorage.removeItem('t');S.token='';S.user=null;setWho();loginView()}
+
+/* 로그인 */
+function loginView(msg=''){app.innerHTML=`<div class="box narrow"><h2>로그인</h2>
+<input id="id" placeholder="학번" autocomplete="username"><input id="pw" type="password" placeholder="비밀번호" autocomplete="current-password">
+<div class="err" id="e">${esc(msg)}</div><button class="main" id="go">들어가기</button>
+<p style="color:var(--sub);font-size:14px">처음 로그인할 때 비밀번호는 학번이에요.</p></div>`;
+  const go=async()=>{$('#e').textContent='확인 중...';const r=await api('login',{id:$('#id').value,pw:$('#pw').value});
+    if(r.error)return $('#e').textContent=r.error;S.token=r.token;sessionStorage.setItem('t',r.token);S.user=r;start()};
+  $('#go').onclick=go;$('#pw').onkeydown=e=>e.key==='Enter'&&go()}
+function start(){setWho();if(S.user.must)return pwView();S.user.role==='관리자'?adminView():langView()}
+function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 만들기</h2><p>처음 로그인했어요. 비밀번호를 바꿔야 계속할 수 있어요.</p>
+<input id="n1" type="password" placeholder="새 비밀번호 (4자 이상)"><input id="n2" type="password" placeholder="한 번 더 입력"><div class="err" id="e"></div><button class="main" id="go">바꾸기</button></div>`;
+  $('#go').onclick=async()=>{if($('#n1').value!==$('#n2').value)return $('#e').textContent='두 비밀번호가 달라요.';
+    const r=await api('changePw',{newPw:$('#n1').value});if(r.error)return $('#e').textContent=r.error;S.user.must=false;start()}}
+
+/* 학생: 언어 → 차시 → 활동 → 내용 */
+function langView(){app.innerHTML=`<h2>배울 언어를 골라요</h2><div class="grid"><button class="card" id="py">🐍 <b>파이썬</b><small>Python</small></button></div>`;$('#py').onclick=lessonView}
+async function lessonView(){app.innerHTML='불러오는 중...';const r=await api('menu');if(r.error)return app.innerHTML=r.error;S.menu=r;
+  app.innerHTML=`<p><button class="ghost" onclick="langView()">← 언어 선택</button></p><h2>차시를 골라요</h2>`+(r.lessons.length?`<div class="grid">${r.lessons.map(l=>{
+  const t=l.t.개념+l.t.해석+l.t.작성,d=Math.min(l.t.개념,l.d.개념)+Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성);
+  return `<button class="card" data-no="${l.no}"><small>${l.no}차시</small><b>${esc(l.title)}</b>${bar(d,t)}</button>`}).join('')}</div>`:'<p>아직 올라온 차시가 없어요.</p>');
+  app.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>actView(+b.dataset.no))}
+function actView(no){const l=S.menu.lessons.find(x=>x.no===no);
+  app.innerHTML=`<p><button class="ghost" onclick="lessonView()">← 차시 선택</button></p><h2>[${no}차시] ${esc(l.title)}</h2><div class="grid">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>
+  `<button class="card" data-k="${k}"><small>${AN[k][0]}</small><b>${AN[k][1]}</b><small>${Math.min(l.d[k],l.t[k])} / ${l.t[k]} 완료</small>${bar(l.d[k],l.t[k])}</button>`).join('')}</div>`;
+  app.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>contentView(no,b.dataset.k))}
+async function contentView(no,act){app.innerHTML='불러오는 중...';const r=await api('lesson',{no,act});if(r.error)return app.innerHTML=r.error;
+  const l=S.menu.lessons.find(x=>x.no===no);
+  app.innerHTML=`<p><button class="ghost" id="back">← 활동 선택</button></p><h2>${AN[act][0]} ${AN[act][1]}</h2><div id="items"></div>`;
+  $('#back').onclick=async()=>{await lessonView0();actView(no)};
+  const box=$('#items');
+  if(act==='개념'){box.innerHTML=r.items.map(i=>`<div class="box"><h3>${esc(i.title)}</h3>${fmt(i.body)}</div>`).join('')+`<button class="main" id="done">${r.saved[0]?.ok?'✔ 읽었어요 (완료됨)':'다 읽었어요 ✔'}</button>`;
+    $('#done').onclick=async()=>{await api('submit',{no,act,q:0,answer:'읽음'});$('#done').textContent='✔ 완료됐어요!'}}
+  if(act==='해석')box.innerHTML=r.items.map((i,n)=>{const s=r.saved[i.q];return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}${i.code?`<pre>${esc(i.code)}</pre>`:''}
+  ${i.choices?i.choices.map(c=>`<label class="choice"><input type="radio" name="q${i.q}" value="${esc(c)}" ${s&&s.answer===c?'checked':''}>${esc(c)}</label>`).join(''):`<input class="ans" placeholder="답을 입력하세요" value="${esc(s?s.answer:'')}">`}
+  <div class="row"><button class="main chk">정답 확인</button></div><div class="msg ${s?(s.ok?'ok':''):''}">${s&&s.ok?'✅ 이전에 맞혔어요':''}</div></div>`}).join('');
+  box.querySelectorAll('.chk').forEach(b=>b.onclick=async()=>{const bx=b.closest('.box'),q=+bx.dataset.q,m=bx.querySelector('.msg');
+    const a=bx.querySelector('input[type=radio]:checked')?.value??bx.querySelector('.ans')?.value??'';if(!a)return;
+    const x=await api('submit',{no,act,q,answer:a});m.className='msg '+(x.correct?'ok':'no');m.innerHTML=(x.correct?'✅ 정답이에요! ':'❌ 아쉬워요, 다시 생각해 봐요. ')+esc(x.explain||'')});
+  if(act==='작성'){box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요.</p>`+r.items.map((i,n)=>{const s=r.saved[i.q];return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}
+  <textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">제출하고 채점</button></div>
+  <pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':''}">${s&&s.ok?'✅ 이전에 통과했어요':''}</div></div>`}).join('');
+    box.querySelectorAll('.box').forEach((bx,n)=>{const it=r.items[n],ta=bx.querySelector('textarea'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
+      ta.onkeydown=e=>{if(e.key==='Tab'){e.preventDefault();document.execCommand('insertText',false,'    ')}};
+      bx.querySelector('.run').onclick=async()=>{out.style.display='block';out.textContent='실행 중...';try{out.textContent=await runPy(ta.value,it.ins[0])||'(출력 없음)'}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
+      bx.querySelector('.sub').onclick=async()=>{m.className='msg';out.style.display='block';out.textContent='채점 중...';let pass=0,fail=[];
+        try{for(let k=0;k<it.outs.length;k++){const o=(await runPy(ta.value,it.ins[k]||'')).replace(/\s+$/gm,'').trim();if(o===String(it.outs[k]).replace(/\s+$/gm,'').trim())pass++;else fail.push(k+1)}}
+        catch(e){out.textContent='파이썬을 불러오지 못했어요.';return}
+        const ok=pass===it.outs.length;out.textContent=`테스트 ${pass} / ${it.outs.length} 통과`+(fail.length?` (실패: ${fail.join(', ')}번)`:'');
+        await api('submit',{no,act,q:it.q,answer:ta.value,ok});m.className='msg '+(ok?'ok':'no');m.textContent=ok?'✅ 모두 통과! 제출됐어요.':'❌ 제출은 저장됐어요. 코드를 고쳐서 다시 도전해 봐요.'}})}}
+async function lessonView0(){const r=await api('menu');if(!r.error)S.menu=r}
+
+/* 파이썬 실행 (브라우저 안, Pyodide) */
+let PYP;function loadPy(){return PYP||(PYP=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';s.onload=()=>loadPyodide().then(ok,no);s.onerror=no;document.head.appendChild(s)}))}
+async function runPy(code,inp){const p=await loadPy();p.globals.set('UC',code);p.globals.set('UI',inp||'');
+  return p.runPython(`import sys,io
+_o=io.StringIO();sys.stdin=io.StringIO(UI);sys.stdout=_o
+try:
+    exec(UC,{'__name__':'__main__'})
+except BaseException as e:
+    print(type(e).__name__+': '+str(e))
+sys.stdout=sys.__stdout__
+_o.getvalue()`)}
+
+/* 관리자 */
+async function adminView(){app.innerHTML='불러오는 중...';const r=await api('classes');if(r.error)return app.innerHTML=r.error;
+  app.innerHTML=`<h2>학급 현황</h2><div class="grid">${r.classes.map(c=>`<button class="card" data-c="${c.cls}"><b>${c.cls}반</b><small>${c.count}명 · 전체 진도 ${c.pct}%</small>${bar(c.pct,100)}</button>`).join('')}</div>`;
+  app.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>classView(+b.dataset.c))}
+async function classView(cls){app.innerHTML='불러오는 중...';const r=await api('classTable',{cls});if(r.error)return app.innerHTML=r.error;
+  const cols=[];r.lessons.forEach(l=>Object.keys(AN).forEach(k=>l.t[k]>0&&cols.push({l,k,t:l.t[k]})));
+  const cell=(s,c)=>{const d=Math.min(s.d[c.l.no+'|'+c.k]||0,c.t);return{d,full:d>=c.t,txt:c.k==='개념'?(d?'완료':''):`${d}/${c.t}`}};
+  const head1=r.lessons.filter(l=>cols.some(c=>c.l===l)).map(l=>`<th colspan="${cols.filter(c=>c.l===l).length}">[${l.no}차시] ${esc(l.title)}</th>`).join('');
+  const body=r.students.map(s=>`<tr><td class="l" data-id="${s.id}">${s.id} ${esc(s.name)}</td>${cols.map(c=>{const x=cell(s,c);return `<td class="${x.full?'done':''}">${x.txt}</td>`}).join('')}</tr>`).join('');
+  const foot=cols.map(c=>`<td>${r.students.filter(s=>cell(s,c).full).length}/${r.students.length}</td>`).join('');
+  app.innerHTML=`<p><button class="ghost" onclick="adminView()">← 학급 목록</button></p><h2>${cls}반 진도 현황</h2><div class="row" style="margin-bottom:12px"><button class="main" id="csv">CSV 내려받기</button><span style="color:var(--sub)">학생 이름을 누르면 답안을 볼 수 있어요.</span></div>
+  <div class="wrap"><table><thead><tr><th rowspan="2">학번 이름</th>${head1}</tr><tr>${cols.map(c=>`<th class="a">${AN[c.k][1]}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td>완료 학생 수</td>${foot}</tr></tfoot></table></div>`;
+  app.querySelectorAll('[data-id]').forEach(t=>t.onclick=()=>detailView(t.dataset.id,cls));
+  $('#csv').onclick=()=>{const q=v=>`"${String(v).replace(/"/g,'""')}"`;
+    const L=[['학번 이름',...cols.map(c=>`[${c.l.no}차시] ${c.l.title}`)],['',...cols.map(c=>AN[c.k][1])],...r.students.map(s=>[s.id+' '+s.name,...cols.map(c=>cell(s,c).txt)])];
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+L.map(x=>x.map(q).join(',')).join('\r\n')],{type:'text/csv'}));a.download=`${cls}반_진도현황.csv`;a.click()}}
+async function detailView(id,cls){app.innerHTML='불러오는 중...';const r=await api('detail',{id});if(r.error)return app.innerHTML=r.error;
+  app.innerHTML=`<p><button class="ghost" id="b">← ${cls}반 현황</button></p><h2>${esc(id)} ${esc(r.name)}</h2><div class="row" style="margin-bottom:14px"><button id="rs">비밀번호 초기화 (학번으로)</button></div>
+  <div class="wrap"><table><thead><tr><th>차시</th><th>활동</th><th>문항</th><th>정답</th><th>시도</th><th>최근 제출</th><th>답안</th></tr></thead><tbody>${r.recs.map(x=>`<tr><td>${x.no}</td><td>${AN[x.act]?AN[x.act][1]:x.act}</td><td>${x.q||'-'}</td><td>${x.ok?'⭕':'❌'}</td><td>${x.tries}</td><td>${x.last}</td><td style="text-align:left"><details><summary>보기</summary><pre>${esc(x.answer)}</pre></details></td></tr>`).join('')||'<tr><td colspan="7">아직 기록이 없어요.</td></tr>'}</tbody></table></div>`;
+  $('#b').onclick=()=>classView(cls);
+  $('#rs').onclick=async()=>{if(!confirm(`${r.name} 학생의 비밀번호를 학번으로 되돌릴까요?`))return;const x=await api('resetPw',{id});alert(x.error||'초기화했어요. 다음 로그인 때 비밀번호를 새로 만들게 됩니다.')}}
+
+/* 시작 */
+(async()=>{if(S.token){const u=await api('me');if(!u.error){S.user=u;return start()}}loginView()})();
+</script></body></html>
