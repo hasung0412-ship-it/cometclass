@@ -26,6 +26,7 @@ textarea{font-family:Consolas,monospace;font-size:14px;min-height:150px;tab-size
 .narrow{max-width:360px;margin:50px auto;text-align:center}.narrow input{margin:6px 0}
 pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:14px/1.6 Consolas,monospace;margin:8px 0;white-space:pre-wrap}
 .msg{margin-top:8px;padding:8px 12px;border-radius:10px;display:none}.msg.ok{background:var(--ok);display:block}.msg.no{background:var(--no);display:block}
+.msg.wait{background:#eef1f8;display:block}.chip{padding:6px 14px;background:#fff;border:1px solid var(--line)}.chip.on{background:var(--sky)}
 .err{color:#c25a5a;min-height:24px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .choice{display:block;padding:6px 10px;border-radius:10px;cursor:pointer}.choice:hover{background:#f3f5fb}.choice input{width:auto;margin-right:8px}
@@ -34,12 +35,14 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><b>🌿 배곧해솔중학교</b><span>정보 학습실</span><div id="who"></div></header>
+<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v3)</span><div id="who"></div></header>
 <main id="app"></main>
 <script>
 const API='https://script.google.com/a/macros/goedu.kr/s/AKfycbwSQB5-Go93agfOpB6IOxSOoj8KuUiGzYGvIWOwhu0p9Z2DiUFce13_iklmxN8L5NOD/exec';
 const $=s=>document.querySelector(s),app=$('#app');
-const S={token:sessionStorage.getItem('t')||'',user:null,menu:null};
+const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{}};let mem={};
+async function get(k,fn,force){if(!force&&mem[k])return mem[k];const r=await fn();if(!r.error)mem[k]=r;return r}
+function rec(no,act,q,answer,ok){if(S.preview||!mem.menu)return;const L=mem['L'+no+act],s=L&&L.saved,was=s&&s[q]&&s[q].ok;if(s)s[q]={answer,ok:ok||was};if(ok&&!was){const l=mem.menu.lessons.find(x=>x.no===no);l.d[act]=Math.min(l.t[act],l.d[act]+1)}}
 const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const AN={개념:['📘','개념 학습'],해석:['🔍','코드 해석'],작성:['✍️','코드 작성']};
 async function api(action,d={}){
@@ -48,8 +51,9 @@ async function api(action,d={}){
   catch(e){return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
 function fmt(t){return String(t??'').split('```').map((x,i)=>i%2?`<pre>${esc(x.trim())}</pre>`:esc(x).replace(/\n/g,'<br>')).join('')}
 function bar(d,t){return `<div class="bar"><i style="width:${t?Math.min(100,d/t*100):0}%"></i></div>`}
-function setWho(){$('#who').innerHTML=S.user?`<span>${esc(S.user.name)}</span><button class="ghost" onclick="logout()">로그아웃</button>`:''}
-function logout(){sessionStorage.removeItem('t');S.token='';S.user=null;setWho();loginView()}
+function setWho(){const u=S.user;$('#who').innerHTML=u?(u.role==='관리자'?`${S.preview?'<span>👀 미리보기 중 (기록 안 됨)</span>':''}<button class="ghost" onclick="togglePrev()">${S.preview?'👩‍🏫 관리자 화면':'👀 학생 화면 보기'}</button>`:'')+`<span>${esc(u.name)}</span><button class="ghost" onclick="logout()">로그아웃</button>`:''}
+function togglePrev(){S.preview=!S.preview;setWho();S.preview?langView():adminView()}
+function logout(){mem={};S.preview=false;S.sel={};sessionStorage.removeItem('t');S.token='';S.user=null;setWho();loginView()}
 
 /* 로그인 */
 function loginView(msg=''){app.innerHTML=`<div class="box narrow"><h2>로그인</h2>
@@ -67,7 +71,7 @@ function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 �
 
 /* 학생: 언어 → 차시 → 활동 → 내용 */
 function langView(){app.innerHTML=`<h2>배울 언어를 골라요</h2><div class="grid"><button class="card" id="py">🐍 <b>파이썬</b><small>Python</small></button></div>`;$('#py').onclick=lessonView}
-async function lessonView(){app.innerHTML='불러오는 중...';const r=await api('menu');if(r.error)return app.innerHTML=r.error;S.menu=r;
+async function lessonView(){if(!mem.menu)app.innerHTML='불러오는 중...';const r=await get('menu',()=>api('menu'));if(r.error)return app.innerHTML=r.error;S.menu=r;
   app.innerHTML=`<p><button class="ghost" onclick="langView()">← 언어 선택</button></p><h2>차시를 골라요</h2>`+(r.lessons.length?`<div class="grid">${r.lessons.map(l=>{
   const t=l.t.개념+l.t.해석+l.t.작성,d=Math.min(l.t.개념,l.d.개념)+Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성);
   return `<button class="card" data-no="${l.no}"><small>${l.no}차시</small><b>${esc(l.title)}</b>${bar(d,t)}</button>`}).join('')}</div>`:'<p>아직 올라온 차시가 없어요.</p>');
@@ -75,20 +79,20 @@ async function lessonView(){app.innerHTML='불러오는 중...';const r=await ap
 function actView(no){const l=S.menu.lessons.find(x=>x.no===no);
   app.innerHTML=`<p><button class="ghost" onclick="lessonView()">← 차시 선택</button></p><h2>[${no}차시] ${esc(l.title)}</h2><div class="grid">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>
   `<button class="card" data-k="${k}"><small>${AN[k][0]}</small><b>${AN[k][1]}</b><small>${Math.min(l.d[k],l.t[k])} / ${l.t[k]} 완료</small>${bar(l.d[k],l.t[k])}</button>`).join('')}</div>`;
-  app.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>contentView(no,b.dataset.k))}
-async function contentView(no,act){app.innerHTML='불러오는 중...';const r=await api('lesson',{no,act});if(r.error)return app.innerHTML=r.error;
+  app.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>contentView(no,b.dataset.k));Object.keys(AN).filter(k=>l.t[k]>0).forEach(k=>get('L'+no+k,()=>api('lesson',{no,act:k})))}
+async function contentView(no,act){if(!mem['L'+no+act])app.innerHTML='불러오는 중...';const r=await get('L'+no+act,()=>api('lesson',{no,act}));if(r.error)return app.innerHTML=r.error;
   const l=S.menu.lessons.find(x=>x.no===no);
   app.innerHTML=`<p><button class="ghost" id="back">← 활동 선택</button></p><h2>${AN[act][0]} ${AN[act][1]}</h2><div id="items"></div>`;
-  $('#back').onclick=async()=>{await lessonView0();actView(no)};
+  $('#back').onclick=()=>actView(no);
   const box=$('#items');
   if(act==='개념'){box.innerHTML=r.items.map(i=>`<div class="box"><h3>${esc(i.title)}</h3>${fmt(i.body)}</div>`).join('')+`<button class="main" id="done">${r.saved[0]?.ok?'✔ 읽었어요 (완료됨)':'다 읽었어요 ✔'}</button>`;
-    $('#done').onclick=async()=>{await api('submit',{no,act,q:0,answer:'읽음'});$('#done').textContent='✔ 완료됐어요!'}}
+    $('#done').onclick=async()=>{$('#done').textContent='저장 중...';const x=await api('submit',{no,act,q:0,answer:'읽음'});if(x.error){$('#done').textContent='저장 실패, 다시 눌러 주세요';return}rec(no,act,0,'읽음',true);$('#done').textContent='✔ 완료됐어요!'}}
   if(act==='해석')box.innerHTML=r.items.map((i,n)=>{const s=r.saved[i.q];return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}${i.code?`<pre>${esc(i.code)}</pre>`:''}
   ${i.choices?i.choices.map(c=>`<label class="choice"><input type="radio" name="q${i.q}" value="${esc(c)}" ${s&&s.answer===c?'checked':''}>${esc(c)}</label>`).join(''):`<input class="ans" placeholder="답을 입력하세요" value="${esc(s?s.answer:'')}">`}
   <div class="row"><button class="main chk">정답 확인</button></div><div class="msg ${s?(s.ok?'ok':''):''}">${s&&s.ok?'✅ 이전에 맞혔어요':''}</div></div>`}).join('');
   box.querySelectorAll('.chk').forEach(b=>b.onclick=async()=>{const bx=b.closest('.box'),q=+bx.dataset.q,m=bx.querySelector('.msg');
     const a=bx.querySelector('input[type=radio]:checked')?.value??bx.querySelector('.ans')?.value??'';if(!a)return;
-    const x=await api('submit',{no,act,q,answer:a});m.className='msg '+(x.correct?'ok':'no');m.innerHTML=(x.correct?'✅ 정답이에요! ':'❌ 아쉬워요, 다시 생각해 봐요. ')+esc(x.explain||'')});
+    b.disabled=true;m.className='msg wait';m.textContent='채점 중...';const x=await api('submit',{no,act,q,answer:a});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,q,a,x.correct);m.className='msg '+(x.correct?'ok':'no');m.innerHTML=(x.correct?'✅ 정답이에요! ':'❌ 아쉬워요, 다시 생각해 봐요. ')+esc(x.explain||'')});
   if(act==='작성'){box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요.</p>`+r.items.map((i,n)=>{const s=r.saved[i.q];return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}
   <textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">제출하고 채점</button></div>
   <pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':''}">${s&&s.ok?'✅ 이전에 통과했어요':''}</div></div>`}).join('');
@@ -99,7 +103,7 @@ async function contentView(no,act){app.innerHTML='불러오는 중...';const r=a
         try{for(let k=0;k<it.outs.length;k++){const o=(await runPy(ta.value,it.ins[k]||'')).replace(/\s+$/gm,'').trim();if(o===String(it.outs[k]).replace(/\s+$/gm,'').trim())pass++;else fail.push(k+1)}}
         catch(e){out.textContent='파이썬을 불러오지 못했어요.';return}
         const ok=pass===it.outs.length;out.textContent=`테스트 ${pass} / ${it.outs.length} 통과`+(fail.length?` (실패: ${fail.join(', ')}번)`:'');
-        await api('submit',{no,act,q:it.q,answer:ta.value,ok});m.className='msg '+(ok?'ok':'no');m.textContent=ok?'✅ 모두 통과! 제출됐어요.':'❌ 제출은 저장됐어요. 코드를 고쳐서 다시 도전해 봐요.'}})}}
+        const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok});if(!x.error)rec(no,act,it.q,ta.value,ok);m.className='msg '+(ok?'ok':'no');m.textContent=ok?'✅ 모두 통과! 제출됐어요.':'❌ 제출은 저장됐어요. 코드를 고쳐서 다시 도전해 봐요.'}})}}
 async function lessonView0(){const r=await api('menu');if(!r.error)S.menu=r}
 
 /* 파이썬 실행 (브라우저 안, Pyodide) */
@@ -115,24 +119,29 @@ sys.stdout=sys.__stdout__
 _o.getvalue()`)}
 
 /* 관리자 */
-async function adminView(){app.innerHTML='불러오는 중...';const r=await api('classes');if(r.error)return app.innerHTML=r.error;
-  app.innerHTML=`<h2>학급 현황</h2><div class="grid">${r.classes.map(c=>`<button class="card" data-c="${c.cls}"><b>${c.cls}반</b><small>${c.count}명 · 전체 진도 ${c.pct}%</small>${bar(c.pct,100)}</button>`).join('')}</div>`;
+async function adminView(force){if(force||!mem.classes)app.innerHTML='불러오는 중...';const r=await get('classes',()=>api('classes'),force);if(r.error)return app.innerHTML=r.error;
+  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>학급 현황</h2><button class="ghost" onclick="adminView(true)">⟳ 새로고침</button></div><div class="grid">${r.classes.map(c=>`<button class="card" data-c="${c.cls}"><b>${c.cls}반</b><small>${c.count}명 · 전체 진도 ${c.pct}%</small>${bar(c.pct,100)}</button>`).join('')}</div>`;
   app.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>classView(+b.dataset.c))}
-async function classView(cls){app.innerHTML='불러오는 중...';const r=await api('classTable',{cls});if(r.error)return app.innerHTML=r.error;
+function csvSave(L,name){const q=v=>`"${String(v).replace(/"/g,'""')}"`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+L.map(x=>x.map(q).join(',')).join('\r\n')],{type:'text/csv'}));a.download=name;a.click()}
+async function classView(cls,force){const key='ct'+cls;if(force||!mem[key])app.innerHTML='불러오는 중...';const r=await get(key,()=>api('classTable',{cls}),force);if(r.error)return app.innerHTML=r.error;
   const cols=[];r.lessons.forEach(l=>Object.keys(AN).forEach(k=>l.t[k]>0&&cols.push({l,k,t:l.t[k]})));
+  const sel=S.sel[cls]??(r.lessons.length?r.lessons[r.lessons.length-1].no:'all'),vis=sel==='all'?cols:cols.filter(c=>c.l.no===sel);
   const cell=(s,c)=>{const d=Math.min(s.d[c.l.no+'|'+c.k]||0,c.t);return{d,full:d>=c.t,txt:c.k==='개념'?(d?'완료':''):`${d}/${c.t}`}};
-  const head1=r.lessons.filter(l=>cols.some(c=>c.l===l)).map(l=>`<th colspan="${cols.filter(c=>c.l===l).length}">[${l.no}차시] ${esc(l.title)}</th>`).join('');
-  const body=r.students.map(s=>`<tr><td class="l" data-id="${s.id}">${s.id} ${esc(s.name)}</td>${cols.map(c=>{const x=cell(s,c);return `<td class="${x.full?'done':''}">${x.txt}</td>`}).join('')}</tr>`).join('');
-  const foot=cols.map(c=>`<td>${r.students.filter(s=>cell(s,c).full).length}/${r.students.length}</td>`).join('');
-  app.innerHTML=`<p><button class="ghost" onclick="adminView()">← 학급 목록</button></p><h2>${cls}반 진도 현황</h2><div class="row" style="margin-bottom:12px"><button class="main" id="csv">CSV 내려받기</button><span style="color:var(--sub)">학생 이름을 누르면 답안을 볼 수 있어요.</span></div>
-  <div class="wrap"><table><thead><tr><th rowspan="2">학번 이름</th>${head1}</tr><tr>${cols.map(c=>`<th class="a">${AN[c.k][1]}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td>완료 학생 수</td>${foot}</tr></tfoot></table></div>`;
+  const head1=r.lessons.filter(l=>vis.some(c=>c.l===l)).map(l=>`<th colspan="${vis.filter(c=>c.l===l).length}">[${l.no}차시] ${esc(l.title)}</th>`).join('');
+  const body=r.students.map(s=>`<tr><td class="l" data-id="${s.id}">${s.id} ${esc(s.name)}</td>${vis.map(c=>{const x=cell(s,c);return `<td class="${x.full?'done':''}">${x.txt}</td>`}).join('')}</tr>`).join('');
+  const foot=vis.map(c=>`<td>${r.students.filter(s=>cell(s,c).full).length}/${r.students.length}</td>`).join('');
+  const chips=`<button class="chip ${sel==='all'?'on':''}" data-s="all">전체</button>`+r.lessons.map(l=>`<button class="chip ${sel===l.no?'on':''}" data-s="${l.no}">${l.no}차시</button>`).join('');
+  app.innerHTML=`<p><button class="ghost" onclick="adminView()">← 학급 목록</button></p><h2>${cls}반 진도 현황</h2><div class="row" style="margin-bottom:10px">${chips}</div>
+  <div class="row" style="margin-bottom:12px"><button class="main" id="csv1">이 화면 CSV</button><button class="ghost" id="csv2">전체 차시 CSV</button><button class="ghost" id="rf">⟳ 새로고침</button><span style="color:var(--sub)">학생 이름을 누르면 답안을 볼 수 있어요.</span></div>
+  <div class="wrap"><table><thead><tr><th rowspan="2">학번 이름</th>${head1}</tr><tr>${vis.map(c=>`<th class="a">${AN[c.k][1]}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td>완료 학생 수</td>${foot}</tr></tfoot></table></div>`;
+  app.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{S.sel[cls]=b.dataset.s==='all'?'all':+b.dataset.s;classView(cls)});
   app.querySelectorAll('[data-id]').forEach(t=>t.onclick=()=>detailView(t.dataset.id,cls));
-  $('#csv').onclick=()=>{const q=v=>`"${String(v).replace(/"/g,'""')}"`;
-    const L=[['학번 이름',...cols.map(c=>`[${c.l.no}차시] ${c.l.title}`)],['',...cols.map(c=>AN[c.k][1])],...r.students.map(s=>[s.id+' '+s.name,...cols.map(c=>cell(s,c).txt)])];
-    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+L.map(x=>x.map(q).join(',')).join('\r\n')],{type:'text/csv'}));a.download=`${cls}반_진도현황.csv`;a.click()}}
+  $('#rf').onclick=()=>classView(cls,true);
+  const dl=(cs,n)=>csvSave([['학번 이름',...cs.map(c=>`[${c.l.no}차시] ${c.l.title}`)],['',...cs.map(c=>AN[c.k][1])],...r.students.map(s=>[s.id+' '+s.name,...cs.map(c=>cell(s,c).txt)])],n);
+  $('#csv1').onclick=()=>dl(vis,`${cls}반_${sel==='all'?'전체':sel+'차시'}.csv`);$('#csv2').onclick=()=>dl(cols,`${cls}반_전체차시.csv`)}
 async function detailView(id,cls){app.innerHTML='불러오는 중...';const r=await api('detail',{id});if(r.error)return app.innerHTML=r.error;
-  app.innerHTML=`<p><button class="ghost" id="b">← ${cls}반 현황</button></p><h2>${esc(id)} ${esc(r.name)}</h2><div class="row" style="margin-bottom:14px"><button id="rs">비밀번호 초기화 (학번으로)</button></div>
-  <div class="wrap"><table><thead><tr><th>차시</th><th>활동</th><th>문항</th><th>정답</th><th>시도</th><th>최근 제출</th><th>답안</th></tr></thead><tbody>${r.recs.map(x=>`<tr><td>${x.no}</td><td>${AN[x.act]?AN[x.act][1]:x.act}</td><td>${x.q||'-'}</td><td>${x.ok?'⭕':'❌'}</td><td>${x.tries}</td><td>${x.last}</td><td style="text-align:left"><details><summary>보기</summary><pre>${esc(x.answer)}</pre></details></td></tr>`).join('')||'<tr><td colspan="7">아직 기록이 없어요.</td></tr>'}</tbody></table></div>`;
+  const g={};r.recs.forEach(x=>(g[x.no]=g[x.no]||[]).push(x));const ks=Object.keys(g).sort((a,b)=>b-a);
+  app.innerHTML=`<p><button class="ghost" id="b">← ${cls}반 현황</button></p><h2>${esc(id)} ${esc(r.name)}</h2><div class="row" style="margin-bottom:14px"><button id="rs">비밀번호 초기화 (학번으로)</button></div>`+(ks.map((k,i)=>`<details class="box" ${i===0?'open':''}><summary><b>${k}차시</b> · 기록 ${g[k].length}건</summary><div class="wrap"><table><thead><tr><th>활동</th><th>문항</th><th>정답</th><th>시도</th><th>최근 제출</th><th>답안</th></tr></thead><tbody>${g[k].map(x=>`<tr><td>${AN[x.act]?AN[x.act][1]:x.act}</td><td>${x.q||'-'}</td><td>${x.ok?'⭕':'❌'}</td><td>${x.tries}</td><td>${x.last}</td><td style="text-align:left"><details><summary>보기</summary><pre>${esc(x.answer)}</pre></details></td></tr>`).join('')}</tbody></table></div></details>`).join('')||'<p>아직 기록이 없어요.</p>');
   $('#b').onclick=()=>classView(cls);
   $('#rs').onclick=async()=>{if(!confirm(`${r.name} 학생의 비밀번호를 학번으로 되돌릴까요?`))return;const x=await api('resetPw',{id});alert(x.error||'초기화했어요. 다음 로그인 때 비밀번호를 새로 만들게 됩니다.')}}
 
