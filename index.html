@@ -38,7 +38,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 <header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v3)</span><div id="who"></div></header>
 <main id="app"></main>
 <script>
-const API='https://script.google.com/a/macros/goedu.kr/s/AKfycbwSQB5-Go93agfOpB6IOxSOoj8KuUiGzYGvIWOwhu0p9Z2DiUFce13_iklmxN8L5NOD/exec';
+const API='https://script.google.com/macros/s/AKfycbwSQB5-Go93agfOpB6IOxSOoj8KuUiGzYGvIWOwhu0p9Z2DiUFce13_iklmxN8L5NOD/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{}};let mem={};
 async function get(k,fn,force){if(!force&&mem[k])return mem[k];const r=await fn();if(!r.error)mem[k]=r;return r}
