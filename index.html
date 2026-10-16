@@ -38,13 +38,13 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v8)</span><div id="who"></div></header>
+<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v9)</span><div id="who"></div></header>
 <main id="app"></main>
 <script>
-const API='https://script.google.com/macros/s/AKfycbye7Geo9oK68GK540J081pBQDDkhQbmlZShl2PByXZiIwILu2dJ5PAVNDsTYtrmKEo2/exec';
+const API='https://script.google.com/macros/s/AKfycbwa-DHpvqkHQdJaNzU_wKfUvcVJuMw5Wt3fk7nZhWQj6LnvZMvmcDX-lJCMaDJHTpMP/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:''};let mem={};
-async function get(k,fn,force){if(!force&&mem[k])return mem[k];const r=await fn();if(!r.error)mem[k]=r;return r}
+const memT={};async function get(k,fn,force){if(!force&&mem[k]&&Date.now()-(memT[k]||0)<60000)return mem[k];const r=await fn();if(!r.error){mem[k]=r;memT[k]=Date.now()}return r}
 function rec(no,act,q,answer,ok){if(S.preview||!S.menu)return;const L=mem['L|'+S.sub+'|'+no+'|'+act],s=L&&L.saved,was=s&&s[q]&&s[q].ok;if(s)s[q]={answer,ok:ok||was};if(ok&&!was){const l=S.menu.lessons.find(x=>x.no===no);l.d[act]=Math.min(l.t[act],l.d[act]+1)}}
 const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ico=x=>/^https?:\/\//i.test(String(x))||/\.(png|jpe?g|gif|svg|webp)$/i.test(String(x))?`<img class="ico" src="${esc(x)}" alt="">`:esc(x);
@@ -85,12 +85,12 @@ function forgotView(){app.innerHTML=`<div class="box narrow"><h2>비밀번호 �
   $('#go').onclick=async()=>{$('#e').textContent='확인 중...';const r=await api('forgot',{id:$('#fi').value,key:$('#fk').value});if(r.error)return $('#e').textContent=r.error;loginView('✅ 초기화했어요! 학번을 비밀번호로 입력해 로그인하세요.')}}
 async function lessonView(){const mk='m|'+S.sub;if(!mem[mk])app.innerHTML='불러오는 중...';const r=await get(mk,()=>api('menu'));if(r.error){app.innerHTML=`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><p>${esc(r.error)}</p>`;return}S.menu=r;
   app.innerHTML=`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><h2>${esc(S.sub)} · 차시를 골라요</h2>`+(r.lessons.length?`<div class="grid">${r.lessons.map(l=>{
-  const t=l.t.개념+l.t.해석+l.t.작성,d=Math.min(l.t.개념,l.d.개념)+Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성);
-  return `<button class="card" data-no="${l.no}"><small>${l.no}차시</small><b>${esc(l.title)}</b>${bar(d,t)}</button>`}).join('')}</div>`:'<p>아직 올라온 차시가 없어요.</p>');
+  const t=l.t.해석+l.t.작성,d=Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성);
+  return `<button class="card" data-no="${l.no}"><small>${l.no}차시</small><b>${esc(l.title)}</b>${t?`<small>문제 ${t}개 · ${d}개 완료</small>${bar(d,t)}`:''}</button>`}).join('')}</div>`:'<p>아직 올라온 차시가 없어요.</p>');
   app.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>actView(+b.dataset.no))}
 function actView(no){const l=S.menu.lessons.find(x=>x.no===no);
   app.innerHTML=`<p><button class="ghost" onclick="lessonView()">← 차시 선택</button></p><h2>[${no}차시] ${esc(l.title)}</h2><div class="grid">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>
-  `<button class="card" data-k="${k}"><small>${AN[k][0]}</small><b>${AN[k][1]}</b><small>${Math.min(l.d[k],l.t[k])} / ${l.t[k]} 완료</small>${bar(l.d[k],l.t[k])}</button>`).join('')}</div>`;
+  `<button class="card" data-k="${k}"><small>${AN[k][0]}</small><b>${AN[k][1]}</b>${k==='개념'?(l.d[k]>0?'<small>✔ 완료</small>':''):`<small>문제 ${l.t[k]}개 · ${Math.min(l.d[k],l.t[k])}개 완료</small>${bar(l.d[k],l.t[k])}`}</button>`).join('')}</div>`;
   app.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>contentView(no,b.dataset.k));Object.keys(AN).filter(k=>l.t[k]>0).forEach(k=>get('L|'+S.sub+'|'+no+'|'+k,()=>api('lesson',{no,act:k})))}
 async function contentView(no,act){const lk='L|'+S.sub+'|'+no+'|'+act;if(!mem[lk])app.innerHTML='불러오는 중...';const r=await get(lk,()=>api('lesson',{no,act}));if(r.error)return app.innerHTML=r.error;
   const l=S.menu.lessons.find(x=>x.no===no);
