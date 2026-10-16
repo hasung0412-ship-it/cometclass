@@ -29,6 +29,7 @@ pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:1
 .msg.wait{background:#eef1f8;display:block}.chip{padding:6px 14px;background:#fff;border:1px solid var(--line)}.chip.on{background:var(--sky)}
 .bc{line-height:2.2}.blank{display:inline-block;width:min(24em,70vw);padding:2px 8px;margin:0 4px;font:14px/1.6 'Gowun Dodum','Malgun Gothic',sans-serif;background:#fffbe8}
 .ico{height:1.3em;vertical-align:-.25em;border-radius:5px}.card .ico{height:48px;display:block;margin-bottom:6px;vertical-align:baseline}
+.pic{max-width:100%;border-radius:12px;margin:8px 0;display:block}
 .err{color:#c25a5a;min-height:24px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .choice{display:block;padding:6px 10px;border-radius:10px;cursor:pointer}.choice:hover{background:#f3f5fb}.choice input{width:auto;margin-right:8px}
@@ -37,7 +38,7 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><b>🏫 배곧해솔중학교</b><span> 정보 (v7)</span><div id="who"></div></header>
+<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v8)</span><div id="who"></div></header>
 <main id="app"></main>
 <script>
 const API='https://script.google.com/macros/s/AKfycbye7Geo9oK68GK540J081pBQDDkhQbmlZShl2PByXZiIwILu2dJ5PAVNDsTYtrmKEo2/exec';
@@ -52,7 +53,8 @@ async function api(action,d={}){
   try{const r=await(await fetch(API,{method:'POST',body:JSON.stringify({action,token:S.token,sub:S.sub,...d})})).json();
     if(r.error==='auth'){logout();return{error:'다시 로그인해 주세요.'}}return r}
   catch(e){return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
-function fmt(t){return String(t??'').split('```').map((x,i)=>i%2?`<pre>${esc(x.trim())}</pre>`:esc(x).replace(/\n/g,'<br>')).join('')}
+function fmt(t){return String(t??'').split('```').map((x,i)=>i%2?`<pre>${esc(x.trim())}</pre>`:pic(esc(x)).replace(/\n/g,'<br>')).join('')}
+function pic(s){return s.replace(/\[그림:([^\]\s]+)\]/g,(m,u)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<img class="pic" src="${u}" alt="그림">`:m)}
 function bar(d,t){return `<div class="bar"><i style="width:${t?Math.min(100,d/t*100):0}%"></i></div>`}
 function setWho(){const u=S.user;$('#who').innerHTML=u?`${S.preview?'<span>👀 미리보기 중 (기록 안 됨)</span>':''}<span>${esc(u.name)}</span>`+(u.role==='관리자'?`<button class="ghost" onclick="togglePrev()">${S.preview?'관리자 화면':'학생 화면 보기'}</button>`:'')+`<button class="ghost" onclick="logout()">로그아웃</button>`:''}
 function togglePrev(){S.preview=!S.preview;setWho();S.preview?langView():adminView()}
