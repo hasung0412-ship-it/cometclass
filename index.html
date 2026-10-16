@@ -40,7 +40,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 <header><b>🏫 배곧해솔중학교</b><span> 정보 (v7)</span><div id="who"></div></header>
 <main id="app"></main>
 <script>
-const API='https://script.google.com/macros/s/AKfycbwMtFdYDUTxyTFlZqH3LQES8_Leg-WwvgSavbw-UqyfUeDiVBmEmxB3Ob3AA59ir2Nm/exec';
+const API='https://script.google.com/macros/s/AKfycbye7Geo9oK68GK540J081pBQDDkhQbmlZShl2PByXZiIwILu2dJ5PAVNDsTYtrmKEo2/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:''};let mem={};
 async function get(k,fn,force){if(!force&&mem[k])return mem[k];const r=await fn();if(!r.error)mem[k]=r;return r}
