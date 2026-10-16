@@ -37,7 +37,7 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v6)</span><div id="who"></div></header>
+<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v7)</span><div id="who"></div></header>
 <main id="app"></main>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwMtFdYDUTxyTFlZqH3LQES8_Leg-WwvgSavbw-UqyfUeDiVBmEmxB3Ob3AA59ir2Nm/exec';
@@ -77,8 +77,9 @@ async function langView(){if(!mem.subjects)app.innerHTML='불러오는 중...';c
   app.innerHTML=`<h2>배울 과목을 골라요</h2>`+(r.subjects.length?`<div class="grid">${r.subjects.map((s,i)=>`<button class="card" data-i="${i}">${ico(s.icon)} <b>${esc(s.name)}</b>${s.ready?'':'<small>준비 중</small>'}</button>`).join('')}</div><div class="msg wait" id="soon" style="display:none;margin-top:14px"></div>`:'<p>아직 등록된 과목이 없어요.</p>');
   app.querySelectorAll('[data-i]').forEach(b=>b.onclick=async()=>{const s=r.subjects[+b.dataset.i];if(!s.ready){const r2=await get('subjects',()=>api('subjects'),true),s2=(r2.subjects||[]).find(x=>x.name===s.name);if(s2&&s2.ready){S.sub=s.name;return lessonView()}const m=$('#soon');m.style.display='block';m.textContent='🛠 아직 준비중입니다!';return}S.sub=s.name;lessonView()})}
 function forgotView(){app.innerHTML=`<div class="box narrow"><h2>비밀번호 초기화</h2><p style="font-size:14px;color:var(--sub)">선생님께 받은 <b>고유키</b>를 입력하면 비밀번호가 학번으로 초기화돼요. 그다음 로그인하면 새 비밀번호를 만들 수 있어요.</p>
-<input id="fi" placeholder="학번"><input id="fk" placeholder="고유키" autocomplete="off"><div class="err" id="e"></div><button class="main" id="go">초기화하기</button> <button class="ghost" id="bk">← 로그인</button></div>`;
+<input id="fi" placeholder="학번"><input id="fk" placeholder="고유키" autocomplete="off"><div class="err" id="e"></div><button class="main" id="go">초기화하기</button> <button class="ghost" id="bk">← 로그인</button><p><a href="#" id="nk" style="color:var(--sub);font-size:14px">고유키도 잊어버렸어요!</a></p></div>`;
   $('#bk').onclick=()=>loginView();
+  $('#nk').onclick=e=>{e.preventDefault();alert('니가 만든\n니 계정의\n니 비밀번호도 잊고\n니 고유키도 잊으면\n대체 뭘 하겠다는건가요?\n선생님께 문의 받으세요')};
   $('#go').onclick=async()=>{$('#e').textContent='확인 중...';const r=await api('forgot',{id:$('#fi').value,key:$('#fk').value});if(r.error)return $('#e').textContent=r.error;loginView('✅ 초기화했어요! 학번을 비밀번호로 입력해 로그인하세요.')}}
 async function lessonView(){const mk='m|'+S.sub;if(!mem[mk])app.innerHTML='불러오는 중...';const r=await get(mk,()=>api('menu'));if(r.error){app.innerHTML=`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><p>${esc(r.error)}</p>`;return}S.menu=r;
   app.innerHTML=`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><h2>${esc(S.sub)} · 차시를 골라요</h2>`+(r.lessons.length?`<div class="grid">${r.lessons.map(l=>{
