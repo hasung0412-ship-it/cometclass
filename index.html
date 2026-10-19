@@ -51,7 +51,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 <header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v10)</span><div id="who"></div></header>
 <main id="app"></main>
 <script>
-const API='https://script.google.com/macros/s/AKfycbwa-DHpvqkHQdJaNzU_wKfUvcVJuMw5Wt3fk7nZhWQj6LnvZMvmcDX-lJCMaDJHTpMP/exec';
+const API='https://script.google.com/macros/s/AKfycbzJLvgi4dJNb4DbVtlT7USia0WyUXU7FyfM-ilOwWYFB45WfXT9Af2HGul0TkuBKBJq/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:''};let mem={};
 const memT={};async function get(k,fn,force){if(!force&&mem[k]&&Date.now()-(memT[k]||0)<60000)return mem[k];const r=await fn();if(!r.error){mem[k]=r;memT[k]=Date.now()}return r}
