@@ -30,6 +30,16 @@ pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:1
 .bc{line-height:2.2}.blank{display:inline-block;width:min(24em,70vw);padding:2px 8px;margin:0 4px;font:14px/1.6 'Gowun Dodum','Malgun Gothic',sans-serif;background:#fffbe8}
 .ico{height:1.3em;vertical-align:-.25em;border-radius:5px}.card .ico{height:48px;display:block;margin-bottom:6px;vertical-align:baseline}
 .pic{max-width:100%;border-radius:12px;margin:8px 0;display:block}
+.trace{border:1px solid var(--line);border-radius:16px;padding:12px;margin:10px 0;background:#fcfcff}
+.tr2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:640px){.tr2{grid-template-columns:1fr}}
+.tp{background:#f6f7fb;border-radius:12px;padding:8px 0;overflow:auto;font:14px/1.8 Consolas,monospace}.tp h4{margin:0 12px 4px;font:13px 'Gowun Dodum','Malgun Gothic',sans-serif;color:var(--sub)}
+.ln{white-space:pre;padding:0 12px 0 36px;position:relative;min-height:1.8em}.ln i{position:absolute;left:6px;color:#b5bbcb;font-style:normal;font-size:12px}
+.ln.cur{background:#ffe0e0;color:#c0392b;font-weight:bold}.ln.cur::after{content:'▶';position:absolute;left:22px;font-size:10px}
+.hot{border-bottom:2px dotted #6a8fd8;background:#e4eefc;border-radius:4px;padding:0 3px;cursor:pointer}
+.hot2{border:1px dashed #9aa6c4;background:#fff;border-radius:6px;padding:0 5px;cursor:pointer}.hot2.ok{border-style:solid;border-color:#7fc8a9;background:var(--mint)}
+.vtb{margin-top:10px;width:100%}.vtb td,.vtb th{text-align:left}.vtb tr.chg td{background:var(--butter);font-weight:bold}
+.modal{position:fixed;inset:0;background:#3a425660;display:flex;align-items:center;justify-content:center;z-index:30}.mb{background:#fff;border-radius:18px;padding:22px;max-width:440px;width:90%}
+.bk{width:5.5em;display:inline-block;padding:2px 8px;margin:0 4px}
 .err{color:#c25a5a;min-height:24px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .choice{display:block;padding:6px 10px;border-radius:10px;cursor:pointer}.choice:hover{background:#f3f5fb}.choice input{width:auto;margin-right:8px}
@@ -38,7 +48,7 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v9)</span><div id="who"></div></header>
+<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v10)</span><div id="who"></div></header>
 <main id="app"></main>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwa-DHpvqkHQdJaNzU_wKfUvcVJuMw5Wt3fk7nZhWQj6LnvZMvmcDX-lJCMaDJHTpMP/exec';
@@ -53,7 +63,7 @@ async function api(action,d={}){
   try{const r=await(await fetch(API,{method:'POST',body:JSON.stringify({action,token:S.token,sub:S.sub,...d})})).json();
     if(r.error==='auth'){logout();return{error:'다시 로그인해 주세요.'}}return r}
   catch(e){return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
-function fmt(t){return String(t??'').split('```').map((x,i)=>i%2?`<pre>${esc(x.trim())}</pre>`:pic(esc(x)).replace(/\n/g,'<br>')).join('')}
+function fmt(t){return String(t??'').split('```').map((x,i)=>i%2?(/^trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):pic(esc(x)).replace(/\n/g,'<br>')).join('')}
 function pic(s){return s.replace(/\[그림:([^\]\s]+)\]/g,(m,u)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<img class="pic" src="${u}" alt="그림">`:m)}
 function bar(d,t){return `<div class="bar"><i style="width:${t?Math.min(100,d/t*100):0}%"></i></div>`}
 function setWho(){const u=S.user;$('#who').innerHTML=u?`${S.preview?'<span>👀 미리보기 중 (기록 안 됨)</span>':''}<span>${esc(u.name)}</span>`+(u.role==='관리자'?`<button class="ghost" onclick="togglePrev()">${S.preview?'관리자 화면':'학생 화면 보기'}</button>`:'')+`<button class="ghost" onclick="logout()">로그아웃</button>`:''}
@@ -100,7 +110,7 @@ async function contentView(no,act){const lk='L|'+S.sub+'|'+no+'|'+act;if(!mem[lk
   if(act==='개념'){box.innerHTML=r.items.map(i=>`<div class="box"><h3>${esc(i.title)}</h3>${fmt(i.body)}</div>`).join('')+`<button class="main" id="done">${r.saved[0]?.ok?'✔ 읽었어요 (완료됨)':'다 읽었어요 ✔'}</button>`;
     $('#done').onclick=async()=>{$('#done').textContent='저장 중...';const x=await api('submit',{no,act,q:0,answer:'읽음'});if(x.error){$('#done').textContent='저장 실패, 다시 눌러 주세요';return}rec(no,act,0,'읽음',true);$('#done').textContent='✔ 완료됐어요!'}}
   if(act==='해석'){const isF=i=>i.type==='설명쓰기'||i.type==='서술';
-  const cd=(i,v)=>{if(i.type!=='설명쓰기')return i.code?`<pre>${esc(i.code)}</pre>`:'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
+  const cd=(i,v)=>{if(i.type!=='설명쓰기')return i.code?(/^\s*```trace/.test(i.code)?fmt(i.code):`<pre>${esc(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
   box.innerHTML=r.items.map((i,n)=>{const s=r.saved[i.q],f=isF(i),v=s&&i.type==='설명쓰기'?String(s.answer).split('\n').map(l=>l.replace(/^\d+:\s?/,'')):[];
     const inp=i.type==='설명쓰기'?'':i.choices?i.choices.map(c=>`<label class="choice"><input type="radio" name="q${i.q}" value="${esc(c)}" ${s&&String(s.answer)===c?'checked':''}>${esc(c)}</label>`).join(''):i.type==='서술'?`<textarea class="free" style="min-height:90px;font-family:inherit" placeholder="생각을 자유롭게 써 보세요">${esc(s?s.answer:'')}</textarea>`:`<input class="ans" placeholder="답을 입력하세요" value="${esc(s?s.answer:'')}">`;
     return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}${cd(i,v)}${inp}<div class="row"><button class="main chk">${f?'제출하기':'정답 확인'}</button></div><div class="msg ${s&&(f||s.ok)?'ok':''}">${s?(f?'📨 이전에 제출했어요 (고쳐서 다시 제출해도 돼요)':(s.ok?'✅ 이전에 맞혔어요':'')):''}</div></div>`}).join('');
@@ -126,6 +136,70 @@ async function contentView(no,act){const lk='L|'+S.sub+'|'+no+'|'+act;if(!mem[lk
 async function lessonView0(){const r=await api('menu');if(!r.error)S.menu=r}
 
 /* 파이썬 실행 (브라우저 안, Pyodide) */
+/* 실행 과정 보기: 시트 칸에 ```trace ... ``` 로 쓰면 이 화면으로 바뀝니다 */
+const TRQ=/\{\{([^{}\n]*?)\}\}/g,norm=s=>String(s).replace(/\s/g,'').toLowerCase();
+function rangeInfo(e){const m=/^range\s*\(([^()]*)\)$/.exec(e.trim());if(!m)return null;const a=m[1].split(',').map(x=>Number(x.trim()));if(a.some(isNaN)||a.length<1||a.length>3)return null;let lo=0,hi,s=1;if(a.length===1)hi=a[0];else{lo=a[0];hi=a[1];if(a.length===3)s=a[2]}if(!s)return null;const L=[];for(let v=lo;s>0?v<hi:v>hi;v+=s){L.push(v);if(L.length>30)break}return{lo,hi,s,L}}
+function mkHot(raw){const p=raw.split('|').map(x=>x.trim()),e=p[0],r=rangeInfo(e);let msg=p[1]||'',ans=p[2]?p[2].split(',').map(x=>x.trim()):null;
+  if(r&&!msg)msg=`만들어내는 숫자의 범위는 ${r.lo} OO ${r.hi} OO 이다.`+(Math.abs(r.s)!==1?` (${Math.abs(r.s)}씩 ${r.s>0?'커져요':'작아져요'})`:'');
+  if(r&&!ans&&/OO/.test(msg))ans=r.s>0?['이상','미만']:['이하','초과'];
+  if(!msg)msg=`이 부분은 "${e}" 예요.`;return{e,r,msg,ans}}
+const hotText=(h,j=0)=>h.r?h.r.L.join(', ')+(h.r.L.length>30?' …':''):h.msg.replace(/OO/g,()=>(h.ans&&h.ans[j++])?h.ans[j-1].split('/')[0]:'OO');
+async function runTrace(code){const p=await loadPy();p.globals.set('UC',code);return p.runPython(`import sys,io,json
+_g={'__name__':'__main__'};_o=io.StringIO();_S=[]
+class _Stop(Exception):pass
+def _snap(f):
+    d={}
+    for k,v in list(f.f_globals.items()):
+        if not k.startswith('_') and isinstance(v,(int,float,str,bool,list,tuple,dict,set,type(None))):
+            d[k]=repr(v)[:60]
+    return d
+def _tr(fr,ev,arg):
+    if fr.f_code.co_filename!='<trace>':return None
+    if ev=='line' or (ev=='return' and fr.f_code.co_name=='<module>'):
+        if len(_S)>=300:raise _Stop()
+        _S.append([fr.f_lineno if ev=='line' else 0,_snap(fr),_o.getvalue()])
+    return _tr
+_so=sys.stdout;sys.stdout=_o;_err=''
+try:
+    _c=compile(UC,'<trace>','exec')
+    sys.settrace(_tr)
+    exec(_c,_g)
+except _Stop:
+    _err='stop'
+except BaseException as e:
+    _err=type(e).__name__+': '+str(e)
+finally:
+    sys.settrace(None);sys.stdout=_so
+json.dumps({'s':_S,'e':_err})`)}
+function traceDiv(x){setTimeout(initTraces,0);return `<div class="trace" data-src="${esc(x.replace(/^trace[ \t]*\n/,'').replace(/\s+$/,''))}"></div>`}
+function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach(async el=>{el.dataset.ok=1;el.innerHTML='<p style="color:var(--sub);margin:0">🐍 파이썬 준비 중... (처음에는 10~30초 걸려요)</p>';
+  const raw=el.dataset.src.split('\n'),H=[];
+  const L=raw.map(line=>{const g=[];let last=0,m;TRQ.lastIndex=0;while((m=TRQ.exec(line))){g.push({t:line.slice(last,m.index)});H.push(mkHot(m[1]));g.push({h:H.length-1});last=m.index+m[0].length}g.push({t:line.slice(last)});return g});
+  let D;try{D=JSON.parse(await runTrace(raw.map(l=>l.replace(TRQ,(m,x)=>x.split('|')[0].trim())).join('\n')))}catch(e){el.innerHTML='<p>파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.</p>';return}
+  const S=D.s,solved={};let cur=0,tm=null;
+  if(!S.length){el.innerHTML=`<pre>${esc(raw.join('\n'))}</pre><p style="color:#c25a5a">${esc(D.e)}</p>`;return}
+  const pane=(R)=>L.map((g,n)=>`<div class="ln" data-n="${n+1}"><i>${n+1}</i>${g.map(s=>s.h==null?esc(s.t):R?`<span class="hot2 ${solved[s.h]?'ok':''}" data-k="${s.h}">${solved[s.h]?esc(hotText(H[s.h])):'🔍 '+esc(H[s.h].e)}</span>`:`<span class="hot" data-k="${s.h}">${esc(H[s.h].e)}</span>`).join('')}</div>`).join('');
+  el.innerHTML=`<div class="tr2"><div class="tp"><h4>📄 원본 코드</h4><div class="pl"></div></div><div class="tp"><h4>💡 해석 (🔍를 눌러 보세요)</h4><div class="pr"></div></div></div>
+  <div class="row" style="margin-top:10px"><button class="ghost pv">◀</button><button class="ghost nx">▶</button><input type="range" class="sl" min="0" max="${S.length-1}" value="0" style="flex:1;min-width:120px;padding:0;border:0"><button class="ghost ap">▶ 자동 재생</button><b class="cn" style="min-width:90px;text-align:right"></b></div>
+  <table class="vtb"><thead><tr><th>변수</th><th>값 (이 줄을 실행하기 직전)</th></tr></thead><tbody class="vt"></tbody></table><pre class="out" style="margin-bottom:0"></pre>${D.e==='stop'?'<p style="color:var(--sub);margin:6px 0 0">단계가 너무 많아 300단계까지만 보여 줘요.</p>':D.e?`<p style="color:#c25a5a;margin:6px 0 0">실행 중 오류: ${esc(D.e)}</p>`:''}`;
+  const upd=()=>{const s=S[cur],pv=S[cur-1]||[0,{},''];el.querySelectorAll('.ln').forEach(d=>d.classList.toggle('cur',+d.dataset.n===s[0]));
+    el.querySelector('.vt').innerHTML=Object.keys(s[1]).map(k=>`<tr class="${pv[1][k]!==s[1][k]?'chg':''}"><td>${esc(k)}</td><td>${esc(s[1][k])}</td></tr>`).join('')||'<tr><td colspan="2" style="color:var(--sub)">아직 변수가 없어요</td></tr>';
+    el.querySelector('.out').textContent=s[2]?'출력:\n'+s[2]:'(아직 출력이 없어요)';el.querySelector('.sl').value=cur;el.querySelector('.cn').textContent=s[0]?`${cur+1} / ${S.length}단계`:'✅ 끝!'};
+  const panes=()=>{el.querySelector('.pl').innerHTML=pane(0);el.querySelector('.pr').innerHTML=pane(1);upd()};panes();
+  const stop=()=>{clearInterval(tm);tm=null;el.querySelector('.ap').textContent='▶ 자동 재생'};
+  el.querySelector('.sl').oninput=e=>{cur=+e.target.value;upd()};
+  el.querySelector('.pv').onclick=()=>{stop();cur=Math.max(0,cur-1);upd()};el.querySelector('.nx').onclick=()=>{stop();cur=Math.min(S.length-1,cur+1);upd()};
+  el.querySelector('.ap').onclick=()=>{if(tm)return stop();if(cur>=S.length-1)cur=0;el.querySelector('.ap').textContent='⏸ 멈춤';tm=setInterval(()=>{if(!el.isConnected||cur>=S.length-1){stop();return}cur++;upd()},800)};
+  el.onclick=e=>{const h=e.target.closest('[data-k]');if(h)openHot(+h.dataset.k)};
+  function openHot(k){const h=H[k],m=document.createElement('div');m.className='modal';
+    const body=esc(h.msg).replace(/OO/g,()=>h.ans?'<input class="bk" autocomplete="off">':'OO');
+    m.innerHTML=`<div class="mb"><p style="font-size:13px;color:var(--sub);margin:0 0 6px">${esc(h.e)}</p><p style="margin:0 0 8px">${body}</p><div class="msg"></div><div class="row"><button class="main ck">${h.ans?'확인':'알겠어요'}</button><button class="ghost cl">닫기</button></div></div>`;
+    document.body.appendChild(m);const ins=[...m.querySelectorAll('.bk')],out=m.querySelector('.msg');if(ins[0])ins[0].focus();
+    m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.cl').onclick=()=>m.remove();
+    m.querySelector('.ck').onclick=()=>{if(!ins.length){solved[k]=1;panes();m.remove();return}
+      if(ins.every((x,i)=>(h.ans[i]||'').split('/').some(a=>norm(a)===norm(x.value)))){solved[k]=1;panes();out.className='msg ok';out.textContent='✅ 맞아요! 오른쪽 해석이 바뀌었어요.';m.querySelector('.ck').remove()}else{out.className='msg no';out.textContent='❌ 다시 생각해 봐요.'}}}
+})}
+
 let PYP;function loadPy(){return PYP||(PYP=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';s.onload=()=>loadPyodide().then(ok,no);s.onerror=no;document.head.appendChild(s)}))}
 async function runPy(code,inp){const p=await loadPy();p.globals.set('UC',code);p.globals.set('UI',inp||'');
   return p.runPython(`import sys,io
