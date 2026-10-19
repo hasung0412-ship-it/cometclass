@@ -51,7 +51,7 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v17)</span><div id="who"></div></header>
+<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v18)</span><div id="who"></div></header>
 <main id="app"></main>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzUtjAEzm2MDsuIkJrnUzR2iw3EqQhu8UUQm5KLqtcm4rxtbghTJnjH1ZHF_1EXc3bD/exec';
@@ -144,11 +144,21 @@ const br=s=>s.replace(/\s*\/\/\s*/g,'<br>'),TRQ=/\{\{([^{}\n]*?)\}\}/g,norm=s=>S
 const SYN={'참':['true','t','네','맞음'],'거짓':['false','f','아니오','틀림'],'안':['내부','안쪽','안에','안으로'],'밖':['외부','바깥','바깥쪽','밖에']};
 const okAns=(a,x)=>{const n=norm(x);return n===norm(a)||(SYN[a]||[]).some(y=>norm(y)===n)};
 function rangeInfo(e){const m=/^range\s*\(([^()]*)\)$/.exec(e.trim());if(!m)return null;const a=m[1].split(',').map(x=>Number(x.trim()));if(a.some(isNaN)||a.length<1||a.length>3)return null;let lo=0,hi,s=1;if(a.length===1)hi=a[0];else{lo=a[0];hi=a[1];if(a.length===3)s=a[2]}if(!s)return null;const L=[];for(let v=lo;s>0?v<hi:v>hi;v+=s){L.push(v);if(L.length>30)break}return{lo,hi,s,L}}
-function mkHot(raw){const p=raw.split('|').map(x=>x.trim()),e=p[0],r=rangeInfo(e);let msg=p[1]||'',ans=p[2]?p[2].split(',').map(x=>x.trim()):null;
-  if(r&&!msg)msg=`만들어내는 숫자의 범위는 ${r.lo} OO ${r.hi} OO 이다.`+(Math.abs(r.s)!==1?` (${Math.abs(r.s)}씩 ${r.s>0?'커져요':'작아져요'})`:'');
-  if(r&&!ans&&/OO/.test(msg))ans=r.s>0?['이상','미만']:['이하','초과'];
-  if(!msg)msg=`이 부분은 "${e}" 예요.`;return{e,r,msg,ans}}
-const hotText=(h,j=0)=>h.r?h.r.L.join(', ')+(h.r.L.length>30?' …':''):h.msg.replace(/OO/g,()=>(h.ans&&h.ans[j++])?h.ans[j-1].split('/')[0]:'OO');
+function parseStages(f){
+  if(f.length<=2){const lines=(f[0]||'').split(/\s*\/\/\s*/),as=(f[1]||'').split(',').map(x=>x.trim());let k=0;
+    return lines.map(l=>{const n=(l.match(/OO/g)||[]).length,a=as.slice(k,k+n);k+=n;return{msg:l,ans:n&&a.length===n&&a.every(Boolean)?a:null}})}
+  const st=[];let msg=f[0],i=1;
+  while(i<f.length&&msg!==undefined){let a=f[i],next=null;const d=a.indexOf('//');if(d>=0){next=a.slice(d+2).trim();a=a.slice(0,d).trim()}
+    const as=a.split(',').map(x=>x.trim());st.push({msg,ans:/OO/.test(msg)&&as.every(Boolean)?as:null});
+    if(next!==null){msg=next;i+=1}else{msg=f[i+1];i+=2}}
+  return st}
+function mkHot(raw){const p=raw.split('|').map(x=>x.trim()),e=p[0],r=rangeInfo(e),f=p.slice(1),da=r?(r.s>0?['이상','미만']:['이하','초과']):null;let st;
+  if(r&&!f[0])st=[{msg:`만들어내는 숫자의 범위는 ${r.lo} OO ${r.hi} OO 이다.`+(Math.abs(r.s)!==1?` (${Math.abs(r.s)}씩 ${r.s>0?'커져요':'작아져요'})`:''),ans:da}];
+  else if(r&&f.length===1&&/OO/.test(f[0]))st=parseStages([f[0],da.join(',')]);
+  else if(f[0])st=parseStages(f);
+  else st=[{msg:`이 부분은 "${e}" 예요.`,ans:null}];
+  return{e,r,st}}
+const hotText=h=>h.r?h.r.L.join(', ')+(h.r.L.length>30?' …':''):h.st.map(s=>{let j=0;return s.msg.replace(/OO/g,()=>{const a=s.ans&&s.ans[j++];return a?a.split('/')[0]:'OO'})}).join('//');
 async function runTrace(code,xj){const p=await loadPy();p.globals.set('UC',code);p.globals.set('XJ',xj);return p.runPython(`import sys,io,json
 _g={'__name__':'__main__'};_o=io.StringIO();_E=[];_X=json.loads(XJ)
 class _Stop(Exception):pass
@@ -240,13 +250,19 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
   el.querySelector('.ap').onclick=()=>{if(tm)return stop();if(cur>=S.length-1)cur=0;el.querySelector('.ap').textContent='⏸ 멈춤';tm=setInterval(()=>{if(!el.isConnected||cur>=S.length-1){stop();return}if(cur>=lock()){stop();note('🤔 먼저 질문에 답해 보세요');return}cur++;upd()},800)};
   el.querySelector('.sw').onclick=e=>{el.classList.toggle('showsp');e.target.textContent=el.classList.contains('showsp')?'␣ 들여쓰기 숨기기':'␣ 들여쓰기 보기'};
   el.onclick=e=>{const h=e.target.closest('[data-k]');if(h)openHot(+h.dataset.k)};
-  function openHot(k){const h=H[k],m=document.createElement('div');m.className='modal';
-    const body=br(esc(h.msg).replace(/OO/g,()=>h.ans?'<input class="bk" autocomplete="off">':'OO'));
-    m.innerHTML=`<div class="mb"><p style="font-size:13px;color:var(--sub);margin:0 0 6px">${esc(h.e)}</p><p style="margin:0 0 8px">${body}</p><div class="msg"></div><div class="row"><button class="main ck">${h.ans?'확인':'알겠어요'}</button><button class="ghost cl">닫기</button></div></div>`;
-    document.body.appendChild(m);const ins=[...m.querySelectorAll('.bk')],out=m.querySelector('.msg');if(ins[0])ins[0].focus();
-    m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.cl').onclick=()=>m.remove();
-    m.querySelector('.ck').onclick=()=>{if(!ins.length){solved[k]=1;panes();m.remove();return}
-      if(ins.every((x,i)=>(h.ans[i]||'').split('/').some(a=>norm(a)===norm(x.value)))){solved[k]=1;panes();out.className='msg ok';out.textContent='✅ 맞아요! 오른쪽 해석이 바뀌었어요.';m.querySelector('.ck').remove()}else{out.className='msg no';out.textContent='❌ 다시 생각해 봐요.'}}}
+  function openHot(k){const h=H[k],m=document.createElement('div');m.className='modal';let si=0,cp=null;const hasQ=h.st.some(s=>s.ans);
+    m.innerHTML=`<div class="mb"><p style="font-size:13px;color:var(--sub);margin:0 0 6px">${esc(h.e)}</p><div class="hs"></div><div class="msg"></div><div class="row"><button class="main ck">${hasQ?'확인':'알겠어요'}</button><button class="ghost cl">닫기</button></div></div>`;
+    document.body.appendChild(m);const hs=m.querySelector('.hs'),out=m.querySelector('.msg'),ck=m.querySelector('.ck');
+    const add=st=>{const p=document.createElement('p');p.style.margin='0 0 8px';p.innerHTML=br(esc(st.msg).replace(/OO/g,()=>st.ans?'<input class="bk" autocomplete="off">':'OO'));hs.appendChild(p);return p};
+    const show=()=>{if(!hasQ){h.st.forEach(add);return}
+      while(si<h.st.length){const st=h.st[si];cp=add(st);if(st.ans){const f=cp.querySelector('.bk');if(f)f.focus();return}si++}
+      solved[k]=1;panes();out.className='msg ok';out.textContent='✅ 모두 맞았어요! 오른쪽 해석이 바뀌었어요.';ck.remove()};
+    show();m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.cl').onclick=()=>m.remove();
+    ck.onclick=()=>{if(!hasQ){solved[k]=1;panes();m.remove();return}
+      const st=h.st[si],ins=[...cp.querySelectorAll('.bk')];
+      if(ins.every((x,i)=>(st.ans[i]||'').split('/').some(a=>norm(a)===norm(x.value)))){ins.forEach((x,i)=>{const b=document.createElement('b');b.textContent=st.ans[i].split('/')[0];x.replaceWith(b)});si++;out.className='msg ok';out.textContent='✅ 맞아요!';show()}
+      else{out.className='msg no';out.textContent='❌ 다시 생각해 봐요.'}};
+    m.addEventListener('keydown',e=>{if(e.key==='Enter'&&ck.isConnected)ck.click()})}
 })}
 
 let PYP;function loadPy(){return PYP||(PYP=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';s.onload=()=>loadPyodide().then(ok,no);s.onerror=no;document.head.appendChild(s)}))}
