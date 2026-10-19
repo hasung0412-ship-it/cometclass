@@ -43,6 +43,16 @@ pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:1
 .cut{color:#e05a5a;text-decoration:line-through;text-decoration-thickness:2px;opacity:.75}.now{background:#ffe0e0;color:#c0392b;border-radius:4px;padding:0 3px}
 .sp{display:inline-block;position:relative}.showsp .sp::before{content:'·';position:absolute;left:0;right:0;text-align:center;color:#3b6fd4;font-weight:bold}.showsp .sp{background:#eaf1ff}
 button:disabled{opacity:.5;cursor:not-allowed}
+#wrap.hasToc{display:grid;grid-template-columns:280px minmax(0,1fr);max-width:1240px;margin:0 auto}.hasToc main{margin:0;max-width:none}
+#toc{display:none}.hasToc #toc{display:block;position:sticky;top:58px;align-self:start;max-height:calc(100vh - 58px);overflow:auto;padding:18px 8px 60px 16px;border-right:1px solid var(--line)}
+#toc h4{margin:0 0 10px;font:14px 'Gowun Dodum','Malgun Gothic',sans-serif;color:var(--sub)}
+.tt{display:block;width:100%;text-align:left;background:none;padding:6px 8px;border-radius:10px;font-size:15px;line-height:1.4}.tt:hover{background:#f3f5fb}.tt small{color:var(--sub);margin-left:4px}
+.tt.cur{background:var(--butter)}.tt.on{background:var(--sky);font-weight:bold}.tl{margin-left:10px}.ta{margin-left:16px}.ti{font-size:14px}
+#tg{display:none}#tg.on{display:inline-block}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#3a4256;color:#fff;padding:10px 18px;border-radius:12px;z-index:50}
+#sv{position:fixed;right:16px;bottom:16px;padding:6px 12px;border-radius:10px;background:#eef1f8;font-size:13px;display:none;z-index:40}#sv.ok{background:var(--ok)}#sv.bad{background:var(--no)}
+@media(max-width:860px){#wrap.hasToc{display:block}.hasToc #toc{position:fixed;left:0;top:56px;bottom:0;max-height:none;width:290px;background:#fff;z-index:15;transform:translateX(-105%);transition:transform .2s;box-shadow:2px 0 12px #0002}.hasToc #toc.open{transform:none}}
+@media(min-width:861px){#tg{display:none!important}}
 .err{color:#c25a5a;min-height:24px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .choice{display:block;padding:6px 10px;border-radius:10px;cursor:pointer}.choice:hover{background:#f3f5fb}.choice input{width:auto;margin-right:8px}
@@ -51,62 +61,97 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v18)</span><div id="who"></div></header>
-<main id="app"></main>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v19)</span><div id="who"></div></header>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzUtjAEzm2MDsuIkJrnUzR2iw3EqQhu8UUQm5KLqtcm4rxtbghTJnjH1ZHF_1EXc3bD/exec';
 const $=s=>document.querySelector(s),app=$('#app');
-const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:''};let mem={};
+const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:'',at:null,tocOpen:{}};let mem={};
 const memT={};async function get(k,fn,force){if(!force&&mem[k]&&Date.now()-(memT[k]||0)<60000)return mem[k];const r=await fn();if(!r.error){mem[k]=r;memT[k]=Date.now()}return r}
-function rec(no,act,q,answer,ok){if(S.preview||!S.menu)return;const L=mem['L|'+S.sub+'|'+no+'|'+act],s=L&&L.saved,was=s&&s[q]&&s[q].ok;if(s)s[q]={answer,ok:ok||was};if(ok&&!was){const l=S.menu.lessons.find(x=>x.no===no);l.d[act]=Math.min(l.t[act],l.d[act]+1)}}
+/* ---- 임시저장(입력 중인 답 자동 저장) ---- */
+const DR={};let dtm=null,dretry=null;
+const dkey=(s,n,a,q)=>`hd|${S.user?S.user.id:''}|${s}|${n}|${a}|${q}`;
+function clearDraft(no,act,q){const k=dkey(S.sub,no,act,q);delete DR[k];try{localStorage.removeItem(k)}catch(e){}}
+function loadLocal(q){try{const a=S.at;return a&&a.act?JSON.parse(localStorage.getItem(dkey(a.sub,a.no,a.act,q))||'null'):null}catch(e){return null}}
+function setSv(t,c){const e=$('#sv');e.textContent=t;e.className=c||'';e.style.display='block';clearTimeout(setSv.h);if(c==='ok')setSv.h=setTimeout(()=>e.style.display='none',2500)}
+function collect(bx){const bl=[...bx.querySelectorAll('.blank')];if(bl.length)return bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n');const rd=bx.querySelector('input[type=radio]:checked');if(rd)return rd.value;const el=bx.querySelector('.ans,.free,textarea');return el?el.value:''}
+function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||a.act==='개념'||e.target.closest('.trace'))return;const bx=e.target.closest('.box[data-q]');if(!bx)return;
+  const q=+bx.dataset.q,text=collect(bx),k=dkey(a.sub,a.no,a.act,q);DR[k]={sub:a.sub,no:a.no,act:a.act,q,text,t:Date.now()};
+  try{localStorage.setItem(k,JSON.stringify({t:Date.now(),text}))}catch(_){}
+  setSv('✏️ 입력 중...','');clearTimeout(dtm);dtm=setTimeout(flushDrafts,3000)}
+async function flushDrafts(){clearTimeout(dretry);const keys=Object.keys(DR);if(!keys.length)return;setSv('💾 저장 중...','');let bad=false;
+  for(const k of keys){const d=DR[k];if(!d)continue;const r=await api('draft',{sub:d.sub,no:d.no,act:d.act,q:d.q,text:d.text});if(r.error){bad=true;continue}if(DR[k]&&DR[k].t===d.t)delete DR[k]}
+  if(bad){setSv('⚠ 저장이 안 됐어요. 연결되면 자동으로 다시 저장해요 (내용은 이 기기에 보관 중)','bad');dretry=setTimeout(flushDrafts,8000)}else setSv('💾 저장됐어요','ok')}
+function beaconDrafts(){Object.values(DR).forEach(d=>{try{navigator.sendBeacon(API,new Blob([JSON.stringify({action:'draft',token:S.token,...d})],{type:'text/plain'}))}catch(e){}})}
+addEventListener('pagehide',beaconDrafts);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')beaconDrafts()});
+app.addEventListener('input',onEdit);app.addEventListener('change',onEdit);
+function rec(no,act,q,answer,ok){clearDraft(no,act,q);if(S.preview||!mem.toc)return;const L=mem['L|'+S.sub+'|'+no+'|'+act],s=L&&L.saved,was=s&&s[q]&&s[q].ok;if(s)s[q]={answer,ok:ok||was,t:Date.now()};
+  if(ok&&!was){const sj=mem.toc.subjects.find(x=>x.name===S.sub),l=sj&&sj.lessons.find(x=>x.no===no);if(l)l.d[act]=Math.min(l.t[act],l.d[act]+1);renderToc()}}
+/* ---- 왼쪽 목차 ---- */
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
+function showToc(on){$('#wrap').classList.toggle('hasToc',on);$('#tg').classList.toggle('on',on);if(on)renderToc();else $('#toc').classList.remove('open')}
+async function loadToc(){await get('toc',()=>api('toc'));renderToc()}
+function renderToc(){const T=mem.toc;if(!T||!$('#wrap').classList.contains('hasToc'))return;const at=S.at||{};
+  $('#toc').innerHTML='<h4>📚 목차</h4>'+T.subjects.map(sj=>{
+    if(!sj.ready)return `<div class="ts"><button class="tt" data-soon="1">🔒 ${ico(sj.icon)} <b>${esc(sj.name)}</b> <small>준비 중</small></button></div>`;
+    const sk='s|'+sj.name,so=S.tocOpen[sk]??true;
+    return `<div class="ts"><button class="tt" data-t="${esc(sk)}" data-o="${so?1:0}">${so?'▾':'▸'} ${ico(sj.icon)} <b>${esc(sj.name)}</b></button>`+(so?`<div class="tl">${sj.lessons.map(l=>{
+      const lk=`l|${sj.name}|${l.no}`,cur=at.sub===sj.name&&at.no===l.no,lo=S.tocOpen[lk]??cur,t=l.t.해석+l.t.작성,d=Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성);
+      return `<button class="tt ${cur?'cur':''}" data-t="${esc(lk)}" data-o="${lo?1:0}">${lo?'▾':'▸'} ${l.no}차시 ${esc(l.title)}${t?` <small>${d}/${t}</small>`:''}</button>`+(lo?`<div class="ta">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>`<button class="tt ti ${cur&&at.act===k?'on':''}" data-go="${esc(sj.name)}|${l.no}|${k}">${AN[k][0]} ${AN[k][1]}${k==='개념'?(l.d[k]>0?' ✔':''):` <small>${Math.min(l.d[k],l.t[k])}/${l.t[k]}</small>`}</button>`).join('')}</div>`:'')}).join('')}</div>`:'')+'</div>'}).join('')}
+$('#toc').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.t){S.tocOpen[b.dataset.t]=!(+b.dataset.o);renderToc();return}if(b.dataset.go){const[s,n,a]=b.dataset.go.split('|');go(s,+n,a);return}if(b.dataset.soon)toast('🛠 아직 준비중입니다!')};
+async function go(sub,no,act){const T=mem.toc||await get('toc',()=>api('toc'));if(!T||T.error)return;const sj=T.subjects.find(x=>x.name===sub);if(!sj||!sj.ready){toast('🛠 아직 준비중입니다!');return}
+  S.sub=sub;S.menu={lessons:sj.lessons};$('#toc').classList.remove('open');act?contentView(no,act):actView(no)}
 const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ico=x=>/^https?:\/\//i.test(String(x))||/\.(png|jpe?g|gif|svg|webp)$/i.test(String(x))?`<img class="ico" src="${esc(x)}" alt="">`:esc(x);
 const AN={개념:['📘','개념 학습'],해석:['🔍','코드 해석'],작성:['✍️','코드 작성']};
-async function api(action,d={}){
+async function api(action,d={},tries=0){
+  const retry=async()=>{await new Promise(r=>setTimeout(r,900*(tries+1)));return api(action,d,tries+1)};
   try{const r=await(await fetch(API,{method:'POST',body:JSON.stringify({action,token:S.token,sub:S.sub,...d})})).json();
-    if(r.error==='auth'){logout();return{error:'다시 로그인해 주세요.'}}return r}
-  catch(e){return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
+    if(r.error==='auth'){logout();return{error:'다시 로그인해 주세요.'}}
+    if(r.error&&String(r.error).startsWith('서버 오류')&&tries<2)return retry();return r}
+  catch(e){if(tries<2&&!['login','forgot','changePw'].includes(action))return retry();return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
 function fmt(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):pic(esc(x)).replace(/\n/g,'<br>')).join('')}
 function pic(s){return s.replace(/\[그림:([^\]\s]+)\]/g,(m,u)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<img class="pic" src="${u}" alt="그림">`:m)}
 function bar(d,t){return `<div class="bar"><i style="width:${t?Math.min(100,d/t*100):0}%"></i></div>`}
 function setWho(){const u=S.user;$('#who').innerHTML=u?`${S.preview?'<span>👀 미리보기 중 (기록 안 됨)</span>':''}<span>${esc(u.name)}</span>`+(u.role==='관리자'?`<button class="ghost" onclick="togglePrev()">${S.preview?'관리자 화면':'학생 화면 보기'}</button>`:'')+`<button class="ghost" onclick="logout()">로그아웃</button>`:''}
-function togglePrev(){S.preview=!S.preview;setWho();S.preview?langView():adminView()}
+function togglePrev(){S.preview=!S.preview;setWho();S.preview?(showToc(true),loadToc(),langView()):(showToc(false),adminView())}
 function logout(){mem={};S.preview=false;S.sel={};S.sub='';S.asub='';sessionStorage.removeItem('t');S.token='';S.user=null;setWho();loginView()}
 
 /* 로그인 */
-function loginView(msg=''){app.innerHTML=`<div class="box narrow"><h2>로그인</h2>
+function loginView(msg=''){showToc(false);app.innerHTML=`<div class="box narrow"><h2>로그인</h2>
 <input id="id" placeholder="학번" autocomplete="username"><input id="pw" type="password" placeholder="비밀번호" autocomplete="current-password">
 <div class="err" id="e">${esc(msg)}</div><button class="main" id="go">들어가기</button>
 <p style="color:var(--sub);font-size:14px">처음 로그인할 때 비밀번호는 학번이에요.</p><p><a href="#" id="fg" style="color:var(--sub);font-size:14px">비밀번호를 잊어버렸어요!</a></p></div>`;
   const go=async()=>{$('#e').textContent='확인 중...';const r=await api('login',{id:$('#id').value,pw:$('#pw').value});
     if(r.error)return $('#e').textContent=r.error;S.token=r.token;sessionStorage.setItem('t',r.token);S.user=r;start()};
   $('#fg').onclick=e=>{e.preventDefault();forgotView()};$('#go').onclick=go;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')go()})}
-function start(){setWho();if(S.user.must)return pwView();S.user.role==='관리자'?adminView():langView()}
+function start(){setWho();if(S.user.must)return pwView();S.user.role==='관리자'?(showToc(false),adminView()):(showToc(true),loadToc(),langView())}
 function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 만들기</h2><p>처음 로그인했어요. 비밀번호를 바꿔야 계속할 수 있어요.</p>
 <input id="n1" type="password" placeholder="새 비밀번호 (4자 이상)"><input id="n2" type="password" placeholder="한 번 더 입력"><div class="err" id="e"></div><button class="main" id="go">바꾸기</button></div>`;
   $('#go').onclick=async()=>{if($('#n1').value!==$('#n2').value)return $('#e').textContent='두 비밀번호가 달라요.';
     const r=await api('changePw',{newPw:$('#n1').value});if(r.error)return $('#e').textContent=r.error;S.user.must=false;start()}}
 
 /* 학생: 언어 → 차시 → 활동 → 내용 */
-async function langView(){if(!mem.subjects)app.innerHTML='불러오는 중...';const r=await get('subjects',()=>api('subjects'));if(r.error)return app.innerHTML=r.error;
+async function langView(){S.at=null;renderToc();if(!mem.toc)app.innerHTML='불러오는 중...';const r=await get('toc',()=>api('toc'));if(r.error)return app.innerHTML=r.error;
   app.innerHTML=`<h2>배울 과목을 골라요</h2>`+(r.subjects.length?`<div class="grid">${r.subjects.map((s,i)=>`<button class="card" data-i="${i}">${ico(s.icon)} <b>${esc(s.name)}</b>${s.ready?'':'<small>준비 중</small>'}</button>`).join('')}</div><div class="msg wait" id="soon" style="display:none;margin-top:14px"></div>`:'<p>아직 등록된 과목이 없어요.</p>');
-  app.querySelectorAll('[data-i]').forEach(b=>b.onclick=async()=>{const s=r.subjects[+b.dataset.i];if(!s.ready){const r2=await get('subjects',()=>api('subjects'),true),s2=(r2.subjects||[]).find(x=>x.name===s.name);if(s2&&s2.ready){S.sub=s.name;return lessonView()}const m=$('#soon'),w=(s2||s).why;m.style.display='block';m.innerHTML='🛠 아직 준비중입니다!'+(w?`<br><small>(관리자에게만 보여요) ${esc(w)}</small>`:'');return}S.sub=s.name;lessonView()})}
+  app.querySelectorAll('[data-i]').forEach(b=>b.onclick=async()=>{const s=r.subjects[+b.dataset.i];if(!s.ready){const r2=await get('toc',()=>api('toc'),true),s2=(r2.subjects||[]).find(x=>x.name===s.name);if(s2&&s2.ready){S.sub=s.name;return lessonView()}const m=$('#soon'),w=(s2||s).why;m.style.display='block';m.innerHTML='🛠 아직 준비중입니다!'+(w?`<br><small>(관리자에게만 보여요) ${esc(w)}</small>`:'');return}S.sub=s.name;lessonView()})}
 function forgotView(){app.innerHTML=`<div class="box narrow"><h2>비밀번호 초기화</h2><p style="font-size:14px;color:var(--sub)">선생님께 받은 <b>고유키</b>를 입력하면 비밀번호가 학번으로 초기화돼요. 그다음 로그인하면 새 비밀번호를 만들 수 있어요.</p>
 <input id="fi" placeholder="학번"><input id="fk" placeholder="고유키" autocomplete="off"><div class="err" id="e"></div><button class="main" id="go">초기화하기</button> <button class="ghost" id="bk">← 로그인</button><p><a href="#" id="nk" style="color:var(--sub);font-size:14px">고유키도 잊어버렸어요!</a></p></div>`;
   $('#bk').onclick=()=>loginView();
   $('#nk').onclick=e=>{e.preventDefault();alert('니가 만든\n니 계정의\n니 비밀번호도 잊고\n니 고유키도 잊으면\n대체 뭘 하겠다는건가요?\n선생님께 문의 받으세요')};
   $('#go').onclick=async()=>{$('#e').textContent='확인 중...';const r=await api('forgot',{id:$('#fi').value,key:$('#fk').value});if(r.error)return $('#e').textContent=r.error;loginView('✅ 초기화했어요! 학번을 비밀번호로 입력해 로그인하세요.')}}
-async function lessonView(){const mk='m|'+S.sub;if(!mem[mk])app.innerHTML='불러오는 중...';const r=await get(mk,()=>api('menu'));if(r.error){app.innerHTML=`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><p>${esc(r.error)}</p>`;return}S.menu=r;
+async function lessonView(){if(!mem.toc)app.innerHTML='불러오는 중...';const T=await get('toc',()=>api('toc'));if(T.error)return app.innerHTML=T.error;const sj=T.subjects.find(x=>x.name===S.sub);
+  if(!sj||!sj.ready){app.innerHTML=`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><p>🛠 아직 준비중입니다!</p>`;return}const r={lessons:sj.lessons};S.menu=r;S.at={sub:S.sub,no:null,act:null};renderToc();
   app.innerHTML=`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><h2>${esc(S.sub)} · 차시를 골라요</h2>`+(r.lessons.length?`<div class="grid">${r.lessons.map(l=>{
   const t=l.t.해석+l.t.작성,d=Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성);
   return `<button class="card" data-no="${l.no}"><small>${l.no}차시</small><b>${esc(l.title)}</b>${t?`<small>문제 ${t}개 · ${d}개 완료</small>${bar(d,t)}`:''}</button>`}).join('')}</div>`:'<p>아직 올라온 차시가 없어요.</p>');
   app.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>actView(+b.dataset.no))}
-function actView(no){const l=S.menu.lessons.find(x=>x.no===no);
+function actView(no){S.at={sub:S.sub,no,act:null};const sj=mem.toc.subjects.find(x=>x.name===S.sub),l=sj.lessons.find(x=>x.no===no);renderToc();
   app.innerHTML=`<p><button class="ghost" onclick="lessonView()">← 차시 선택</button></p><h2>[${no}차시] ${esc(l.title)}</h2><div class="grid">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>
   `<button class="card" data-k="${k}"><small>${AN[k][0]}</small><b>${AN[k][1]}</b>${k==='개념'?(l.d[k]>0?'<small>✔ 완료</small>':''):`<small>문제 ${l.t[k]}개 · ${Math.min(l.d[k],l.t[k])}개 완료</small>${bar(l.d[k],l.t[k])}`}</button>`).join('')}</div>`;
   app.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>contentView(no,b.dataset.k));Object.keys(AN).filter(k=>l.t[k]>0).forEach(k=>get('L|'+S.sub+'|'+no+'|'+k,()=>api('lesson',{no,act:k})))}
-async function contentView(no,act){const lk='L|'+S.sub+'|'+no+'|'+act;if(!mem[lk])app.innerHTML='불러오는 중...';const r=await get(lk,()=>api('lesson',{no,act}));if(r.error)return app.innerHTML=r.error;
-  const l=S.menu.lessons.find(x=>x.no===no);
+async function contentView(no,act){S.at={sub:S.sub,no,act};renderToc();const lk='L|'+S.sub+'|'+no+'|'+act;if(!mem[lk])app.innerHTML='불러오는 중...';const r=await get(lk,()=>api('lesson',{no,act}));if(r.error)return app.innerHTML=r.error;
+  const sv=q=>{const a=r.saved[q],d=r.drafts&&r.drafts[q],lc=loadLocal(q);let b=a?{answer:a.answer,t:a.t||0}:null;[d&&{answer:d.text,t:d.t},lc&&{answer:lc.text,t:lc.t}].forEach(c=>{if(c&&(!b||c.t>b.t))b={answer:c.answer,t:c.t,dr:1}});return b?{answer:b.answer,ok:a?a.ok:false,submitted:!!a,draft:!!b.dr}:null};
   app.innerHTML=`<p><button class="ghost" id="back">← 활동 선택</button></p><h2>${AN[act][0]} ${AN[act][1]}</h2><div id="items"></div>`;
   $('#back').onclick=()=>actView(no);
   const box=$('#items');
@@ -114,9 +159,9 @@ async function contentView(no,act){const lk='L|'+S.sub+'|'+no+'|'+act;if(!mem[lk
     $('#done').onclick=async()=>{$('#done').textContent='저장 중...';const x=await api('submit',{no,act,q:0,answer:'읽음'});if(x.error){$('#done').textContent='저장 실패, 다시 눌러 주세요';return}rec(no,act,0,'읽음',true);$('#done').textContent='✔ 완료됐어요!'}}
   if(act==='해석'){const isF=i=>i.type==='설명쓰기'||i.type==='서술';
   const cd=(i,v)=>{if(i.type!=='설명쓰기')return i.code?(/^\s*```\s*trace/.test(i.code)?fmt(i.code):`<pre>${esc(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
-  box.innerHTML=r.items.map((i,n)=>{const s=r.saved[i.q],f=isF(i),v=s&&i.type==='설명쓰기'?String(s.answer).split('\n').map(l=>l.replace(/^\d+:\s?/,'')):[];
+  box.innerHTML=r.items.map((i,n)=>{const s=sv(i.q),f=isF(i),v=s&&i.type==='설명쓰기'?String(s.answer).split('\n').map(l=>l.replace(/^\d+:\s?/,'')):[];
     const inp=i.type==='설명쓰기'?'':i.choices?i.choices.map(c=>`<label class="choice"><input type="radio" name="q${i.q}" value="${esc(c)}" ${s&&String(s.answer)===c?'checked':''}>${esc(c)}</label>`).join(''):i.type==='서술'?`<textarea class="free" style="min-height:90px;font-family:inherit" placeholder="생각을 자유롭게 써 보세요">${esc(s?s.answer:'')}</textarea>`:`<input class="ans" placeholder="답을 입력하세요" value="${esc(s?s.answer:'')}">`;
-    return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}${cd(i,v)}${inp}<div class="row"><button class="main chk">${f?'제출하기':'정답 확인'}</button></div><div class="msg ${s&&(f||s.ok)?'ok':''}">${s?(f?'📨 이전에 제출했어요 (고쳐서 다시 제출해도 돼요)':(s.ok?'✅ 이전에 맞혔어요':'')):''}</div></div>`}).join('');
+    return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}${cd(i,v)}${inp}<div class="row"><button class="main chk">${f?'제출하기':'정답 확인'}</button></div><div class="msg ${s&&s.submitted&&(f||s.ok)?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.submitted?(f?'📨 이전에 제출했어요 (고쳐서 다시 제출해도 돼요)':(s.ok?'✅ 이전에 맞혔어요':'')):(s?'✏️ 이어서 쓰던 내용이 있어요 (아직 제출 전)':'')}</div></div>`}).join('');
   box.querySelectorAll('.chk').forEach(b=>b.onclick=async()=>{const bx=b.closest('.box'),q=+bx.dataset.q,m=bx.querySelector('.msg'),bl=[...bx.querySelectorAll('.blank')];let a;
     if(bl.length){if(bl.some(x=>!x.value.trim())){m.className='msg no';m.textContent='빈칸을 모두 채워 주세요.';return}a=bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n')}
     else a=bx.querySelector('input[type=radio]:checked')?.value??bx.querySelector('.ans')?.value??bx.querySelector('.free')?.value??'';
@@ -125,9 +170,9 @@ async function contentView(no,act){const lk='L|'+S.sub+'|'+no+'|'+act;if(!mem[lk
     if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,q,a,x.correct);
     if(x.free){m.className='msg ok';m.innerHTML='📨 제출했어요! 고쳐서 다시 제출해도 돼요. '+esc(x.explain||'');return}
     m.className='msg '+(x.correct?'ok':'no');m.innerHTML=(x.correct?'✅ 정답이에요! ':'❌ 아쉬워요, 다시 생각해 봐요. ')+esc(x.explain||'')})}
-  if(act==='작성'){box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요.</p>`+r.items.map((i,n)=>{const s=r.saved[i.q];return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}
+  if(act==='작성'){box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요.</p>`+r.items.map((i,n)=>{const s=sv(i.q);return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}
   <textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">제출하고 채점</button></div>
-  <pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':''}">${s&&s.ok?'✅ 이전에 통과했어요':''}</div></div>`}).join('');
+  <pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.ok?'✅ 이전에 통과했어요':(s&&!s.submitted?'✏️ 이어서 쓰던 코드가 있어요 (아직 제출 전)':'')}</div></div>`}).join('');
     box.querySelectorAll('.box').forEach((bx,n)=>{const it=r.items[n],ta=bx.querySelector('textarea'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
       ta.onkeydown=e=>{if(e.key==='Tab'){e.preventDefault();document.execCommand('insertText',false,'    ')}};
       bx.querySelector('.run').onclick=async()=>{out.style.display='block';out.textContent='실행 중...';try{out.textContent=await runPy(ta.value,it.ins[0])||'(출력 없음)'}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
