@@ -48,10 +48,10 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v10)</span><div id="who"></div></header>
+<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v11)</span><div id="who"></div></header>
 <main id="app"></main>
 <script>
-const API='https://script.google.com/macros/s/AKfycbzJLvgi4dJNb4DbVtlT7USia0WyUXU7FyfM-ilOwWYFB45WfXT9Af2HGul0TkuBKBJq/exec';
+const API='https://script.google.com/macros/s/AKfycbxHRm2tF1XLQKy6ncDeX9p_1CVKyFp0-funGpL27BI3_hs73f36QxqpGjtfke7Zh00/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:''};let mem={};
 const memT={};async function get(k,fn,force){if(!force&&mem[k]&&Date.now()-(memT[k]||0)<60000)return mem[k];const r=await fn();if(!r.error){mem[k]=r;memT[k]=Date.now()}return r}
@@ -87,7 +87,7 @@ function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 �
 /* 학생: 언어 → 차시 → 활동 → 내용 */
 async function langView(){if(!mem.subjects)app.innerHTML='불러오는 중...';const r=await get('subjects',()=>api('subjects'));if(r.error)return app.innerHTML=r.error;
   app.innerHTML=`<h2>배울 과목을 골라요</h2>`+(r.subjects.length?`<div class="grid">${r.subjects.map((s,i)=>`<button class="card" data-i="${i}">${ico(s.icon)} <b>${esc(s.name)}</b>${s.ready?'':'<small>준비 중</small>'}</button>`).join('')}</div><div class="msg wait" id="soon" style="display:none;margin-top:14px"></div>`:'<p>아직 등록된 과목이 없어요.</p>');
-  app.querySelectorAll('[data-i]').forEach(b=>b.onclick=async()=>{const s=r.subjects[+b.dataset.i];if(!s.ready){const r2=await get('subjects',()=>api('subjects'),true),s2=(r2.subjects||[]).find(x=>x.name===s.name);if(s2&&s2.ready){S.sub=s.name;return lessonView()}const m=$('#soon');m.style.display='block';m.textContent='🛠 아직 준비중입니다!';return}S.sub=s.name;lessonView()})}
+  app.querySelectorAll('[data-i]').forEach(b=>b.onclick=async()=>{const s=r.subjects[+b.dataset.i];if(!s.ready){const r2=await get('subjects',()=>api('subjects'),true),s2=(r2.subjects||[]).find(x=>x.name===s.name);if(s2&&s2.ready){S.sub=s.name;return lessonView()}const m=$('#soon'),w=(s2||s).why;m.style.display='block';m.innerHTML='🛠 아직 준비중입니다!'+(w?`<br><small>(관리자에게만 보여요) ${esc(w)}</small>`:'');return}S.sub=s.name;lessonView()})}
 function forgotView(){app.innerHTML=`<div class="box narrow"><h2>비밀번호 초기화</h2><p style="font-size:14px;color:var(--sub)">선생님께 받은 <b>고유키</b>를 입력하면 비밀번호가 학번으로 초기화돼요. 그다음 로그인하면 새 비밀번호를 만들 수 있어요.</p>
 <input id="fi" placeholder="학번"><input id="fk" placeholder="고유키" autocomplete="off"><div class="err" id="e"></div><button class="main" id="go">초기화하기</button> <button class="ghost" id="bk">← 로그인</button><p><a href="#" id="nk" style="color:var(--sub);font-size:14px">고유키도 잊어버렸어요!</a></p></div>`;
   $('#bk').onclick=()=>loginView();
