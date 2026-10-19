@@ -48,10 +48,10 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v11)</span><div id="who"></div></header>
+<header><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v12)</span><div id="who"></div></header>
 <main id="app"></main>
 <script>
-const API='https://script.google.com/macros/s/AKfycbxHRm2tF1XLQKy6ncDeX9p_1CVKyFp0-funGpL27BI3_hs73f36QxqpGjtfke7Zh00/exec';
+const API='https://script.google.com/macros/s/AKfycbzUtjAEzm2MDsuIkJrnUzR2iw3EqQhu8UUQm5KLqtcm4rxtbghTJnjH1ZHF_1EXc3bD/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:''};let mem={};
 const memT={};async function get(k,fn,force){if(!force&&mem[k]&&Date.now()-(memT[k]||0)<60000)return mem[k];const r=await fn();if(!r.error){mem[k]=r;memT[k]=Date.now()}return r}
@@ -63,7 +63,7 @@ async function api(action,d={}){
   try{const r=await(await fetch(API,{method:'POST',body:JSON.stringify({action,token:S.token,sub:S.sub,...d})})).json();
     if(r.error==='auth'){logout();return{error:'다시 로그인해 주세요.'}}return r}
   catch(e){return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
-function fmt(t){return String(t??'').split('```').map((x,i)=>i%2?(/^trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):pic(esc(x)).replace(/\n/g,'<br>')).join('')}
+function fmt(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):pic(esc(x)).replace(/\n/g,'<br>')).join('')}
 function pic(s){return s.replace(/\[그림:([^\]\s]+)\]/g,(m,u)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<img class="pic" src="${u}" alt="그림">`:m)}
 function bar(d,t){return `<div class="bar"><i style="width:${t?Math.min(100,d/t*100):0}%"></i></div>`}
 function setWho(){const u=S.user;$('#who').innerHTML=u?`${S.preview?'<span>👀 미리보기 중 (기록 안 됨)</span>':''}<span>${esc(u.name)}</span>`+(u.role==='관리자'?`<button class="ghost" onclick="togglePrev()">${S.preview?'관리자 화면':'학생 화면 보기'}</button>`:'')+`<button class="ghost" onclick="logout()">로그아웃</button>`:''}
@@ -110,7 +110,7 @@ async function contentView(no,act){const lk='L|'+S.sub+'|'+no+'|'+act;if(!mem[lk
   if(act==='개념'){box.innerHTML=r.items.map(i=>`<div class="box"><h3>${esc(i.title)}</h3>${fmt(i.body)}</div>`).join('')+`<button class="main" id="done">${r.saved[0]?.ok?'✔ 읽었어요 (완료됨)':'다 읽었어요 ✔'}</button>`;
     $('#done').onclick=async()=>{$('#done').textContent='저장 중...';const x=await api('submit',{no,act,q:0,answer:'읽음'});if(x.error){$('#done').textContent='저장 실패, 다시 눌러 주세요';return}rec(no,act,0,'읽음',true);$('#done').textContent='✔ 완료됐어요!'}}
   if(act==='해석'){const isF=i=>i.type==='설명쓰기'||i.type==='서술';
-  const cd=(i,v)=>{if(i.type!=='설명쓰기')return i.code?(/^\s*```trace/.test(i.code)?fmt(i.code):`<pre>${esc(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
+  const cd=(i,v)=>{if(i.type!=='설명쓰기')return i.code?(/^\s*```\s*trace/.test(i.code)?fmt(i.code):`<pre>${esc(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
   box.innerHTML=r.items.map((i,n)=>{const s=r.saved[i.q],f=isF(i),v=s&&i.type==='설명쓰기'?String(s.answer).split('\n').map(l=>l.replace(/^\d+:\s?/,'')):[];
     const inp=i.type==='설명쓰기'?'':i.choices?i.choices.map(c=>`<label class="choice"><input type="radio" name="q${i.q}" value="${esc(c)}" ${s&&String(s.answer)===c?'checked':''}>${esc(c)}</label>`).join(''):i.type==='서술'?`<textarea class="free" style="min-height:90px;font-family:inherit" placeholder="생각을 자유롭게 써 보세요">${esc(s?s.answer:'')}</textarea>`:`<input class="ans" placeholder="답을 입력하세요" value="${esc(s?s.answer:'')}">`;
     return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}${cd(i,v)}${inp}<div class="row"><button class="main chk">${f?'제출하기':'정답 확인'}</button></div><div class="msg ${s&&(f||s.ok)?'ok':''}">${s?(f?'📨 이전에 제출했어요 (고쳐서 다시 제출해도 돼요)':(s.ok?'✅ 이전에 맞혔어요':'')):''}</div></div>`}).join('');
@@ -171,7 +171,7 @@ except BaseException as e:
 finally:
     sys.settrace(None);sys.stdout=_so
 json.dumps({'s':_S,'e':_err})`)}
-function traceDiv(x){setTimeout(initTraces,0);return `<div class="trace" data-src="${esc(x.replace(/^trace[ \t]*\n/,'').replace(/\s+$/,''))}"></div>`}
+function traceDiv(x){setTimeout(initTraces,0);return `<div class="trace" data-src="${esc(x.replace(/^\s*trace[ \t]*\n/,'').replace(/\s+$/,''))}"></div>`}
 function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach(async el=>{el.dataset.ok=1;el.innerHTML='<p style="color:var(--sub);margin:0">🐍 파이썬 준비 중... (처음에는 10~30초 걸려요)</p>';
   const raw=el.dataset.src.split('\n'),H=[];
   const L=raw.map(line=>{const g=[];let last=0,m;TRQ.lastIndex=0;while((m=TRQ.exec(line))){g.push({t:line.slice(last,m.index)});H.push(mkHot(m[1]));g.push({h:H.length-1});last=m.index+m[0].length}g.push({t:line.slice(last)});return g});
