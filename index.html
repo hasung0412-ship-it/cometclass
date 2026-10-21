@@ -61,6 +61,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 code.ic{background:#f1f3fa;border-radius:6px;padding:0 5px;font:.92em Consolas,monospace}
 .ii{display:inline-block;width:auto;min-width:6em;padding:2px 8px;margin:0 4px;border:0;border-bottom:2px solid #b9cdf5;border-radius:6px;background:#fbfcff}.ii::placeholder{color:#b9bfce}
 .is{padding:2px 8px;margin:0 4px;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;width:auto}.im{font-weight:bold}.im.g{color:#2e8b62}.im.r{color:#c25a5a}
+.ck{display:inline-flex;align-items:center;gap:6px;margin:2px 14px 2px 0;cursor:pointer}.ck input{width:auto}
 .err{color:#c25a5a;min-height:24px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .choice{display:block;padding:6px 10px;border-radius:10px;cursor:pointer}.choice:hover{background:#f3f5fb}.choice input{width:auto;margin-right:8px}
@@ -69,7 +70,7 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v26)</span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v27)</span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzUtjAEzm2MDsuIkJrnUzR2iw3EqQhu8UUQm5KLqtcm4rxtbghTJnjH1ZHF_1EXc3bD/exec';
@@ -84,7 +85,7 @@ function loadLocal(q){try{const a=S.at;return a&&a.act?JSON.parse(localStorage.g
 function setSv(t,c){const e=$('#sv');e.textContent=t;e.className=c||'';e.style.display='block';clearTimeout(setSv.h);if(c==='ok')setSv.h=setTimeout(()=>e.style.display='none',2500)}
 function collect(bx){const bl=[...bx.querySelectorAll('.blank')];if(bl.length)return bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n');const rd=bx.querySelector('input[type=radio]:checked');if(rd)return rd.value;const el=bx.querySelector('.ans,.free,textarea');return el?el.value:''}
 function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||e.target.closest('.trace,.qz'))return;let q,text;
-  if(a.act==='개념'){const el=e.target.closest('.ib');if(!el)return;q=+el.dataset.i;text=el.value}
+  if(a.act==='개념'){const el=e.target.closest('.ib');if(!el)return;q=+el.dataset.i;text=el.type==='checkbox'?(el.checked?'1':'0'):el.value}
   else{const bx=e.target.closest('.box[data-q]');if(!bx||e.target.closest('.ib'))return;q=+bx.dataset.q;text=collect(bx)}
   const k=dkey(a.sub,a.no,a.act,q);DR[k]={sub:a.sub,no:a.no,act:a.act,q,text,t:Date.now()};
   try{localStorage.setItem(k,JSON.stringify({t:Date.now(),text}))}catch(_){}
@@ -126,8 +127,11 @@ function fmt(t){const P=String(t??'').split(/\[\s*분할\s*(?:[:：]\s*([\d.:：
     out+=`<div class="cols" style="grid-template-columns:${cs.map((_,k)=>`minmax(0,${r[k]||1}fr)`).join(' ')}">${cs.map(c=>`<div class="col">${fmt0(c.trim())}</div>`).join('')}</div>`}}return out}
 const nt=x=>String(x||'').replace(/<[^>]*>/g,'').trim();
 function ib(s){return s.replace(/\[입력(?::([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>{h=nt(h);a=nt(a);return `<input class="ib ii" size="${Math.max(8,Math.ceil(h.length*1.7)+2)}" placeholder="${h}" data-a="${a}" autocomplete="off"><span class="im"></span>`})
-  .replace(/\[선택:([^\]|]*)(?:\|([^\]]*))?\]/g,(m,o,a)=>`<select class="ib is" data-a="${nt(a)}"><option value="">선택</option>${o.split('/').map(nt).filter(Boolean).map(x=>`<option>${x}</option>`).join('')}</select><span class="im"></span>`)}
-function ibCheck(el){const m=el.nextElementSibling;if(!m||!m.classList.contains('im'))return;const a=el.dataset.a,v=el.value;if(!a||!String(v).trim()){m.textContent='';return}
+  .replace(/\[선택:([^\]|]*)(?:\|([^\]]*))?\]/g,(m,o,a)=>`<select class="ib is" data-a="${nt(a)}"><option value="">선택</option>${o.split('/').map(nt).filter(Boolean).map(x=>`<option>${x}</option>`).join('')}</select><span class="im"></span>`)
+  .replace(/\[체크(?::([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>`<label class="ck"><input type="checkbox" class="ib" data-a="${nt(a).toUpperCase()}"><span>${(h||'').trim()}</span><span class="im"></span></label>`)}
+function ibCheck(el){const lb=el.closest('label'),m=lb?lb.querySelector('.im'):el.nextElementSibling;if(!m||!m.classList.contains('im'))return;const a=el.dataset.a;
+  if(el.type==='checkbox'){if(!a){m.textContent='';return}const ok=el.checked===(a==='O');m.textContent=ok?' ✅':' ❌';m.className='im '+(ok?'g':'r');return}
+  const v=el.value;if(!a||!String(v).trim()){m.textContent='';return}
   const ok=a.split('/').some(x=>norm(x)===norm(v));m.textContent=ok?' ✅':' ❌';m.className='im '+(ok?'g':'r')}
 document.addEventListener('change',e=>{if(e.target.classList&&e.target.classList.contains('ib'))ibCheck(e.target)});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('ii'))ibCheck(e.target)});
@@ -197,7 +201,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};renderToc();const lk=
   $('#back').onclick=()=>actView(no);
   const box=$('#items');
   if(act==='개념'){box.innerHTML=r.items.map(i=>`<div class="box"><h3>${esc(i.title)}</h3>${fmt(i.body)}</div>`).join('');
-    box.querySelectorAll('.ib').forEach((el,i)=>{el.dataset.i=i+1;const d=r.drafts&&r.drafts[i+1],lc=loadLocal(i+1);let v=null,t0=-1;[d&&{x:d.text,t:d.t},lc&&{x:lc.text,t:lc.t}].forEach(c=>{if(c&&c.t>t0){t0=c.t;v=c.x}});if(v!=null){el.value=v;ibCheck(el)}});
+    box.querySelectorAll('.ib').forEach((el,i)=>{el.dataset.i=i+1;const d=r.drafts&&r.drafts[i+1],lc=loadLocal(i+1);let v=null,t0=-1;[d&&{x:d.text,t:d.t},lc&&{x:lc.text,t:lc.t}].forEach(c=>{if(c&&c.t>t0){t0=c.t;v=c.x}});if(v!=null){if(el.type==='checkbox')el.checked=v==='1';else el.value=v;ibCheck(el)}});
     const sb=S.sub;if(!S.preview&&!(r.saved[0]&&r.saved[0].ok))api('submit',{no,act,q:0,answer:'열람',sub:sb}).then(x=>{if(!x.error&&S.sub===sb)rec(no,act,0,'열람',true)})}
   if(act==='해석'){const isF=i=>i.type==='설명쓰기'||i.type==='서술';
   const cd=(i,v)=>{if(i.type!=='설명쓰기')return i.code?(/^\s*```\s*trace/.test(i.code)?fmt(i.code):`<pre>${esc(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
