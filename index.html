@@ -59,6 +59,8 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .qz{background:#fffbe8;border-radius:14px;padding:12px 14px;margin:10px 0}.qq{font-weight:bold;margin-bottom:6px}.qin{max-width:260px}select.qin{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;width:auto}
 .qr2{font-weight:bold}.qr2.g{color:#2e8b62}.qr2.r{color:#c25a5a}.qo.sel{background:var(--sky)}
 code.ic{background:#f1f3fa;border-radius:6px;padding:0 5px;font:.92em Consolas,monospace}
+.ii{display:inline-block;width:auto;min-width:6em;padding:2px 8px;margin:0 4px;border:0;border-bottom:2px solid #b9cdf5;border-radius:6px;background:#fbfcff}.ii::placeholder{color:#b9bfce}
+.is{padding:2px 8px;margin:0 4px;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;width:auto}.im{font-weight:bold}.im.g{color:#2e8b62}.im.r{color:#c25a5a}
 .err{color:#c25a5a;min-height:24px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .choice{display:block;padding:6px 10px;border-radius:10px;cursor:pointer}.choice:hover{background:#f3f5fb}.choice input{width:auto;margin-right:8px}
@@ -67,7 +69,7 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v23)</span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v25)</span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzUtjAEzm2MDsuIkJrnUzR2iw3EqQhu8UUQm5KLqtcm4rxtbghTJnjH1ZHF_1EXc3bD/exec';
@@ -81,12 +83,14 @@ function clearDraft(no,act,q){const k=dkey(S.sub,no,act,q);delete DR[k];try{loca
 function loadLocal(q){try{const a=S.at;return a&&a.act?JSON.parse(localStorage.getItem(dkey(a.sub,a.no,a.act,q))||'null'):null}catch(e){return null}}
 function setSv(t,c){const e=$('#sv');e.textContent=t;e.className=c||'';e.style.display='block';clearTimeout(setSv.h);if(c==='ok')setSv.h=setTimeout(()=>e.style.display='none',2500)}
 function collect(bx){const bl=[...bx.querySelectorAll('.blank')];if(bl.length)return bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n');const rd=bx.querySelector('input[type=radio]:checked');if(rd)return rd.value;const el=bx.querySelector('.ans,.free,textarea');return el?el.value:''}
-function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||a.act==='개념'||e.target.closest('.trace,.qz'))return;const bx=e.target.closest('.box[data-q]');if(!bx)return;
-  const q=+bx.dataset.q,text=collect(bx),k=dkey(a.sub,a.no,a.act,q);DR[k]={sub:a.sub,no:a.no,act:a.act,q,text,t:Date.now()};
+function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||e.target.closest('.trace,.qz'))return;let q,text;
+  if(a.act==='개념'){const el=e.target.closest('.ib');if(!el)return;q=+el.dataset.i;text=el.value}
+  else{const bx=e.target.closest('.box[data-q]');if(!bx||e.target.closest('.ib'))return;q=+bx.dataset.q;text=collect(bx)}
+  const k=dkey(a.sub,a.no,a.act,q);DR[k]={sub:a.sub,no:a.no,act:a.act,q,text,t:Date.now()};
   try{localStorage.setItem(k,JSON.stringify({t:Date.now(),text}))}catch(_){}
   setSv('✏️ 입력 중...','');clearTimeout(dtm);dtm=setTimeout(flushDrafts,3000)}
 async function flushDrafts(){clearTimeout(dretry);const keys=Object.keys(DR);if(!keys.length)return;setSv('💾 저장 중...','');let bad=false;
-  for(const k of keys){const d=DR[k];if(!d)continue;const r=await api('draft',{sub:d.sub,no:d.no,act:d.act,q:d.q,text:d.text});if(r.error){bad=true;continue}if(DR[k]&&DR[k].t===d.t)delete DR[k]}
+  for(const k of keys){const d=DR[k];if(!d)continue;const r=await api('draft',{sub:d.sub,no:d.no,act:d.act,q:d.q,text:d.text});if(r.error){if(/저장할 수 없/.test(r.error)){delete DR[k];continue}bad=true;continue}if(DR[k]&&DR[k].t===d.t)delete DR[k]}
   if(bad){setSv('⚠ 저장이 안 됐어요. 연결되면 자동으로 다시 저장해요 (내용은 이 기기에 보관 중)','bad');dretry=setTimeout(flushDrafts,8000)}else setSv('💾 저장됐어요','ok')}
 function beaconDrafts(){Object.values(DR).forEach(d=>{try{navigator.sendBeacon(API,new Blob([JSON.stringify({action:'draft',token:S.token,...d})],{type:'text/plain'}))}catch(e){}})}
 addEventListener('pagehide',beaconDrafts);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')beaconDrafts()});
@@ -116,8 +120,17 @@ async function api(action,d={},tries=0){
     if(r.error==='auth'){logout();return{error:'다시 로그인해 주세요.'}}
     if(r.error&&String(r.error).startsWith('서버 오류')&&tries<2)return retry();return r}
   catch(e){if(tries<2&&!['login','forgot','changePw'].includes(action))return retry();return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
-function fmt0(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):qz(pic(fx(esc(x)))).replace(/\n/g,'<br>')).join('')}
-function fmt(t){return String(t??'').split(/\[분할\]([\s\S]*?)\[\/분할\]/).map((x,i)=>{if(!(i%2))return fmt0(x);const cs=x.split(/\[칸\]/);return `<div class="cols" style="grid-template-columns:repeat(${cs.length},minmax(0,1fr))">${cs.map(c=>`<div class="col">${fmt0(c.trim())}</div>`).join('')}</div>`}).join('')}
+function fmt0(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):qz(ib(pic(fx(esc(x))))).replace(/\n/g,'<br>')).join('')}
+function fmt(t){const P=String(t??'').split(/\[분할(?::([\d.:]+))?\]([\s\S]*?)\[\/분할\]/);let out='';
+  for(let i=0;i<P.length;i+=3){out+=fmt0(P[i]||'');if(i+2<P.length){const cs=P[i+2].split(/\[칸\]/),r=P[i+1]?P[i+1].split(':'):[];
+    out+=`<div class="cols" style="grid-template-columns:${cs.map((_,k)=>`minmax(0,${r[k]||1}fr)`).join(' ')}">${cs.map(c=>`<div class="col">${fmt0(c.trim())}</div>`).join('')}</div>`}}return out}
+const nt=x=>String(x||'').replace(/<[^>]*>/g,'').trim();
+function ib(s){return s.replace(/\[입력(?::([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>{h=nt(h);a=nt(a);return `<input class="ib ii" size="${Math.max(8,Math.ceil(h.length*1.7)+2)}" placeholder="${h}" data-a="${a}" autocomplete="off"><span class="im"></span>`})
+  .replace(/\[선택:([^\]|]*)(?:\|([^\]]*))?\]/g,(m,o,a)=>`<select class="ib is" data-a="${nt(a)}"><option value="">선택</option>${o.split('/').map(nt).filter(Boolean).map(x=>`<option>${x}</option>`).join('')}</select><span class="im"></span>`)}
+function ibCheck(el){const m=el.nextElementSibling;if(!m||!m.classList.contains('im'))return;const a=el.dataset.a,v=el.value;if(!a||!String(v).trim()){m.textContent='';return}
+  const ok=a.split('/').some(x=>norm(x)===norm(v));m.textContent=ok?' ✅':' ❌';m.className='im '+(ok?'g':'r')}
+document.addEventListener('change',e=>{if(e.target.classList&&e.target.classList.contains('ib'))ibCheck(e.target)});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('ii'))ibCheck(e.target)});
 const PAL={빨강:'#d94a4a',파랑:'#3b6fd4',초록:'#2e8b62',주황:'#e67e22',보라:'#7b5fc4',분홍:'#e0559b',회색:'#7b8499',검정:'#3a4256'},HL={노랑:'#fff3a0',초록:'#c9f2d8',파랑:'#cfe3fb',분홍:'#fbd3e4',주황:'#fde3d6',보라:'#e5dcf6'};
 const colr=(v,M)=>{v=v.trim();return M[v]||(/^#[0-9a-f]{3,8}$/i.test(v)?v:null)};
 function fx(s){const st=[];s=s.replace(/`([^`\n]+)`/g,(m,c)=>{st.push(c);return '\u0001'+(st.length-1)+'\u0001'});
@@ -184,6 +197,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};renderToc();const lk=
   $('#back').onclick=()=>actView(no);
   const box=$('#items');
   if(act==='개념'){box.innerHTML=r.items.map(i=>`<div class="box"><h3>${esc(i.title)}</h3>${fmt(i.body)}</div>`).join('');
+    box.querySelectorAll('.ib').forEach((el,i)=>{el.dataset.i=i+1;const d=r.drafts&&r.drafts[i+1],lc=loadLocal(i+1);let v=null,t0=-1;[d&&{x:d.text,t:d.t},lc&&{x:lc.text,t:lc.t}].forEach(c=>{if(c&&c.t>t0){t0=c.t;v=c.x}});if(v!=null){el.value=v;ibCheck(el)}});
     const sb=S.sub;if(!S.preview&&!(r.saved[0]&&r.saved[0].ok))api('submit',{no,act,q:0,answer:'열람',sub:sb}).then(x=>{if(!x.error&&S.sub===sb)rec(no,act,0,'열람',true)})}
   if(act==='해석'){const isF=i=>i.type==='설명쓰기'||i.type==='서술';
   const cd=(i,v)=>{if(i.type!=='설명쓰기')return i.code?(/^\s*```\s*trace/.test(i.code)?fmt(i.code):`<pre>${esc(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
@@ -214,8 +228,8 @@ async function lessonView0(){const r=await api('menu');if(!r.error)S.menu=r}
 /* 파이썬 실행 (브라우저 안, Pyodide) */
 /* 실행 과정 보기: 시트 칸에 ```trace ... ``` 로 쓰면 이 화면으로 바뀝니다 */
 const br=s=>s.replace(/\s*\/\/\s*/g,'<br>'),TRQ=/\{\{([^{}\n]*?)\}\}/g,norm=s=>String(s).replace(/\s/g,'').toLowerCase(),spl=s=>s.replace(/^( +)/,m=>m.replace(/ /g,'<span class="sp"> </span>'));
-const SYN={'참':['true','t','네','맞음'],'거짓':['false','f','아니오','틀림'],'안':['내부','안쪽','안에','안으로'],'밖':['외부','바깥','바깥쪽','밖에']};
-const okAns=(a,x)=>{const n=norm(x);return n===norm(a)||(SYN[a]||[]).some(y=>norm(y)===n)};
+const SYN={'참':['true','t','맞음'],'거짓':['false','f','틀림'],'안':['내부','안쪽','안에','안으로'],'밖':['외부','바깥','바깥쪽','밖에'],'예':['네','응','yes','y','맞아요','들어가요','진입해요'],'아니오':['아니','아니요','아뇨','no','n','안들어가요','진입못해요']},SUF=['이다','이에요','입니다','이야','예요','요','임','이죠','이지요'];
+const okAns=(a,x)=>{const n=norm(x);return [a,...(SYN[a]||[])].map(norm).some(f=>n===f||SUF.some(s=>n===f+s))};
 function rangeInfo(e){const m=/^range\s*\(([^()]*)\)$/.exec(e.trim());if(!m)return null;const a=m[1].split(',').map(x=>Number(x.trim()));if(a.some(isNaN)||a.length<1||a.length>3)return null;let lo=0,hi,s=1;if(a.length===1)hi=a[0];else{lo=a[0];hi=a[1];if(a.length===3)s=a[2]}if(!s)return null;const L=[];for(let v=lo;s>0?v<hi:v>hi;v+=s){L.push(v);if(L.length>30)break}return{lo,hi,s,L}}
 function parseStages(f){
   if(f.length<=2){const lines=(f[0]||'').split(/\s*\/\/\s*/),as=(f[1]||'').split(',').map(x=>x.trim());let k=0;
@@ -293,7 +307,7 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
   if(!S.length){el.innerHTML=`<pre>${esc(raw.join('\n'))}</pre><p style="color:#c25a5a">${esc(D.e)}</p>`;return}
   const allSolved=()=>H.every((_,k)=>solved[k]),qs=c=>S[c]&&Q[S[c][0]]||null,pend=c=>!!(qs(c)&&!done[c]),ind=n=>(raw[n-1]||'').match(/^\s*/)[0].length;
   const lock=()=>{for(let k=0;k<S.length;k++)if(pend(k))return k;return Infinity};
-  const atAns=c=>{const n2=S[c+1];return n2&&n2[0]&&ind(n2[0])>ind(S[c][0])?'안':'밖'};
+  const atAns=(c,e)=>{const n2=S[c+1],inn=n2&&n2[0]&&ind(n2[0])>ind(S[c][0]);return e==='@진입'?(inn?'예':'아니오'):(inn?'안':'밖')};
   const pane=R=>L.map((g,n)=>`<div class="ln" data-n="${n+1}"><i>${n+1}</i>${g.map((s,i)=>s.h==null?(i===0?spl(esc(s.t)):esc(s.t)):R?`<span class="hot2 ${solved[s.h]?'ok':''}" data-k="${s.h}">${solved[s.h]?(H[s.h].r?rgHTML(H[s.h],S,pend(cur)?cur-1:cur):br(esc(hotText(H[s.h])))):'🔍 '+esc(H[s.h].e)}</span>`:`<span class="hot" data-k="${s.h}">${esc(H[s.h].e)}</span>`).join('')}</div>`).join('');
   el.innerHTML=`<div class="tr2"><div class="tp"><h4>📄 원본 코드</h4><div class="pl"></div></div><div class="tp"><h4>💡 해석 (🔍를 눌러 보세요)</h4><div class="pr"></div></div></div>
   <div class="lk"></div><div class="lw"><div class="row" style="margin-top:10px"><button class="ghost pv">◀</button><button class="ghost nx">▶</button><input type="range" class="sl" min="0" max="${S.length-1}" value="0" style="flex:1;min-width:120px;padding:0;border:0"><button class="ghost ap">▶ 자동 재생</button><b class="cn" style="min-width:90px;text-align:right"></b></div>
@@ -303,7 +317,7 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
   const qpanel=()=>{const box=el.querySelector('.qp');if(!allSolved()){box.innerHTML='';pk='';return}const q=qs(cur),key=cur+'|'+(done[cur]?1:0);if(pk===key)return;pk=key;
     if(!q||done[cur]){box.innerHTML=q?'<p style="margin:8px 0 0;color:#3b8f6a">✅ 질문을 모두 풀었어요!</p>':'';return}
     const pv0=(S[cur-1]||[0,{}])[1],vals=Object.keys(pv0).map(k=>`<b>${esc(k)}</b> = ${esc(pv0[k])}`).join(' · ')||'아직 변수가 없어요';
-    box.innerHTML=`<div class="box" style="margin:10px 0 0;background:#fffbe8"><b>🤔 이 줄을 실행하고 나면? 생각해 봐요</b><div style="margin:6px 0;color:var(--sub);font-size:14px">📌 이 줄을 실행하기 <u>전</u> 값: ${vals}</div>${q.map((x,i)=>{const m=/\(([^()/]+(?:\/[^()/]+)+)\)\s*$/.exec(x.q);return `<div class="qi" style="margin-top:8px"><span>${i+1}. ${esc(x.q)}</span><div class="row"><input class="qa" autocomplete="off" placeholder="답을 써 보세요" style="max-width:240px">${m?m[1].split('/').map(o=>`<button class="ghost opt">${esc(o.trim())}</button>`).join(''):''}<span class="qr"></span></div></div>`}).join('')}<div class="row"><button class="main qc">확인</button><button class="ghost qk" disabled>건너뛰기</button></div></div>`;
+    box.innerHTML=`<div class="box" style="margin:10px 0 0;background:#fffbe8"><b>🤔 이 줄을 실행하고 나면? 생각해 봐요</b><div style="margin:6px 0;color:var(--sub);font-size:14px">📌 이 줄을 실행하기 <u>전</u> 값: ${vals}</div>${q.map((x,i)=>{const m=/\(([^()/]+(?:\/[^()/]+)+)\)\s*$/.exec(x.q),op=m?m[1].split('/'):(x.e==='@진입'?['예','아니오']:(x.e==='@안밖'?['안','밖']:null));return `<div class="qi" style="margin-top:8px"><span>${i+1}. ${esc(x.q)}</span><div class="row"><input class="qa" autocomplete="off" placeholder="답을 써 보세요" style="max-width:240px">${op?op.map(o=>`<button class="ghost opt">${esc(o.trim())}</button>`).join(''):''}<span class="qr"></span></div></div>`}).join('')}<div class="row"><button class="main qc">확인</button><button class="ghost qk" disabled>건너뛰기</button></div></div>`;
     const refreshQk=()=>{const b=box.querySelector('.qk'),n=tries[cur]||0;b.disabled=n<3;b.textContent=n<3?`건너뛰기 (${n}/3번 시도 후 가능)`:'건너뛰기'};refreshQk();
     box.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const i=b.closest('.qi').querySelector('.qa');i.value=b.textContent;i.focus()});
     box.querySelectorAll('.qa').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')box.querySelector('.qc').click()}));
@@ -311,7 +325,7 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
     box.querySelector('.qc').onclick=()=>{const qi=box.querySelectorAll('.qi'),ins=[...box.querySelectorAll('.qa')].filter(x=>!x.disabled);
       if(ins.some(x=>!x.value.trim())){note('✍️ 모든 칸에 답을 써 주세요');return}
       let all=true;q.forEach((x,i)=>{const inp=qi[i].querySelector('.qa'),r=qi[i].querySelector('.qr');if(inp.disabled)return;
-        const a=x.e[0]==='@'?atAns(cur):S[cur][3][i];if(okAns(a,inp.value)){inp.disabled=true;r.textContent='✅'}else{all=false;r.textContent='❌ 다시 생각해 봐요'}});
+        const a=x.e[0]==='@'?atAns(cur,x.e):S[cur][3][i];if(okAns(a,inp.value)){inp.disabled=true;r.textContent='✅'}else{all=false;r.textContent='❌ 다시 생각해 봐요'}});
       if(all){done[cur]=true;upd();return}
       const sig=ins.map(x=>norm(x.value)).join('|');if(sig===(last[cur]||'')){note('같은 답이에요. 다른 답을 생각해 봐요');return}
       last[cur]=sig;tries[cur]=(tries[cur]||0)+1;refreshQk();const b=box.querySelector('.qc');b.disabled=true;setTimeout(()=>{if(b.isConnected)b.disabled=false},1500)};};
