@@ -44,8 +44,12 @@ pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:1
 .cut{color:#e05a5a;text-decoration:line-through;text-decoration-thickness:2px;opacity:.75}.now{background:#ffe0e0;color:#c0392b;border-radius:4px;padding:0 3px}
 .sp{display:inline-block;position:relative}.showsp .sp::before{content:'·';position:absolute;left:0;right:0;text-align:center;color:#3b6fd4;font-weight:bold}.showsp .sp{background:#eaf1ff}
 button:disabled{opacity:.5;cursor:not-allowed}
-#wrap.hasToc{display:grid;grid-template-columns:280px minmax(0,1fr);max-width:1240px;margin:0 auto}.hasToc main{margin:0;max-width:none}
-#toc{display:none}.hasToc #toc{display:block;position:sticky;top:58px;align-self:start;max-height:calc(100vh - 58px);overflow:auto;padding:18px 8px 60px 16px;border-right:1px solid var(--line)}
+#wrap.hasToc{display:grid;grid-template-columns:260px minmax(0,1fr);max-width:none;margin:0}.hasToc main{margin:0;max-width:1000px;padding-left:22px}
+#side{display:none;position:sticky;top:58px;align-self:start;padding:18px 16px;max-height:calc(100vh - 58px);overflow:auto}
+@media(min-width:1200px){#wrap.hasToc{grid-template-columns:250px minmax(0,1fr) 300px}.hasToc #side{display:block}}
+.sbox{border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:12px}.sbox h4{margin:0 0 6px;font-size:14px;color:var(--sub)}
+.yr{padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;width:auto}
+#toc{display:none}.hasToc #toc{display:block;position:sticky;top:58px;align-self:start;max-height:calc(100vh - 58px);overflow:auto;padding:18px 8px 60px 10px;border-right:1px solid var(--line)}
 #toc h4{margin:0 0 10px;font:14px 'Gowun Dodum','Malgun Gothic',sans-serif;color:var(--sub)}
 .tt{display:block;width:100%;text-align:left;background:none;padding:6px 8px;border-radius:10px;font-size:15px;line-height:1.4}.tt:hover{background:#f3f5fb}.tt small{color:var(--sub);margin-left:4px}
 .tt.cur{background:var(--butter)}.tt.on{background:var(--sky);font-weight:bold}.tl{margin-left:10px}.ta{margin-left:16px}.ti{font-size:14px}
@@ -74,12 +78,12 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠혜성쌤과 함께하는 정보 수업 </b><span>배곧해솔중학교 (v30)</span><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main></div><div id="sv"></div>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v32)</span><div id="who"></div></header>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
-const API='https://script.google.com/macros/s/AKfycbzUtjAEzm2MDsuIkJrnUzR2iw3EqQhu8UUQm5KLqtcm4rxtbghTJnjH1ZHF_1EXc3bD/exec';
+const API='https://script.google.com/macros/s/AKfycby0oNRxsfBuEJ23uQ7fMZHeHO1XcmMe4NGmZxEsIDDBdEPAOsD3vBrdd2J85kZPqGiY/exec';
 const $=s=>document.querySelector(s),app=$('#app');
-const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:'',at:null,tocOpen:{}};let mem={};
+const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:'',at:null,tocOpen:{},ayear:''};let mem={};
 const memT={};async function get(k,fn,force){if(!force&&mem[k]&&Date.now()-(memT[k]||0)<60000)return mem[k];const r=await fn();if(!r.error){mem[k]=r;memT[k]=Date.now()}return r}
 /* ---- 임시저장(입력 중인 답 자동 저장) ---- */
 const DR={};let dtm=null,dretry=null;
@@ -106,7 +110,8 @@ function rec(no,act,q,answer,ok){clearDraft(no,act,q);if(S.preview||!mem.toc)ret
 function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
 function showToc(on){$('#wrap').classList.toggle('hasToc',on);$('#tg').classList.toggle('on',on);if(on)renderToc();else $('#toc').classList.remove('open')}
 async function loadToc(){await get('toc',()=>api('toc'));renderToc()}
-function renderToc(){const T=mem.toc;if(!T||!$('#wrap').classList.contains('hasToc'))return;const at=S.at||{};
+function renderToc(){renderToc0();renderSide()}
+function renderToc0(){const T=mem.toc;if(!T||!$('#wrap').classList.contains('hasToc'))return;const at=S.at||{};
   $('#toc').innerHTML='<h4>📚 목차</h4>'+T.subjects.map(sj=>{
     if(!sj.ready)return `<div class="ts"><button class="tt" data-soon="1">🔒 ${ico(sj.icon)} <b>${esc(sj.name)}</b> <small>준비 중</small></button></div>`;
     const sk='s|'+sj.name,so=S.tocOpen[sk]??true;
@@ -114,6 +119,11 @@ function renderToc(){const T=mem.toc;if(!T||!$('#wrap').classList.contains('hasT
       const lk=`l|${sj.name}|${l.no}`,cur=at.sub===sj.name&&at.no===l.no,lo=S.tocOpen[lk]??cur,t=l.t.해석+l.t.작성,d=Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성);
       return `<button class="tt ${cur?'cur':''}" data-t="${esc(lk)}" data-o="${lo?1:0}">${lo?'▾':'▸'} [${l.no}차시] ${esc(l.title)}${t?` <small>${d}/${t}</small>`:''}</button>`+(lo?`<div class="ta">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>`<button class="tt ti ${cur&&at.act===k?'on':''}" data-go="${esc(sj.name)}|${l.no}|${k}">${AN[k][0]} ${nm(sj.name,k)}${k==='개념'?(l.d[k]>0?' ✔':''):` <small>${Math.min(l.d[k],l.t[k])}/${l.t[k]}</small>`}</button>`).join('')}</div>`:'')}).join('')}</div>`:'')+'</div>'}).join('')}
 $('#toc').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.t){S.tocOpen[b.dataset.t]=!(+b.dataset.o);renderToc();return}if(b.dataset.go){const[s,n,a]=b.dataset.go.split('|');go(s,+n,a);return}if(b.dataset.soon)toast('🛠 아직 준비중입니다!')};
+function renderSide(){const T=mem.toc,e=$('#side');if(!T||!e||!$('#wrap').classList.contains('hasToc'))return;let last=null;try{last=JSON.parse(localStorage.getItem('last|'+S.user.id))}catch(x){}
+  const rows=T.subjects.filter(s=>s.ready).map(s=>{const t=s.lessons.reduce((n,l)=>n+l.t.해석+l.t.작성,0),d=s.lessons.reduce((n,l)=>n+Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성),0);return `<div style="margin:8px 0"><b>${ico(s.icon)} ${esc(s.name)}</b> <small style="color:var(--sub)">${t?d+'/'+t:'문제 없음'}</small>${t?bar(d,t):''}</div>`}).join('');
+  let cont='';if(last){const sj=T.subjects.find(x=>x.name===last.sub),l=sj&&sj.ready&&sj.lessons.find(x=>x.no===last.no);if(l)cont=`<div class="sbox"><h4>▶ 이어서 하기</h4><button class="main" style="width:100%;text-align:left" data-go="${esc(last.sub)}|${last.no}|${last.act}">${esc(last.sub)} [${last.no}차시] ${esc(nm(last.sub,last.act))}</button></div>`}
+  e.innerHTML=cont+`<div class="sbox"><h4>📌 내 학습 현황</h4>${rows||'<small>아직 진행할 수 있는 과목이 없어요</small>'}</div>`}
+$('#side').onclick=e=>{const b=e.target.closest('button[data-go]');if(!b)return;const[s,n,a]=b.dataset.go.split('|');go(s,+n,a)};
 async function go(sub,no,act){const T=mem.toc||await get('toc',()=>api('toc'));if(!T||T.error)return;const sj=T.subjects.find(x=>x.name===sub);if(!sj||!sj.ready){toast('🛠 아직 준비중입니다!');return}
   S.sub=sub;S.menu={lessons:sj.lessons};$('#toc').classList.remove('open');act?contentView(no,act):actView(no)}
 const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -166,16 +176,18 @@ function nm(sub,k){const L=[...(mem.toc?mem.toc.subjects:[]),...(mem.subjects?me
 function bar(d,t){return `<div class="bar"><i style="width:${t?Math.min(100,d/t*100):0}%"></i></div>`}
 function setWho(){const u=S.user;$('#who').innerHTML=u?`${S.preview?'<span>👀 미리보기 중 (기록 안 됨)</span>':''}<span>${esc(u.name)}</span>`+(u.role==='관리자'?`<button class="ghost" onclick="togglePrev()">${S.preview?'관리자 화면':'학생 화면 보기'}</button>`:'')+`<button class="ghost" onclick="logout()">로그아웃</button>`:''}
 function togglePrev(){S.preview=!S.preview;setWho();S.preview?(showToc(true),loadToc(),langView()):(showToc(false),adminView())}
-function logout(){mem={};S.preview=false;S.sel={};S.sub='';S.asub='';sessionStorage.removeItem('t');S.token='';S.user=null;setWho();loginView()}
+function logout(){mem={};S.preview=false;S.sel={};S.sub='';S.asub='';S.ayear='';sessionStorage.removeItem('t');S.token='';S.user=null;setWho();loginView()}
 
 /* 로그인 */
+async function fillYears(){const e=$('#yr');if(!e)return;const r=await get('years',()=>api('years')),L=(r&&r.years)||[];if(!L.length){e.style.display='none';return}
+  let sv=null;try{sv=localStorage.getItem('yr')}catch(x){}e.innerHTML=L.map(y=>`<option value="${y}">${y}년</option>`).join('');e.value=(sv&&L.includes(sv))?sv:(r.cur||L[0]);e.onchange=()=>{try{localStorage.setItem('yr',e.value)}catch(x){}}}
 function loginView(msg=''){showToc(false);app.innerHTML=`<div class="box narrow"><h2>로그인</h2>
-<input id="id" placeholder="학번" autocomplete="username"><input id="pw" type="password" placeholder="비밀번호" autocomplete="current-password">
+<div class="row" style="justify-content:center;margin:0 0 6px">📅 <select id="yr" class="yr"></select></div><input id="id" placeholder="학번" autocomplete="username"><input id="pw" type="password" placeholder="비밀번호" autocomplete="current-password">
 <div class="err" id="e">${esc(msg)}</div><button class="main" id="go">들어가기</button>
 <p style="color:var(--sub);font-size:14px">처음 로그인할 때 비밀번호는 학번이에요.</p><p><a href="#" id="fg" style="color:var(--sub);font-size:14px">비밀번호를 잊어버렸어요!</a></p></div>`;
-  const go=async()=>{$('#e').textContent='확인 중...';const r=await api('login',{id:$('#id').value,pw:$('#pw').value});
+  const go=async()=>{$('#e').textContent='확인 중...';const r=await api('login',{id:$('#id').value,pw:$('#pw').value,year:$('#yr').value});
     if(r.error)return $('#e').textContent=r.error;S.token=r.token;sessionStorage.setItem('t',r.token);S.user=r;start()};
-  $('#fg').onclick=e=>{e.preventDefault();forgotView()};$('#go').onclick=go;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')go()})}
+  $('#fg').onclick=e=>{e.preventDefault();forgotView()};fillYears();$('#go').onclick=go;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')go()})}
 function start(){setWho();if(S.user.must)return pwView();S.user.role==='관리자'?(showToc(false),adminView()):(showToc(true),loadToc(),langView())}
 function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 만들기</h2><p>처음 로그인했어요. 비밀번호를 바꿔야 계속할 수 있어요.</p>
 <input id="n1" type="password" placeholder="새 비밀번호 (4자 이상)"><input id="n2" type="password" placeholder="한 번 더 입력"><div class="err" id="e"></div><button class="main" id="go">바꾸기</button></div>`;
@@ -187,10 +199,10 @@ async function langView(){S.at=null;renderToc();if(!mem.toc)app.innerHTML='불�
   app.innerHTML=`<h2>배울 과목을 골라요</h2>`+(r.subjects.length?`<div class="grid">${r.subjects.map((s,i)=>`<button class="card" data-i="${i}">${ico(s.icon)} <b>${esc(s.name)}</b>${s.ready?'':'<small>준비 중</small>'}</button>`).join('')}</div><div class="msg wait" id="soon" style="display:none;margin-top:14px"></div>`:'<p>아직 등록된 과목이 없어요.</p>');
   app.querySelectorAll('[data-i]').forEach(b=>b.onclick=async()=>{const s=r.subjects[+b.dataset.i];if(!s.ready){const r2=await get('toc',()=>api('toc'),true),s2=(r2.subjects||[]).find(x=>x.name===s.name);if(s2&&s2.ready){S.sub=s.name;return lessonView()}const m=$('#soon'),w=(s2||s).why;m.style.display='block';m.innerHTML='🛠 아직 준비중입니다!'+(w?`<br><small>(관리자에게만 보여요) ${esc(w)}</small>`:'');return}S.sub=s.name;lessonView()})}
 function forgotView(){app.innerHTML=`<div class="box narrow"><h2>비밀번호 초기화</h2><p style="font-size:14px;color:var(--sub)">선생님께 받은 <b>고유키</b>를 입력하면 비밀번호가 학번으로 초기화돼요. 그다음 로그인하면 새 비밀번호를 만들 수 있어요.</p>
-<input id="fi" placeholder="학번"><input id="fk" placeholder="고유키" autocomplete="off"><div class="err" id="e"></div><button class="main" id="go">초기화하기</button> <button class="ghost" id="bk">← 로그인</button><p><a href="#" id="nk" style="color:var(--sub);font-size:14px">고유키도 잊어버렸어요!</a></p></div>`;
-  $('#bk').onclick=()=>loginView();
+<div class="row" style="justify-content:center;margin:0 0 6px">📅 <select id="yr" class="yr"></select></div><input id="fi" placeholder="학번"><input id="fk" placeholder="고유키" autocomplete="off"><div class="err" id="e"></div><button class="main" id="go">초기화하기</button> <button class="ghost" id="bk">← 로그인</button><p><a href="#" id="nk" style="color:var(--sub);font-size:14px">고유키도 잊어버렸어요!</a></p></div>`;
+  $('#bk').onclick=()=>loginView();fillYears();
   $('#nk').onclick=e=>{e.preventDefault();alert('니가 만든\n니 계정의\n니 비밀번호도 잊고\n니 고유키도 잊으면\n대체 뭘 하겠다는건가요?\n선생님께 문의 받으세요')};
-  $('#go').onclick=async()=>{$('#e').textContent='확인 중...';const r=await api('forgot',{id:$('#fi').value,key:$('#fk').value});if(r.error)return $('#e').textContent=r.error;loginView('✅ 초기화했어요! 학번을 비밀번호로 입력해 로그인하세요.')}}
+  $('#go').onclick=async()=>{$('#e').textContent='확인 중...';const r=await api('forgot',{id:$('#fi').value,key:$('#fk').value,year:$('#yr').value});if(r.error)return $('#e').textContent=r.error;loginView('✅ 초기화했어요! 학번을 비밀번호로 입력해 로그인하세요.')}}
 async function lessonView(){if(!mem.toc)app.innerHTML='불러오는 중...';const T=await get('toc',()=>api('toc'));if(T.error)return app.innerHTML=T.error;const sj=T.subjects.find(x=>x.name===S.sub);
   if(!sj||!sj.ready){app.innerHTML=`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><p>🛠 아직 준비중입니다!</p>`;return}const r={lessons:sj.lessons};S.menu=r;S.at={sub:S.sub,no:null,act:null};renderToc();
   app.innerHTML=`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><h2>${esc(S.sub)} · 차시를 골라요</h2>`+(r.lessons.length?`<div class="grid">${r.lessons.map(l=>{
@@ -201,7 +213,7 @@ function actView(no){S.at={sub:S.sub,no,act:null};const sj=mem.toc.subjects.find
   app.innerHTML=`<p><button class="ghost" onclick="lessonView()">← 차시 선택</button></p><h2>[${no}차시] ${esc(l.title)}</h2><div class="grid">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>
   `<button class="card" data-k="${k}"><small>${AN[k][0]}</small><b>${nm(S.sub,k)}</b>${k==='개념'?(l.d[k]>0?'<small>✔ 완료</small>':''):`<small>문제 ${l.t[k]}개 · ${Math.min(l.d[k],l.t[k])}개 완료</small>${bar(l.d[k],l.t[k])}`}</button>`).join('')}</div>`;
   app.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>contentView(no,b.dataset.k));Object.keys(AN).filter(k=>l.t[k]>0).forEach(k=>get('L|'+S.sub+'|'+no+'|'+k,()=>api('lesson',{no,act:k})))}
-async function contentView(no,act){S.at={sub:S.sub,no,act};renderToc();const lk='L|'+S.sub+'|'+no+'|'+act;if(!mem[lk])app.innerHTML='불러오는 중...';const r=await get(lk,()=>api('lesson',{no,act}));if(r.error)return app.innerHTML=r.error;
+async function contentView(no,act){S.at={sub:S.sub,no,act};renderToc();try{localStorage.setItem('last|'+S.user.id,JSON.stringify({sub:S.sub,no,act}))}catch(e){}const lk='L|'+S.sub+'|'+no+'|'+act;if(!mem[lk])app.innerHTML='불러오는 중...';const r=await get(lk,()=>api('lesson',{no,act}));if(r.error)return app.innerHTML=r.error;
   const sv=q=>{const a=r.saved[q],d=r.drafts&&r.drafts[q],lc=loadLocal(q);let b=a?{answer:a.answer,t:a.t||0}:null;[d&&{answer:d.text,t:d.t},lc&&{answer:lc.text,t:lc.t}].forEach(c=>{if(c&&(!b||c.t>b.t))b={answer:c.answer,t:c.t,dr:1}});return b?{answer:b.answer,ok:a?a.ok:false,submitted:!!a,draft:!!b.dr}:null};
   app.innerHTML=`<p><button class="ghost" id="back">← 활동 선택</button></p><h2>${AN[act][0]} ${nm(S.sub,act)}</h2><div id="items"></div>`;
   $('#back').onclick=()=>actView(no);
@@ -386,31 +398,31 @@ _o.getvalue()`)}
 async function adminView(force){if(force||!mem.subjects)app.innerHTML='불러오는 중...';
   const sr=await get('subjects',()=>api('subjects'),force);if(sr.error)return app.innerHTML=sr.error;
   if(!sr.subjects.some(s=>s.name===S.asub))S.asub=(sr.subjects.find(s=>s.ready)||sr.subjects[0]||{}).name||'';
-  const key='classes|'+S.asub,r=await get(key,()=>api('classes',{sub:S.asub}),force);if(r.error)return app.innerHTML=r.error;
+  const yr=await get('years',()=>api('years'),force);if(!S.ayear||!(yr.years||[]).includes(S.ayear))S.ayear=yr.cur||(yr.years||[])[0]||'';const key='classes|'+S.asub+'|'+S.ayear,r=await get(key,()=>api('classes',{sub:S.asub,year:S.ayear}),force);if(r.error)return app.innerHTML=r.error;
   app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>학급 현황</h2><button class="ghost" onclick="adminView(true)">⟳ 새로고침</button></div><div class="row" style="margin-bottom:14px">${sr.subjects.map(s=>`<button class="chip ${s.name===S.asub?'on':''}" data-sub="${esc(s.name)}">${ico(s.icon)} ${esc(s.name)}${s.ready?'':' (준비중)'}</button>`).join('')}</div>
-  <div class="grid">${r.classes.map(c=>`<button class="card" data-c="${c.cls}"><b>${c.cls}반</b><small>${c.count}명 · 전체 진도 ${c.pct}%</small>${bar(c.pct,100)}</button>`).join('')}</div>`;
-  app.querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{S.asub=b.dataset.sub;adminView()});
+  <div class="row" style="margin-bottom:14px">📅 ${(yr.years||[]).map(y=>`<button class="chip ${y===S.ayear?'on':''}" data-yr="${y}">${y}년</button>`).join('')}</div><div class="grid">${r.classes.map(c=>`<button class="card" data-c="${c.cls}"><b>${c.cls}반</b><small>${c.count}명 · 전체 진도 ${c.pct}%</small>${bar(c.pct,100)}</button>`).join('')}</div>`;
+  app.querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{S.asub=b.dataset.sub;adminView()});app.querySelectorAll('[data-yr]').forEach(b=>b.onclick=()=>{S.ayear=b.dataset.yr;adminView()});
   app.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>classView(+b.dataset.c))}
 function csvSave(L,name){const q=v=>`"${String(v).replace(/"/g,'""')}"`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+L.map(x=>x.map(q).join(',')).join('\r\n')],{type:'text/csv'}));a.download=name;a.click()}
-async function classView(cls,force){const key='ct|'+S.asub+'|'+cls,sk=S.asub+'|'+cls;if(force||!mem[key])app.innerHTML='불러오는 중...';const r=await get(key,()=>api('classTable',{cls,sub:S.asub}),force);if(r.error)return app.innerHTML=r.error;
+async function classView(cls,force){const key='ct|'+S.asub+'|'+S.ayear+'|'+cls,sk=S.asub+'|'+S.ayear+'|'+cls;if(force||!mem[key])app.innerHTML='불러오는 중...';const r=await get(key,()=>api('classTable',{cls,sub:S.asub,year:S.ayear}),force);if(r.error)return app.innerHTML=r.error;
   const cols=[];r.lessons.forEach(l=>Object.keys(AN).forEach(k=>l.t[k]>0&&cols.push({l,k,t:l.t[k]})));
   const sel=S.sel[sk]??(r.lessons.length?r.lessons[r.lessons.length-1].no:'all'),vis=sel==='all'?cols:cols.filter(c=>c.l.no===sel);
   const cell=(s,c)=>{const d=Math.min(s.d[c.l.no+'|'+c.k]||0,c.t);return{d,full:d>=c.t,txt:c.k==='개념'?(d?'완료':''):`${d}/${c.t}`}};
   const head1=r.lessons.filter(l=>vis.some(c=>c.l===l)).map(l=>`<th colspan="${vis.filter(c=>c.l===l).length}">[${l.no}차시] ${esc(l.title)}</th>`).join('');
-  const body=r.students.map(s=>`<tr><td class="l" data-id="${s.id}">${s.id} ${esc(s.name)}</td>${vis.map(c=>{const x=cell(s,c);return `<td class="${x.full?'done':''}">${x.txt}</td>`}).join('')}</tr>`).join('');
+  const body=r.students.map(s=>`<tr><td class="l" data-id="${s.id}">${s.sid||s.id} ${esc(s.name)}</td>${vis.map(c=>{const x=cell(s,c);return `<td class="${x.full?'done':''}">${x.txt}</td>`}).join('')}</tr>`).join('');
   const foot=vis.map(c=>`<td>${r.students.filter(s=>cell(s,c).full).length}/${r.students.length}</td>`).join('');
   const chips=`<button class="chip ${sel==='all'?'on':''}" data-s="all">전체</button>`+r.lessons.map(l=>`<button class="chip ${sel===l.no?'on':''}" data-s="${l.no}">${l.no}차시</button>`).join('');
-  app.innerHTML=`<p><button class="ghost" onclick="adminView()">← 학급 목록</button></p><h2>${esc(S.asub)} · ${cls}반 진도 현황</h2><div class="row" style="margin-bottom:10px">${chips}</div>
+  app.innerHTML=`<p><button class="ghost" onclick="adminView()">← 학급 목록</button></p><h2>${esc(S.asub)} · ${S.ayear}년 ${cls}반 진도 현황</h2><div class="row" style="margin-bottom:10px">${chips}</div>
   <div class="row" style="margin-bottom:12px"><button class="main" id="csv1">이 화면 CSV</button><button class="ghost" id="csv2">전체 차시 CSV</button><button class="ghost" id="rf">⟳ 새로고침</button><span style="color:var(--sub)">학생 이름을 누르면 답안을 볼 수 있어요.</span></div>
   <div class="wrap"><table><thead><tr><th rowspan="2">학번 이름</th>${head1}</tr><tr>${vis.map(c=>`<th class="a">${nm(S.asub,c.k)}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td>완료 학생 수</td>${foot}</tr></tfoot></table></div>`;
   app.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{S.sel[sk]=b.dataset.s==='all'?'all':+b.dataset.s;classView(cls)});
   app.querySelectorAll('[data-id]').forEach(t=>t.onclick=()=>detailView(t.dataset.id,cls));
   $('#rf').onclick=()=>classView(cls,true);
-  const dl=(cs,n)=>csvSave([['학번 이름',...cs.map(c=>`[${c.l.no}차시] ${c.l.title}`)],['',...cs.map(c=>nm(S.asub,c.k))],...r.students.map(s=>[s.id+' '+s.name,...cs.map(c=>cell(s,c).txt)])],n);
-  $('#csv1').onclick=()=>dl(vis,`${S.asub}_${cls}반_${sel==='all'?'전체':sel+'차시'}.csv`);$('#csv2').onclick=()=>dl(cols,`${S.asub}_${cls}반_전체차시.csv`)}
+  const dl=(cs,n)=>csvSave([['학번 이름',...cs.map(c=>`[${c.l.no}차시] ${c.l.title}`)],['',...cs.map(c=>nm(S.asub,c.k))],...r.students.map(s=>[(s.sid||s.id)+' '+s.name,...cs.map(c=>cell(s,c).txt)])],n);
+  $('#csv1').onclick=()=>dl(vis,`${S.asub}_${S.ayear}_${cls}반_${sel==='all'?'전체':sel+'차시'}.csv`);$('#csv2').onclick=()=>dl(cols,`${S.asub}_${S.ayear}_${cls}반_전체차시.csv`)}
 async function detailView(id,cls){app.innerHTML='불러오는 중...';const r=await api('detail',{id});if(r.error)return app.innerHTML=r.error;
   const g={};r.recs.forEach(x=>{const k=x.sub+'|'+x.no;(g[k]=g[k]||{sub:x.sub,no:x.no,list:[]}).list.push(x)});const ks=Object.values(g).sort((a,b)=>(b.sub===S.asub)-(a.sub===S.asub)||b.no-a.no);
-  app.innerHTML=`<p><button class="ghost" id="b">← ${cls}반 현황</button></p><h2>${esc(id)} ${esc(r.name)}</h2><div class="row" style="margin-bottom:14px"><button id="rs">비밀번호 초기화 (학번으로)</button></div>`+(ks.map((k,i)=>`<details class="box" ${i===0?'open':''}><summary><b>${esc(k.sub)} · ${k.no}차시</b> · 기록 ${k.list.length}건</summary><div class="wrap"><table><thead><tr><th>활동</th><th>문항</th><th>정답</th><th>시도</th><th>최근 제출</th><th>답안</th></tr></thead><tbody>${k.list.map(x=>`<tr><td>${AN[x.act]?nm(x.sub,x.act):x.act}</td><td>${x.q||'-'}</td><td>${x.free?'✍️ 제출':(x.ok?'⭕':'❌')}</td><td>${x.tries}</td><td>${x.last}</td><td style="text-align:left"><details><summary>보기</summary><pre>${esc(x.answer)}</pre></details></td></tr>`).join('')}</tbody></table></div></details>`).join('')||'<p>아직 기록이 없어요.</p>');
+  app.innerHTML=`<p><button class="ghost" id="b">← ${cls}반 현황</button></p><h2>${esc(r.sid||id)} ${esc(r.name)}</h2><div class="row" style="margin-bottom:14px"><button id="rs">비밀번호 초기화 (학번으로)</button></div>`+(ks.map((k,i)=>`<details class="box" ${i===0?'open':''}><summary><b>${esc(k.sub)} · ${k.no}차시</b> · 기록 ${k.list.length}건</summary><div class="wrap"><table><thead><tr><th>활동</th><th>문항</th><th>정답</th><th>시도</th><th>최근 제출</th><th>답안</th></tr></thead><tbody>${k.list.map(x=>`<tr><td>${AN[x.act]?nm(x.sub,x.act):x.act}</td><td>${x.q||'-'}</td><td>${x.free?'✍️ 제출':(x.ok?'⭕':'❌')}</td><td>${x.tries}</td><td>${x.last}</td><td style="text-align:left"><details><summary>보기</summary><pre>${esc(x.answer)}</pre></details></td></tr>`).join('')}</tbody></table></div></details>`).join('')||'<p>아직 기록이 없어요.</p>');
   $('#b').onclick=()=>classView(cls);
   $('#rs').onclick=async()=>{if(!confirm(`${r.name} 학생의 비밀번호를 학번으로 되돌릴까요?`))return;const x=await api('resetPw',{id});alert(x.error||'초기화했어요. 다음 로그인 때 비밀번호를 새로 만들게 됩니다.')}}
 
