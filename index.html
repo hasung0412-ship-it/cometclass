@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>배곧해솔중학교 정보</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌠%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌿%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#3a4256;--sub:#7b8499;--line:#e8ebf3;--mint:#d4f1e4;--sky:#d6e8fb;--lav:#e5dcf6;--peach:#fde3d6;--butter:#fff3c6;--ok:#bfe8d2;--no:#f9d0d0}
@@ -74,7 +74,7 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업 </b><span> 배곧해솔중학교 (v29)</span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠혜성쌤과 함께하는 정보 수업 </b><span>배곧해솔중학교 (v30)</span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzUtjAEzm2MDsuIkJrnUzR2iw3EqQhu8UUQm5KLqtcm4rxtbghTJnjH1ZHF_1EXc3bD/exec';
@@ -123,6 +123,7 @@ async function api(action,d={},tries=0){
   const retry=async()=>{await new Promise(r=>setTimeout(r,900*(tries+1)));return api(action,d,tries+1)};
   try{const r=await(await fetch(API,{method:'POST',body:JSON.stringify({action,token:S.token,sub:S.sub,...d})})).json();
     if(r.error==='auth'){logout();return{error:'다시 로그인해 주세요.'}}
+    if(r.error==='알 수 없는 요청이에요.')return{error:'⚠ 서버(Apps Script)가 예전 버전이에요. 선생님께 알려 주세요. (Code.gs를 새 버전으로 다시 배포해야 해요)'};
     if(r.error&&String(r.error).startsWith('서버 오류')&&tries<2)return retry();return r}
   catch(e){if(tries<2&&!['login','forgot','changePw'].includes(action))return retry();return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
 function fmt0(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):qz(ib(pic(fx(esc(x))))).replace(/\n/g,'<br>')).join('')}
