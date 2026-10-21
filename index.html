@@ -2,6 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>배곧해솔중학교 정보</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌿%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#3a4256;--sub:#7b8499;--line:#e8ebf3;--mint:#d4f1e4;--sky:#d6e8fb;--lav:#e5dcf6;--peach:#fde3d6;--butter:#fff3c6;--ok:#bfe8d2;--no:#f9d0d0}
@@ -62,6 +63,8 @@ code.ic{background:#f1f3fa;border-radius:6px;padding:0 5px;font:.92em Consolas,m
 .ii{display:inline-block;width:auto;min-width:6em;padding:2px 8px;margin:0 4px;border:0;border-bottom:2px solid #b9cdf5;border-radius:6px;background:#fbfcff}.ii::placeholder{color:#b9bfce}
 .is{padding:2px 8px;margin:0 4px;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;width:auto}.im{font-weight:bold}.im.g{color:#2e8b62}.im.r{color:#c25a5a}
 .ck{display:inline-flex;align-items:center;gap:6px;margin:2px 14px 2px 0;cursor:pointer}.ck input{width:auto}
+details.sec>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}details.sec>summary::-webkit-details-marker{display:none}details.sec>summary h3{margin:0}
+details.sec>summary::before{content:'▾';color:var(--sub)}details.sec:not([open])>summary::before{content:'▸'}details.sec[open]>summary{margin-bottom:10px}
 .err{color:#c25a5a;min-height:24px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .choice{display:block;padding:6px 10px;border-radius:10px;cursor:pointer}.choice:hover{background:#f3f5fb}.choice input{width:auto;margin-right:8px}
@@ -70,7 +73,7 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v27)</span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v28)</span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzUtjAEzm2MDsuIkJrnUzR2iw3EqQhu8UUQm5KLqtcm4rxtbghTJnjH1ZHF_1EXc3bD/exec';
@@ -83,10 +86,10 @@ const dkey=(s,n,a,q)=>`hd|${S.user?S.user.id:''}|${s}|${n}|${a}|${q}`;
 function clearDraft(no,act,q){const k=dkey(S.sub,no,act,q);delete DR[k];try{localStorage.removeItem(k)}catch(e){}}
 function loadLocal(q){try{const a=S.at;return a&&a.act?JSON.parse(localStorage.getItem(dkey(a.sub,a.no,a.act,q))||'null'):null}catch(e){return null}}
 function setSv(t,c){const e=$('#sv');e.textContent=t;e.className=c||'';e.style.display='block';clearTimeout(setSv.h);if(c==='ok')setSv.h=setTimeout(()=>e.style.display='none',2500)}
-function collect(bx){const bl=[...bx.querySelectorAll('.blank')];if(bl.length)return bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n');const rd=bx.querySelector('input[type=radio]:checked');if(rd)return rd.value;const el=bx.querySelector('.ans,.free,textarea');return el?el.value:''}
+function collect(bx){if(bx.dataset.etc)return [...bx.querySelectorAll('.ib')].map((x,k)=>`${k+1}: ${x.type==='checkbox'?(x.checked?'1':'0'):x.value}`).join('\n');const bl=[...bx.querySelectorAll('.blank')];if(bl.length)return bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n');const rd=bx.querySelector('input[type=radio]:checked');if(rd)return rd.value;const el=bx.querySelector('.ans,.free,textarea');return el?el.value:''}
 function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||e.target.closest('.trace,.qz'))return;let q,text;
   if(a.act==='개념'){const el=e.target.closest('.ib');if(!el)return;q=+el.dataset.i;text=el.type==='checkbox'?(el.checked?'1':'0'):el.value}
-  else{const bx=e.target.closest('.box[data-q]');if(!bx||e.target.closest('.ib'))return;q=+bx.dataset.q;text=collect(bx)}
+  else{const bx=e.target.closest('.box[data-q]');if(!bx||(e.target.closest('.ib')&&!bx.dataset.etc))return;q=+bx.dataset.q;text=collect(bx)}
   const k=dkey(a.sub,a.no,a.act,q);DR[k]={sub:a.sub,no:a.no,act:a.act,q,text,t:Date.now()};
   try{localStorage.setItem(k,JSON.stringify({t:Date.now(),text}))}catch(_){}
   setSv('✏️ 입력 중...','');clearTimeout(dtm);dtm=setTimeout(flushDrafts,3000)}
@@ -108,7 +111,7 @@ function renderToc(){const T=mem.toc;if(!T||!$('#wrap').classList.contains('hasT
     const sk='s|'+sj.name,so=S.tocOpen[sk]??true;
     return `<div class="ts"><button class="tt" data-t="${esc(sk)}" data-o="${so?1:0}">${so?'▾':'▸'} ${ico(sj.icon)} <b>${esc(sj.name)}</b></button>`+(so?`<div class="tl">${sj.lessons.map(l=>{
       const lk=`l|${sj.name}|${l.no}`,cur=at.sub===sj.name&&at.no===l.no,lo=S.tocOpen[lk]??cur,t=l.t.해석+l.t.작성,d=Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성);
-      return `<button class="tt ${cur?'cur':''}" data-t="${esc(lk)}" data-o="${lo?1:0}">${lo?'▾':'▸'} ${l.no}차시 ${esc(l.title)}${t?` <small>${d}/${t}</small>`:''}</button>`+(lo?`<div class="ta">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>`<button class="tt ti ${cur&&at.act===k?'on':''}" data-go="${esc(sj.name)}|${l.no}|${k}">${AN[k][0]} ${nm(sj.name,k)}${k==='개념'?(l.d[k]>0?' ✔':''):` <small>${Math.min(l.d[k],l.t[k])}/${l.t[k]}</small>`}</button>`).join('')}</div>`:'')}).join('')}</div>`:'')+'</div>'}).join('')}
+      return `<button class="tt ${cur?'cur':''}" data-t="${esc(lk)}" data-o="${lo?1:0}">${lo?'▾':'▸'} [${l.no}차시] ${esc(l.title)}${t?` <small>${d}/${t}</small>`:''}</button>`+(lo?`<div class="ta">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>`<button class="tt ti ${cur&&at.act===k?'on':''}" data-go="${esc(sj.name)}|${l.no}|${k}">${AN[k][0]} ${nm(sj.name,k)}${k==='개념'?(l.d[k]>0?' ✔':''):` <small>${Math.min(l.d[k],l.t[k])}/${l.t[k]}</small>`}</button>`).join('')}</div>`:'')}).join('')}</div>`:'')+'</div>'}).join('')}
 $('#toc').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.t){S.tocOpen[b.dataset.t]=!(+b.dataset.o);renderToc();return}if(b.dataset.go){const[s,n,a]=b.dataset.go.split('|');go(s,+n,a);return}if(b.dataset.soon)toast('🛠 아직 준비중입니다!')};
 async function go(sub,no,act){const T=mem.toc||await get('toc',()=>api('toc'));if(!T||T.error)return;const sj=T.subjects.find(x=>x.name===sub);if(!sj||!sj.ready){toast('🛠 아직 준비중입니다!');return}
   S.sub=sub;S.menu={lessons:sj.lessons};$('#toc').classList.remove('open');act?contentView(no,act):actView(no)}
@@ -200,16 +203,19 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};renderToc();const lk=
   app.innerHTML=`<p><button class="ghost" id="back">← 활동 선택</button></p><h2>${AN[act][0]} ${nm(S.sub,act)}</h2><div id="items"></div>`;
   $('#back').onclick=()=>actView(no);
   const box=$('#items');
-  if(act==='개념'){box.innerHTML=r.items.map(i=>`<div class="box"><h3>${esc(i.title)}</h3>${fmt(i.body)}</div>`).join('');
+  if(act==='개념'){box.innerHTML=r.items.map((i,n)=>`<details class="box sec" data-s="${n}" open><summary><h3>${esc(i.title)}</h3></summary><div>${fmt(i.body)}</div></details>`).join('');
+    box.querySelectorAll('details.sec').forEach(d=>{const k=`cf|${S.user.id}|${S.sub}|${no}|${d.dataset.s}`;try{if(localStorage.getItem(k)==='0')d.open=false}catch(e){}d.addEventListener('toggle',()=>{try{localStorage.setItem(k,d.open?'1':'0')}catch(e){}})});
     box.querySelectorAll('.ib').forEach((el,i)=>{el.dataset.i=i+1;const d=r.drafts&&r.drafts[i+1],lc=loadLocal(i+1);let v=null,t0=-1;[d&&{x:d.text,t:d.t},lc&&{x:lc.text,t:lc.t}].forEach(c=>{if(c&&c.t>t0){t0=c.t;v=c.x}});if(v!=null){if(el.type==='checkbox')el.checked=v==='1';else el.value=v;ibCheck(el)}});
     const sb=S.sub;if(!S.preview&&!(r.saved[0]&&r.saved[0].ok))api('submit',{no,act,q:0,answer:'열람',sub:sb}).then(x=>{if(!x.error&&S.sub===sb)rec(no,act,0,'열람',true)})}
-  if(act==='해석'){const isF=i=>i.type==='설명쓰기'||i.type==='서술';
-  const cd=(i,v)=>{if(i.type!=='설명쓰기')return i.code?(/^\s*```\s*trace/.test(i.code)?fmt(i.code):`<pre>${esc(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
+  if(act==='해석'){const isF=i=>i.type==='설명쓰기'||i.type==='서술'||i.type==='기타';
+  const cd=(i,v)=>{if(i.type==='기타')return fmt(i.code||'');if(i.type!=='설명쓰기')return i.code?(/^\s*```\s*trace/.test(i.code)?fmt(i.code):`<pre>${esc(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
   box.innerHTML=r.items.map((i,n)=>{const s=sv(i.q),f=isF(i),v=s&&i.type==='설명쓰기'?String(s.answer).split('\n').map(l=>l.replace(/^\d+:\s?/,'')):[];
-    const inp=i.type==='설명쓰기'?'':i.choices?i.choices.map(c=>`<label class="choice"><input type="radio" name="q${i.q}" value="${esc(c)}" ${s&&String(s.answer)===c?'checked':''}>${esc(c)}</label>`).join(''):i.type==='서술'?`<textarea class="free" style="min-height:90px;font-family:inherit" placeholder="생각을 자유롭게 써 보세요">${esc(s?s.answer:'')}</textarea>`:`<input class="ans" placeholder="답을 입력하세요" value="${esc(s?s.answer:'')}">`;
-    return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}${cd(i,v)}${inp}<div class="row"><button class="main chk">${f?'제출하기':'정답 확인'}</button></div><div class="msg ${s&&s.submitted&&(f||s.ok)?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.submitted?(f?'📨 이전에 제출했어요 (고쳐서 다시 제출해도 돼요)':(s.ok?'✅ 이전에 맞혔어요':'')):(s?'✏️ 이어서 쓰던 내용이 있어요 (아직 제출 전)':'')}</div></div>`}).join('');
+    const inp=(i.type==='설명쓰기'||i.type==='기타')?'':i.choices?i.choices.map(c=>`<label class="choice"><input type="radio" name="q${i.q}" value="${esc(c)}" ${s&&String(s.answer)===c?'checked':''}>${esc(c)}</label>`).join(''):i.type==='서술'?`<textarea class="free" style="min-height:90px;font-family:inherit" placeholder="생각을 자유롭게 써 보세요">${esc(s?s.answer:'')}</textarea>`:`<input class="ans" placeholder="답을 입력하세요" value="${esc(s?s.answer:'')}">`;
+    return `<div class="box" data-q="${i.q}"${i.type==='기타'?' data-etc="1"':''}>${i.type==='기타'?`<h3>${fmt(i.text)}</h3>`:`<h3>문제 ${n+1}</h3>${fmt(i.text)}`}${cd(i,v)}${inp}<div class="row"><button class="main chk">${f?'제출하기':'정답 확인'}</button></div><div class="msg ${s&&s.submitted&&(f||s.ok)?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.submitted?(f?'📨 이전에 제출했어요 (고쳐서 다시 제출해도 돼요)':(s.ok?'✅ 이전에 맞혔어요':'')):(s?'✏️ 이어서 쓰던 내용이 있어요 (아직 제출 전)':'')}</div></div>`}).join('');
+  box.querySelectorAll('.box[data-etc]').forEach(bx=>{const s=sv(+bx.dataset.q),mp={};if(s)String(s.answer).split('\n').forEach(l=>{const m=/^(\d+):\s?(.*)$/.exec(l);if(m)mp[m[1]]=m[2]});
+    bx.querySelectorAll('.ib').forEach((el,k)=>{const v=mp[k+1];if(v!=null){if(el.type==='checkbox')el.checked=v==='1';else el.value=v;ibCheck(el)}})});
   box.querySelectorAll('.chk').forEach(b=>b.onclick=async()=>{const bx=b.closest('.box'),q=+bx.dataset.q,m=bx.querySelector('.msg'),bl=[...bx.querySelectorAll('.blank')];let a;
-    if(bl.length){if(bl.some(x=>!x.value.trim())){m.className='msg no';m.textContent='빈칸을 모두 채워 주세요.';return}a=bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n')}
+    if(bx.dataset.etc){a=bx.querySelector('.ib')?collect(bx):'열람'}else if(bl.length){if(bl.some(x=>!x.value.trim())){m.className='msg no';m.textContent='빈칸을 모두 채워 주세요.';return}a=bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n')}
     else a=bx.querySelector('input[type=radio]:checked')?.value??bx.querySelector('.ans')?.value??bx.querySelector('.free')?.value??'';
     if(!String(a).trim())return;
     b.disabled=true;m.className='msg wait';m.textContent='저장 중...';const x=await api('submit',{no,act,q,answer:a});b.disabled=false;
