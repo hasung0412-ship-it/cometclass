@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>배곧해솔중학교 정보</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌿%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌠%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#3a4256;--sub:#7b8499;--line:#e8ebf3;--mint:#d4f1e4;--sky:#d6e8fb;--lav:#e5dcf6;--peach:#fde3d6;--butter:#fff3c6;--ok:#bfe8d2;--no:#f9d0d0}
@@ -65,6 +65,7 @@ code.ic{background:#f1f3fa;border-radius:6px;padding:0 5px;font:.92em Consolas,m
 .ck{display:inline-flex;align-items:center;gap:6px;margin:2px 14px 2px 0;cursor:pointer}.ck input{width:auto}
 details.sec>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}details.sec>summary::-webkit-details-marker{display:none}details.sec>summary h3{margin:0}
 details.sec>summary::before{content:'▾';color:var(--sub)}details.sec:not([open])>summary::before{content:'▸'}details.sec[open]>summary{margin-bottom:10px}
+.cols2{display:grid;gap:4px 16px;margin:10px 0;align-items:center}.cell{min-width:0;min-height:1.7em}
 .err{color:#c25a5a;min-height:24px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .choice{display:block;padding:6px 10px;border-radius:10px;cursor:pointer}.choice:hover{background:#f3f5fb}.choice input{width:auto;margin-right:8px}
@@ -73,10 +74,10 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업 </b><span> 배곧해솔중학교 (v28)</span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업 </b><span> 배곧해솔중학교 (v29)</span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main></div><div id="sv"></div>
 <script>
-const API='https://script.google.com/macros/s/AKfycbzUtjAEzm2MDsuIkJrnUzR2iw3EqQhu8UUQm5KLqtcm4rxtbghTJnjH1ZHF_1EXc3bD/exec';
+const API='https://script.google.com/a/macros/goedu.kr/s/AKfycbwSQB5-Go93agfOpB6IOxSOoj8KuUiGzYGvIWOwhu0p9Z2DiUFce13_iklmxN8L5NOD/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:'',at:null,tocOpen:{}};let mem={};
 const memT={};async function get(k,fn,force){if(!force&&mem[k]&&Date.now()-(memT[k]||0)<60000)return mem[k];const r=await fn();if(!r.error){mem[k]=r;memT[k]=Date.now()}return r}
@@ -125,9 +126,10 @@ async function api(action,d={},tries=0){
     if(r.error&&String(r.error).startsWith('서버 오류')&&tries<2)return retry();return r}
   catch(e){if(tries<2&&!['login','forgot','changePw'].includes(action))return retry();return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
 function fmt0(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):qz(ib(pic(fx(esc(x))))).replace(/\n/g,'<br>')).join('')}
-function fmt(t){const P=String(t??'').split(/\[\s*분할\s*(?:[:：]\s*([\d.:：\s]*?))?\s*\]([\s\S]*?)\[\s*\/\s*분할\s*\]/);let out='';
-  for(let i=0;i<P.length;i+=3){out+=fmt0(P[i]||'');if(i+2<P.length){const cs=P[i+2].split(/\[\s*칸\s*\]/),r=P[i+1]?P[i+1].split(/[:：]/).map(x=>x.trim()):[];
-    out+=`<div class="cols" style="grid-template-columns:${cs.map((_,k)=>`minmax(0,${r[k]||1}fr)`).join(' ')}">${cs.map(c=>`<div class="col">${fmt0(c.trim())}</div>`).join('')}</div>`}}return out}
+function fmt(t){const P=String(t??'').replace(/\r/g,'').split(/\[\s*분할\s*(?:[:：]\s*([\d.:：\s]*?))?\s*(?:\|\s*(줄맞춤|가운데)\s*)?\]([\s\S]*?)\[\s*\/\s*분할\s*\]/);let out='';
+  for(let i=0;i<P.length;i+=4){out+=fmt0(P[i]||'');if(i+3<P.length){const cs=P[i+3].split(/\[\s*칸\s*\]/),r=P[i+1]?P[i+1].split(/[:：]/).map(x=>x.trim()):[],op=P[i+2],g=cs.map((_,k)=>`minmax(0,${r[k]||1}fr)`).join(' ');
+    if(op==='줄맞춤'){const L=cs.map(c=>c.replace(/^\n/,'').replace(/\n$/,'').split('\n')),n=Math.max(...L.map(a=>a.length));let h='';for(let k=0;k<n;k++)L.forEach(a=>{h+=`<div class="cell">${fmt0(a[k]||'')}</div>`});out+=`<div class="cols2" style="grid-template-columns:${g}">${h}</div>`}
+    else out+=`<div class="cols" style="grid-template-columns:${g}${op==='가운데'?';align-items:center':''}">${cs.map(c=>`<div class="col">${fmt0(c.trim())}</div>`).join('')}</div>`}}return out}
 const nt=x=>String(x||'').replace(/<[^>]*>/g,'').trim();
 function ib(s){return s.replace(/\[입력(?::([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>{h=nt(h);a=nt(a);return `<input class="ib ii" size="${Math.max(8,Math.ceil(h.length*1.7)+2)}" placeholder="${h}" data-a="${a}" autocomplete="off"><span class="im"></span>`})
   .replace(/\[선택:([^\]|]*)(?:\|([^\]]*))?\]/g,(m,o,a)=>`<select class="ib is" data-a="${nt(a)}"><option value="">선택</option>${o.split('/').map(nt).filter(Boolean).map(x=>`<option>${x}</option>`).join('')}</select><span class="im"></span>`)
