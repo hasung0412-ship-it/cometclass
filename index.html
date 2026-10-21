@@ -58,6 +58,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 @media(max-width:640px){.cols{grid-template-columns:1fr!important}}
 .qz{background:#fffbe8;border-radius:14px;padding:12px 14px;margin:10px 0}.qq{font-weight:bold;margin-bottom:6px}.qin{max-width:260px}select.qin{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;width:auto}
 .qr2{font-weight:bold}.qr2.g{color:#2e8b62}.qr2.r{color:#c25a5a}.qo.sel{background:var(--sky)}
+code.ic{background:#f1f3fa;border-radius:6px;padding:0 5px;font:.92em Consolas,monospace}
 .err{color:#c25a5a;min-height:24px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .choice{display:block;padding:6px 10px;border-radius:10px;cursor:pointer}.choice:hover{background:#f3f5fb}.choice input{width:auto;margin-right:8px}
@@ -66,7 +67,7 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v22)</span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v23)</span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzUtjAEzm2MDsuIkJrnUzR2iw3EqQhu8UUQm5KLqtcm4rxtbghTJnjH1ZHF_1EXc3bD/exec';
@@ -115,11 +116,19 @@ async function api(action,d={},tries=0){
     if(r.error==='auth'){logout();return{error:'다시 로그인해 주세요.'}}
     if(r.error&&String(r.error).startsWith('서버 오류')&&tries<2)return retry();return r}
   catch(e){if(tries<2&&!['login','forgot','changePw'].includes(action))return retry();return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
-function fmt0(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):qz(pic(esc(x))).replace(/\n/g,'<br>')).join('')}
+function fmt0(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):qz(pic(fx(esc(x)))).replace(/\n/g,'<br>')).join('')}
 function fmt(t){return String(t??'').split(/\[분할\]([\s\S]*?)\[\/분할\]/).map((x,i)=>{if(!(i%2))return fmt0(x);const cs=x.split(/\[칸\]/);return `<div class="cols" style="grid-template-columns:repeat(${cs.length},minmax(0,1fr))">${cs.map(c=>`<div class="col">${fmt0(c.trim())}</div>`).join('')}</div>`}).join('')}
-function pic(s){return s.replace(/\[그림:([^\]\s|]+)(?:\|([^\]]*))?\]/g,(m,u,cap)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<figure class="fig"><img class="pic" src="${u}" alt="${cap?cap.trim():'그림'}">${cap?`<figcaption>${cap.trim()}</figcaption>`:''}</figure>`:m)}
+const PAL={빨강:'#d94a4a',파랑:'#3b6fd4',초록:'#2e8b62',주황:'#e67e22',보라:'#7b5fc4',분홍:'#e0559b',회색:'#7b8499',검정:'#3a4256'},HL={노랑:'#fff3a0',초록:'#c9f2d8',파랑:'#cfe3fb',분홍:'#fbd3e4',주황:'#fde3d6',보라:'#e5dcf6'};
+const colr=(v,M)=>{v=v.trim();return M[v]||(/^#[0-9a-f]{3,8}$/i.test(v)?v:null)};
+function fx(s){const st=[];s=s.replace(/`([^`\n]+)`/g,(m,c)=>{st.push(c);return '\u0001'+(st.length-1)+'\u0001'});
+  s=s.replace(/\[색:([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,PAL);return v?`<span style='color:${v}'>${x}</span>`:m})
+    .replace(/\[형광:([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,HL);return v?`<mark style='background:${v};border-radius:4px;padding:0 3px'>${x}</mark>`:m})
+    .replace(/\[(크게|작게):([^\]]*)\]/g,(m,k,x)=>`<span style='font-size:${k==='크게'?'1.3em':'.85em'}'>${x}</span>`)
+    .replace(/\*\*([^*\n]+?)\*\*/g,'<b>$1</b>').replace(/__([^_\n]+?)__/g,'<u>$1</u>').replace(/~~([^~\n]+?)~~/g,'<s>$1</s>');
+  return s.replace(/\u0001(\d+)\u0001/g,(m,i)=>`<code class='ic'>${st[i]}</code>`)}
+function pic(s){return s.replace(/\[그림:([^\]\s|]+)(?:\|([^\]]*))?\]/g,(m,u,cap)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<figure class="fig"><img class="pic" src="${u}" alt="${cap?cap.replace(/<[^>]*>/g,'').trim():'그림'}">${cap?`<figcaption>${cap.trim()}</figcaption>`:''}</figure>`:m)}
 function qz(s){return s.replace(/\[(주관식|드롭다운|객관식|예아니오):([^\]]*)\]/g,(m,k,b)=>{const p=b.split('|').map(x=>x.trim());let q=p[0],ans,opts,h;
-  if(k==='주관식'){ans=p[1];h=p[2]}else if(k==='예아니오'){opts=['예','아니오'];ans=p[1];h=p[2]}else{opts=(p[1]||'').split('/').map(x=>x.trim());ans=p[2];h=p[3]}
+  const sp2=x=>(x||'').replace(/<[^>]*>/g,'');if(k==='주관식'){ans=sp2(p[1]);h=sp2(p[2])}else if(k==='예아니오'){opts=['예','아니오'];ans=sp2(p[1]);h=sp2(p[2])}else{opts=(p[1]||'').split('/').map(x=>sp2(x).trim());ans=sp2(p[2]);h=sp2(p[3])}
   const body=k==='주관식'?'<input class="qin" placeholder="답을 써 보세요" autocomplete="off">':k==='드롭다운'?`<select class="qin"><option value="">선택하세요</option>${opts.map(o=>`<option>${o}</option>`).join('')}</select>`:opts.map(o=>`<button class="ghost qo" data-v="${o}">${o}</button>`).join('');
   return `<div class="qz" data-a="${ans||''}" data-h="${h||''}"><div class="qq">❓ ${q}</div><div class="row">${body}${k==='주관식'||k==='드롭다운'?'<button class="main qc2">확인</button>':''}<span class="qr2"></span></div></div>`})}
 document.addEventListener('click',e=>{const b=e.target.closest('.qc2,.qo');if(!b)return;const z=b.closest('.qz');if(!z)return;const r=z.querySelector('.qr2');
