@@ -54,6 +54,10 @@ button:disabled{opacity:.5;cursor:not-allowed}
 @media(max-width:860px){#wrap.hasToc{display:block}.hasToc #toc{position:fixed;left:0;top:56px;bottom:0;max-height:none;width:290px;background:#fff;z-index:15;transform:translateX(-105%);transition:transform .2s;box-shadow:2px 0 12px #0002}.hasToc #toc.open{transform:none}}
 @media(min-width:861px){#tg{display:none!important}}
 .lk{margin:10px 0 0;color:#c25a5a;font-size:14px}.lw.locked{opacity:.45}.lw.locked .pv,.lw.locked .nx,.lw.locked .ap,.lw.locked .sl{pointer-events:none}
+.fig{margin:8px 0}.fig figcaption{color:var(--sub);font-size:14px;text-align:center;margin-top:4px}.cols{display:grid;gap:16px;margin:10px 0}.col{min-width:0}
+@media(max-width:640px){.cols{grid-template-columns:1fr!important}}
+.qz{background:#fffbe8;border-radius:14px;padding:12px 14px;margin:10px 0}.qq{font-weight:bold;margin-bottom:6px}.qin{max-width:260px}select.qin{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;width:auto}
+.qr2{font-weight:bold}.qr2.g{color:#2e8b62}.qr2.r{color:#c25a5a}.qo.sel{background:var(--sky)}
 .err{color:#c25a5a;min-height:24px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .choice{display:block;padding:6px 10px;border-radius:10px;cursor:pointer}.choice:hover{background:#f3f5fb}.choice input{width:auto;margin-right:8px}
@@ -62,7 +66,7 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v21)</span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v22)</span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzUtjAEzm2MDsuIkJrnUzR2iw3EqQhu8UUQm5KLqtcm4rxtbghTJnjH1ZHF_1EXc3bD/exec';
@@ -76,7 +80,7 @@ function clearDraft(no,act,q){const k=dkey(S.sub,no,act,q);delete DR[k];try{loca
 function loadLocal(q){try{const a=S.at;return a&&a.act?JSON.parse(localStorage.getItem(dkey(a.sub,a.no,a.act,q))||'null'):null}catch(e){return null}}
 function setSv(t,c){const e=$('#sv');e.textContent=t;e.className=c||'';e.style.display='block';clearTimeout(setSv.h);if(c==='ok')setSv.h=setTimeout(()=>e.style.display='none',2500)}
 function collect(bx){const bl=[...bx.querySelectorAll('.blank')];if(bl.length)return bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n');const rd=bx.querySelector('input[type=radio]:checked');if(rd)return rd.value;const el=bx.querySelector('.ans,.free,textarea');return el?el.value:''}
-function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||a.act==='개념'||e.target.closest('.trace'))return;const bx=e.target.closest('.box[data-q]');if(!bx)return;
+function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||a.act==='개념'||e.target.closest('.trace,.qz'))return;const bx=e.target.closest('.box[data-q]');if(!bx)return;
   const q=+bx.dataset.q,text=collect(bx),k=dkey(a.sub,a.no,a.act,q);DR[k]={sub:a.sub,no:a.no,act:a.act,q,text,t:Date.now()};
   try{localStorage.setItem(k,JSON.stringify({t:Date.now(),text}))}catch(_){}
   setSv('✏️ 입력 중...','');clearTimeout(dtm);dtm=setTimeout(flushDrafts,3000)}
@@ -98,7 +102,7 @@ function renderToc(){const T=mem.toc;if(!T||!$('#wrap').classList.contains('hasT
     const sk='s|'+sj.name,so=S.tocOpen[sk]??true;
     return `<div class="ts"><button class="tt" data-t="${esc(sk)}" data-o="${so?1:0}">${so?'▾':'▸'} ${ico(sj.icon)} <b>${esc(sj.name)}</b></button>`+(so?`<div class="tl">${sj.lessons.map(l=>{
       const lk=`l|${sj.name}|${l.no}`,cur=at.sub===sj.name&&at.no===l.no,lo=S.tocOpen[lk]??cur,t=l.t.해석+l.t.작성,d=Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성);
-      return `<button class="tt ${cur?'cur':''}" data-t="${esc(lk)}" data-o="${lo?1:0}">${lo?'▾':'▸'} ${l.no}차시 ${esc(l.title)}${t?` <small>${d}/${t}</small>`:''}</button>`+(lo?`<div class="ta">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>`<button class="tt ti ${cur&&at.act===k?'on':''}" data-go="${esc(sj.name)}|${l.no}|${k}">${AN[k][0]} ${AN[k][1]}${k==='개념'?(l.d[k]>0?' ✔':''):` <small>${Math.min(l.d[k],l.t[k])}/${l.t[k]}</small>`}</button>`).join('')}</div>`:'')}).join('')}</div>`:'')+'</div>'}).join('')}
+      return `<button class="tt ${cur?'cur':''}" data-t="${esc(lk)}" data-o="${lo?1:0}">${lo?'▾':'▸'} ${l.no}차시 ${esc(l.title)}${t?` <small>${d}/${t}</small>`:''}</button>`+(lo?`<div class="ta">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>`<button class="tt ti ${cur&&at.act===k?'on':''}" data-go="${esc(sj.name)}|${l.no}|${k}">${AN[k][0]} ${nm(sj.name,k)}${k==='개념'?(l.d[k]>0?' ✔':''):` <small>${Math.min(l.d[k],l.t[k])}/${l.t[k]}</small>`}</button>`).join('')}</div>`:'')}).join('')}</div>`:'')+'</div>'}).join('')}
 $('#toc').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.t){S.tocOpen[b.dataset.t]=!(+b.dataset.o);renderToc();return}if(b.dataset.go){const[s,n,a]=b.dataset.go.split('|');go(s,+n,a);return}if(b.dataset.soon)toast('🛠 아직 준비중입니다!')};
 async function go(sub,no,act){const T=mem.toc||await get('toc',()=>api('toc'));if(!T||T.error)return;const sj=T.subjects.find(x=>x.name===sub);if(!sj||!sj.ready){toast('🛠 아직 준비중입니다!');return}
   S.sub=sub;S.menu={lessons:sj.lessons};$('#toc').classList.remove('open');act?contentView(no,act):actView(no)}
@@ -111,8 +115,22 @@ async function api(action,d={},tries=0){
     if(r.error==='auth'){logout();return{error:'다시 로그인해 주세요.'}}
     if(r.error&&String(r.error).startsWith('서버 오류')&&tries<2)return retry();return r}
   catch(e){if(tries<2&&!['login','forgot','changePw'].includes(action))return retry();return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
-function fmt(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):pic(esc(x)).replace(/\n/g,'<br>')).join('')}
-function pic(s){return s.replace(/\[그림:([^\]\s]+)\]/g,(m,u)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<img class="pic" src="${u}" alt="그림">`:m)}
+function fmt0(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):qz(pic(esc(x))).replace(/\n/g,'<br>')).join('')}
+function fmt(t){return String(t??'').split(/\[분할\]([\s\S]*?)\[\/분할\]/).map((x,i)=>{if(!(i%2))return fmt0(x);const cs=x.split(/\[칸\]/);return `<div class="cols" style="grid-template-columns:repeat(${cs.length},minmax(0,1fr))">${cs.map(c=>`<div class="col">${fmt0(c.trim())}</div>`).join('')}</div>`}).join('')}
+function pic(s){return s.replace(/\[그림:([^\]\s|]+)(?:\|([^\]]*))?\]/g,(m,u,cap)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<figure class="fig"><img class="pic" src="${u}" alt="${cap?cap.trim():'그림'}">${cap?`<figcaption>${cap.trim()}</figcaption>`:''}</figure>`:m)}
+function qz(s){return s.replace(/\[(주관식|드롭다운|객관식|예아니오):([^\]]*)\]/g,(m,k,b)=>{const p=b.split('|').map(x=>x.trim());let q=p[0],ans,opts,h;
+  if(k==='주관식'){ans=p[1];h=p[2]}else if(k==='예아니오'){opts=['예','아니오'];ans=p[1];h=p[2]}else{opts=(p[1]||'').split('/').map(x=>x.trim());ans=p[2];h=p[3]}
+  const body=k==='주관식'?'<input class="qin" placeholder="답을 써 보세요" autocomplete="off">':k==='드롭다운'?`<select class="qin"><option value="">선택하세요</option>${opts.map(o=>`<option>${o}</option>`).join('')}</select>`:opts.map(o=>`<button class="ghost qo" data-v="${o}">${o}</button>`).join('');
+  return `<div class="qz" data-a="${ans||''}" data-h="${h||''}"><div class="qq">❓ ${q}</div><div class="row">${body}${k==='주관식'||k==='드롭다운'?'<button class="main qc2">확인</button>':''}<span class="qr2"></span></div></div>`})}
+document.addEventListener('click',e=>{const b=e.target.closest('.qc2,.qo');if(!b)return;const z=b.closest('.qz');if(!z)return;const r=z.querySelector('.qr2');
+  const v=b.classList.contains('qo')?b.dataset.v:z.querySelector('.qin').value;
+  if(!String(v).trim()){r.className='qr2 r';r.textContent='답을 골라 주세요';return}
+  z.querySelectorAll('.qo').forEach(x=>x.classList.toggle('sel',x===b));
+  const ok=String(z.dataset.a||'').split('/').some(a=>norm(a)===norm(v));
+  r.className='qr2 '+(ok?'g':'r');r.textContent=ok?'✅ 맞아요! '+(z.dataset.h||''):'❌ 다시 생각해 봐요'});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches&&e.target.matches('.qz .qin')){const b=e.target.closest('.qz').querySelector('.qc2');if(b)b.click()}});
+const DEF={'데이터분석':{해석:'데이터 해석하기'}};
+function nm(sub,k){const L=[...(mem.toc?mem.toc.subjects:[]),...(mem.subjects?mem.subjects.subjects:[])],s=L.find(x=>x.name===sub),o=s&&s.names&&s.names[k];return o||(DEF[String(sub).replace(/\s/g,'')]||{})[k]||AN[k][1]}
 function bar(d,t){return `<div class="bar"><i style="width:${t?Math.min(100,d/t*100):0}%"></i></div>`}
 function setWho(){const u=S.user;$('#who').innerHTML=u?`${S.preview?'<span>👀 미리보기 중 (기록 안 됨)</span>':''}<span>${esc(u.name)}</span>`+(u.role==='관리자'?`<button class="ghost" onclick="togglePrev()">${S.preview?'관리자 화면':'학생 화면 보기'}</button>`:'')+`<button class="ghost" onclick="logout()">로그아웃</button>`:''}
 function togglePrev(){S.preview=!S.preview;setWho();S.preview?(showToc(true),loadToc(),langView()):(showToc(false),adminView())}
@@ -149,11 +167,11 @@ async function lessonView(){if(!mem.toc)app.innerHTML='불러오는 중...';cons
   app.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>actView(+b.dataset.no))}
 function actView(no){S.at={sub:S.sub,no,act:null};const sj=mem.toc.subjects.find(x=>x.name===S.sub),l=sj.lessons.find(x=>x.no===no);renderToc();
   app.innerHTML=`<p><button class="ghost" onclick="lessonView()">← 차시 선택</button></p><h2>[${no}차시] ${esc(l.title)}</h2><div class="grid">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>
-  `<button class="card" data-k="${k}"><small>${AN[k][0]}</small><b>${AN[k][1]}</b>${k==='개념'?(l.d[k]>0?'<small>✔ 완료</small>':''):`<small>문제 ${l.t[k]}개 · ${Math.min(l.d[k],l.t[k])}개 완료</small>${bar(l.d[k],l.t[k])}`}</button>`).join('')}</div>`;
+  `<button class="card" data-k="${k}"><small>${AN[k][0]}</small><b>${nm(S.sub,k)}</b>${k==='개념'?(l.d[k]>0?'<small>✔ 완료</small>':''):`<small>문제 ${l.t[k]}개 · ${Math.min(l.d[k],l.t[k])}개 완료</small>${bar(l.d[k],l.t[k])}`}</button>`).join('')}</div>`;
   app.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>contentView(no,b.dataset.k));Object.keys(AN).filter(k=>l.t[k]>0).forEach(k=>get('L|'+S.sub+'|'+no+'|'+k,()=>api('lesson',{no,act:k})))}
 async function contentView(no,act){S.at={sub:S.sub,no,act};renderToc();const lk='L|'+S.sub+'|'+no+'|'+act;if(!mem[lk])app.innerHTML='불러오는 중...';const r=await get(lk,()=>api('lesson',{no,act}));if(r.error)return app.innerHTML=r.error;
   const sv=q=>{const a=r.saved[q],d=r.drafts&&r.drafts[q],lc=loadLocal(q);let b=a?{answer:a.answer,t:a.t||0}:null;[d&&{answer:d.text,t:d.t},lc&&{answer:lc.text,t:lc.t}].forEach(c=>{if(c&&(!b||c.t>b.t))b={answer:c.answer,t:c.t,dr:1}});return b?{answer:b.answer,ok:a?a.ok:false,submitted:!!a,draft:!!b.dr}:null};
-  app.innerHTML=`<p><button class="ghost" id="back">← 활동 선택</button></p><h2>${AN[act][0]} ${AN[act][1]}</h2><div id="items"></div>`;
+  app.innerHTML=`<p><button class="ghost" id="back">← 활동 선택</button></p><h2>${AN[act][0]} ${nm(S.sub,act)}</h2><div id="items"></div>`;
   $('#back').onclick=()=>actView(no);
   const box=$('#items');
   if(act==='개념'){box.innerHTML=r.items.map(i=>`<div class="box"><h3>${esc(i.title)}</h3>${fmt(i.body)}</div>`).join('');
@@ -348,15 +366,15 @@ async function classView(cls,force){const key='ct|'+S.asub+'|'+cls,sk=S.asub+'|'
   const chips=`<button class="chip ${sel==='all'?'on':''}" data-s="all">전체</button>`+r.lessons.map(l=>`<button class="chip ${sel===l.no?'on':''}" data-s="${l.no}">${l.no}차시</button>`).join('');
   app.innerHTML=`<p><button class="ghost" onclick="adminView()">← 학급 목록</button></p><h2>${esc(S.asub)} · ${cls}반 진도 현황</h2><div class="row" style="margin-bottom:10px">${chips}</div>
   <div class="row" style="margin-bottom:12px"><button class="main" id="csv1">이 화면 CSV</button><button class="ghost" id="csv2">전체 차시 CSV</button><button class="ghost" id="rf">⟳ 새로고침</button><span style="color:var(--sub)">학생 이름을 누르면 답안을 볼 수 있어요.</span></div>
-  <div class="wrap"><table><thead><tr><th rowspan="2">학번 이름</th>${head1}</tr><tr>${vis.map(c=>`<th class="a">${AN[c.k][1]}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td>완료 학생 수</td>${foot}</tr></tfoot></table></div>`;
+  <div class="wrap"><table><thead><tr><th rowspan="2">학번 이름</th>${head1}</tr><tr>${vis.map(c=>`<th class="a">${nm(S.asub,c.k)}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td>완료 학생 수</td>${foot}</tr></tfoot></table></div>`;
   app.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{S.sel[sk]=b.dataset.s==='all'?'all':+b.dataset.s;classView(cls)});
   app.querySelectorAll('[data-id]').forEach(t=>t.onclick=()=>detailView(t.dataset.id,cls));
   $('#rf').onclick=()=>classView(cls,true);
-  const dl=(cs,n)=>csvSave([['학번 이름',...cs.map(c=>`[${c.l.no}차시] ${c.l.title}`)],['',...cs.map(c=>AN[c.k][1])],...r.students.map(s=>[s.id+' '+s.name,...cs.map(c=>cell(s,c).txt)])],n);
+  const dl=(cs,n)=>csvSave([['학번 이름',...cs.map(c=>`[${c.l.no}차시] ${c.l.title}`)],['',...cs.map(c=>nm(S.asub,c.k))],...r.students.map(s=>[s.id+' '+s.name,...cs.map(c=>cell(s,c).txt)])],n);
   $('#csv1').onclick=()=>dl(vis,`${S.asub}_${cls}반_${sel==='all'?'전체':sel+'차시'}.csv`);$('#csv2').onclick=()=>dl(cols,`${S.asub}_${cls}반_전체차시.csv`)}
 async function detailView(id,cls){app.innerHTML='불러오는 중...';const r=await api('detail',{id});if(r.error)return app.innerHTML=r.error;
   const g={};r.recs.forEach(x=>{const k=x.sub+'|'+x.no;(g[k]=g[k]||{sub:x.sub,no:x.no,list:[]}).list.push(x)});const ks=Object.values(g).sort((a,b)=>(b.sub===S.asub)-(a.sub===S.asub)||b.no-a.no);
-  app.innerHTML=`<p><button class="ghost" id="b">← ${cls}반 현황</button></p><h2>${esc(id)} ${esc(r.name)}</h2><div class="row" style="margin-bottom:14px"><button id="rs">비밀번호 초기화 (학번으로)</button></div>`+(ks.map((k,i)=>`<details class="box" ${i===0?'open':''}><summary><b>${esc(k.sub)} · ${k.no}차시</b> · 기록 ${k.list.length}건</summary><div class="wrap"><table><thead><tr><th>활동</th><th>문항</th><th>정답</th><th>시도</th><th>최근 제출</th><th>답안</th></tr></thead><tbody>${k.list.map(x=>`<tr><td>${AN[x.act]?AN[x.act][1]:x.act}</td><td>${x.q||'-'}</td><td>${x.free?'✍️ 제출':(x.ok?'⭕':'❌')}</td><td>${x.tries}</td><td>${x.last}</td><td style="text-align:left"><details><summary>보기</summary><pre>${esc(x.answer)}</pre></details></td></tr>`).join('')}</tbody></table></div></details>`).join('')||'<p>아직 기록이 없어요.</p>');
+  app.innerHTML=`<p><button class="ghost" id="b">← ${cls}반 현황</button></p><h2>${esc(id)} ${esc(r.name)}</h2><div class="row" style="margin-bottom:14px"><button id="rs">비밀번호 초기화 (학번으로)</button></div>`+(ks.map((k,i)=>`<details class="box" ${i===0?'open':''}><summary><b>${esc(k.sub)} · ${k.no}차시</b> · 기록 ${k.list.length}건</summary><div class="wrap"><table><thead><tr><th>활동</th><th>문항</th><th>정답</th><th>시도</th><th>최근 제출</th><th>답안</th></tr></thead><tbody>${k.list.map(x=>`<tr><td>${AN[x.act]?nm(x.sub,x.act):x.act}</td><td>${x.q||'-'}</td><td>${x.free?'✍️ 제출':(x.ok?'⭕':'❌')}</td><td>${x.tries}</td><td>${x.last}</td><td style="text-align:left"><details><summary>보기</summary><pre>${esc(x.answer)}</pre></details></td></tr>`).join('')}</tbody></table></div></details>`).join('')||'<p>아직 기록이 없어요.</p>');
   $('#b').onclick=()=>classView(cls);
   $('#rs').onclick=async()=>{if(!confirm(`${r.name} 학생의 비밀번호를 학번으로 되돌릴까요?`))return;const x=await api('resetPw',{id});alert(x.error||'초기화했어요. 다음 로그인 때 비밀번호를 새로 만들게 됩니다.')}}
 
