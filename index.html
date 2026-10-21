@@ -69,7 +69,7 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v25)</span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌿 배곧해솔중학교</b><span>정보 학습실 (v26)</span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzUtjAEzm2MDsuIkJrnUzR2iw3EqQhu8UUQm5KLqtcm4rxtbghTJnjH1ZHF_1EXc3bD/exec';
@@ -121,8 +121,8 @@ async function api(action,d={},tries=0){
     if(r.error&&String(r.error).startsWith('서버 오류')&&tries<2)return retry();return r}
   catch(e){if(tries<2&&!['login','forgot','changePw'].includes(action))return retry();return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
 function fmt0(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):qz(ib(pic(fx(esc(x))))).replace(/\n/g,'<br>')).join('')}
-function fmt(t){const P=String(t??'').split(/\[분할(?::([\d.:]+))?\]([\s\S]*?)\[\/분할\]/);let out='';
-  for(let i=0;i<P.length;i+=3){out+=fmt0(P[i]||'');if(i+2<P.length){const cs=P[i+2].split(/\[칸\]/),r=P[i+1]?P[i+1].split(':'):[];
+function fmt(t){const P=String(t??'').split(/\[\s*분할\s*(?:[:：]\s*([\d.:：\s]*?))?\s*\]([\s\S]*?)\[\s*\/\s*분할\s*\]/);let out='';
+  for(let i=0;i<P.length;i+=3){out+=fmt0(P[i]||'');if(i+2<P.length){const cs=P[i+2].split(/\[\s*칸\s*\]/),r=P[i+1]?P[i+1].split(/[:：]/).map(x=>x.trim()):[];
     out+=`<div class="cols" style="grid-template-columns:${cs.map((_,k)=>`minmax(0,${r[k]||1}fr)`).join(' ')}">${cs.map(c=>`<div class="col">${fmt0(c.trim())}</div>`).join('')}</div>`}}return out}
 const nt=x=>String(x||'').replace(/<[^>]*>/g,'').trim();
 function ib(s){return s.replace(/\[입력(?::([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>{h=nt(h);a=nt(a);return `<input class="ib ii" size="${Math.max(8,Math.ceil(h.length*1.7)+2)}" placeholder="${h}" data-a="${a}" autocomplete="off"><span class="im"></span>`})
