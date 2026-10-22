@@ -80,7 +80,7 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v34)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v37)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwmmkq-ZyoAdMnm59phHypRr0OP5hOQKk9hQljjLm0Bq1v3DEM7Uw6PJZtPjbVK3Z-L/exec';
@@ -111,7 +111,9 @@ function rec(no,act,q,answer,ok){clearDraft(no,act,q);if(S.preview||!mem.toc)ret
 /* ---- 왼쪽 목차 ---- */
 function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
 function showToc(on){$('#wrap').classList.toggle('hasToc',on);$('#tg').classList.toggle('on',on);if(on)renderToc();else $('#toc').classList.remove('open')}
-async function loadToc(){await get('toc',()=>api('toc'));renderToc()}
+async function loadToc(){await get('toc',()=>api('toc'));renderToc();get('info',()=>api('info')).then(r=>{if(r&&!r.error)renderSide()})}
+let NSEEN=false;function autoNotice(){if(NSEEN||!S.user||S.user.role==='관리자'||S.preview)return;const I=mem.info,k='seen|'+S.user.id;let seen=[];try{seen=JSON.parse(localStorage.getItem(k)||'[]')}catch(e){}
+  const nw=((I&&I.notices)||[]).filter(x=>!seen.includes(x.date+'|'+x.title));NSEEN=true;if(!nw.length)return;try{localStorage.setItem(k,JSON.stringify(seen.concat(nw.map(x=>x.date+'|'+x.title)).slice(-200)))}catch(e){}openInfo('notice',nw)}
 function renderToc(){renderToc0();renderSide()}
 function renderToc0(){const T=mem.toc;if(!T||!$('#wrap').classList.contains('hasToc'))return;const at=S.at||{};
   $('#toc').innerHTML='<h4>📚 목차</h4>'+T.subjects.map(sj=>{
@@ -122,9 +124,10 @@ function renderToc0(){const T=mem.toc;if(!T||!$('#wrap').classList.contains('has
       return `<button class="tt ${cur?'cur':''}" data-t="${esc(lk)}" data-o="${lo?1:0}">${lo?'▾':'▸'} [${l.no}차시] ${esc(l.title)}${t?` <small>${d}/${t}</small>`:''}</button>`+(lo?`<div class="ta">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>`<button class="tt ti ${cur&&at.act===k?'on':''}" data-go="${esc(sj.name)}|${l.no}|${k}">${AN[k][0]} ${nm(sj.name,k)}${k==='개념'?(l.d[k]>0?' ✔':''):` <small>${Math.min(l.d[k],l.t[k])}/${l.t[k]}</small>`}</button>`).join('')}</div>`:'')}).join('')}</div>`:'')+'</div>'}).join('')+helperBtns('th')}
 $('#toc').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.info){openInfo(b.dataset.info);return}if(b.dataset.t){S.tocOpen[b.dataset.t]=!(+b.dataset.o);renderToc();return}if(b.dataset.go){const[s,n,a]=b.dataset.go.split('|');go(s,+n,a);return}if(b.dataset.soon)toast('🛠 아직 준비중입니다!')};
 /* ---- 오른쪽 칸: 집중 시간 스톱워치 + 학습 도우미 ---- */
-const helperBtns=c=>`<div class="sbox ${c||''}" style="margin-top:12px"><h4>📚 학습 도우미</h4><button class="tt" data-info="notice">📢 공지</button><button class="tt" data-info="term">📖 용어 사전</button><button class="tt" data-info="err">🛠 오류 모음</button><button class="tt" data-info="cheat">📝 치트시트</button></div>`;
+const helperBtns=c=>`<div class="sbox ${c||''}" style="margin-top:12px"><h4>📚 학습 도우미</h4><button class="tt" data-info="notice">📢 지난 공지 모두 보기</button><button class="tt" data-info="term">📖 용어 사전</button><button class="tt" data-info="err">🛠 오류 모음</button><button class="tt" data-info="cheat">📝 치트시트</button></div><div class="sbox" style="margin-top:12px"><h4>🏫 성적</h4><button class="tt" data-info="assess">📑 수행평가 안내</button><button class="tt" data-info="grade">🔒 내 성적 보기</button></div>`;
 function renderSide(){const e=$('#side');if(!e||!$('#wrap').classList.contains('hasToc'))return;const stu=S.user&&S.user.role!=='관리자';
-  e.innerHTML=(stu?`<div class="sbox tmb" id="tbf"><h4>🎯 오늘 내가 수업에 집중한 시간</h4><div class="clk" id="tf">00:00:00</div></div><div class="sbox tmb" id="tba"><h4>💤 잠시 다른 곳에 다녀온 시간</h4><div class="clk" id="ta">00:00:00</div></div><p style="font-size:12px;color:var(--sub);margin:0 0 12px">이 화면이 보이는 동안 집중 시간이 올라가고, 다른 탭·창으로 가거나 화면을 최소화하면 멈춰요.</p>`:'<div class="sbox"><small>👀 미리보기에서는 시간이 기록되지 않아요</small></div>')+helperBtns();tmUpd()}
+  const I=mem.info,N=(I&&I.notices||[]).slice(0,3),nb=`<div class="sbox" style="background:#fffbe8"><h4>📢 공지</h4>${N.length?N.map(x=>`<div style="margin-bottom:8px"><b>${esc(x.title)}</b> <small style="color:var(--sub)">${esc(x.date)}</small><div style="font-size:14px;max-height:160px;overflow:auto">${fmt(x.body)}</div></div>`).join(''):'<small style="color:var(--sub)">새 공지가 없어요</small>'}</div>`;
+  e.innerHTML=nb+(stu?`<div class="sbox tmb" id="tbf"><h4>🎯 오늘 내가 수업에 집중한 시간</h4><div class="clk" id="tf">00:00:00</div></div><div class="sbox tmb" id="tba"><h4>💤 잠시 다른 곳에 다녀온 시간</h4><div class="clk" id="ta">00:00:00</div></div><p style="font-size:12px;color:var(--sub);margin:0 0 12px">이 화면이 보이는 동안 집중 시간이 올라가고, 다른 탭·창으로 가거나 화면을 최소화하면 멈춰요.</p>`:'<div class="sbox"><small>👀 미리보기에서는 시간이 기록되지 않아요</small></div>')+helperBtns();tmUpd()}
 $('#side').onclick=e=>{const b=e.target.closest('button[data-info]');if(b)openInfo(b.dataset.info)};
 const TM={f:0,a:0,date:'',last:0,hid:false,dirty:false,on:false,t1:null,t2:null};
 const tdy=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`};
@@ -147,17 +150,25 @@ document.addEventListener('visibilitychange',()=>{if(!TM.on)return;const a0=TM.a
   if(h)tmFlush(true);else{const d=TM.a-a0;if(d>=10)toast(`💤 ${fmtT(d)} 동안 다른 곳에 다녀왔어요`);tmFlush()}tmUpd()});
 addEventListener('pagehide',()=>{if(TM.on){tmAccrue();tmFlush(true)}});
 /* ---- 학습 도우미: 공지 / 용어 사전 / 오류 모음 / 치트시트 ---- */
-async function openInfo(kind){const r=await get('info',()=>api('info'));if(r.error){toast(r.error);return}
-  const T={notice:'📢 공지',term:'📖 용어 사전',err:'🛠 오류 모음',cheat:'📝 치트시트'}[kind],m=document.createElement('div');m.className='modal';
+async function openInfo(kind,nl){if(kind==='grade')return openGrades();const r=await get('info',()=>api('info'));if(r.error){toast(r.error);return}
+  const T={notice:'📢 공지',term:'📖 용어 사전',err:'🛠 오류 모음',cheat:'📝 치트시트',assess:'📑 수행평가 안내'}[kind],m=document.createElement('div');m.className='modal';
   const tag=x=>x.sub?` <small style="color:var(--sub)">${esc(x.sub)}</small>`:'';
   let h='';
-  if(kind==='notice')h=(r.notices.length?r.notices.map(x=>`<div class="sbox"><b>${esc(x.title)}</b> <small style="color:var(--sub)">${esc(x.date)}</small><div>${fmt(x.body)}</div></div>`).join(''):'<p>등록된 공지가 없어요.</p>');
+  if(kind==='notice')h=((nl||r.notices).length?(nl||r.notices).map(x=>`<div class="sbox"><b>${esc(x.title)}</b> <small style="color:var(--sub)">${esc(x.date)}</small><div>${fmt(x.body)}</div></div>`).join(''):'<p>등록된 공지가 없어요.</p>');
   if(kind==='term')h=r.terms.length?r.terms.map(x=>`<div class="sbox" data-k="${esc((x.name+' '+x.body).toLowerCase())}"><b>${esc(x.name)}</b>${tag(x)}<div>${fmt(x.body)}</div>${x.ex?`<div style="color:var(--sub)">예) ${fmt(x.ex)}</div>`:''}</div>`).join(''):'<p>등록된 용어가 없어요.</p>';
   if(kind==='err')h=r.errors.length?r.errors.map(x=>`<div class="sbox" data-k="${esc((x.name+' '+x.body+' '+x.fix).toLowerCase())}"><b>${esc(x.name)}</b>${tag(x)}<div>${fmt(x.body)}</div><div>🔧 ${fmt(x.fix)}</div></div>`).join(''):'<p>등록된 오류가 없어요.</p>';
   if(kind==='cheat'){const g={};r.cheats.forEach(x=>(g[x.cat]=g[x.cat]||[]).push(x));h=Object.keys(g).length?Object.keys(g).map(c=>`<h4 style="margin:14px 0 6px">${esc(c)}</h4>`+g[c].map(x=>`<div class="sbox"><b>${esc(x.title)}</b><div>${fmt(x.body)}</div></div>`).join('')).join(''):'<p>등록된 치트시트가 없어요.</p>'}
+  if(kind==='assess'){const g={};(r.assess||[]).forEach(x=>(g[x.cat]=g[x.cat]||[]).push(x));h=Object.keys(g).length?Object.keys(g).map(c=>`<h4 style="margin:14px 0 6px">${esc(c)}</h4>`+g[c].map(x=>`<div class="sbox"><b>${esc(x.title)}</b><div>${fmt(x.body)}</div></div>`).join('')).join(''):'<p>등록된 수행평가 안내가 없어요.</p>'}
   m.innerHTML=`<div class="mb" style="max-width:720px;width:94%;max-height:85vh;overflow:auto"><div class="row" style="justify-content:space-between;margin:0 0 10px"><h3 style="margin:0">${T}</h3><button class="ghost cl">닫기</button></div>${kind==='term'||kind==='err'?'<input class="sq" placeholder="🔍 검색" style="margin-bottom:10px">':''}<div class="il">${h}</div></div>`;
   document.body.appendChild(m);m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.cl').onclick=()=>m.remove();
   const q=m.querySelector('.sq');if(q)q.oninput=()=>{const v=q.value.trim().toLowerCase();m.querySelectorAll('[data-k]').forEach(c=>c.style.display=c.dataset.k.includes(v)?'':'none')}}
+function openGrades(){if(S.preview||!S.user||S.user.role==='관리자'){toast('학생 계정으로 로그인했을 때만 볼 수 있어요');return}
+  const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class="mb" style="max-width:640px;width:94%;max-height:85vh;overflow:auto"><div class="row" style="justify-content:space-between;margin:0 0 10px"><h3 style="margin:0">🔒 내 성적 보기</h3><button class="ghost cl">닫기</button></div><div class="gb"><p style="margin:0 0 8px">성적은 본인만 볼 수 있어요. 내가 정한 <b>비밀번호</b>를 한 번 더 입력해 주세요.</p><input type="password" class="gp" placeholder="비밀번호" autocomplete="current-password"><div class="err ge"></div><button class="main gk">확인</button></div></div>`;
+  document.body.appendChild(m);const pw=m.querySelector('.gp'),er=m.querySelector('.ge'),gb=m.querySelector('.gb');pw.focus();m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.cl').onclick=()=>m.remove();
+  const go=async()=>{if(!pw.value)return;er.textContent='확인 중...';const r=await api('myGrades',{pw:pw.value});pw.value='';if(r.error){er.textContent=r.error;return}
+    const L=r.items,num=x=>typeof x==='number'?x:parseFloat(x),tot=L.reduce((a,x)=>a+(isNaN(num(x.score))?0:num(x.score)),0),fu=L.reduce((a,x)=>a+(isNaN(num(x.full))||isNaN(num(x.score))?0:num(x.full)),0);
+    gb.innerHTML=`<p style="margin:0 0 8px"><b>${esc(r.name)}</b> · ${esc(r.year)}년</p>`+(L.length?`<div class="wrap"><table><thead><tr><th>항목</th><th>점수</th><th>만점</th><th>비고</th></tr></thead><tbody>${L.map(x=>`<tr><td style="text-align:left">${esc(x.title)}</td><td><b>${esc(x.score)}</b></td><td>${esc(x.full)}</td><td style="text-align:left;white-space:normal">${esc(x.note)}</td></tr>`).join('')}</tbody>${L.length>1&&fu?`<tfoot><tr><td>합계</td><td>${Math.round(tot*100)/100}</td><td>${fu}</td><td></td></tr></tfoot>`:''}</table></div>`:'<p>아직 등록된 성적이 없어요.</p>')+'<p style="font-size:12px;color:var(--sub)">화면을 닫으면 성적은 지워져요.</p>'};
+  m.querySelector('.gk').onclick=go;pw.addEventListener('keydown',e=>{if(e.key==='Enter')go()})}
 async function go(sub,no,act){const T=mem.toc||await get('toc',()=>api('toc'));if(!T||T.error)return;const sj=T.subjects.find(x=>x.name===sub);if(!sj||!sj.ready){toast('🛠 아직 준비중입니다!');return}
   S.sub=sub;S.menu={lessons:sj.lessons};$('#toc').classList.remove('open');act?contentView(no,act):actView(no)}
 const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -210,7 +221,7 @@ function nm(sub,k){const L=[...(mem.toc?mem.toc.subjects:[]),...(mem.subjects?me
 function bar(d,t){return `<div class="bar"><i style="width:${t?Math.min(100,d/t*100):0}%"></i></div>`}
 function setWho(){const u=S.user;$('#who').innerHTML=u?`${S.preview?'<span>👀 미리보기 중 (기록 안 됨)</span>':''}<span>${esc(u.name)}</span>`+(u.role==='관리자'?`<button class="ghost" onclick="togglePrev()">${S.preview?'관리자 화면':'학생 화면 보기'}</button>`:'')+`<button class="ghost" onclick="logout()">로그아웃</button>`:''}
 function togglePrev(){S.preview=!S.preview;setWho();S.preview?(showToc(true),loadToc(),langView()):(showToc(false),adminView())}
-function logout(){tmStop();mem={};S.preview=false;S.sel={};S.sub='';S.asub='';S.ayear='';sessionStorage.removeItem('t');S.token='';S.user=null;setWho();loginView()}
+function logout(){NSEEN=false;tmStop();mem={};S.preview=false;S.sel={};S.sub='';S.asub='';S.ayear='';sessionStorage.removeItem('t');S.token='';S.user=null;setWho();loginView()}
 
 /* 로그인 */
 async function fillYears(){const e=$('#yr');if(!e)return;const r=await get('years',()=>api('years')),L=(r&&r.years)||[];if(!L.length){e.style.display='none';return}
