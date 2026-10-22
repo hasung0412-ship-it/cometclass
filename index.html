@@ -86,10 +86,10 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .lst{border-collapse:collapse;margin:2px 0}.lst td{border:1.5px solid #cdbfe8;padding:3px 12px;text-align:center;font-family:Consolas,monospace}.lst td.ix{border:0;font-size:11px;color:var(--sub);padding:0 12px}.lst td.hl{background:#fff3a0;font-weight:700}.lst td.hl2{color:#b8860b;font-weight:700}
 .tr2.one{grid-template-columns:minmax(0,1fr)!important}.tr2.one .tp:nth-child(2){display:none}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v61)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v63)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
-const API='https://script.google.com/macros/s/AKfycbwSQMhFPf3sdpXyv3442zaR3WaJShVosFTX4GYH6JgWQrLr81b3mLRICHkSFbpnrQwM/exec';
+const API='https://script.google.com/macros/s/AKfycbwJC5qbo-y0Zca3-PT9jvJ0AJSTWruTKX09P-TuRtglua2iA9lpeCmAWPVdObeA6Oic/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:'',at:null,tocOpen:{},ayear:''};let mem={};
 const memT={};async function get(k,fn,force){if(!force&&mem[k]&&Date.now()-(memT[k]||0)<60000)return mem[k];const r=await fn();if(!r.error){mem[k]=r;memT[k]=Date.now()}return r}
@@ -102,7 +102,7 @@ function clearDraft(no,act,q){const k=dkey(S.sub,no,act,q);delete DR[k];if(isAft
 function loadLocal(q){try{const a=S.at;return a&&a.act?JSON.parse(localStorage.getItem(dkey(a.sub,a.no,a.act,q))||'null'):null}catch(e){return null}}
 function setSv(t,c){const e=$('#sv');e.textContent=t;e.className=c||'';e.style.display='block';clearTimeout(setSv.h);if(c==='ok')setSv.h=setTimeout(()=>e.style.display='none',2500)}
 function collect(bx){if(bx.dataset.etc)return [...bx.querySelectorAll('.ib')].map((x,k)=>`${k+1}: ${x.type==='checkbox'?(x.checked?'1':'0'):x.value}`).join('\n');const bl=[...bx.querySelectorAll('.blank')];if(bl.length)return bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n');const rd=bx.querySelector('input[type=radio]:checked');if(rd)return rd.value;const el=bx.querySelector('.ans,.free,textarea');return el?el.value:''}
-function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||e.target.closest('.trace,.qz'))return;let q,text;
+function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||e.target.closest('.trace,.qz,.sp2'))return;let q,text;
   if(a.act==='개념'){const el=e.target.closest('.ib');if(!el)return;q=+el.dataset.i;text=el.type==='checkbox'?(el.checked?'1':'0'):el.value}
   else{const bx=e.target.closest('.box[data-q]');if(!bx||(e.target.closest('.ib')&&!bx.dataset.etc))return;q=+bx.dataset.q;text=collect(bx)}
   const k=dkey(a.sub,a.no,a.act,q);DR[k]={sub:a.sub,no:a.no,act:a.act,q,text,t:Date.now()};
@@ -309,17 +309,22 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};renderToc();try{local
     if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,q,a,x.correct);
     if(x.free){m.className='msg ok';m.innerHTML='📨 제출했어요! 고쳐서 다시 제출해도 돼요. '+esc(x.explain||'');return}
     m.className='msg '+(x.correct?'ok':'no');m.innerHTML=(x.correct?'✅ 정답이에요! ':'❌ 아쉬워요, 다시 생각해 봐요. ')+esc(x.explain||'')})}
-  if(act==='작성'){box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요.</p>`+r.items.map((i,n)=>{const s=sv(i.q);return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}
-  <textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">제출하고 채점</button></div>
-  <pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.ok?'✅ 이전에 통과했어요':(s&&!s.submitted?'✏️ 이어서 쓰던 코드가 있어요 (아직 제출 전)':'')}</div></div>`}).join('');
+  if(act==='작성'){box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니에요. 직접 짜 보고 💾 저장해 두세요!</p>`+r.items.map((i,n)=>{const s=sv(i.q);return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}
+  <div class="tr2${i.hasSample?'':' one'}"><div class="tp"><h4>✍️ 내가 짠 코드</h4><textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">💾 저장</button>${String(i.hint||'').trim()?'<button class="ghost hb"></button>':''}</div><div class="hl"></div><pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.ok?'💾 저장해 둔 코드예요':(s&&!s.submitted?'✏️ 이어서 쓰던 코드가 있어요 (아직 저장 전)':'')}</div></div>
+  ${i.hasSample?`<div class="tp"><h4>🔒 선생님 예시 코드</h4><div class="sm"><p style="margin:0 0 8px;color:var(--sub)">선생님이 알려 주는 비밀번호를 입력하면 열려요.</p><div class="row"><input type="password" class="sp2" placeholder="비밀번호" autocomplete="off" style="max-width:200px"><button class="main sk">열기</button></div><div class="err se"></div></div></div>`:''}</div></div>`}).join('');
     box.querySelectorAll('.box').forEach((bx,n)=>{const it=r.items[n],ta=bx.querySelector('textarea'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
+      const hb=bx.querySelector('.hb');if(hb){const hs=String(it.hint).split(/\r?\n---\r?\n/).map(x=>x.trim()).filter(Boolean),hl=bx.querySelector('.hl');let hn=0;
+        const hbt=()=>{hb.textContent=hn<hs.length?`💡 ${hn?'다음 ':''}힌트 보기 (${hn}/${hs.length})`:`💡 힌트를 모두 봤어요 (${hs.length}/${hs.length})`;hb.disabled=hn>=hs.length};hbt();
+        hb.onclick=()=>{if(hn>=hs.length)return;const d=document.createElement('div');d.className='sbox';d.style.background='#fffbe8';d.innerHTML=`<b>💡 힌트 ${hn+1}</b><div>${fmt(hs[hn])}</div>`;hl.appendChild(d);hn++;hbt()}}
+      if(it.hasSample){const sm=bx.querySelector('.sm'),pw=bx.querySelector('.sp2'),er=bx.querySelector('.se'),sk=`su|${S.user.id}|${S.sub}|${no}|${it.q}`;
+        const open=async(p0,auto)=>{if(!auto)er.textContent='확인 중...';const x=await api('sample',{no,q:it.q,pw:p0});if(x.error){if(!auto)er.textContent=x.error;else try{sessionStorage.removeItem(sk)}catch(e){}return}
+          try{sessionStorage.setItem(sk,p0)}catch(e){}sm.innerHTML=`<pre style="margin:0">${esc(x.code)}</pre>`};
+        bx.querySelector('.sk').onclick=()=>{if(pw.value.trim())open(pw.value.trim())};pw.addEventListener('keydown',e=>{if(e.key==='Enter')bx.querySelector('.sk').click()});
+        let sv0=null;try{sv0=sessionStorage.getItem(sk)}catch(e){}if(sv0!=null||(S.user&&S.user.role==='관리자'))open(sv0||'',true)}
       ta.onkeydown=e=>{if(e.key==='Tab'){e.preventDefault();document.execCommand('insertText',false,'    ')}};
       bx.querySelector('.run').onclick=async()=>{out.style.display='block';out.textContent='실행 중...';try{out.textContent=await runPy(ta.value,it.ins[0])||'(출력 없음)'}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
-      bx.querySelector('.sub').onclick=async()=>{m.className='msg';out.style.display='block';out.textContent='채점 중...';let pass=0,fail=[];
-        try{for(let k=0;k<it.outs.length;k++){const o=(await runPy(ta.value,it.ins[k]||'')).replace(/\s+$/gm,'').trim();if(o===String(it.outs[k]).replace(/\s+$/gm,'').trim())pass++;else fail.push(k+1)}}
-        catch(e){out.textContent='파이썬을 불러오지 못했어요.';return}
-        const ok=pass===it.outs.length;out.textContent=`테스트 ${pass} / ${it.outs.length} 통과`+(fail.length?` (실패: ${fail.join(', ')}번)`:'');
-        const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok});if(!x.error)rec(no,act,it.q,ta.value,ok);m.className='msg '+(ok?'ok':'no');m.textContent=ok?'✅ 모두 통과! 제출됐어요.':'❌ 제출은 저장됐어요. 코드를 고쳐서 다시 도전해 봐요.'}})}}
+      bx.querySelector('.sub').onclick=async()=>{const b=bx.querySelector('.sub');if(!ta.value.trim()){m.className='msg no';m.textContent='코드를 먼저 써 주세요';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';
+        const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='💾 저장했어요! 고쳐서 다시 저장해도 돼요.'}})}}
 async function lessonView0(){const r=await api('menu');if(!r.error)S.menu=r}
 
 /* 파이썬 실행 (브라우저 안, Pyodide) */
