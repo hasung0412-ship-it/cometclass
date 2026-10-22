@@ -82,8 +82,9 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .gt{width:100%;table-layout:fixed;font-size:17px}.gt th,.gt td{padding:11px 12px}.gt td:nth-child(n+2),.gt th:nth-child(n+2){text-align:center}.gt td b{font-size:19px}
 .tb{border-collapse:collapse;margin:8px auto;font-size:17px}.tb th,.tb td{border:2px solid #cdbfe8;padding:8px 16px;min-width:56px;min-height:34px;text-align:center;white-space:normal}.tb caption{caption-side:top;text-align:center;font-weight:700;font-size:18px;padding:0 0 6px;font-family:Consolas,monospace}.tb th{background:#efe8fb}.tb.lf td,.tb.lf th{text-align:left}
 .ctr{text-align:center;margin:8px 0}.ctr pre{display:table;margin:8px auto;text-align:left}.ctr .qz,.ctr .box{text-align:center}
+.ib.ii,select.ib{margin:6px 3px;vertical-align:middle}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v55)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v56)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwbBNAy4xB4SyCKf-0521cW6YM-ZqVwAoWWyKa3z9hXxqpEAzsTjW1lAAIxNua9baGe/exec';
@@ -203,7 +204,7 @@ function tbl(op,b){op=op||'';const tm=/(?:제목|이름)\s*[=:：]\s*([^|]*)/.ex
   if(!R.length)return '';const w=Math.max(...R.map(r=>r.length));
   return `<div class="wrap"><table class="tb${lf?' lf':''}">${ttl?`<caption>${qz(ib(pic(fx(esc(ttl)))))}</caption>`:''}`+R.map((r,i)=>{const t=(!nh&&i===0)?'th':'td';let h='';for(let k=0;k<w;k++)h+=`<${t}>${ce(r[k]||'')}</${t}>`;return `<tr>${h}</tr>`}).join('')+'</table></div>'}
 function fmtTx(x){const P=x.split(TBR);let o='';for(let i=0;i<P.length;i+=3){let a=P[i]||'';if(i+2<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=qz(ib(pic(fx(esc(a))))).replace(/\n/g,'<br>');if(i+2<P.length)o+=tbl(P[i+1],P[i+2])}return o}
-function fmt0(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):fmtTx(x)).join('')}
+function fmt0(t){const PP=String(t??'').split('```');return PP.map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):fmtTx(x.replace(i>0?/^[ \t]*\n/:/^$/,'').replace(i<PP.length-1?/\n[ \t]*$/:/^$/,''))).join('')}
 const CTR=/\[\s*가운데\s*\]([\s\S]*?)\[\s*\/\s*가운데\s*\]/;
 function fmt0c(t){const P=String(t??'').split(CTR);let o='';for(let i=0;i<P.length;i+=2){let a=P[i]||'';if(i+1<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=fmt0(a);if(i+1<P.length)o+=`<div class="ctr">${fmt0(P[i+1].replace(/^\s*\n/,'').replace(/\s+$/,''))}</div>`}return o}
 function fmt(t){const P=String(t??'').replace(/\r/g,'').split(/\[\s*분할\s*(?:[:：]\s*([\d.:：\s]*?))?\s*(?:\|\s*(줄맞춤|가운데)\s*)?\]([\s\S]*?)\[\s*\/\s*분할\s*\]/);let out='';
