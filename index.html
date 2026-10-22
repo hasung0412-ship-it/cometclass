@@ -83,8 +83,9 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .tb{border-collapse:collapse;margin:8px auto;font-size:17px}.tb th,.tb td{border:2px solid #cdbfe8;padding:8px 16px;min-width:56px;min-height:34px;text-align:center;white-space:normal}.tb caption{caption-side:top;text-align:center;font-weight:700;font-size:18px;padding:0 0 6px;font-family:Consolas,monospace}.tb th{background:#efe8fb}.tb.lf td,.tb.lf th{text-align:left}
 .ctr{text-align:center;margin:8px 0}.ctr pre{display:table;margin:8px auto;text-align:left}.ctr .qz,.ctr .box{text-align:center}
 .ib.ii,select.ib{margin:6px 3px;vertical-align:middle}
+.lst{border-collapse:collapse;margin:2px 0}.lst td{border:1.5px solid #cdbfe8;padding:3px 12px;text-align:center;font-family:Consolas,monospace}.lst td.ix{border:0;font-size:11px;color:var(--sub);padding:0 12px}.lst td.hl{background:#fff3a0;font-weight:700}.lst td.hl2{color:#b8860b;font-weight:700}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v58)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v59)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwbBNAy4xB4SyCKf-0521cW6YM-ZqVwAoWWyKa3z9hXxqpEAzsTjW1lAAIxNua9baGe/exec';
@@ -325,7 +326,18 @@ async function lessonView0(){const r=await api('menu');if(!r.error)S.menu=r}
 const br=s=>s.replace(/\s*\/\/\s*/g,'<br>'),TRQ=/\{\{([^{}\n]*?)\}\}/g,norm=s=>String(s).replace(/\s/g,'').toLowerCase(),spl=s=>s.replace(/^( +)/,m=>m.replace(/ /g,'<span class="sp"> </span>'));
 const SYN={'참':['true','t','맞음'],'거짓':['false','f','틀림'],'안':['내부','안쪽','안에','안으로'],'밖':['외부','바깥','바깥쪽','밖에'],'예':['네','응','yes','y','맞아요','들어가요','진입해요'],'아니오':['아니','아니요','아뇨','no','n','안들어가요','진입못해요']},SUF=['이다','이에요','입니다','이야','예요','요','임','이죠','이지요'];
 const okAns=(a,x)=>{const n=norm(x);return [a,...(SYN[a]||[])].map(norm).some(f=>n===f||SUF.some(s=>n===f+s))};
-function rangeInfo(e){const m=/^range\s*\(([^()]*)\)$/.exec(e.trim());if(!m)return null;const a=m[1].split(',').map(x=>Number(x.trim()));if(a.some(isNaN)||a.length<1||a.length>3)return null;let lo=0,hi,s=1;if(a.length===1)hi=a[0];else{lo=a[0];hi=a[1];if(a.length===3)s=a[2]}if(!s)return null;const L=[];for(let v=lo;s>0?v<hi:v>hi;v+=s){L.push(v);if(L.length>30)break}return{lo,hi,s,L}}
+let TRLEN={}; // 코드 안의 '이름 = [..]' 리스트 길이 (range(len(이름)) 를 풀 때 씀)
+function splitTop(str,sep){const out=[];let d=0,q='',cur='';for(const ch of str){if(q){cur+=ch;if(ch===q)q='';continue}if(ch==='"'||ch==="'"){q=ch;cur+=ch;continue}if('[({'.includes(ch))d++;if('])}'.includes(ch))d--;if(ch===sep&&d===0){out.push(cur.trim());cur='';continue}cur+=ch}if(cur.trim()!=='')out.push(cur.trim());return out}
+function rangeInfo(e){e=e.replace(/len\(\s*(\w+)\s*\)/g,(m,n)=>TRLEN[n]!=null?TRLEN[n]:m);const m=/^range\s*\(([^()]*)\)$/.exec(e.trim());if(!m)return null;const a=m[1].split(',').map(x=>Number(x.trim()));if(a.some(isNaN)||a.length<1||a.length>3)return null;let lo=0,hi,s=1;if(a.length===1)hi=a[0];else{lo=a[0];hi=a[1];if(a.length===3)s=a[2]}if(!s)return null;const L=[];for(let v=lo;s>0?v<hi:v>hi;v+=s){L.push(v);if(L.length>30)break}return{lo,hi,s,L}}
+function vizVal(r,name,vs,line){const t=String(r).trim();const isL=t[0]==='['&&t.endsWith(']'),isD=t[0]==='{'&&t.endsWith('}')&&t.includes(':');if(!isL&&!isD)return esc(r);
+  let items;try{items=splitTop(t.slice(1,-1),',')}catch(e){return esc(r)}
+  const un=x=>String(x).replace(/^['"]|['"]$/g,'');let hi=-1;
+  if(line){for(const nm of Object.keys(vs)){if(nm!==name)continue;const m=new RegExp('\\b'+nm.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\[\\s*(-?\\d+|[A-Za-z_]\\w*|"[^"]*"|\'[^\']*\')\\s*\\]').exec(line);if(!m)continue;let tk=m[1];
+    if(isL){let n=/^-?\d+$/.test(tk)?Number(tk):Number(vs[tk]);if(!isNaN(n)){if(n<0)n+=items.length;if(n>=0&&n<items.length)hi=n}}
+    else{const key=/^['"]/.test(tk)?un(tk):(vs[tk]!=null?un(vs[tk]):null);if(key!=null)hi=items.findIndex(it=>{const kv=splitTop(it,':');return un(kv[0])===key})}}}
+  if(isL)return `<table class="lst"><tr>${items.map((_,i)=>`<td class="ix">${i}</td>`).join('')}</tr><tr>${items.map((x,i)=>`<td class="${i===hi?'hl':''}">${esc(x)}</td>`).join('')}</tr></table>`;
+  const kv=items.map(it=>{const a=splitTop(it,':');return[a[0],a.slice(1).join(':')]});
+  return `<table class="lst"><tr><td class="ix">키</td>${kv.map((x,i)=>`<td class="ix${i===hi?' hl2':''}">${esc(x[0])}</td>`).join('')}</tr><tr><td class="ix">값</td>${kv.map((x,i)=>`<td class="${i===hi?'hl':''}">${esc(x[1])}</td>`).join('')}</tr></table>`}
 function parseStages(f){
   if(f.length<=2){const lines=(f[0]||'').split(/\s*\/\/\s*/),as=(f[1]||'').split(',').map(x=>x.trim());let k=0;
     return lines.map(l=>{const n=(l.match(/OO/g)||[]).length,a=as.slice(k,k+n);k+=n;return{msg:l,ans:n&&a.length===n&&a.every(Boolean)?a:null}})}
@@ -350,7 +362,7 @@ def _snap():
     d={}
     for k,v in list(_g.items()):
         if not k.startswith('_') and isinstance(v,(int,float,str,bool,list,tuple,dict,set,type(None))):
-            d[k]=repr(v)[:60]
+            d[k]=repr(v)[:(300 if isinstance(v,(list,tuple,dict,set)) else 60)]
     return d
 def _ans(ln):
     r=[]
@@ -394,11 +406,12 @@ function rgHTML(h,S,c,nx){const L2=h.r.L,more=L2.length>30?' …':'',s=S[c];let 
     if(!fin&&nx&&nx===h.lp.fl&&idx>=0&&ln>h.lp.fl&&ln<=h.lp.end)up=true}
   return L2.map((x,k)=>fin||k<idx||(up&&k===idx)?`<s class="cut">${x}</s>`:k===idx?`<b class="now">${x}</b>`:x).join(', ')+more}
 function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach(async el=>{el.dataset.ok=1;el.innerHTML='<p style="color:var(--sub);margin:0">🐍 파이썬 준비 중... (처음에는 10~30초 걸려요)</p>';
-  const Q={},X={},H=[];
+  const Q={},X={},H=[];TRLEN={};
+  el.dataset.src.split('\n').forEach(l=>{const m=/^\s*(\w+)\s*=\s*\[(.*)\]\s*(#.*)?$/.exec(l);if(m)TRLEN[m[1]]=m[2].trim()===''?0:splitTop(m[2],',').length});
   const raw=el.dataset.src.split('\n').map((line,n)=>{const m=/#\?(.*)$/.exec(line);if(!m)return line;
     const qs=m[1].split(';;').map(x=>{const p=x.split('|'),e=(p.pop()||'').trim();return{q:p.join('|').trim(),e}}).filter(x=>x.q&&x.e);
     if(qs.length){Q[n+1]=qs;X[n+1]=qs.map(x=>x.e[0]==='@'?'None':x.e)}return line.slice(0,m.index).replace(/\s+$/,'')});
-  const L=raw.map((line,n)=>{const g=[];let last=0,m;TRQ.lastIndex=0;while((m=TRQ.exec(line))){g.push({t:line.slice(last,m.index)});H.push(mkHot(m[1]));g.push({h:H.length-1});last=m.index+m[0].length}g.push({t:line.slice(last)});
+  const L=raw.map((line,n)=>{const g=[];let last=0,m;TRQ.lastIndex=0;while((m=TRQ.exec(line))){let pre=line.slice(last,m.index),rw=m[1];{const f0=rw.split('|')[0].trim();if(/range\s*$/.test(pre)&&/^\(.*\)$/.test(f0)){pre=pre.replace(/range\s*$/,'');rw='range'+f0+(rw.indexOf('|')>=0?rw.slice(rw.indexOf('|')):'')}}g.push({t:pre});H.push(mkHot(rw));g.push({h:H.length-1});last=m.index+m[0].length}g.push({t:line.slice(last)});
     g.forEach((s,i)=>{if(s.h==null||!H[s.h].r)return;const mv=/for\s+(\w+)\s+in\s*$/.exec(g.slice(0,i).map(z=>z.t||'').join(''));if(!mv)return;
       const ind=raw[n].match(/^\s*/)[0].length;let end=n+1;for(let j=n+1;j<raw.length;j++){if(!raw[j].trim())continue;if(raw[j].match(/^\s*/)[0].length>ind)end=j+1;else break}H[s.h].lp={v:mv[1],fl:n+1,end}});return g});
   let D;try{D=JSON.parse(await runTrace(raw.map(l=>l.replace(TRQ,(m,x)=>x.split('|')[0].trim())).join('\n'),JSON.stringify(X)))}catch(e){el.innerHTML='<p>파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.</p>';return}
@@ -441,8 +454,8 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
   const upd=()=>{const s=S[cur],pd=pend(cur),pv=S[cur-1]||[0,{},''],lk=!allSolved(),ns=H.filter((_,k)=>solved[k]).length;
     el.querySelector('.lw').classList.toggle('locked',lk);el.querySelector('.lk').textContent=lk?`🔒 위 코드의 🔍 칸을 모두 눌러서 풀면 아래 "실행 과정 보기"가 열려요 (${ns}/${H.length})`:'';el.querySelector('.pr').innerHTML=pane(1);
     el.querySelectorAll('.ln').forEach(d=>d.classList.toggle('cur',!lk&&+d.dataset.n===s[0]));
-    const vs=pd?pv[1]:s[1],os=pd?pv[2]:s[2];el.querySelector('.vh').textContent=pd?'값 (이 줄을 실행하기 전)':'값 (이 줄을 실행한 직후)';
-    el.querySelector('.vt').innerHTML=Object.keys(vs).map(k=>`<tr class="${!pd&&pv[1][k]!==vs[k]?'chg':''}"><td>${esc(k)}</td><td>${esc(vs[k])}</td></tr>`).join('')||'<tr><td colspan="2" style="color:var(--sub)">아직 변수가 없어요</td></tr>';
+    const vs=pd?pv[1]:s[1],os=pd?pv[2]:s[2],hlLine=raw[((pd?pv[0]:s[0])||0)-1]||'';el.querySelector('.vh').textContent=pd?'값 (이 줄을 실행하기 전)':'값 (이 줄을 실행한 직후)';
+    el.querySelector('.vt').innerHTML=Object.keys(vs).map(k=>`<tr class="${!pd&&pv[1][k]!==vs[k]?'chg':''}"><td>${esc(k)}</td><td>${vizVal(vs[k],k,vs,hlLine)}</td></tr>`).join('')||'<tr><td colspan="2" style="color:var(--sub)">아직 변수가 없어요</td></tr>';
     el.querySelector('.out').textContent=os?'출력:\n'+os:'(아직 출력이 없어요)';lpBtn();el.querySelector('.sl').value=cur;el.querySelector('.cn').textContent=s[0]?`${cur+1} / ${S.length}단계`:'✅ 끝!';qpanel()};
   const panes=()=>{el.querySelector('.pl').innerHTML=pane(0);upd()};panes();
   const stop=()=>{clearInterval(tm);tm=null;el.querySelector('.ap').textContent='▶ 자동 재생'};
