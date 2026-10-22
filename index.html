@@ -85,8 +85,9 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .ib.ii,select.ib{margin:6px 3px;vertical-align:middle}
 .lst{border-collapse:collapse;margin:2px 0}.lst td{border:1.5px solid #cdbfe8;padding:3px 12px;text-align:center;font-family:Consolas,monospace}.lst td.ix{border:0;font-size:11px;color:var(--sub);padding:0 12px}.lst td.hl{background:#fff3a0;font-weight:700}.lst td.hl2{color:#b8860b;font-weight:700}
 .tr2.one{grid-template-columns:minmax(0,1fr)!important}.tr2.one .tp:nth-child(2){display:none}
+.sm{text-align:center;padding:26px 12px}.sm .row{justify-content:center}.sm .sp2{text-align:center}.lkm{margin:20px 0;font-weight:700;color:#c25a5a;line-height:1.7}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v63)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v65)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzQv49KYYbXCfH4OShB8KdCQCrBj5iK0zc6vJuE3R3Gy4wj0FZp9eaiLSDCPtMJjPNA/exec';
@@ -310,17 +311,18 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};renderToc();try{local
     if(x.free){m.className='msg ok';m.innerHTML='📨 제출했어요! 고쳐서 다시 제출해도 돼요. '+esc(x.explain||'');return}
     m.className='msg '+(x.correct?'ok':'no');m.innerHTML=(x.correct?'✅ 정답이에요! ':'❌ 아쉬워요, 다시 생각해 봐요. ')+esc(x.explain||'')})}
   if(act==='작성'){box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니에요. 직접 짜 보고 💾 저장해 두세요!</p>`+r.items.map((i,n)=>{const s=sv(i.q);return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}
-  <div class="tr2${i.hasSample?'':' one'}"><div class="tp"><h4>✍️ 내가 짠 코드</h4><textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">💾 저장</button>${String(i.hint||'').trim()?'<button class="ghost hb"></button>':''}</div><div class="hl"></div><pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.ok?'💾 저장해 둔 코드예요':(s&&!s.submitted?'✏️ 이어서 쓰던 코드가 있어요 (아직 저장 전)':'')}</div></div>
+  <div class="tr2${i.hasSample?'':' one'}"><div class="tp"><h4>✍️ 내가 짠 코드</h4><textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">💾 저장</button>${String(i.hint||'').trim()?'<button class="ghost hb"></button>':''}</div><div class="hl"></div>${!i.hasSample&&S.user&&S.user.role==='관리자'?'<p style="color:var(--sub);font-size:13px;margin:6px 0">※ 관리자에게만 보이는 안내: 이 문제는 예시 코드가 비어 있어서 오른쪽 칸이 없어요. 응용해보기 시트의 <b>예시코드</b> 열 제목과 칸을 확인하세요.</p>':''}<pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.ok?'💾 저장해 둔 코드예요':(s&&!s.submitted?'✏️ 이어서 쓰던 코드가 있어요 (아직 저장 전)':'')}</div></div>
   ${i.hasSample?`<div class="tp"><h4>🔒 선생님 예시 코드</h4><div class="sm"><p style="margin:0 0 8px;color:var(--sub)">선생님이 알려 주는 비밀번호를 입력하면 열려요.</p><div class="row"><input type="password" class="sp2" placeholder="비밀번호" autocomplete="off" style="max-width:200px"><button class="main sk">열기</button></div><div class="err se"></div></div></div>`:''}</div></div>`}).join('');
     box.querySelectorAll('.box').forEach((bx,n)=>{const it=r.items[n],ta=bx.querySelector('textarea'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
       const hb=bx.querySelector('.hb');if(hb){const hs=String(it.hint).split(/\r?\n---\r?\n/).map(x=>x.trim()).filter(Boolean),hl=bx.querySelector('.hl');let hn=0;
         const hbt=()=>{hb.textContent=hn<hs.length?`💡 ${hn?'다음 ':''}힌트 보기 (${hn}/${hs.length})`:`💡 힌트를 모두 봤어요 (${hs.length}/${hs.length})`;hb.disabled=hn>=hs.length};hbt();
         hb.onclick=()=>{if(hn>=hs.length)return;const d=document.createElement('div');d.className='sbox';d.style.background='#fffbe8';d.innerHTML=`<b>💡 힌트 ${hn+1}</b><div>${fmt(hs[hn])}</div>`;hl.appendChild(d);hn++;hbt()}}
       if(it.hasSample){const sm=bx.querySelector('.sm'),pw=bx.querySelector('.sp2'),er=bx.querySelector('.se'),sk=`su|${S.user.id}|${S.sub}|${no}|${it.q}`;
-        const open=async(p0,auto)=>{if(!auto)er.textContent='확인 중...';const x=await api('sample',{no,q:it.q,pw:p0});if(x.error){if(!auto)er.textContent=x.error;else try{sessionStorage.removeItem(sk)}catch(e){}return}
+        const lockMsg=()=>{sm.innerHTML='<p class="lkm">어차피 못 뚫는데 헛짓거리 하지 말고 코드나 짜세요 😎</p>';try{sessionStorage.setItem(sk+'|L','1')}catch(e){}};
+        const open=async(p0,auto)=>{if(!auto)er.textContent='확인 중...';const x=await api('sample',{no,q:it.q,pw:p0});if(x.locked){lockMsg();return}if(x.error){if(!auto)er.textContent=x.error;else try{sessionStorage.removeItem(sk)}catch(e){}return}
           try{sessionStorage.setItem(sk,p0)}catch(e){}sm.innerHTML=`<pre style="margin:0">${esc(x.code)}</pre>`};
         bx.querySelector('.sk').onclick=()=>{if(pw.value.trim())open(pw.value.trim())};pw.addEventListener('keydown',e=>{if(e.key==='Enter')bx.querySelector('.sk').click()});
-        let sv0=null;try{sv0=sessionStorage.getItem(sk)}catch(e){}if(sv0!=null||(S.user&&S.user.role==='관리자'))open(sv0||'',true)}
+        let sv0=null,lk0=null;try{sv0=sessionStorage.getItem(sk);lk0=sessionStorage.getItem(sk+'|L')}catch(e){}if(lk0&&!(S.user&&S.user.role==='관리자'))lockMsg();else if(sv0!=null||(S.user&&S.user.role==='관리자'))open(sv0||'',true)}
       ta.onkeydown=e=>{if(e.key==='Tab'){e.preventDefault();document.execCommand('insertText',false,'    ')}};
       bx.querySelector('.run').onclick=async()=>{out.style.display='block';out.textContent='실행 중...';try{out.textContent=await runPy(ta.value,it.ins[0])||'(출력 없음)'}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
       bx.querySelector('.sub').onclick=async()=>{const b=bx.querySelector('.sub');if(!ta.value.trim()){m.className='msg no';m.textContent='코드를 먼저 써 주세요';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';
