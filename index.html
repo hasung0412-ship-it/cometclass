@@ -80,10 +80,10 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v38)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v39)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
-const API='https://script.google.com/macros/s/AKfycbxhcdRZfvNvLvd5WuGJvbkDbLnPwwhp0AcEfIyDZevSlST7DCbWTGTAYK9A0uVOxL6D/exec';
+const API='https://script.google.com/macros/s/AKfycbxdPGX_gUXEt9Ee_t2jKAK3Rm_i1rA8KlXu35HOzftYyyfIax831NKyFFMRp9PafFGB/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:'',at:null,tocOpen:{},ayear:''};let mem={};
 const memT={};async function get(k,fn,force){if(!force&&mem[k]&&Date.now()-(memT[k]||0)<60000)return mem[k];const r=await fn();if(!r.error){mem[k]=r;memT[k]=Date.now()}return r}
@@ -150,8 +150,9 @@ document.addEventListener('visibilitychange',()=>{if(!TM.on)return;const a0=TM.a
   if(h)tmFlush(true);else{const d=TM.a-a0;if(d>=10)toast(`💤 ${fmtT(d)} 동안 다른 곳에 다녀왔어요`);tmFlush()}tmUpd()});
 addEventListener('pagehide',()=>{if(TM.on){tmAccrue();tmFlush(true)}});
 /* ---- 학습 도우미: 공지 / 용어 사전 / 오류 모음 / 치트시트 ---- */
-async function openInfo(kind,nl){if(kind==='grade')return openGrades();const r=await get('info',()=>api('info'));if(r.error){toast(r.error);return}
-  const T={notice:'📢 공지',term:'📖 용어 사전',err:'🛠 오류 모음',cheat:'📝 치트시트',assess:'📑 수행평가 안내'}[kind],m=document.createElement('div');m.className='modal';
+let infoBusy=false;
+async function openInfo(kind,nl){if(kind==='grade')return openGrades();if(infoBusy||document.querySelector('.modal.info'))return;infoBusy=true;let r;try{r=await get('info',()=>api('info'))}finally{infoBusy=false}if(document.querySelector('.modal.info'))return;if(r.error){toast(r.error);return}
+  const T={notice:'📢 공지',term:'📖 용어 사전',err:'🛠 오류 모음',cheat:'📝 치트시트',assess:'📑 수행평가 안내'}[kind],m=document.createElement('div');m.className='modal info';
   const tag=x=>x.sub?` <small style="color:var(--sub)">${esc(x.sub)}</small>`:'';
   let h='';
   if(kind==='notice')h=((nl||r.notices).length?(nl||r.notices).map(x=>`<div class="sbox"><b>${esc(x.title)}</b> <small style="color:var(--sub)">${esc(x.date)}</small><div>${fmt(x.body)}</div></div>`).join(''):'<p>등록된 공지가 없어요.</p>');
@@ -159,13 +160,15 @@ async function openInfo(kind,nl){if(kind==='grade')return openGrades();const r=a
   if(kind==='err')h=r.errors.length?r.errors.map(x=>`<div class="sbox" data-k="${esc((x.name+' '+x.body+' '+x.fix).toLowerCase())}"><b>${esc(x.name)}</b>${tag(x)}<div>${fmt(x.body)}</div><div>🔧 ${fmt(x.fix)}</div></div>`).join(''):'<p>등록된 오류가 없어요.</p>';
   if(kind==='cheat'){const g={};r.cheats.forEach(x=>(g[x.cat]=g[x.cat]||[]).push(x));h=Object.keys(g).length?Object.keys(g).map(c=>`<h4 style="margin:14px 0 6px">${esc(c)}</h4>`+g[c].map(x=>`<div class="sbox"><b>${esc(x.title)}</b><div>${fmt(x.body)}</div></div>`).join('')).join(''):'<p>등록된 치트시트가 없어요.</p>'}
   if(kind==='assess'){const g={};(r.assess||[]).forEach(x=>(g[x.cat]=g[x.cat]||[]).push(x));h=Object.keys(g).map(c=>`<h4 style="margin:14px 0 6px">${esc(c)}</h4>`+g[c].map(x=>`<div class="sbox"><b>${esc(x.title)}</b><div>${fmt(x.body)}</div></div>`).join('')).join('');
-    const C=r.criteria||[];if(C.length){const ga={};C.forEach(x=>(ga[x.area]=ga[x.area]||[]).push(x));h=`<h4 style="margin:0 0 6px">📐 평가 기준표 (${esc(r.cyear||'')}년)</h4>`+Object.keys(ga).map(a=>`<div class="sbox"><b>${esc(a)}</b><div class="wrap"><table><thead><tr><th>평가요소</th><th>항목</th><th>단계별 점수</th><th>기준</th></tr></thead><tbody>${ga[a].map(x=>`<tr><td style="text-align:left;white-space:normal">${esc(x.elem)}</td><td style="text-align:left;white-space:normal">${esc(x.item)}</td><td>${x.levels.length?x.levels.join(' · '):'<small>미정</small>'}</td><td style="text-align:left;white-space:normal">${esc(x.desc)}</td></tr>`).join('')}</tbody></table></div></div>`).join('')+h}
+    const C=r.criteria||[];if(C.length){const ga={};C.forEach(x=>(ga[x.area]=ga[x.area]||[]).push(x));const L=x=>{const v=x.lv&&x.lv.length?x.lv:[{s:'',d:''}],n=v.length;return v.map((l,i)=>`<tr>${i?'':`<td rowspan="${n}" style="text-align:left;white-space:normal"><b>${esc(x.elem)}</b>${x.item?`<br><small>└ ${esc(x.item)}</small>`:''}</td>`}<td><b>${l.s===''?'<small>미정</small>':esc(l.s)}</b></td><td style="text-align:left;white-space:normal">${esc(l.d)}</td></tr>`).join('')};
+      h=`<h4 style="margin:0 0 6px">📐 평가 기준표 (${esc(r.cyear||'')}년)</h4>`+Object.keys(ga).map(a=>`<div class="sbox"><b>${esc(a)}</b><div class="wrap"><table><thead><tr><th>평가항목</th><th>점수</th><th>단계별 기준</th></tr></thead><tbody>${ga[a].map(L).join('')}</tbody></table></div></div>`).join('')+h}
     if(!h)h='<p>등록된 수행평가 안내가 없어요.</p>'}
   m.innerHTML=`<div class="mb" style="max-width:720px;width:94%;max-height:85vh;overflow:auto"><div class="row" style="justify-content:space-between;margin:0 0 10px"><h3 style="margin:0">${T}</h3><button class="ghost cl">닫기</button></div>${kind==='term'||kind==='err'?'<input class="sq" placeholder="🔍 검색" style="margin-bottom:10px">':''}<div class="il">${h}</div></div>`;
   document.body.appendChild(m);m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.cl').onclick=()=>m.remove();
   const q=m.querySelector('.sq');if(q)q.oninput=()=>{const v=q.value.trim().toLowerCase();m.querySelectorAll('[data-k]').forEach(c=>c.style.display=c.dataset.k.includes(v)?'':'none')}}
 function openGrades(){if(S.preview||!S.user||S.user.role==='관리자'){toast('학생 계정으로 로그인했을 때만 볼 수 있어요');return}
-  const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class="mb" style="max-width:640px;width:94%;max-height:85vh;overflow:auto"><div class="row" style="justify-content:space-between;margin:0 0 10px"><h3 style="margin:0">🔒 내 성적 보기</h3><button class="ghost cl">닫기</button></div><div class="gb"><p style="margin:0 0 8px">성적은 본인만 볼 수 있어요. 내가 정한 <b>비밀번호</b>를 한 번 더 입력해 주세요.</p><input type="password" class="gp" placeholder="비밀번호" autocomplete="current-password"><div class="err ge"></div><button class="main gk">확인</button></div></div>`;
+  if(document.querySelector('.modal.info'))return;
+  const m=document.createElement('div');m.className='modal info';m.innerHTML=`<div class="mb" style="max-width:640px;width:94%;max-height:85vh;overflow:auto"><div class="row" style="justify-content:space-between;margin:0 0 10px"><h3 style="margin:0">🔒 내 성적 보기</h3><button class="ghost cl">닫기</button></div><div class="gb"><p style="margin:0 0 8px">성적은 본인만 볼 수 있어요. 내가 정한 <b>비밀번호</b>를 한 번 더 입력해 주세요.</p><input type="password" class="gp" placeholder="비밀번호" autocomplete="current-password"><div class="err ge"></div><button class="main gk">확인</button></div></div>`;
   document.body.appendChild(m);const pw=m.querySelector('.gp'),er=m.querySelector('.ge'),gb=m.querySelector('.gb');pw.focus();m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.cl').onclick=()=>m.remove();
   const go=async()=>{if(!pw.value)return;er.textContent='확인 중...';const r=await api('myGrades',{pw:pw.value});pw.value='';if(r.error){er.textContent=r.error;return}
     const A=r.areas||[],fx=x=>x==null?'-':x;
@@ -415,7 +418,7 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
   el.querySelector('.ap').onclick=()=>{if(tm)return stop();if(!allSolved()){note('🔒 위 코드의 🔍 칸을 먼저 풀어 주세요');return}if(cur>=S.length-1)cur=0;el.querySelector('.ap').textContent='⏸ 멈춤';tm=setInterval(()=>{if(!el.isConnected||cur>=S.length-1){stop();return}if(cur>=lock()){stop();note('🤔 먼저 질문에 답해 보세요');return}cur++;upd()},800)};
   el.querySelector('.sw').onclick=e=>{el.classList.toggle('showsp');e.target.textContent=el.classList.contains('showsp')?'␣ 들여쓰기 숨기기':'␣ 들여쓰기 보기'};
   el.onclick=e=>{const h=e.target.closest('[data-k]');if(h)openHot(+h.dataset.k)};
-  function openHot(k){const h=H[k],m=document.createElement('div');m.className='modal';let si=0,cp=null;const hasQ=h.st.some(s=>s.ans);
+  function openHot(k){if(document.querySelector('.modal.hot'))return;const h=H[k],m=document.createElement('div');m.className='modal hot';let si=0,cp=null;const hasQ=h.st.some(s=>s.ans);
     m.innerHTML=`<div class="mb"><p style="font-size:13px;color:var(--sub);margin:0 0 6px">${esc(h.e)}</p><div class="hs"></div><div class="msg"></div><div class="row"><button class="main ck">${hasQ?'확인':'알겠어요'}</button><button class="ghost cl">닫기</button></div></div>`;
     document.body.appendChild(m);const hs=m.querySelector('.hs'),out=m.querySelector('.msg'),ck=m.querySelector('.ck');
     const add=st=>{const p=document.createElement('p');p.style.margin='0 0 8px';p.innerHTML=br(esc(st.msg).replace(/OO/g,()=>st.ans?'<input class="bk" autocomplete="off">':'OO'));hs.appendChild(p);return p};
