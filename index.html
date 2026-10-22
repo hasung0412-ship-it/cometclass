@@ -82,7 +82,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .gt{width:100%;table-layout:fixed;font-size:17px}.gt th,.gt td{padding:11px 12px}.gt td:nth-child(n+2),.gt th:nth-child(n+2){text-align:center}.gt td b{font-size:19px}
 .tb{border-collapse:collapse;margin:8px auto;font-size:17px}.tb th,.tb td{border:2px solid #cdbfe8;padding:8px 16px;min-width:56px;min-height:34px;text-align:center;white-space:normal}.tb th{background:#efe8fb}.tb.lf td,.tb.lf th{text-align:left}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v49)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v50)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwbBNAy4xB4SyCKf-0521cW6YM-ZqVwAoWWyKa3z9hXxqpEAzsTjW1lAAIxNua9baGe/exec';
@@ -205,12 +205,12 @@ function fmtTx(x){const P=x.split(TBR);let o='';for(let i=0;i<P.length;i+=3){let
 function fmt0(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):fmtTx(x)).join('')}
 function fmt(t){const P=String(t??'').replace(/\r/g,'').split(/\[\s*분할\s*(?:[:：]\s*([\d.:：\s]*?))?\s*(?:\|\s*(줄맞춤|가운데)\s*)?\]([\s\S]*?)\[\s*\/\s*분할\s*\]/);let out='';
   for(let i=0;i<P.length;i+=4){out+=fmt0(P[i]||'');if(i+3<P.length){const cs=P[i+3].split(/\[\s*칸\s*\]/),r=P[i+1]?P[i+1].split(/[:：]/).map(x=>x.trim()):[],op=P[i+2],g=cs.map((_,k)=>`minmax(0,${r[k]||1}fr)`).join(' ');
-    if(op==='줄맞춤'){const L=cs.map(c=>c.replace(/^\n/,'').replace(/\n$/,'').split('\n')),n=Math.max(...L.map(a=>a.length));let h='';for(let k=0;k<n;k++)L.forEach(a=>{h+=`<div class="cell">${fmt0(a[k]||'')}</div>`});out+=`<div class="cols2" style="grid-template-columns:${g}">${h}</div>`}
+    if(op==='줄맞춤'){const L=cs.map(c=>c.replace(/^\s*\n/,'').replace(/\s+$/,'').split('\n')),n=Math.max(...L.map(a=>a.length));let h='';for(let k=0;k<n;k++)L.forEach(a=>{h+=`<div class="cell">${fmt0(a[k]||'')}</div>`});out+=`<div class="cols2" style="grid-template-columns:${g}">${h}</div>`}
     else out+=`<div class="cols" style="grid-template-columns:${g}${op==='가운데'?';align-items:center':''}">${cs.map(c=>`<div class="col">${fmt0(c.trim())}</div>`).join('')}</div>`}}return out}
 const nt=x=>String(x||'').replace(/<[^>]*>/g,'').trim();
-function ib(s){return s.replace(/\[입력(?::([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>{h=nt(h);a=nt(a);return `<input class="ib ii" size="${Math.max(8,Math.ceil(h.length*1.7)+2)}" placeholder="${h}" data-a="${a}" autocomplete="off"><span class="im"></span>`})
-  .replace(/\[선택:([^\]|]*)(?:\|([^\]]*))?\]/g,(m,o,a)=>`<select class="ib is" data-a="${nt(a)}"><option value="">선택</option>${o.split('/').map(nt).filter(Boolean).map(x=>`<option>${x}</option>`).join('')}</select><span class="im"></span>`)
-  .replace(/\[체크(?::([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>`<label class="ck"><input type="checkbox" class="ib" data-a="${nt(a).toUpperCase()}"><span>${(h||'').trim()}</span><span class="im"></span></label>`)}
+function ib(s){return s.replace(/\[\s*입력\s*(?:[:：]([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>{h=nt(h);a=nt(a);return `<input class="ib ii" size="${Math.max(8,Math.ceil(h.length*1.7)+2)}" placeholder="${h}" data-a="${a}" autocomplete="off"><span class="im"></span>`})
+  .replace(/\[\s*선택\s*[:：]([^\]|]*)(?:\|([^\]]*))?\]/g,(m,o,a)=>`<select class="ib is" data-a="${nt(a)}"><option value="">선택</option>${o.split('/').map(nt).filter(Boolean).map(x=>`<option>${x}</option>`).join('')}</select><span class="im"></span>`)
+  .replace(/\[\s*체크\s*(?:[:：]([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>`<label class="ck"><input type="checkbox" class="ib" data-a="${nt(a).toUpperCase()}"><span>${(h||'').trim()}</span><span class="im"></span></label>`)}
 function ibCheck(el){const lb=el.closest('label'),m=lb?lb.querySelector('.im'):el.nextElementSibling;if(!m||!m.classList.contains('im'))return;const a=el.dataset.a;
   if(el.type==='checkbox'){if(!a){m.textContent='';return}const ok=el.checked===(a==='O');m.textContent=ok?' ✅':' ❌';m.className='im '+(ok?'g':'r');return}
   const v=el.value;if(!a||!String(v).trim()){m.textContent='';return}
@@ -220,13 +220,13 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&
 const PAL={빨강:'#d94a4a',파랑:'#3b6fd4',초록:'#2e8b62',주황:'#e67e22',보라:'#7b5fc4',분홍:'#e0559b',회색:'#7b8499',검정:'#3a4256'},HL={노랑:'#fff3a0',초록:'#c9f2d8',파랑:'#cfe3fb',분홍:'#fbd3e4',주황:'#fde3d6',보라:'#e5dcf6'};
 const colr=(v,M)=>{v=v.trim();return M[v]||(/^#[0-9a-f]{3,8}$/i.test(v)?v:null)};
 function fx(s){const st=[];s=s.replace(/`([^`\n]+)`/g,(m,c)=>{st.push(c);return '\u0001'+(st.length-1)+'\u0001'});
-  s=s.replace(/\[색:([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,PAL);return v?`<span style='color:${v}'>${x}</span>`:m})
-    .replace(/\[형광:([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,HL);return v?`<mark style='background:${v};border-radius:4px;padding:0 3px'>${x}</mark>`:m})
-    .replace(/\[(크게|작게):([^\]]*)\]/g,(m,k,x)=>`<span style='font-size:${k==='크게'?'1.3em':'.85em'}'>${x}</span>`)
+  s=s.replace(/\[\s*색\s*[:：]([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,PAL);return v?`<span style='color:${v}'>${x}</span>`:m})
+    .replace(/\[\s*형광\s*[:：]([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,HL);return v?`<mark style='background:${v};border-radius:4px;padding:0 3px'>${x}</mark>`:m})
+    .replace(/\[\s*(크게|작게)\s*[:：]([^\]]*)\]/g,(m,k,x)=>`<span style='font-size:${k==='크게'?'1.3em':'.85em'}'>${x}</span>`)
     .replace(/\*\*([^*\n]+?)\*\*/g,'<b>$1</b>').replace(/__([^_\n]+?)__/g,'<u>$1</u>').replace(/~~([^~\n]+?)~~/g,'<s>$1</s>');
   return s.replace(/\u0001(\d+)\u0001/g,(m,i)=>`<code class='ic'>${st[i]}</code>`)}
 function pic(s){return s.replace(/\[그림:([^\]\s|]+)(?:\|([^\]]*))?\]/g,(m,u,cap)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<figure class="fig"><img class="pic" src="${u}" alt="${cap?cap.replace(/<[^>]*>/g,'').trim():'그림'}">${cap?`<figcaption>${cap.trim()}</figcaption>`:''}</figure>`:m)}
-function qz(s){return s.replace(/\[(주관식|드롭다운|객관식|예아니오):([^\]]*)\]/g,(m,k,b)=>{const p=b.split('|').map(x=>x.trim());let q=p[0],ans,opts,h;
+function qz(s){return s.replace(/\[\s*(주관식|드롭다운|객관식|예아니오)\s*[:：]([^\]]*)\]/g,(m,k,b)=>{const p=b.split('|').map(x=>x.trim());let q=p[0],ans,opts,h;
   const sp2=x=>(x||'').replace(/<[^>]*>/g,'');if(k==='주관식'){ans=sp2(p[1]);h=sp2(p[2])}else if(k==='예아니오'){opts=['예','아니오'];ans=sp2(p[1]);h=sp2(p[2])}else{opts=(p[1]||'').split('/').map(x=>sp2(x).trim());ans=sp2(p[2]);h=sp2(p[3])}
   const body=k==='주관식'?'<input class="qin" placeholder="답을 써 보세요" autocomplete="off">':k==='드롭다운'?`<select class="qin"><option value="">선택하세요</option>${opts.map(o=>`<option>${o}</option>`).join('')}</select>`:opts.map(o=>`<button class="ghost qo" data-v="${o}">${o}</button>`).join('');
   return `<div class="qz" data-a="${ans||''}" data-h="${h||''}"><div class="qq">❓ ${q}</div><div class="row">${body}${k==='주관식'||k==='드롭다운'?'<button class="main qc2">확인</button>':''}<span class="qr2"></span></div></div>`})}
