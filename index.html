@@ -81,8 +81,9 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 .gt{width:100%;table-layout:fixed;font-size:17px}.gt th,.gt td{padding:11px 12px}.gt td:nth-child(n+2),.gt th:nth-child(n+2){text-align:center}.gt td b{font-size:19px}
 .tb{border-collapse:collapse;margin:8px auto;font-size:17px}.tb th,.tb td{border:2px solid #cdbfe8;padding:8px 16px;min-width:56px;min-height:34px;text-align:center;white-space:normal}.tb caption{caption-side:top;text-align:center;font-weight:700;font-size:18px;padding:0 0 6px;font-family:Consolas,monospace}.tb th{background:#efe8fb}.tb.lf td,.tb.lf th{text-align:left}
+.ctr{text-align:center;margin:8px 0}.ctr pre{display:table;margin:8px auto;text-align:left}.ctr .qz,.ctr .box{text-align:center}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v51)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v52)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwbBNAy4xB4SyCKf-0521cW6YM-ZqVwAoWWyKa3z9hXxqpEAzsTjW1lAAIxNua9baGe/exec';
@@ -203,10 +204,12 @@ function tbl(op,b){op=op||'';const tm=/(?:제목|이름)\s*[=:：]\s*([^|]*)/.ex
   return `<div class="wrap"><table class="tb${lf?' lf':''}">${ttl?`<caption>${qz(ib(pic(fx(esc(ttl)))))}</caption>`:''}`+R.map((r,i)=>{const t=(!nh&&i===0)?'th':'td';let h='';for(let k=0;k<w;k++)h+=`<${t}>${ce(r[k]||'')}</${t}>`;return `<tr>${h}</tr>`}).join('')+'</table></div>'}
 function fmtTx(x){const P=x.split(TBR);let o='';for(let i=0;i<P.length;i+=3){let a=P[i]||'';if(i+2<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=qz(ib(pic(fx(esc(a))))).replace(/\n/g,'<br>');if(i+2<P.length)o+=tbl(P[i+1],P[i+2])}return o}
 function fmt0(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):fmtTx(x)).join('')}
+const CTR=/\[\s*가운데\s*\]([\s\S]*?)\[\s*\/\s*가운데\s*\]/;
+function fmt0c(t){const P=String(t??'').split(CTR);let o='';for(let i=0;i<P.length;i+=2){let a=P[i]||'';if(i+1<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=fmt0(a);if(i+1<P.length)o+=`<div class="ctr">${fmt0(P[i+1].replace(/^\s*\n/,'').replace(/\s+$/,''))}</div>`}return o}
 function fmt(t){const P=String(t??'').replace(/\r/g,'').split(/\[\s*분할\s*(?:[:：]\s*([\d.:：\s]*?))?\s*(?:\|\s*(줄맞춤|가운데)\s*)?\]([\s\S]*?)\[\s*\/\s*분할\s*\]/);let out='';
-  for(let i=0;i<P.length;i+=4){out+=fmt0(P[i]||'');if(i+3<P.length){const cs=P[i+3].split(/\[\s*칸\s*\]/),r=P[i+1]?P[i+1].split(/[:：]/).map(x=>x.trim()):[],op=P[i+2],g=cs.map((_,k)=>`minmax(0,${r[k]||1}fr)`).join(' ');
-    if(op==='줄맞춤'){const L=cs.map(c=>c.replace(/^\s*\n/,'').replace(/\s+$/,'').split('\n')),n=Math.max(...L.map(a=>a.length));let h='';for(let k=0;k<n;k++)L.forEach(a=>{h+=`<div class="cell">${fmt0(a[k]||'')}</div>`});out+=`<div class="cols2" style="grid-template-columns:${g}">${h}</div>`}
-    else out+=`<div class="cols" style="grid-template-columns:${g}${op==='가운데'?';align-items:center':''}">${cs.map(c=>`<div class="col">${fmt0(c.trim())}</div>`).join('')}</div>`}}return out}
+  for(let i=0;i<P.length;i+=4){out+=fmt0c(P[i]||'');if(i+3<P.length){const cs=P[i+3].split(/\[\s*칸\s*\]/),r=P[i+1]?P[i+1].split(/[:：]/).map(x=>x.trim()):[],op=P[i+2],g=cs.map((_,k)=>`minmax(0,${r[k]||1}fr)`).join(' ');
+    if(op==='줄맞춤'){const L=cs.map(c=>c.replace(/^\s*\n/,'').replace(/\s+$/,'').split('\n')),n=Math.max(...L.map(a=>a.length));let h='';for(let k=0;k<n;k++)L.forEach(a=>{h+=`<div class="cell">${fmt0c(a[k]||'')}</div>`});out+=`<div class="cols2" style="grid-template-columns:${g}">${h}</div>`}
+    else out+=`<div class="cols" style="grid-template-columns:${g}${op==='가운데'?';align-items:center':''}">${cs.map(c=>`<div class="col">${fmt0c(c.trim())}</div>`).join('')}</div>`}}return out}
 const nt=x=>String(x||'').replace(/<[^>]*>/g,'').trim();
 function ib(s){return s.replace(/\[\s*입력\s*(?:[:：]([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>{h=nt(h);a=nt(a);return `<input class="ib ii" size="${Math.max(8,Math.ceil(h.length*1.7)+2)}" placeholder="${h}" data-a="${a}" autocomplete="off"><span class="im"></span>`})
   .replace(/\[\s*선택\s*[:：]([^\]|]*)(?:\|([^\]]*))?\]/g,(m,o,a)=>`<select class="ib is" data-a="${nt(a)}"><option value="">선택</option>${o.split('/').map(nt).filter(Boolean).map(x=>`<option>${x}</option>`).join('')}</select><span class="im"></span>`)
