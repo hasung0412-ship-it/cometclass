@@ -88,7 +88,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .sm{text-align:center;padding:26px 12px}.sm .row{justify-content:center}.sm .sp2{text-align:center}.lkm{margin:20px 0;font-weight:700;color:#c25a5a;line-height:1.7}
 .sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v67)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v68)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbx-utakpcescojGyaXhUhBGg21ZUONQ6AV5zrpsBaf8vczJMV3iex_d2b4TZ1P5QyxN/exec';
@@ -216,7 +216,8 @@ function fmt(t){const P=String(t??'').replace(/\r/g,'').split(/\[\s*분할\s*(?:
     if(op==='줄맞춤'){const L=cs.map(c=>c.replace(/^\s*\n/,'').replace(/\s+$/,'').split('\n')),n=Math.max(...L.map(a=>a.length));let h='';for(let k=0;k<n;k++)L.forEach(a=>{h+=`<div class="cell">${fmt0c(a[k]||'')}</div>`});out+=`<div class="cols2" style="grid-template-columns:${g}">${h}</div>`}
     else out+=`<div class="cols" style="grid-template-columns:${g}${op==='가운데'?';align-items:center':''}">${cs.map(c=>`<div class="col">${fmt0c(c.trim())}</div>`).join('')}</div>`}}return out}
 const nt=x=>String(x||'').replace(/<[^>]*>/g,'').trim();
-function ib(s){return s.replace(/\[\s*입력\s*(?:[:：]([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>{h=nt(h);const pp=String(a||'').split('|').map(nt),ce=pp.slice(1).some(x=>/^가운데$/.test(x));a=pp[0];const t=`<input class="ib ii" size="${Math.max(8,Math.ceil(h.length*1.7)+2)}" placeholder="${h}" data-a="${a}" autocomplete="off"><span class="im"></span>`;return ce?`<div class="ctr">${t}</div>`:t})
+function ib(s){return s.replace(/\[\s*입력\s*(?:[:：]([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>{h=nt(h);const pp=String(a||'').split('|').map(nt),op=pp.slice(1),ce=op.some(x=>/^가운데$/.test(x)),wd=op.some(x=>/^넓게$/.test(x)),ml=op.some(x=>/^여러\s*줄$/.test(x));a=pp[0];
+    const t=ml?`<textarea class="ib ii2" rows="3" placeholder="${h}" data-a="${a}" style="width:100%;min-height:90px;font-family:inherit"></textarea><span class="im"></span>`:`<input class="ib ii" size="${Math.max(8,Math.ceil(h.length*1.7)+2)}" placeholder="${h}" data-a="${a}" autocomplete="off"${wd?' style="width:100%;box-sizing:border-box"':''}><span class="im"></span>`;return ce?`<div class="ctr">${t}</div>`:(wd||ml?`<div>${t}</div>`:t)})
   .replace(/\[\s*선택\s*[:：]([^\]|]*)(?:\|([^\]]*))?\]/g,(m,o,a)=>`<select class="ib is" data-a="${nt(a)}"><option value="">선택</option>${o.split('/').map(nt).filter(Boolean).map(x=>`<option>${x}</option>`).join('')}</select><span class="im"></span>`)
   .replace(/\[\s*체크\s*(?:[:：]([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>`<label class="ck"><input type="checkbox" class="ib" data-a="${nt(a).toUpperCase()}"><span>${(h||'').trim()}</span><span class="im"></span></label>`)}
 function ibCheck(el){const lb=el.closest('label'),m=lb?lb.querySelector('.im'):el.nextElementSibling;if(!m||!m.classList.contains('im'))return;const a=el.dataset.a;
