@@ -24,6 +24,7 @@ textarea{font-family:Consolas,monospace;font-size:14px;min-height:150px;tab-size
 .card small{color:var(--sub);display:block}
 .bar{height:7px;border-radius:5px;background:#ffffffa0;margin-top:10px;overflow:hidden}.bar i{display:block;height:100%;background:#7fc8a9}
 .box{border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:16px}
+.pwr{position:relative}.pwr .eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;font-size:18px;cursor:pointer;padding:4px 8px}.pwr input{padding-right:44px}
 .narrow{max-width:360px;margin:50px auto;text-align:center}.narrow input{margin:6px 0}
 pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:14px/1.6 Consolas,monospace;margin:8px 0;white-space:pre-wrap}
 .msg{margin-top:8px;padding:8px 12px;border-radius:10px;display:none}.msg.ok{background:var(--ok);display:block}.msg.no{background:var(--no);display:block}
@@ -89,10 +90,10 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v70)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v74)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
-const API='https://script.google.com/macros/s/AKfycbwYlAXGnksS9uT8t2x_QTcrTydRj2PXhWaJ9fuubMtZ-coLTZiDrmpdtOUbyJPBCFFA/exec';
+const API='https://script.google.com/macros/s/AKfycbxSvXuxV2HA69Pm7_3aU9tbrzuXTi0MGXvRZXLYu1sbGUvVT_y_7_AqGbjcSnVcVVHZ/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:'',at:null,tocOpen:{},ayear:''};let mem={};
 const memT={};async function get(k,fn,force){if(!force&&mem[k]&&Date.now()-(memT[k]||0)<60000)return mem[k];const r=await fn();if(!r.error){mem[k]=r;memT[k]=Date.now()}return r}
@@ -266,9 +267,23 @@ function loginView(msg=''){showToc(false);app.innerHTML=`<div class="box narrow"
   $('#fg').onclick=e=>{e.preventDefault();forgotView()};fillYears();$('#go').onclick=go;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')go()})}
 function start(){setWho();if(S.user.must)return pwView();S.user.role==='관리자'?(showToc(false),tmStop(),adminView()):(showToc(true),loadToc(),tmStart(),langView())}
 function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 만들기</h2><p>처음 로그인했어요. 비밀번호를 바꿔야 계속할 수 있어요.</p>
-<input id="n1" type="password" placeholder="새 비밀번호 (4자 이상)"><input id="n2" type="password" placeholder="한 번 더 입력"><div class="err" id="e"></div><button class="main" id="go">바꾸기</button></div>`;
-  $('#go').onclick=async()=>{if($('#n1').value!==$('#n2').value)return $('#e').textContent='두 비밀번호가 달라요.';
-    const r=await api('changePw',{newPw:$('#n1').value});if(r.error)return $('#e').textContent=r.error;S.user.must=false;start()}}
+<div class="pwr"><input id="n1" type="password" placeholder="새 비밀번호 (4자 이상)" autocomplete="new-password"><button type="button" class="eye" id="ey" title="비밀번호 보기">👁</button></div><div class="pwr"><input id="n2" type="password" placeholder="한 번 더 입력" autocomplete="new-password"></div><div class="err" id="e"></div><button class="main" id="go">바꾸기</button></div>`;
+  const POP=(inner)=>{const m=document.createElement('div');m.className='modal pwm';m.innerHTML=`<div class="mb" style="text-align:center">${inner}</div>`;document.body.appendChild(m);return m};
+  $('#ey').onclick=()=>{const on=$('#n1').type==='password';
+    if(!on){$('#n1').type=$('#n2').type='password';$('#ey').textContent='👁';return}
+    const m=POP(`<h3 style="margin-top:0">📒 잠깐!</h3><p style="font-size:17px"><b>비밀번호 안 까먹게<br>정보책에 적어두세요!</b></p><button class="main" id="pk">알겠어요</button>`);
+    m.querySelector('#pk').onclick=()=>{m.remove();$('#n1').type=$('#n2').type='text';$('#ey').textContent='🙈'}};
+  $('#go').onclick=()=>{const p=$('#n1').value;if(p!==$('#n2').value)return $('#e').textContent='두 비밀번호가 달라요.';if(p.length<4)return $('#e').textContent='비밀번호는 4자 이상이어야 해요.';$('#e').textContent='';
+    const PH='나는 정보책에 비밀번호를 잘 적어놨습니다.',norm=x=>String(x).replace(/\s+/g,'').replace(/[.。]+$/,'');
+    const m=POP(`<h3 style="margin-top:0">📒 정보책에 적었나요?</h3><p style="margin:6px 0">내가 정한 비밀번호</p><div style="font-size:22px;font-weight:bold;background:#f5f1fb;border-radius:10px;padding:10px;word-break:break-all;user-select:all" id="pv"></div>
+<p style="font-size:14px;color:var(--sub);margin:12px 0 6px">비밀번호를 정보책에 적은 다음, 아래 문구를 <b>직접 입력</b>해 주세요.<br>(붙여넣기는 안 돼요)</p><div style="font-weight:bold;margin-bottom:6px">${PH}</div>
+<input id="cf" placeholder="위 문구를 그대로 입력" autocomplete="off"><div class="err" id="ce"></div><div style="display:flex;gap:8px;justify-content:center;margin-top:6px"><button class="ghost" id="cn">돌아가기</button><button class="main" id="cy" disabled style="width:auto;padding:9px 22px">비밀번호 확정</button></div>`);
+    m.querySelector('#pv').textContent=p;const cf=m.querySelector('#cf'),cy=m.querySelector('#cy');
+    ['paste','drop'].forEach(ev=>cf.addEventListener(ev,e=>e.preventDefault()));
+    cf.oninput=()=>{cy.disabled=norm(cf.value)!==norm(PH)};cf.focus();
+    m.querySelector('#cn').onclick=()=>m.remove();
+    cy.onclick=async()=>{if(cy.disabled)return;cy.disabled=true;m.querySelector('#ce').textContent='저장 중...';
+      const r=await api('changePw',{newPw:p});if(r.error){m.querySelector('#ce').textContent=r.error;cy.disabled=false;return}m.remove();S.user.must=false;start()}}}
 
 /* 학생: 언어 → 차시 → 활동 → 내용 */
 async function langView(){S.at=null;renderToc();if(!mem.toc)app.innerHTML='불러오는 중...';const r=await get('toc',()=>api('toc'));if(r.error)return app.innerHTML=r.error;
