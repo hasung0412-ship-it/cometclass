@@ -81,17 +81,19 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 .gt{width:100%;table-layout:fixed;font-size:17px}.gt th,.gt td{padding:11px 12px}.gt td:nth-child(n+2),.gt th:nth-child(n+2){text-align:center}.gt td b{font-size:19px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v45)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v48)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
-const API='https://script.google.com/macros/s/AKfycbxtDwJNupEL64JVNiYrTBwxrHvUyWWrD8yo9vuPqkmy7GwXubfm_2DwoNcLgHRA1KAQ/exec';
+const API='https://script.google.com/macros/s/AKfycbwbBNAy4xB4SyCKf-0521cW6YM-ZqVwAoWWyKa3z9hXxqpEAzsTjW1lAAIxNua9baGe/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:'',at:null,tocOpen:{},ayear:''};let mem={};
 const memT={};async function get(k,fn,force){if(!force&&mem[k]&&Date.now()-(memT[k]||0)<60000)return mem[k];const r=await fn();if(!r.error){mem[k]=r;memT[k]=Date.now()}return r}
 /* ---- 임시저장(입력 중인 답 자동 저장) ---- */
 const DR={};let dtm=null,dretry=null;
 const dkey=(s,n,a,q)=>`hd|${S.user?S.user.id:''}|${s}|${n}|${a}|${q}`;
-function clearDraft(no,act,q){const k=dkey(S.sub,no,act,q);delete DR[k];try{localStorage.removeItem(k)}catch(e){}}
+const isAft=()=>!!S.user&&/^after\d+$/i.test(S.user.sid||S.user.id);
+const hkey=(s,n,a,q)=>`hs|${S.user?S.user.id:''}|${s}|${n}|${a}|${q}`;
+function clearDraft(no,act,q){const k=dkey(S.sub,no,act,q);delete DR[k];if(isAft())return;try{localStorage.removeItem(k)}catch(e){}} // 방과후 계정은 이 기기에도 입력을 남김(서버 저장이 우선)
 function loadLocal(q){try{const a=S.at;return a&&a.act?JSON.parse(localStorage.getItem(dkey(a.sub,a.no,a.act,q))||'null'):null}catch(e){return null}}
 function setSv(t,c){const e=$('#sv');e.textContent=t;e.className=c||'';e.style.display='block';clearTimeout(setSv.h);if(c==='ok')setSv.h=setTimeout(()=>e.style.display='none',2500)}
 function collect(bx){if(bx.dataset.etc)return [...bx.querySelectorAll('.ib')].map((x,k)=>`${k+1}: ${x.type==='checkbox'?(x.checked?'1':'0'):x.value}`).join('\n');const bl=[...bx.querySelectorAll('.blank')];if(bl.length)return bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n');const rd=bx.querySelector('input[type=radio]:checked');if(rd)return rd.value;const el=bx.querySelector('.ans,.free,textarea');return el?el.value:''}
@@ -107,7 +109,7 @@ async function flushDrafts(){clearTimeout(dretry);const keys=Object.keys(DR);if(
 function beaconDrafts(){Object.values(DR).forEach(d=>{try{navigator.sendBeacon(API,new Blob([JSON.stringify({action:'draft',token:S.token,...d})],{type:'text/plain'}))}catch(e){}})}
 addEventListener('pagehide',beaconDrafts);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')beaconDrafts()});
 app.addEventListener('input',onEdit);app.addEventListener('change',onEdit);
-function rec(no,act,q,answer,ok){clearDraft(no,act,q);if(S.preview||!mem.toc)return;const L=mem['L|'+S.sub+'|'+no+'|'+act],s=L&&L.saved,was=s&&s[q]&&s[q].ok;if(s)s[q]={answer,ok:ok||was,t:Date.now()};
+function rec(no,act,q,answer,ok){clearDraft(no,act,q);if(isAft()&&!S.preview){try{const k=hkey(S.sub,no,act,q),o=JSON.parse(localStorage.getItem(k)||'null');localStorage.setItem(k,JSON.stringify({answer,ok:!!(ok||(o&&o.ok)),t:Date.now()}))}catch(e){}}if(S.preview||!mem.toc)return;const L=mem['L|'+S.sub+'|'+no+'|'+act],s=L&&L.saved,was=s&&s[q]&&s[q].ok;if(s)s[q]={answer,ok:ok||was,t:Date.now()};
   if(ok&&!was){const sj=mem.toc.subjects.find(x=>x.name===S.sub),l=sj&&sj.lessons.find(x=>x.no===no);if(l)l.d[act]=Math.min(l.t[act],l.d[act]+1);renderToc()}}
 /* ---- 왼쪽 목차 ---- */
 function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
@@ -271,7 +273,7 @@ function actView(no){S.at={sub:S.sub,no,act:null};const sj=mem.toc.subjects.find
   `<button class="card" data-k="${k}"><small>${AN[k][0]}</small><b>${nm(S.sub,k)}</b>${k==='개념'?(l.d[k]>0?'<small>✔ 완료</small>':''):`<small>문제 ${l.t[k]}개 · ${Math.min(l.d[k],l.t[k])}개 완료</small>${bar(l.d[k],l.t[k])}`}</button>`).join('')}</div>`;
   app.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>contentView(no,b.dataset.k));Object.keys(AN).filter(k=>l.t[k]>0).forEach(k=>get('L|'+S.sub+'|'+no+'|'+k,()=>api('lesson',{no,act:k})))}
 async function contentView(no,act){S.at={sub:S.sub,no,act};renderToc();try{localStorage.setItem('last|'+S.user.id,JSON.stringify({sub:S.sub,no,act}))}catch(e){}const lk='L|'+S.sub+'|'+no+'|'+act;if(!mem[lk])app.innerHTML='불러오는 중...';const r=await get(lk,()=>api('lesson',{no,act}));if(r.error)return app.innerHTML=r.error;
-  const sv=q=>{const a=r.saved[q],d=r.drafts&&r.drafts[q],lc=loadLocal(q);let b=a?{answer:a.answer,t:a.t||0}:null;[d&&{answer:d.text,t:d.t},lc&&{answer:lc.text,t:lc.t}].forEach(c=>{if(c&&(!b||c.t>b.t))b={answer:c.answer,t:c.t,dr:1}});return b?{answer:b.answer,ok:a?a.ok:false,submitted:!!a,draft:!!b.dr}:null};
+  const sv=q=>{let a=r.saved[q];if(!a&&isAft()){try{const o=JSON.parse(localStorage.getItem(hkey(S.sub,no,act,q))||'null');if(o)a=o}catch(e){}}const d=r.drafts&&r.drafts[q],lc=loadLocal(q);let b=a?{answer:a.answer,t:a.t||0}:null;[d&&{answer:d.text,t:d.t},lc&&{answer:lc.text,t:lc.t}].forEach(c=>{if(c&&(!b||c.t>b.t))b={answer:c.answer,t:c.t,dr:1}});return b?{answer:b.answer,ok:a?a.ok:false,submitted:!!a,draft:!!b.dr}:null};
   app.innerHTML=`<p><button class="ghost" id="back">← 활동 선택</button></p><h2>${AN[act][0]} ${nm(S.sub,act)}</h2><div id="items"></div>`;
   $('#back').onclick=()=>actView(no);
   const box=$('#items');
