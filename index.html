@@ -80,9 +80,9 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 .gt{width:100%;table-layout:fixed;font-size:17px}.gt th,.gt td{padding:11px 12px}.gt td:nth-child(n+2),.gt th:nth-child(n+2){text-align:center}.gt td b{font-size:19px}
-.tb{border-collapse:collapse;margin:8px auto;font-size:17px}.tb th,.tb td{border:2px solid #cdbfe8;padding:8px 16px;min-width:56px;min-height:34px;text-align:center;white-space:normal}.tb th{background:#efe8fb}.tb.lf td,.tb.lf th{text-align:left}
+.tb{border-collapse:collapse;margin:8px auto;font-size:17px}.tb th,.tb td{border:2px solid #cdbfe8;padding:8px 16px;min-width:56px;min-height:34px;text-align:center;white-space:normal}.tb caption{caption-side:top;text-align:center;font-weight:700;font-size:18px;padding:0 0 6px;font-family:Consolas,monospace}.tb th{background:#efe8fb}.tb.lf td,.tb.lf th{text-align:left}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v50)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v51)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwbBNAy4xB4SyCKf-0521cW6YM-ZqVwAoWWyKa3z9hXxqpEAzsTjW1lAAIxNua9baGe/exec';
@@ -197,10 +197,10 @@ async function api(action,d={},tries=0){
     if(r.error&&String(r.error).startsWith('서버 오류')&&tries<2)return retry();return r}
   catch(e){if(tries<2&&!['login','forgot','changePw'].includes(action))return retry();return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
 const TBR=/\[\s*표\s*(?:[:：]\s*([^\]]*))?\]([\s\S]*?)\[\s*\/\s*표\s*\]/;
-function tbl(op,b){op=op||'';const nh=/머리\s*없음|헤더\s*없음/.test(op),lf=/왼쪽/.test(op),ce=c=>qz(ib(pic(fx(esc(c.trim().replace(/\u0002/g,'|'))))));
+function tbl(op,b){op=op||'';const tm=/(?:제목|이름)\s*[=:：]\s*([^|]*)/.exec(op),ttl=tm?tm[1].trim():'';const nh=/머리\s*없음|헤더\s*없음/.test(op),lf=/왼쪽/.test(op),ce=c=>qz(ib(pic(fx(esc(c.trim().replace(/\u0002/g,'|'))))));
   const R=b.replace(/^\n+|\n+$/g,'').split('\n').map(r=>r.trim()).filter(r=>r!=='').map(r=>r.replace(/\\\|/g,'\u0002').replace(/^\|/,'').replace(/\|$/,'').split('|'));
   if(!R.length)return '';const w=Math.max(...R.map(r=>r.length));
-  return `<div class="wrap"><table class="tb${lf?' lf':''}">`+R.map((r,i)=>{const t=(!nh&&i===0)?'th':'td';let h='';for(let k=0;k<w;k++)h+=`<${t}>${ce(r[k]||'')}</${t}>`;return `<tr>${h}</tr>`}).join('')+'</table></div>'}
+  return `<div class="wrap"><table class="tb${lf?' lf':''}">${ttl?`<caption>${qz(ib(pic(fx(esc(ttl)))))}</caption>`:''}`+R.map((r,i)=>{const t=(!nh&&i===0)?'th':'td';let h='';for(let k=0;k<w;k++)h+=`<${t}>${ce(r[k]||'')}</${t}>`;return `<tr>${h}</tr>`}).join('')+'</table></div>'}
 function fmtTx(x){const P=x.split(TBR);let o='';for(let i=0;i<P.length;i+=3){let a=P[i]||'';if(i+2<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=qz(ib(pic(fx(esc(a))))).replace(/\n/g,'<br>');if(i+2<P.length)o+=tbl(P[i+1],P[i+2])}return o}
 function fmt0(t){return String(t??'').split('```').map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):fmtTx(x)).join('')}
 function fmt(t){const P=String(t??'').replace(/\r/g,'').split(/\[\s*분할\s*(?:[:：]\s*([\d.:：\s]*?))?\s*(?:\|\s*(줄맞춤|가운데)\s*)?\]([\s\S]*?)\[\s*\/\s*분할\s*\]/);let out='';
