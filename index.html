@@ -86,8 +86,9 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .lst{border-collapse:collapse;margin:2px 0}.lst td{border:1.5px solid #cdbfe8;padding:3px 12px;text-align:center;font-family:Consolas,monospace}.lst td.ix{border:0;font-size:11px;color:var(--sub);padding:0 12px}.lst td.hl{background:#fff3a0;font-weight:700}.lst td.hl2{color:#b8860b;font-weight:700}
 .tr2.one{grid-template-columns:minmax(0,1fr)!important}.tr2.one .tp:nth-child(2){display:none}
 .sm{text-align:center;padding:26px 12px}.sm .row{justify-content:center}.sm .sp2{text-align:center}.lkm{margin:20px 0;font-weight:700;color:#c25a5a;line-height:1.7}
+.sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v65)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v66)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbx-utakpcescojGyaXhUhBGg21ZUONQ6AV5zrpsBaf8vczJMV3iex_d2b4TZ1P5QyxN/exec';
@@ -320,7 +321,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};renderToc();try{local
       if(it.hasSample){const sm=bx.querySelector('.sm'),pw=bx.querySelector('.sp2'),er=bx.querySelector('.se'),sk=`su|${S.user.id}|${S.sub}|${no}|${it.q}`;
         const lockMsg=()=>{sm.innerHTML='<p class="lkm">어차피 못 뚫는데 헛짓거리 하지 말고 코드나 짜세요 😎</p>';try{sessionStorage.setItem(sk+'|L','1')}catch(e){}};
         const open=async(p0,auto)=>{if(!auto)er.textContent='확인 중...';const x=await api('sample',{no,q:it.q,pw:p0});if(x.locked){lockMsg();return}if(x.error){if(!auto)er.textContent=x.error;else try{sessionStorage.removeItem(sk)}catch(e){}return}
-          try{sessionStorage.setItem(sk,p0)}catch(e){}sm.innerHTML=`<pre style="margin:0">${esc(x.code)}</pre>`};
+          try{sessionStorage.setItem(sk,p0)}catch(e){}sm.className='sm opened';sm.innerHTML=`<pre style="margin:0">${esc(String(x.code).replace(/^\s*```[^\n]*\n/,'').replace(/\n?\s*```\s*$/,''))}</pre>`};
         bx.querySelector('.sk').onclick=()=>{if(pw.value.trim())open(pw.value.trim())};pw.addEventListener('keydown',e=>{if(e.key==='Enter')bx.querySelector('.sk').click()});
         let sv0=null,lk0=null;try{sv0=sessionStorage.getItem(sk);lk0=sessionStorage.getItem(sk+'|L')}catch(e){}if(lk0&&!(S.user&&S.user.role==='관리자'))lockMsg();else if(sv0!=null||(S.user&&S.user.role==='관리자'))open(sv0||'',true)}
       ta.onkeydown=e=>{if(e.key==='Tab'){e.preventDefault();document.execCommand('insertText',false,'    ')}};
