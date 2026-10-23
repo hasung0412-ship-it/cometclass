@@ -93,7 +93,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v80)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v81)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbxSvXuxV2HA69Pm7_3aU9tbrzuXTi0MGXvRZXLYu1sbGUvVT_y_7_AqGbjcSnVcVVHZ/exec';
@@ -283,10 +283,10 @@ function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 �
     m.querySelector('#pk').onclick=()=>{m.remove();$('#n1').type=$('#n2').type='text';$('#ey').textContent='🙈'}};
   $('#go').onclick=()=>{const p=$('#n1').value;if(p!==$('#n2').value)return $('#e').textContent='두 비밀번호가 달라요.';if(p.length<4)return $('#e').textContent='비밀번호는 4자 이상이어야 해요.';$('#e').textContent='';
     const PH='나는 정보책에 비밀번호를 잘 적어놨습니다.',norm=x=>String(x).replace(/\s+/g,'').replace(/[.。]+$/,'');
-    const m=POP(`<h3 style="margin-top:0">📒 정보책에 적었나요?</h3><p style="margin:6px 0">내가 정한 비밀번호</p><div style="font-size:22px;font-weight:bold;background:#f5f1fb;border-radius:10px;padding:10px;word-break:break-all;user-select:all" id="pv"></div>
+    const m=POP(`<h3 style="margin-top:0">📒 정보책에 적었나요?</h3><p style="margin:6px 0">내가 정한 비밀번호</p><div style="display:flex;align-items:center;justify-content:center;gap:8px;background:#f5f1fb;border-radius:10px;padding:6px 10px"><span id="pv" style="font-size:16px;letter-spacing:2px;word-break:break-all;min-height:1.6em;line-height:1.6em"></span><button type="button" class="eye" id="pe" title="비밀번호 보기" style="background:none;border:0;font-size:18px;cursor:pointer;padding:2px 6px">👁</button></div>
 <p style="font-size:14px;color:var(--sub);margin:12px 0 6px">비밀번호를 정보책에 적은 다음, 아래 문구를 <b>직접 입력</b>해 주세요.<br>(붙여넣기는 안 돼요)</p><div style="font-weight:bold;margin-bottom:6px">${PH}</div>
 <input id="cf" placeholder="위 문구를 그대로 입력" autocomplete="off"><div class="err" id="ce"></div><div style="display:flex;gap:8px;justify-content:center;margin-top:6px"><button class="ghost" id="cn">돌아가기</button><button class="main" id="cy" disabled style="width:auto;padding:9px 22px">비밀번호 확정</button></div>`);
-    m.querySelector('#pv').textContent=p;const cf=m.querySelector('#cf'),cy=m.querySelector('#cy');
+    const pv=m.querySelector('#pv'),pe=m.querySelector('#pe');let sh=false;const pr=()=>{pv.textContent=sh?p:'●'.repeat(p.length);pe.textContent=sh?'🙈':'👁'};pr();pe.onclick=()=>{sh=!sh;pr()};const cf=m.querySelector('#cf'),cy=m.querySelector('#cy');
     ['paste','drop'].forEach(ev=>cf.addEventListener(ev,e=>e.preventDefault()));
     cf.oninput=()=>{cy.disabled=norm(cf.value)!==norm(PH)};cf.focus();
     m.querySelector('#cn').onclick=()=>m.remove();
