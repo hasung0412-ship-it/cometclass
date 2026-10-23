@@ -75,7 +75,7 @@ details.sec>summary::before{content:'▾';color:var(--sub)}details.sec:not([open
 
 .clk{font:700 30px/1.2 Consolas,monospace;letter-spacing:1px}.tmb.on{border-color:#7fc8a9;background:#f3fbf7}.tmc{display:none;font-size:13px}
 @media(max-width:1199px){.tmc.on{display:inline-block}}@media(min-width:1200px){.th{display:none}}
-.err{color:#c25a5a;min-height:24px}
+.err{color:#c25a5a;min-height:24px;white-space:pre-line}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .choice{display:block;padding:6px 10px;border-radius:10px;cursor:pointer}.choice:hover{background:#f3f5fb}.choice input{width:auto;margin-right:8px}
 table{border-collapse:collapse;font-size:14px;background:#fff}th,td{border:1px solid var(--line);padding:6px 10px;text-align:center;white-space:nowrap}
@@ -93,7 +93,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v81)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v82)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbxSvXuxV2HA69Pm7_3aU9tbrzuXTi0MGXvRZXLYu1sbGUvVT_y_7_AqGbjcSnVcVVHZ/exec';
@@ -202,11 +202,14 @@ const ico=x=>/^https?:\/\//i.test(String(x))||/\.(png|jpe?g|gif|svg|webp)$/i.tes
 const AN={개념:['📘','개념 학습'],해석:['🔍','코드 해석'],작성:['✍️','코드 작성']};
 async function api(action,d={},tries=0){
   const retry=async()=>{await new Promise(r=>setTimeout(r,900*(tries+1)));return api(action,d,tries+1)};
-  try{const r=await(await fetch(API,{method:'POST',body:JSON.stringify({action,token:S.token,sub:S.sub,...d})})).json();
+  let why='';
+  try{const res=await fetch(API,{method:'POST',body:JSON.stringify({action,token:S.token,sub:S.sub,...d})});let r;const tx=await res.text();
+    try{r=JSON.parse(tx)}catch(e){const tt=(/<title>([^<]{0,60})/i.exec(tx)||[])[1];why='서버가 오류 페이지를 돌려줬어요 (HTTP '+res.status+(tt?', '+tt.trim():'')+')';throw new Error('x')}
     if(r.error==='auth'){logout();return{error:'다시 로그인해 주세요.'}}
     if(r.error==='알 수 없는 요청이에요.')return{error:'⚠ 서버(Apps Script)가 예전 버전이에요. 선생님께 알려 주세요. (Code.gs를 새 버전으로 다시 배포해야 해요)'};
     if(r.error&&String(r.error).startsWith('서버 오류')&&tries<2)return retry();return r}
-  catch(e){if(tries<2&&!['login','forgot','changePw'].includes(action))return retry();return{error:'서버에 연결할 수 없어요. 인터넷과 API 주소를 확인해 주세요.'}}}
+  catch(e){if(!why)why=/Failed to fetch|NetworkError|Load failed/i.test(String(e&&e.message))?'인터넷이 끊겼거나, 이 컴퓨터(학교 네트워크)에서 서버 주소가 막혀 있어요':String(e&&e.message||e).slice(0,80);
+    if(tries<2&&!['forgot','changePw'].includes(action))return retry();return{error:'서버에 연결할 수 없어요. 잠시 뒤 다시 눌러 보세요.\n(원인: '+why+')'}}}
 const TBR=/\[\s*표\s*(?:[:：]\s*([^\]]*))?\]([\s\S]*?)\[\s*\/\s*표\s*\]/;
 function tbl(op,b){op=op||'';const tm=/(?:제목|이름)\s*[=:：]\s*([^|]*)/.exec(op),ttl=tm?tm[1].trim():'';const nh=/머리\s*없음|헤더\s*없음/.test(op),lf=/왼쪽/.test(op),ce=c=>qz(ib(pic(fx(esc(c.trim().replace(/\u0002/g,'|'))))));
   const R=b.replace(/^\n+|\n+$/g,'').split('\n').map(r=>r.trim()).filter(r=>r!=='').map(r=>r.replace(/\\\|/g,'\u0002').replace(/^\|/,'').replace(/\|$/,'').split('|'));
