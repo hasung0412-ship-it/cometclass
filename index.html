@@ -95,7 +95,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v84)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b>🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v85)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzTvyz8Slu21aASzOgt84DAen1N6Z_S5U_aDk6IheKV8XUwA1xeDtxxxy3IC_zS0xyB/exec';
@@ -533,8 +533,8 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
   const pane=R=>L.map((g,n)=>`<div class="ln" data-n="${n+1}"><i>${n+1}</i>${g.map((s,i)=>s.h==null?(i===0?spl(esc(s.t)):esc(s.t)):R?`<span class="hot2 ${solved[s.h]?'ok':''}" data-k="${s.h}">${solved[s.h]?(H[s.h].r?rgHTML(H[s.h],S,pend(cur)?cur-1:cur,pend(cur)?S[cur][0]:0):br(esc(hotText(H[s.h])))):'🔍 '+esc(H[s.h].e)}</span>`:`<span class="hot" data-k="${s.h}">${esc(H[s.h].e)}</span>`).join('')}</div>`).join('');
   el.innerHTML=`<div class="tr2${H.length?'':' one'}"><div class="tp"><h4>📄 원본 코드 <button class="ghost sw" style="float:right;padding:2px 10px;font-size:13px">␣ 들여쓰기 숨기기</button></h4><div class="pl"></div></div><div class="tp"><h4>💡 해석 (🔍를 눌러 보세요)</h4><div class="pr"></div></div></div>
   <div class="lk"></div><div class="lw"><div class="row" style="margin-top:10px"><button class="ghost pv">◀</button><button class="ghost nx">▶</button><input type="range" class="sl" min="0" max="${S.length-1}" value="0" style="flex:1;min-width:120px;padding:0;border:0"><button class="ghost ap">▶ 자동 재생</button><button class="ghost lp" style="display:none"></button><b class="cn" style="min-width:90px;text-align:right"></b></div>
-  <div class="row"><span class="qn" style="color:#c25a5a"></span></div><div class="qp"></div><div class="skn" style="display:none"></div>
-  <div class="itw"></div><table class="vtb"><thead><tr><th class="vk">변수</th><th class="vh">값 (이 줄을 실행한 직후)</th></tr></thead><tbody class="vt"></tbody></table><pre class="out" style="margin-bottom:0"></pre></div>${D.e==='stop'?'<p style="color:var(--sub);margin:6px 0 0">단계가 너무 많아 300단계까지만 보여 줘요.</p>':D.e?`<p style="color:#c25a5a;margin:6px 0 0">실행 중 오류: ${esc(D.e)}</p>`:''}`;
+  <div class="row"><span class="qn" style="color:#c25a5a"></span></div><div class="skn" style="display:none"></div>
+  <div class="itw"></div><table class="vtb"><thead><tr><th class="vk">변수</th><th class="vh">값 (이 줄을 실행한 직후)</th></tr></thead><tbody class="vt"></tbody></table><div class="qp"></div><pre class="out" style="margin-bottom:0"></pre></div>${D.e==='stop'?'<p style="color:var(--sub);margin:6px 0 0">단계가 너무 많아 300단계까지만 보여 줘요.</p>':D.e?`<p style="color:#c25a5a;margin:6px 0 0">실행 중 오류: ${esc(D.e)}</p>`:''}`;
   el.classList.add('showsp'); // 들여쓰기 점은 처음부터 보이게 (버튼으로 끌 수 있음)
   const note=t=>{const n=el.querySelector('.qn');n.textContent=t;setTimeout(()=>n.textContent='',2500)};
   const qpanel=()=>{const box=el.querySelector('.qp');if(!allSolved()){box.innerHTML='';pk='';return}const q=qs(cur),key=cur+'|'+(done[cur]?1:0);if(pk===key)return;pk=key;
@@ -614,7 +614,7 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
   el.querySelector('.sw').onclick=e=>{el.classList.toggle('showsp');e.target.textContent=el.classList.contains('showsp')?'␣ 들여쓰기 숨기기':'␣ 들여쓰기 보기'};
   el.onclick=e=>{const h=e.target.closest('[data-k]');if(h)openHot(+h.dataset.k)};
   function openHot(k){if(document.querySelector('.modal.hot'))return;const h=H[k],m=document.createElement('div');m.className='modal hot';let si=0,cp=null;const hasQ=h.st.some(s=>s.ans);
-    m.innerHTML=`<div class="mb"><p style="font-size:13px;color:var(--sub);margin:0 0 6px">${esc(h.e)}</p><div class="hs"></div><div class="msg"></div><div class="row"><button class="main ck">${hasQ?'확인':'알겠어요'}</button><button class="ghost cl">닫기</button></div></div>`;
+    m.innerHTML=`<div class="mb"><p style="font:bold 22px/1.5 Consolas,monospace;color:var(--ink);margin:0 0 10px"><span style="background:#e4eefc;border-radius:6px;padding:2px 10px">${esc(h.e)}</span></p><div class="hs"></div><div class="msg"></div><div class="row"><button class="main ck">${hasQ?'확인':'알겠어요'}</button><button class="ghost cl">닫기</button></div></div>`;
     document.body.appendChild(m);const hs=m.querySelector('.hs'),out=m.querySelector('.msg'),ck=m.querySelector('.ck');
     const add=st=>{const p=document.createElement('p');p.style.margin='0 0 8px';const om=optMsg(st);p.innerHTML=br(esc(om.msg).replace(/OO/g,()=>st.ans?(om.opts?`<select class="bk"><option value="">선택</option>${om.opts.map(o=>`<option>${esc(o)}</option>`).join('')}</select>`:'<input class="bk" autocomplete="off">'):'OO'));hs.appendChild(p);return p};
     const show=()=>{if(!hasQ){h.st.forEach(add);return}
