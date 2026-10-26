@@ -109,7 +109,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v90)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
-const API='https://script.google.com/macros/s/AKfycbzTvyz8Slu21aASzOgt84DAen1N6Z_S5U_aDk6IheKV8XUwA1xeDtxxxy3IC_zS0xyB/exec';
+const API='https://script.google.com/macros/s/AKfycbw9wYcIfV4JB0b1NTg6gaRMOLHPqV2karSv5VtVqwzhONEP4VW1UNv49spsmIfhxAdD/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:'',at:null,tocOpen:{},ayear:''};let mem={};
 const memT={};async function get(k,fn,force){if(!force&&mem[k]&&Date.now()-(memT[k]||0)<60000)return mem[k];const r=await fn();if(!r.error){mem[k]=r;memT[k]=Date.now()}return r}
