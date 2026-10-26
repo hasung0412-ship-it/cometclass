@@ -64,6 +64,9 @@ button:disabled{opacity:.5;cursor:not-allowed}
 @media(min-width:1200px){#wrap.hasToc{grid-template-columns:250px minmax(0,1fr) 300px}.hasToc #side{display:block}}
 .sbox{border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:12px}.sbox h4{margin:0 0 6px;font-size:14px;color:var(--sub)}
 .yr{padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;width:auto}
+.cnx{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 8px;padding:9px 12px;border-radius:12px;background:#eef1f8;color:var(--sub);font-size:15px;line-height:1.5;white-space:pre-line;transition:opacity .6s}.cnx.ok{background:var(--mint);color:var(--ink)}.cnx.no{background:var(--no);color:var(--ink);flex-direction:column}.cnx.gone{opacity:0}
+.spin{flex:none;width:18px;height:18px;border:3px solid var(--lav);border-top-color:#a993d6;border-radius:50%;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.yrin{animation:yrin .5s ease-out}@keyframes yrin{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 #toc{display:none}.hasToc #toc{display:block;position:sticky;top:58px;align-self:start;max-height:calc(100vh - 58px);overflow:auto;padding:18px 8px 60px 10px;border-right:1px solid var(--line)}
 #toc h4{margin:0 0 10px;font:14px 'KoPubWorld Dotum','Malgun Gothic',sans-serif;color:var(--sub)}
 .tt{display:block;width:100%;text-align:left;background:none;padding:6px 8px;border-radius:10px;font-size:15px;line-height:1.4}.tt:hover{background:#f3f5fb}.tt small{color:var(--sub);margin-left:4px}
@@ -78,6 +81,8 @@ button:disabled{opacity:.5;cursor:not-allowed}
 @media(max-width:640px){.cols{grid-template-columns:1fr!important}}
 .qz{background:#fffbe8;border-radius:14px;padding:12px 14px;margin:10px 0}.qq{font-weight:bold;margin-bottom:6px}.qin{max-width:260px}select.qin{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;width:auto}
 .qr2{font-weight:bold}.qr2.g{color:#2e8b62}.qr2.r{color:#c25a5a}.qo.sel{background:var(--sky)}
+.fnq{word-break:keep-all;background:#f1f6ff;border-radius:14px;padding:12px 14px;margin:10px 0;border:2px solid transparent}.fnq.act{border-color:#9ec3f0}.fqh{font-weight:bold;margin-bottom:6px}.fqb{display:inline-block;background:var(--sky);border-radius:8px;padding:0 8px;margin-right:6px;font-family:Consolas,monospace}.fqx{font-family:Consolas,monospace;font-size:17px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 10px}.fqs{display:inline-block;min-width:96px;text-align:center;border-bottom:2px dashed #9ec3f0;color:var(--sub);font-size:15px}.fqs.on{color:#3b6fd4;font-weight:bold;font-size:17px;border-bottom-style:solid}.fqv{width:110px}.fqm{font-weight:bold}.fqm.g{color:#2e8b62}.fqm.r{color:#c25a5a}.fqt{display:block;color:var(--sub);margin-top:4px}.fqe{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:0 0 8px;display:inline-block;min-width:240px}.fqe b{font-family:Consolas,monospace;display:block;border-bottom:1px dashed #9ec3f0;padding-bottom:4px;margin-bottom:4px}
+.tb.xl{user-select:none;-webkit-user-select:none}.tb.xl td,.tb.xl th{touch-action:none;cursor:cell}.tb .xh{background:#f4f5f9;color:var(--sub);font-size:13px;font-weight:normal;padding:2px 8px;min-width:0;border-color:#e3e6ee;cursor:default}.tb .fsel{background:#cfe3fb;box-shadow:inset 0 0 0 2px #6fa0e0}.tb .fok{background:var(--mint)}.tb .fhit{background:#fff3a0;font-weight:bold}
 code.ic{background:#f1f3fa;border-radius:6px;padding:0 5px;font:.92em Consolas,monospace}
 .ii{display:inline-block;width:auto;min-width:6em;padding:2px 8px;margin:0 4px;border:0;border-bottom:2px solid #b9cdf5;border-radius:6px;background:#fbfcff}.ii::placeholder{color:#b9bfce}
 .is{padding:2px 8px;margin:0 4px;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;width:auto}.im{font-weight:bold}.im.g{color:#2e8b62}.im.r{color:#c25a5a}
@@ -97,7 +102,7 @@ th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:
 td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .wrap{overflow-x:auto;border-radius:12px}
 .gt{width:100%;table-layout:fixed;font-size:17px}.gt th,.gt td{padding:11px 12px}.gt td:nth-child(n+2),.gt th:nth-child(n+2){text-align:center}.gt td b{font-size:19px}
-.tb{border-collapse:collapse;margin:8px auto;font-size:17px}.tb th,.tb td{border:2px solid #cdbfe8;padding:8px 16px;min-width:56px;min-height:34px;text-align:center;white-space:normal}.tb caption{caption-side:top;text-align:center;font-weight:700;font-size:18px;padding:0 0 6px;font-family:Consolas,monospace}.tb th{background:#efe8fb}.tb.lf td,.tb.lf th{text-align:left}
+.tb{border-collapse:collapse;margin:8px auto;font-size:17px}.tb th,.tb td{border:2px solid #cdbfe8;padding:8px 16px;min-width:56px;min-height:34px;text-align:center;white-space:normal;word-break:keep-all;overflow-wrap:break-word}.tb caption{caption-side:top;text-align:center;font-weight:700;font-size:18px;padding:0 0 6px}.tb caption.cd{font-family:Consolas,monospace}.tb.sm{font-size:15px}.tb.sm th,.tb.sm td{padding:6px 10px}.tb th{background:#efe8fb}.tb.lf td,.tb.lf th{text-align:left}
 .lk{color:#3b6fd4;text-decoration:underline;word-break:break-all}.bxo{border:1px solid var(--line);border-left:5px solid #b8c0d4;border-radius:10px;padding:12px 16px;margin:10px 0;text-align:left;line-height:1.75}.bxt{font-weight:bold;font-size:14px;color:var(--sub);margin-bottom:6px}.bxb>*:first-child{margin-top:0}.bxb>*:last-child{margin-bottom:0}
 .ctr{text-align:center;margin:8px 0}.ctr pre{display:table;margin:8px auto;text-align:left}.ctr .qz,.ctr .box{text-align:center}
 .ib.ii,select.ib{margin:6px 3px;vertical-align:middle}
@@ -107,7 +112,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v94)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v96)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbx5Im0ofFvxyWBgPuCL1CikMjpa-9ISrr2brpLeuYPu26HWEcLLqHz3bTSjLq0ZFn5m/exec';
@@ -238,11 +243,58 @@ async function api(action,d={},tries=0){
   catch(e){if(!why)why=/Failed to fetch|NetworkError|Load failed/i.test(String(e&&e.message))?'인터넷이 끊겼거나, 이 컴퓨터(학교 네트워크)에서 서버 주소가 막혀 있어요':String(e&&e.message||e).slice(0,80);
     if(tries<2&&!['forgot','changePw'].includes(action))return retry();return{error:'서버에 연결할 수 없어요. 잠시 뒤 다시 눌러 보세요.\n(원인: '+why+')'}}}
 const TBR=/\[\s*표\s*(?:[:：]\s*([^\]]*))?\]([\s\S]*?)\[\s*\/\s*표\s*\]/;
-function tbl(op,b){op=op||'';const tm=/(?:제목|이름)\s*[=:：]\s*([^|]*)/.exec(op),ttl=tm?tm[1].trim():'';const nh=/머리\s*없음|헤더\s*없음/.test(op),lf=/왼쪽/.test(op),ce=c=>qz(ib(pic(fx(esc(c.trim().replace(/\u0002/g,'|'))))));
+function tbl(op,b){op=op||'';const tm=/(?:제목|이름)\s*[=:：]\s*([^|]*)/.exec(op),ttl=tm?tm[1].trim():'';const nh=/머리\s*없음|헤더\s*없음/.test(op),lf=/왼쪽/.test(op),sm=/작게/.test(op),ce=c=>qz(ib(pic(fx(esc(c.trim().replace(/\u0002/g,'|'))))));
   const R=b.replace(/^\n+|\n+$/g,'').split('\n').map(r=>r.trim()).filter(r=>r!=='').map(r=>r.replace(/\\\|/g,'\u0002').replace(/^\|/,'').replace(/\|$/,'').split('|'));
   if(!R.length)return '';const w=Math.max(...R.map(r=>r.length));
-  return `<div class="wrap"><table class="tb${lf?' lf':''}">${ttl?`<caption>${qz(ib(pic(fx(esc(ttl)))))}</caption>`:''}`+R.map((r,i)=>{const t=(!nh&&i===0)?'th':'td';let h='';for(let k=0;k<w;k++)h+=`<${t}>${ce(r[k]||'')}</${t}>`;return `<tr>${h}</tr>`}).join('')+'</table></div>'}
-function fmtTx(x){const P=x.split(TBR);let o='';for(let i=0;i<P.length;i+=3){let a=P[i]||'';if(i+2<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=qz(ib(pic(fx(esc(a))))).replace(/\n/g,'<br>');if(i+2<P.length)o+=tbl(P[i+1],P[i+2])}return o}
+  return `<div class="wrap"><table class="tb${lf?' lf':''}${sm?' sm':''}">${ttl?`<caption${/^[\w.\[\]'"]+$/.test(ttl)?' class="cd"':''}>${qz(ib(pic(fx(esc(ttl)))))}</caption>`:''}`+R.map((r,i)=>{const t=(!nh&&i===0)?'th':'td';let h='';for(let k=0;k<w;k++)h+=`<${t}>${ce(r[k]||'')}</${t}>`;return `<tr>${h}</tr>`}).join('')+'</table></div>'}
+function fmtTx(x){const P=x.split(TBR);let o='';for(let i=0;i<P.length;i+=3){let a=P[i]||'';if(i+2<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=qz(ib(pic(fx(fq(esc(a)))))).replace(/\n/g,'<br>');if(i+2<P.length)o+=tbl(P[i+1],P[i+2])}return o}
+// [함수:MAX|범위=B2:B6 또는 범위=1회(머리글 이름)|질문=…|해설=…] : 바로 위 표에서 범위를 드래그해 고르고 결과 값을 써 보는 활동 (MAX·MIN·AVERAGE·COUNTIF, 기록은 안 남겨요)
+const FQN={MAX:'가장 큰 값을 찾아보세요.',MIN:'가장 작은 값을 찾아보세요.',AVERAGE:'평균을 구해 보세요.',COUNTIF:'조건에 맞는 칸이 몇 개인지 세어 보세요.'};
+function fq(s){return s.replace(/\[\s*함수\s*[:：]\s*(MAX|MIN|AVERAGE|COUNTIF)\s*((?:\|[^\]|]*)*)\][ \t]*\n?/gi,(m,f,o)=>{const kv={};o.split('|').forEach(x=>{const i=x.indexOf('=');if(i>0)kv[x.slice(0,i).trim()]=x.slice(i+1).trim()});f=f.toUpperCase();
+  const rg=(kv['범위']||'').toUpperCase().replace(/\s/g,''),cd=(kv['조건']||'').replace(/^&quot;|&quot;$/g,'');
+  if(!rg)return `<div class="fnq bad">⚠ [함수:${f}] 범위를 B2:B6 또는 머리글 이름(예: 범위=1회)으로 적어 주세요.</div>`;const xl=/^[A-Z]\d+(:[A-Z]\d+)?$/.test(rg)?'xl':'';
+  return `<div class="fnq" data-f="${f}" data-r="${xl?rg:(kv['범위']||'').trim()}" data-m="${xl}" data-c="${cd}"><div class="fqh"><span class="fqb">🧮 ${f}</span>${kv['질문']||FQN[f]}</div>${kv['해설']?`<div class="fqe"><b>${f}(범위${f==='COUNTIF'?', 조건':''})</b><div>${kv['해설']}</div></div>`:''}<div class="row"><code class="fqx">${xl?'=':''}${f}(<span class="fqs">표에서 드래그</span>${f==='COUNTIF'?`, "${cd}"`:''})</code> = <input class="fqv" placeholder="값" autocomplete="off"><button class="main fqk">확인</button><button class="ghost fqz">다시</button><span class="fqm"></span></div><small class="fqt">👆 위 표에서 값을 찾은 칸들을 드래그(한 칸은 클릭)해서 범위를 골라요.</small></div>`})}
+const fqA=r=>{const P=r.split(':').map(x=>[x.charCodeAt(0)-64,+x.slice(1)]),b=P[1]||P[0];return{c1:Math.min(P[0][0],b[0]),c2:Math.max(P[0][0],b[0]),r1:Math.min(P[0][1],b[1]),r2:Math.max(P[0][1],b[1])}};
+const fqH=(T,r)=>{const H=[...T.querySelectorAll('[data-r="1"]')],P=r.split(/\s*[:~]\s*/).map(x=>H.find(c=>c.textContent.trim()===x.trim())),n=Math.max(...[...T.querySelectorAll('[data-r]')].map(c=>+c.dataset.r));
+  return P.every(Boolean)&&n>1?{r1:2,r2:n,c1:Math.min(...P.map(c=>+c.dataset.c)),c2:Math.max(...P.map(c=>+c.dataset.c))}:null};
+const fqV=(q,g)=>{const V=fqC(q._t,g).map(c=>c.textContent.trim()||'(빈칸)');return V.length>8?V.slice(0,7).join(', ')+`, … (${V.length}칸)`:V.join(', ')};
+const fqS=(q,g)=>q.dataset.m?fqL(g):fqV(q,g);
+const fqL=g=>{const a=String.fromCharCode(64+g.c1)+g.r1,b=String.fromCharCode(64+g.c2)+g.r2;return a===b?a:a+':'+b};
+const fqC=(T,g)=>[...T.querySelectorAll('[data-r]')].filter(c=>+c.dataset.r>=g.r1&&+c.dataset.r<=g.r2&&+c.dataset.c>=g.c1&&+c.dataset.c<=g.c2);
+const fqN=t=>{t=String(t).trim().replace(/,/g,'');return t!==''&&isFinite(t)?+t:null};
+function fqCalc(T,g,f,cd){const C=fqC(T,g),N=C.filter(c=>fqN(c.textContent)!=null),V=N.map(c=>fqN(c.textContent));
+  if(f==='COUNTIF'){const m=/^(>=|<=|<>|>|<|=)?(.*)$/.exec(cd.trim()),op=m[1]||'=',x=m[2].trim().replace(/^"|"$/g,''),xn=fqN(x);
+    const ok=c=>{const t=c.textContent.trim();if(xn==null){const e=t.toLowerCase()===x.toLowerCase();return op==='='?e:op==='<>'?!e:false}const n=fqN(t);if(n==null)return op==='<>';return {'=':n===xn,'<>':n!==xn,'>':n>xn,'<':n<xn,'>=':n>=xn,'<=':n<=xn}[op]},H=C.filter(ok);return{v:H.length,hit:H}}
+  if(!V.length)return{v:null,hit:[]};if(f==='AVERAGE')return{v:V.reduce((a,b)=>a+b,0)/V.length,hit:N};
+  const v=Math[f==='MAX'?'max':'min'](...V);return{v,hit:N.filter(c=>fqN(c.textContent)===v)}}
+function fqPaint(q){const T=q._t;T.querySelectorAll('.fsel,.fok,.fhit').forEach(c=>c.classList.remove('fsel','fok','fhit'));if(!q._g)return;
+  fqC(T,q._g).forEach(c=>c.classList.add(q._done?'fok':'fsel'));if(q._done)q._done.hit.forEach(c=>c.classList.add('fhit'))}
+function fqAct(q){q._t._q=q;document.querySelectorAll('.fnq').forEach(x=>{if(x._t===q._t)x.classList.toggle('act',x===q)});fqPaint(q)}
+function fqNum(T){if(T.classList.contains('xl'))return;T.classList.add('xl');[...T.rows].forEach((r,i)=>[...r.cells].forEach((c,k)=>{c.dataset.r=i+1;c.dataset.c=k+1}))}
+function fqXL(T){if(T._xl)return;T._xl=1;const R=[...T.rows],w=Math.max(...R.map(r=>r.cells.length));
+  R.forEach((r,i)=>{const h=document.createElement('th');h.className='xh';h.textContent=i+1;r.insertBefore(h,r.firstChild)});
+  const h=T.insertRow(0);h.innerHTML='<th class="xh"></th>'+Array.from({length:w},(_,k)=>`<th class="xh">${String.fromCharCode(65+k)}</th>`).join('')}
+function fqBind(){document.querySelectorAll('.fnq:not(.on):not(.bad)').forEach(q=>{q.classList.add('on');const T=[...document.querySelectorAll('table.tb')].filter(t=>t.compareDocumentPosition(q)&4).pop();
+  if(!T){const m=q.querySelector('.fqm');m.className='fqm r';m.textContent='⚠ 이 줄보다 위에 [표]가 있어야 해요.';return}
+  q._t=T;fqNum(T);if(q.dataset.m)fqXL(T);else if(!(q._A=fqH(T,q.dataset.r))){const m=q.querySelector('.fqm');m.className='fqm r';m.textContent=`⚠ 표 머리글에서 '${q.dataset.r}'을(를) 찾지 못했어요.`}if(!T._q)fqAct(q)})}
+new MutationObserver(fqBind).observe(document.body,{childList:true,subtree:true});
+let fqD=null;
+function fqSel(q,a,b){q._done=null;q._g={r1:Math.min(+a.dataset.r,+b.dataset.r),r2:Math.max(+a.dataset.r,+b.dataset.r),c1:Math.min(+a.dataset.c,+b.dataset.c),c2:Math.max(+a.dataset.c,+b.dataset.c)};
+  const s=q.querySelector('.fqs');s.textContent=fqS(q,q._g);s.classList.add('on');q.querySelector('.fqm').textContent='';fqPaint(q)}
+document.addEventListener('pointerdown',e=>{const z=e.target.closest&&e.target.closest('.fnq.on');if(z&&z._t&&z._t._q!==z)fqAct(z);
+  const c=e.target.closest&&e.target.closest('table.xl [data-r]');if(!c)return;const T=c.closest('table');if(!T._q)return;e.preventDefault();fqD={T,q:T._q,a:c};fqSel(fqD.q,c,c)});
+document.addEventListener('pointermove',e=>{if(!fqD)return;const el=document.elementFromPoint(e.clientX,e.clientY),c=el&&el.closest('[data-r]');if(c&&c.closest('table')===fqD.T)fqSel(fqD.q,fqD.a,c)});
+['pointerup','pointercancel'].forEach(k=>document.addEventListener(k,()=>fqD=null));
+function fqCheck(q){const m=q.querySelector('.fqm'),say=(ok,t)=>{m.className='fqm '+(ok?'g':'r');m.textContent=t},v=q.querySelector('.fqv').value.trim(),f=q.dataset.f;if(!q._t)return;
+  if(!q._g)return say(0,'표에서 범위를 먼저 드래그해서 골라 주세요.');if(!v)return say(0,'결과 값을 써 주세요.');
+  const A=q.dataset.m?fqA(q.dataset.r):q._A;if(!A)return say(0,'⚠ 정답 범위를 찾지 못했어요. (선생님 확인 필요)');const R=fqCalc(q._t,A,f,q.dataset.c);if(R.v==null)return say(0,'⚠ 정답 범위에 숫자가 없어요. (선생님 확인 필요)');
+  const g=q._g,okR=['r1','r2','c1','c2'].every(k=>g[k]===A[k]),n=fqN(v),okV=n!=null&&(Math.abs(n-R.v)<1e-9||(f==='AVERAGE'&&[0,1,2].some(d=>Math.abs(n-+R.v.toFixed(d))<1e-9)));
+  if(okR&&okV){q._done=R;fqPaint(q);return say(1,`✅ 맞아요! ${q.dataset.m?'=':''}${f}(${fqS(q,A)}${f==='COUNTIF'?`, "${q.dataset.c}"`:''}) 의 결과는 ${+R.v.toFixed(2)} 이에요.`)}
+  const hd=g.r1===1&&q._t.querySelector('th[data-r="1"]');
+  say(0,okV?'❌ 값은 맞았어요! 그런데 범위가 달라요.'+(hd?' 머리글(제목) 칸은 빼고 골라요.':''):okR?'❌ 범위는 맞았어요! 값을 다시 살펴봐요.':'❌ 범위와 값을 다시 살펴봐요.'+(hd?' (머리글 칸은 빼고 골라요)':''))}
+document.addEventListener('click',e=>{const b=e.target.closest('.fqk,.fqz');if(!b)return;const q=b.closest('.fnq');if(!q||!q._t)return;
+  if(b.classList.contains('fqk'))return fqCheck(q);q._g=null;q._done=null;q.querySelector('.fqv').value='';const s=q.querySelector('.fqs');s.textContent='표에서 드래그';s.classList.remove('on');q.querySelector('.fqm').textContent='';fqPaint(q)});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('fqv')){const q=e.target.closest('.fnq');if(q)fqCheck(q)}});
 function fmt0(t){const PP=String(t??'').split('```');return PP.map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):`<pre>${esc(x.trim())}</pre>`):fmtTx(x.replace(i>0?/^[ \t]*\n/:/^$/,'').replace(i<PP.length-1?/\n[ \t]*$/:/^$/,''))).join('')}
 const BOXR=/\[\s*상자\s*(?:[:：]([^\]]*))?\]([\s\S]*?)\[\s*\/\s*상자\s*\]/;
 function fmt0c(t){const P=String(t??'').split(BOXR);let o='';for(let i=0;i<P.length;i+=3){let a=P[i]||'';if(i+2<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=fmt0c0(a);
@@ -297,15 +349,21 @@ function togglePrev(){S.preview=!S.preview;setWho();S.preview?(showToc(true),loa
 function logout(){NSEEN=false;tmStop();mem={};S.preview=false;S.sel={};S.sub='';S.asub='';S.ayear='';sessionStorage.removeItem('t');S.token='';S.user=null;setWho();hdrNotice();loginView()}
 
 /* 로그인 */
-async function fillYears(){const e=$('#yr');if(!e)return;const r=await get('years',()=>api('years')),L=(r&&r.years)||[];if(!L.length){e.style.display='none';return}
-  let sv=null;try{sv=localStorage.getItem('yr')}catch(x){}e.innerHTML=L.map(y=>`<option value="${y}">${y}년</option>`).join('');e.value=(sv&&L.includes(sv))?sv:(r.cur||L[0]);e.onchange=()=>{try{localStorage.setItem('yr',e.value)}catch(x){}}}
+let cnxT=null;
+async function fillYears(){const e=$('#yr'),c=$('#cnx'),b=$('#go');if(!e)return;clearTimeout(cnxT);const fresh=mem.years&&Date.now()-(memT.years||0)<60000,w=e.parentNode; // 연결될 때까지 로그인 버튼 막기
+  if(!fresh){w.style.display='none';b.disabled=true;c.className='cnx';c.innerHTML='<span class="spin"></span><span>서버에 연결하는 중이에요.\n연결되면 로그인할 수 있어요.</span>'}
+  const r=await get('years',()=>api('years'));if($('#yr')!==e)return;b.disabled=false;
+  if(r.error){c.className='cnx no';c.innerHTML=`<span>⚠ ${esc(r.error)}</span><small>10초 뒤에 자동으로 다시 연결해 볼게요.</small><button class="ghost" id="rc">지금 다시 연결</button>`;$('#rc').onclick=fillYears;cnxT=setTimeout(fillYears,10000);return}
+  const L=r.years||[];if(L.length){let sv=null;try{sv=localStorage.getItem('yr')}catch(x){}e.innerHTML=L.map(y=>`<option value="${y}">${y}년</option>`).join('');e.value=(sv&&L.includes(sv))?sv:(r.cur||L[0]);e.onchange=()=>{try{localStorage.setItem('yr',e.value)}catch(x){}};w.style.display='';if(!fresh)w.classList.add('yrin')}
+  if(fresh){c.style.display='none';return}
+  c.className='cnx ok';c.innerHTML='<span>✅ 서버에 연결됐어요! 이제 로그인할 수 있어요.</span>';cnxT=setTimeout(()=>{c.classList.add('gone');cnxT=setTimeout(()=>c.style.display='none',600)},4000)}
 function loginView(msg=''){showToc(false);app.innerHTML=`<div class="box narrow"><h2>로그인</h2>
-<div class="row" style="justify-content:center;margin:0 0 6px">📅 <select id="yr" class="yr"></select></div><input id="id" placeholder="학번" autocomplete="username"><input id="pw" type="password" placeholder="비밀번호" autocomplete="current-password">
+<div class="cnx" id="cnx"></div><div class="row" style="justify-content:center;margin:0 0 6px">📅 <select id="yr" class="yr"></select></div><input id="id" placeholder="학번" autocomplete="username"><input id="pw" type="password" placeholder="비밀번호" autocomplete="current-password">
 <div class="err" id="e">${esc(msg)}</div><button class="main" id="go">들어가기</button>
 <p style="color:var(--sub);font-size:14px">처음 로그인할 때 비밀번호는 학번이에요.</p><p><a href="#" id="fg" style="color:var(--sub);font-size:14px">비밀번호를 잊어버렸어요!</a></p></div>`;
   const go=async()=>{$('#e').textContent='확인 중...';await new Promise(z=>setTimeout(z,Math.random()*800));const r=await api('login',{id:$('#id').value,pw:$('#pw').value,year:$('#yr').value});
     if(r.error)return $('#e').textContent=r.error;S.token=r.token;sessionStorage.setItem('t',r.token);S.user=r;start()};
-  $('#fg').onclick=e=>{e.preventDefault();forgotView()};fillYears();$('#go').onclick=go;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')go()})}
+  $('#fg').onclick=e=>{e.preventDefault();forgotView()};fillYears();$('#go').onclick=go;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('#go').disabled)go()})}
 function start(){setWho();if(S.user.must)return pwView();S.user.role==='관리자'?(showToc(false),tmStop(),adminView()):(showToc(true),loadToc(),tmStart(),langView())}
 function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 만들기</h2><p>처음 로그인했어요. 비밀번호를 바꿔야 계속할 수 있어요.</p>
 <div class="pwr"><input id="n1" type="password" placeholder="새 비밀번호 (4자 이상)" autocomplete="new-password"><button type="button" class="eye" id="ey" title="비밀번호 보기">👁</button></div><div class="pwr"><input id="n2" type="password" placeholder="한 번 더 입력" autocomplete="new-password"></div><div class="err" id="e"></div><button class="main" id="go">바꾸기</button></div>`;
@@ -333,7 +391,7 @@ async function langView(gn){S.at=null;renderToc();if(!mem.toc)app.innerHTML='불
   app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>langView(b.dataset.g));
   app.querySelectorAll('[data-i]').forEach(b=>b.onclick=async()=>{const s=r.subjects[+b.dataset.i];if(!s.ready){const r2=await get('toc',()=>api('toc'),true),s2=(r2.subjects||[]).find(x=>x.name===s.name);if(s2&&s2.ready){S.sub=s.name;return lessonView()}const m=$('#soon'),w=(s2||s).why;m.style.display='block';m.innerHTML='🛠 아직 준비중입니다!'+(w?`<br><small>(관리자에게만 보여요) ${esc(w)}</small>`:'');return}S.sub=s.name;lessonView()})}
 function forgotView(){app.innerHTML=`<div class="box narrow"><h2>비밀번호 초기화</h2><p style="font-size:14px;color:var(--sub)">선생님께 받은 <b>고유키</b>를 입력하면 비밀번호가 학번으로 초기화돼요. 그다음 로그인하면 새 비밀번호를 만들 수 있어요.</p>
-<div class="row" style="justify-content:center;margin:0 0 6px">📅 <select id="yr" class="yr"></select></div><input id="fi" placeholder="학번"><input id="fk" placeholder="고유키" autocomplete="off"><div class="err" id="e"></div><button class="main" id="go">초기화하기</button> <button class="ghost" id="bk">← 로그인</button><p><a href="#" id="nk" style="color:var(--sub);font-size:14px">고유키도 잊어버렸어요!</a></p></div>`;
+<div class="cnx" id="cnx"></div><div class="row" style="justify-content:center;margin:0 0 6px">📅 <select id="yr" class="yr"></select></div><input id="fi" placeholder="학번"><input id="fk" placeholder="고유키" autocomplete="off"><div class="err" id="e"></div><button class="main" id="go">초기화하기</button> <button class="ghost" id="bk">← 로그인</button><p><a href="#" id="nk" style="color:var(--sub);font-size:14px">고유키도 잊어버렸어요!</a></p></div>`;
   $('#bk').onclick=()=>loginView();fillYears();
   $('#nk').onclick=e=>{e.preventDefault();alert('니가 만든\n니 계정의\n니 비밀번호도 잊고\n니 고유키도 잊으면\n대체 뭘 하겠다는건가요?\n선생님께 문의 받으세요')};
   $('#go').onclick=async()=>{$('#e').textContent='확인 중...';const r=await api('forgot',{id:$('#fi').value,key:$('#fk').value,year:$('#yr').value});if(r.error)return $('#e').textContent=r.error;loginView('✅ 초기화했어요! 학번을 비밀번호로 입력해 로그인하세요.')}}
