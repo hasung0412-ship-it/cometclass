@@ -106,7 +106,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v89)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v90)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzTvyz8Slu21aASzOgt84DAen1N6Z_S5U_aDk6IheKV8XUwA1xeDtxxxy3IC_zS0xyB/exec';
@@ -143,13 +143,19 @@ async function loadToc(){await get('toc',()=>api('toc'));renderToc();get('info',
 let NSEEN=false;function autoNotice(){if(NSEEN||!S.user||S.user.role==='관리자'||S.preview)return;const I=mem.info,k='seen|'+S.user.id;let seen=[];try{seen=JSON.parse(localStorage.getItem(k)||'[]')}catch(e){}
   const nw=((I&&I.notices)||[]).filter(x=>!seen.includes(x.date+'|'+x.title));NSEEN=true;if(!nw.length)return;try{localStorage.setItem(k,JSON.stringify(seen.concat(nw.map(x=>x.date+'|'+x.title)).slice(-200)))}catch(e){}openInfo('notice',nw)}
 function renderToc(){renderToc0();renderSide()}
+/* 목차 묶음: [상위 탭 이름, 아이콘, [묶을 과목들]] — 여기에 없는 과목(예: 파이썬 방과후)은 맨 위 칸에 그대로 보여요 */
+const GRP=[['프로그래밍','💻',['엔트리','파이썬']],['데이터','📊',['데이터 분석']]],gk=s=>String(s).replace(/\s/g,'');
+const grpOf=sub=>(GRP.find(g=>g[2].some(x=>gk(x)===gk(sub)))||[''])[0];
+function groupSubs(L){const out=[],done={};L.forEach(s=>{const g=GRP.find(g=>g[0]===grpOf(s.name));if(!g)return out.push({s});if(done[g[0]])return;done[g[0]]=1;out.push({g:g[0],icon:g[1],subs:g[2].map(x=>L.find(s=>gk(s.name)===gk(x))).filter(Boolean)})});return out}
 function renderToc0(){const T=mem.toc;if(!T||!$('#wrap').classList.contains('hasToc'))return;const at=S.at||{};
-  $('#toc').innerHTML='<h4>📚 목차</h4>'+T.subjects.map(sj=>{
+  const one=sj=>{
     if(!sj.ready)return `<div class="ts"><button class="tt" data-soon="1">🔒 ${ico(sj.icon)} <b>${esc(sj.name)}</b> <small>준비 중</small></button></div>`;
     const sk='s|'+sj.name,so=S.tocOpen[sk]??true;
     return `<div class="ts"><button class="tt" data-t="${esc(sk)}" data-o="${so?1:0}">${so?'▾':'▸'} ${ico(sj.icon)} <b>${esc(sj.name)}</b></button>`+(so?`<div class="tl">${sj.lessons.map(l=>{
       const lk=`l|${sj.name}|${l.no}`,cur=at.sub===sj.name&&at.no===l.no,lo=S.tocOpen[lk]??cur,t=l.t.해석+l.t.작성,d=Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성);
-      return `<button class="tt ${cur?'cur':''}" data-t="${esc(lk)}" data-o="${lo?1:0}">${lo?'▾':'▸'} [${l.no}차시] ${esc(l.title)}${t?` <small>${d}/${t}</small>`:''}</button>`+(lo?`<div class="ta">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>`<button class="tt ti ${cur&&at.act===k?'on':''}" data-go="${esc(sj.name)}|${l.no}|${k}">${AN[k][0]} ${nm(sj.name,k)}${k==='개념'?(l.d[k]>0?' ✔':''):` <small>${Math.min(l.d[k],l.t[k])}/${l.t[k]}</small>`}</button>`).join('')}</div>`:'')}).join('')}</div>`:'')+'</div>'}).join('')+helperBtns('th')}
+      return `<button class="tt ${cur?'cur':''}" data-t="${esc(lk)}" data-o="${lo?1:0}">${lo?'▾':'▸'} [${l.no}차시] ${esc(l.title)}${t?` <small>${d}/${t}</small>`:''}</button>`+(lo?`<div class="ta">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>`<button class="tt ti ${cur&&at.act===k?'on':''}" data-go="${esc(sj.name)}|${l.no}|${k}">${AN[k][0]} ${nm(sj.name,k)}${k==='개념'?(l.d[k]>0?' ✔':''):` <small>${Math.min(l.d[k],l.t[k])}/${l.t[k]}</small>`}</button>`).join('')}</div>`:'')}).join('')}</div>`:'')+'</div>'};
+  $('#toc').innerHTML='<h4>📚 목차</h4>'+groupSubs(T.subjects).map(x=>{if(x.s)return one(x.s);const gk2='g|'+x.g,go=S.tocOpen[gk2]??true;
+    return `<div class="ts"><button class="tt" data-t="${esc(gk2)}" data-o="${go?1:0}">${go?'▾':'▸'} ${ico(x.icon)} <b>${esc(x.g)}</b></button>`+(go?`<div class="tl">${x.subs.map(one).join('')}</div>`:'')+'</div>'}).join('')+helperBtns('th')}
 $('#toc').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.info){openInfo(b.dataset.info);return}if(b.dataset.t){S.tocOpen[b.dataset.t]=!(+b.dataset.o);renderToc();return}if(b.dataset.go){const[s,n,a]=b.dataset.go.split('|');go(s,+n,a);return}if(b.dataset.soon)toast('🛠 아직 준비중입니다!')};
 /* ---- 오른쪽 칸: 집중 시간 스톱워치 + 학습 도우미 ---- */
 const helperBtns=c=>`<div class="sbox ${c||''}" style="margin-top:12px"><h4>📚 학습 도우미</h4><button class="tt" data-info="notice">📢 지난 공지 모두 보기</button><button class="tt" data-info="term">📖 용어 사전</button></div>${c==='th'?'':'<div class="sbox" style="margin-top:12px"><h4>🏫 성적</h4><button class="tt" data-info="assess">📑 평가 기준표</button><button class="tt" data-info="grade">🔒 내 성적 보기</button></div>'}`;
@@ -212,7 +218,7 @@ async function go(sub,no,act){const T=mem.toc||await get('toc',()=>api('toc'));i
   S.sub=sub;S.menu={lessons:sj.lessons};$('#toc').classList.remove('open');act?contentView(no,act):actView(no)}
 const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ico=x=>/^https?:\/\//i.test(String(x))||/\.(png|jpe?g|gif|svg|webp)$/i.test(String(x))?`<img class="ico" src="${esc(x)}" alt="">`:esc(x);
-const AN={개념:['📘','개념 학습'],해석:['🔍','코드 해석'],작성:['✍️','코드 작성']};
+const AN={개념:['📘','개념 배우기'],해석:['🔍','코드 해석하기'],작성:['✍️','코드 작성하기']};
 async function api(action,d={},tries=0){
   const retry=async()=>{await new Promise(r=>setTimeout(r,900*(tries+1)));return api(action,d,tries+1)};
   let why='';
@@ -313,8 +319,10 @@ function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 �
       const r=await api('changePw',{newPw:p});if(r.error){m.querySelector('#ce').textContent=r.error;cy.disabled=false;return}m.remove();S.user.must=false;start()}}}
 
 /* 학생: 언어 → 차시 → 활동 → 내용 */
-async function langView(){S.at=null;renderToc();if(!mem.toc)app.innerHTML='불러오는 중...';const r=await get('toc',()=>api('toc'));if(r.error)return app.innerHTML=r.error;
-  app.innerHTML=`<h2>배울 과목을 골라요</h2>`+(r.subjects.length?`<div class="grid">${r.subjects.map((s,i)=>`<button class="card" data-i="${i}">${ico(s.icon)} <b>${esc(s.name)}</b>${s.ready?'':'<small>준비 중</small>'}</button>`).join('')}</div><div class="msg wait" id="soon" style="display:none;margin-top:14px"></div>`:'<p>아직 등록된 과목이 없어요.</p>');
+async function langView(gn){S.at=null;renderToc();if(!mem.toc)app.innerHTML='불러오는 중...';const r=await get('toc',()=>api('toc'));if(r.error)return app.innerHTML=r.error;
+  const G=groupSubs(r.subjects),cg=gn&&G.find(x=>x.g===gn),card=s=>`<button class="card" data-i="${r.subjects.indexOf(s)}">${ico(s.icon)} <b>${esc(s.name)}</b>${s.ready?'':'<small>준비 중</small>'}</button>`;
+  app.innerHTML=(cg?`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><h2>${esc(cg.g)} · 과목을 골라요</h2>`:`<h2>배울 과목을 골라요</h2>`)+(r.subjects.length?`<div class="grid">${(cg?cg.subs.map(card):G.map(x=>x.s?card(x.s):`<button class="card" data-g="${esc(x.g)}">${ico(x.icon)} <b>${esc(x.g)}</b><small>${x.subs.map(s=>esc(s.name)).join(' · ')}</small></button>`)).join('')}</div><div class="msg wait" id="soon" style="display:none;margin-top:14px"></div>`:'<p>아직 등록된 과목이 없어요.</p>');
+  app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>langView(b.dataset.g));
   app.querySelectorAll('[data-i]').forEach(b=>b.onclick=async()=>{const s=r.subjects[+b.dataset.i];if(!s.ready){const r2=await get('toc',()=>api('toc'),true),s2=(r2.subjects||[]).find(x=>x.name===s.name);if(s2&&s2.ready){S.sub=s.name;return lessonView()}const m=$('#soon'),w=(s2||s).why;m.style.display='block';m.innerHTML='🛠 아직 준비중입니다!'+(w?`<br><small>(관리자에게만 보여요) ${esc(w)}</small>`:'');return}S.sub=s.name;lessonView()})}
 function forgotView(){app.innerHTML=`<div class="box narrow"><h2>비밀번호 초기화</h2><p style="font-size:14px;color:var(--sub)">선생님께 받은 <b>고유키</b>를 입력하면 비밀번호가 학번으로 초기화돼요. 그다음 로그인하면 새 비밀번호를 만들 수 있어요.</p>
 <div class="row" style="justify-content:center;margin:0 0 6px">📅 <select id="yr" class="yr"></select></div><input id="fi" placeholder="학번"><input id="fk" placeholder="고유키" autocomplete="off"><div class="err" id="e"></div><button class="main" id="go">초기화하기</button> <button class="ghost" id="bk">← 로그인</button><p><a href="#" id="nk" style="color:var(--sub);font-size:14px">고유키도 잊어버렸어요!</a></p></div>`;
@@ -322,8 +330,8 @@ function forgotView(){app.innerHTML=`<div class="box narrow"><h2>비밀번호 �
   $('#nk').onclick=e=>{e.preventDefault();alert('니가 만든\n니 계정의\n니 비밀번호도 잊고\n니 고유키도 잊으면\n대체 뭘 하겠다는건가요?\n선생님께 문의 받으세요')};
   $('#go').onclick=async()=>{$('#e').textContent='확인 중...';const r=await api('forgot',{id:$('#fi').value,key:$('#fk').value,year:$('#yr').value});if(r.error)return $('#e').textContent=r.error;loginView('✅ 초기화했어요! 학번을 비밀번호로 입력해 로그인하세요.')}}
 async function lessonView(){if(!mem.toc)app.innerHTML='불러오는 중...';const T=await get('toc',()=>api('toc'));if(T.error)return app.innerHTML=T.error;const sj=T.subjects.find(x=>x.name===S.sub);
-  if(!sj||!sj.ready){app.innerHTML=`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><p>🛠 아직 준비중입니다!</p>`;return}const r={lessons:sj.lessons};S.menu=r;S.at={sub:S.sub,no:null,act:null};renderToc();
-  app.innerHTML=`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><h2>${esc(S.sub)} · 차시를 골라요</h2>`+(r.lessons.length?`<div class="grid">${r.lessons.map(l=>{
+  if(!sj||!sj.ready){app.innerHTML=`<p><button class="ghost" onclick="langView(grpOf(S.sub))">← 과목 선택</button></p><p>🛠 아직 준비중입니다!</p>`;return}const r={lessons:sj.lessons};S.menu=r;S.at={sub:S.sub,no:null,act:null};renderToc();
+  app.innerHTML=`<p><button class="ghost" onclick="langView(grpOf(S.sub))">← 과목 선택</button></p><h2>${esc(S.sub)} · 차시를 골라요</h2>`+(r.lessons.length?`<div class="grid">${r.lessons.map(l=>{
   const t=l.t.해석+l.t.작성,d=Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성);
   return `<button class="card" data-no="${l.no}"><small>${l.no}차시</small><b>${esc(l.title)}</b>${t?`<small>문제 ${t}개 · ${d}개 완료</small>${bar(d,t)}`:''}</button>`}).join('')}</div>`:'<p>아직 올라온 차시가 없어요.</p>');
   app.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>actView(+b.dataset.no))}
