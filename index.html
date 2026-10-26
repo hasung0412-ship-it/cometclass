@@ -249,11 +249,18 @@ function tbl(op,b){op=op||'';const tm=/(?:제목|이름)\s*[=:：]\s*([^|]*)/.ex
   return `<div class="wrap"><table class="tb${lf?' lf':''}${sm?' sm':''}">${ttl?`<caption${/^[\w.\[\]'"]+$/.test(ttl)?' class="cd"':''}>${qz(ib(pic(fx(esc(ttl)))))}</caption>`:''}`+R.map((r,i)=>{const t=(!nh&&i===0)?'th':'td';let h='';for(let k=0;k<w;k++)h+=`<${t}>${ce(r[k]||'')}</${t}>`;return `<tr>${h}</tr>`}).join('')+'</table></div>'}
 function fmtTx(x){const P=x.split(TBR);let o='';for(let i=0;i<P.length;i+=3){let a=P[i]||'';if(i+2<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=qz(ib(pic(fx(fq(esc(a)))))).replace(/\n/g,'<br>');if(i+2<P.length)o+=tbl(P[i+1],P[i+2])}return o}
 // [함수:MAX|범위=B2:B6 또는 범위=1회(머리글 이름)|질문=…|해설=…] : 바로 위 표에서 범위를 드래그해 고르고 결과 값을 써 보는 활동 (MAX·MIN·AVERAGE·COUNTIF, 기록은 안 남겨요)
-const FQN={MAX:'가장 큰 값을 찾아보세요.',MIN:'가장 작은 값을 찾아보세요.',AVERAGE:'평균을 구해 보세요.',COUNTIF:'조건에 맞는 칸이 몇 개인지 세어 보세요.'};
+// ✏️ [함수] 활동 문구: 여기만 고치면 화면 글이 바뀌어요. (사용법=함수 이름 아래, 질문=🧮 옆 기본 질문, 해설=빨간 밑줄 아래 기본 설명)
+// 시트에서 질문=… / 해설=… 을 쓰면 그 문제만 시트 글이 먼저 쓰여요.
+const FQN={
+  MAX:    {사용법:'MAX(범위)',          질문:'가장 큰 값을 찾아보세요.',            해설:'최댓값을 찾아라. 여기 범위에서'},
+  MIN:    {사용법:'MIN(범위)',          질문:'가장 작은 값을 찾아보세요.',          해설:'최솟값을 찾아라. 여기 범위에서'},
+  AVERAGE:{사용법:'AVERAGE(범위)',      질문:'평균을 구해 보세요.',                 해설:'평균을 구하라. 여기 범위에서'},
+  COUNTIF:{사용법:'COUNTIF(범위, 조건)', 질문:'조건에 맞는 칸이 몇 개인지 세어 보세요.', 해설:'조건에 맞는 칸의 개수를 세어라. 여기 범위에서'}
+};
 function fq(s){return s.replace(/\[\s*함수\s*[:：]\s*(MAX|MIN|AVERAGE|COUNTIF)\s*((?:\|[^\]|]*)*)\][ \t]*\n?/gi,(m,f,o)=>{const kv={};o.split('|').forEach(x=>{const i=x.indexOf('=');if(i>0)kv[x.slice(0,i).trim()]=x.slice(i+1).trim()});f=f.toUpperCase();
   const rg=(kv['범위']||'').toUpperCase().replace(/\s/g,''),cd=(kv['조건']||'').replace(/^&quot;|&quot;$/g,'');
   if(!rg)return `<div class="fnq bad">⚠ [함수:${f}] 범위를 B2:B6 또는 머리글 이름(예: 범위=1회)으로 적어 주세요.</div>`;const xl=/^[A-Z]\d+(:[A-Z]\d+)?$/.test(rg)?'xl':'';
-  return `<div class="fnq" data-f="${f}" data-r="${xl?rg:(kv['범위']||'').trim()}" data-m="${xl}" data-c="${cd}"><div class="fqh"><span class="fqb">🧮 ${f}</span>${kv['질문']||FQN[f]}</div><div class="row"><div class="fqf"><span class="fqp"><b>${xl?'=':''}${f}</b><small>함수 이름</small></span><span class="fqp"><b>(</b></span><span class="fqp"><b class="fqs">표에서 드래그</b><small>${kv['해설']||'범위'}</small></span>${f==='COUNTIF'?`<span class="fqp"><b>, "${cd}"</b><small>조건</small></span>`:''}<span class="fqp"><b>)</b></span></div><b class="fqq">=</b> <input class="fqv" placeholder="값" autocomplete="off"><button class="main fqk">확인</button><button class="ghost fqz">다시</button><span class="fqm"></span></div><small class="fqt">👆 위 표에서 값을 찾은 칸들을 드래그(한 칸은 클릭)해서 범위를 골라요.</small></div>`})}
+  return `<div class="fnq" data-f="${f}" data-r="${xl?rg:(kv['범위']||'').trim()}" data-m="${xl}" data-c="${cd}"><div class="fqh"><span class="fqb">🧮 ${f}</span>${kv['질문']||FQN[f].질문}</div><div class="row"><div class="fqf"><span class="fqp"><b>${xl?'=':''}${f}</b><small>${FQN[f].사용법}</small></span><span class="fqp"><b>(</b></span><span class="fqp"><b class="fqs">표에서 드래그</b><small>${kv['해설']||FQN[f].해설}</small></span>${f==='COUNTIF'?`<span class="fqp"><b>, "${cd}"</b><small>조건</small></span>`:''}<span class="fqp"><b>)</b></span></div><b class="fqq">=</b> <input class="fqv" placeholder="값" autocomplete="off"><button class="main fqk">확인</button><button class="ghost fqz">다시</button><span class="fqm"></span></div><small class="fqt">👆 위 표에서 값을 찾은 칸들을 드래그(한 칸은 클릭)해서 범위를 골라요.</small></div>`})}
 const fqA=r=>{const P=r.split(':').map(x=>[x.charCodeAt(0)-64,+x.slice(1)]),b=P[1]||P[0];return{c1:Math.min(P[0][0],b[0]),c2:Math.max(P[0][0],b[0]),r1:Math.min(P[0][1],b[1]),r2:Math.max(P[0][1],b[1])}};
 const fqH=(T,r)=>{const H=[...T.querySelectorAll('[data-r="1"]')],P=r.split(/\s*[:~]\s*/).map(x=>H.find(c=>c.textContent.trim()===x.trim())),n=Math.max(...[...T.querySelectorAll('[data-r]')].map(c=>+c.dataset.r));
   return P.every(Boolean)&&n>1?{r1:2,r2:n,c1:Math.min(...P.map(c=>+c.dataset.c)),c2:Math.max(...P.map(c=>+c.dataset.c))}:null};
