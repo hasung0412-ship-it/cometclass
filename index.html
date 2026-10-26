@@ -3,15 +3,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>혜성특급</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌠%3C/text%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>@font-face{font-family:'KoPubWorld Dotum';font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff') format('woff')}@font-face{font-family:'KoPubWorld Dotum';font-weight:700;font-display:swap;src:url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff') format('woff')}</style>
 <style>
 :root{--ink:#3a4256;--sub:#7b8499;--line:#e8ebf3;--mint:#d4f1e4;--sky:#d6e8fb;--lav:#e5dcf6;--peach:#fde3d6;--butter:#fff3c6;--ok:#bfe8d2;--no:#f9d0d0}
 *{box-sizing:border-box}
-body{margin:0;background:#fff;color:var(--ink);font:16px/1.7 'Gowun Dodum','Malgun Gothic',sans-serif}
+body{margin:0;background:#fff;color:var(--ink);font:16px/1.7 'KoPubWorld Dotum','Malgun Gothic',sans-serif}
 header{display:flex;align-items:center;gap:12px;padding:14px 22px;background:linear-gradient(90deg,var(--sky),var(--lav));position:sticky;top:0;z-index:5}
 header b{font-size:20px}header span{color:var(--sub);font-size:14px}#who{margin-left:auto;display:flex;gap:10px;align-items:center}
 main{max-width:920px;margin:0 auto;padding:26px 18px 60px}
-h2{margin:6px 0 18px}h3{margin:0 0 6px}
+h2{margin:6px 0 18px}
+header b,h1,h2,h3{font-family:'Jua','KoPubWorld Dotum','Malgun Gothic',sans-serif;font-weight:normal}h3{margin:0 0 6px}
 button,input,textarea{font:inherit;color:inherit}
 button{border:0;border-radius:12px;padding:9px 18px;background:var(--lav);cursor:pointer}
 button:hover{filter:brightness(.96)}button.main{background:var(--mint)}button.ghost{background:#fff;border:1px solid var(--line)}
@@ -29,17 +31,17 @@ textarea{font-family:Consolas,monospace;font-size:14px;min-height:150px;tab-size
 pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:14px/1.6 Consolas,monospace;margin:8px 0;white-space:pre-wrap}
 .msg{margin-top:8px;padding:8px 12px;border-radius:10px;display:none}.msg.ok{background:var(--ok);display:block}.msg.no{background:var(--no);display:block}
 .msg.wait{background:#eef1f8;display:block}.chip{padding:6px 14px;background:#fff;border:1px solid var(--line)}.chip.on{background:var(--sky)}
-.bc{line-height:2.2}.blank{display:inline-block;width:min(24em,70vw);padding:2px 8px;margin:0 4px;font:14px/1.6 'Gowun Dodum','Malgun Gothic',sans-serif;background:#fffbe8}
+.bc{line-height:2.2}.blank{display:inline-block;width:min(24em,70vw);padding:2px 8px;margin:0 4px;font:14px/1.6 'KoPubWorld Dotum','Malgun Gothic',sans-serif;background:#fffbe8}
 .ico{height:1.3em;vertical-align:-.25em;border-radius:5px}.card .ico{height:48px;display:block;margin-bottom:6px;vertical-align:baseline}
 .pic{max-width:100%;border-radius:12px;margin:8px 0;display:block}
 .trace{border:1px solid var(--line);border-radius:16px;padding:12px;margin:10px 0;background:#fcfcff}
 .tr2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:640px){.tr2{grid-template-columns:1fr}}
-.tp{background:#f6f7fb;border-radius:12px;padding:8px 0;overflow:auto;font:14px/1.8 Consolas,monospace}.tp h4{margin:0 12px 4px;font:13px 'Gowun Dodum','Malgun Gothic',sans-serif;color:var(--sub)}
+.tp{background:#f6f7fb;border-radius:12px;padding:8px 0;overflow:auto;font:14px/1.8 Consolas,monospace}.tp h4{margin:0 12px 4px;font:13px 'KoPubWorld Dotum','Malgun Gothic',sans-serif;color:var(--sub)}
 .ln{white-space:pre;padding:0 12px 0 36px;position:relative;min-height:1.8em}.ln i{position:absolute;left:6px;color:#b5bbcb;font-style:normal;font-size:12px}
 .ln.cur{background:#ffe0e0;color:#c0392b;font-weight:bold}.ln.cur::after{content:'▶';position:absolute;left:22px;font-size:10px}
 .hot{font-size:17px;border-bottom:2px dotted #6a8fd8;background:#e4eefc;border-radius:4px;padding:0 3px;cursor:pointer}
 .hot2{font-size:16px;display:inline-block;vertical-align:top;white-space:pre-wrap;border:1px dashed #9aa6c4;background:#fff;border-radius:6px;padding:0 5px;cursor:pointer}.hot2.ok{border-style:solid;border-color:#7fc8a9;background:var(--mint)}
-.gh{position:relative;background:#fff;border-radius:10px}.gh .gt,.gh input{font:16px/1.4 'Gowun Dodum','Malgun Gothic',sans-serif;letter-spacing:0;padding:9px 12px;box-sizing:border-box;text-align:left}.gh .gt{position:absolute;inset:0;border:1px solid transparent;color:#c3c9d9;white-space:nowrap;overflow:hidden;pointer-events:none;display:flex;align-items:center}.gh input{position:relative;width:100%;background:transparent;color:var(--ink)}
+.gh{position:relative;background:#fff;border-radius:10px}.gh .gt,.gh input{font:16px/1.4 'KoPubWorld Dotum','Malgun Gothic',sans-serif;letter-spacing:0;padding:9px 12px;box-sizing:border-box;text-align:left}.gh .gt{position:absolute;inset:0;border:1px solid transparent;color:#c3c9d9;white-space:nowrap;overflow:hidden;pointer-events:none;display:flex;align-items:center}.gh input{position:relative;width:100%;background:transparent;color:var(--ink)}
 .bigm{z-index:40}.bz{background:#fff;border-radius:20px;width:min(1280px,97vw);height:min(93vh,940px);display:flex;flex-direction:column;padding:16px 20px;overflow:hidden}
 .bzh{display:flex;align-items:center;gap:10px;margin-bottom:10px}.bzh h3{margin:0;font-size:20px}.bzk{font-size:13px;color:var(--sub)}
 .bzm{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px}
@@ -62,7 +64,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .sbox{border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:12px}.sbox h4{margin:0 0 6px;font-size:14px;color:var(--sub)}
 .yr{padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;width:auto}
 #toc{display:none}.hasToc #toc{display:block;position:sticky;top:58px;align-self:start;max-height:calc(100vh - 58px);overflow:auto;padding:18px 8px 60px 10px;border-right:1px solid var(--line)}
-#toc h4{margin:0 0 10px;font:14px 'Gowun Dodum','Malgun Gothic',sans-serif;color:var(--sub)}
+#toc h4{margin:0 0 10px;font:14px 'KoPubWorld Dotum','Malgun Gothic',sans-serif;color:var(--sub)}
 .tt{display:block;width:100%;text-align:left;background:none;padding:6px 8px;border-radius:10px;font-size:15px;line-height:1.4}.tt:hover{background:#f3f5fb}.tt small{color:var(--sub);margin-left:4px}
 .tt.cur{background:var(--butter)}.tt.on{background:var(--sky);font-weight:bold}.tl{margin-left:10px}.ta{margin-left:16px}.ti{font-size:14px}
 #tg{display:none}#tg.on{display:inline-block}
@@ -104,7 +106,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v88)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v89)</span><span id="tm" class="tmc"></span><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzTvyz8Slu21aASzOgt84DAen1N6Z_S5U_aDk6IheKV8XUwA1xeDtxxxy3IC_zS0xyB/exec';
