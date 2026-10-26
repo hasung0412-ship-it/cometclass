@@ -11,7 +11,7 @@
 body{margin:0;background:#fff;color:var(--ink);font:16px/1.7 'KoPubWorld Dotum','Malgun Gothic',sans-serif}
 header{display:flex;align-items:center;gap:12px;padding:14px 22px;background:linear-gradient(90deg,var(--sky),var(--lav));position:sticky;top:0;z-index:5}
 header b{font-size:20px}header span{color:var(--sub);font-size:14px}#who{margin-left:auto;display:flex;gap:10px;align-items:center}
-#hn{flex:0 1 auto;min-width:0;max-width:46%;margin:0 4px 0 auto;padding:4px 14px;border-radius:12px;background:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.7);font-size:14px;line-height:1.35;cursor:pointer;display:flex;flex-direction:column}#hn:empty{display:none}#hn:hover{background:rgba(255,255,255,.7)}#hn>div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#hn b{font-size:14px}#hn .hb{color:var(--sub);margin-left:6px}#hn .hd{font-size:11px;color:var(--sub)}#hn+#who{margin-left:0}header:has(#hn:not(:empty)) :is(header>b,header>span,#who>*){white-space:nowrap;flex-shrink:0}@media(max-width:700px){#hn{display:none}}
+#hn{flex:0 1 auto;min-width:0;max-width:46%;margin:0 4px 0 auto;padding:4px 14px;border-radius:12px;background:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.7);font-size:14px;line-height:1.35;cursor:pointer;display:flex;align-items:center;gap:12px}#hn:empty{display:none}#hn:hover{background:rgba(255,255,255,.7)}#hn .ht{flex:none;display:flex;flex-direction:column;align-items:center;white-space:nowrap}#hn b{font-size:14px}#hn .hd{font-size:11px;color:var(--sub)}#hn .hx{min-width:0;display:flex;align-items:flex-end;gap:4px}#hn .hb{color:var(--sub);font-size:13px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;word-break:keep-all}#hn .hm{display:none;flex:none;font-size:12px;color:#5b7bc0;white-space:nowrap}#hn.more .hm{display:inline}#hn+#who{margin-left:0}header:has(#hn:not(:empty)) :is(header>b,header>span,#who>*){white-space:nowrap;flex-shrink:0}@media(max-width:700px){#hn{display:none}}
 main{max-width:920px;margin:0 auto;padding:26px 18px 60px}
 h2{margin:6px 0 18px}
 header b,h1,h2,h3{font-family:'Jua','KoPubWorld Dotum','Malgun Gothic',sans-serif;font-weight:normal}h3{margin:0 0 6px}
@@ -107,7 +107,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v93)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v94)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbx5Im0ofFvxyWBgPuCL1CikMjpa-9ISrr2brpLeuYPu26HWEcLLqHz3bTSjLq0ZFn5m/exec';
@@ -164,7 +164,9 @@ function renderSide(){const e=$('#side');if(!e||!$('#wrap').classList.contains('
   hdrNotice();
   e.innerHTML=(stu?`<div class="sbox tmb" id="tbf"><h4>🎯 오늘 내가 수업에 집중한 시간</h4><div class="clk" id="tf">00:00:00</div></div><div class="sbox tmb" id="tba"><h4>💤 잠시 다른 곳에 다녀온 시간</h4><div class="clk" id="ta">00:00:00</div></div><p style="font-size:12px;color:var(--sub);margin:0 0 12px">제발 딴 짓 하지 말고 수업에 집중 좀 하세요 !!!!.</p>`:'<div class="sbox"><small>👀 미리보기에서는 시간이 기록되지 않아요</small></div>')+helperBtns();tmUpd()}
 function hdrNotice(){const h=$('#hn'),I=S.user&&mem.info,x=I&&(I.notices||[])[0];if(!x){h.innerHTML='';return} // 머리글 가운데: 가장 최근 공지 한 줄
-  const t=document.createElement('div');t.innerHTML=fmt(x.body);h.innerHTML=`<div>📢 <b>${esc(x.title)}</b><span class="hb">${esc(t.textContent.replace(/\s+/g,' ').trim())}</span></div><div class="hd">${esc(x.date)}</div>`}
+  const t=document.createElement('div');t.innerHTML=fmt(x.body);h.innerHTML=`<div class="ht"><b>📢 ${esc(x.title)}</b><span class="hd">${esc(x.date)}</span></div><div class="hx"><span class="hb">${esc(t.textContent.replace(/\s+/g,' ').trim())}</span><span class="hm">(더보기)</span></div>`;hnMore()}
+function hnMore(){const h=$('#hn'),b=h.querySelector('.hb');if(b)h.classList.toggle('more',b.scrollHeight>b.clientHeight+1)} // 세 줄 이상이면 두 줄까지만 보이고 (더보기)
+addEventListener('resize',hnMore);
 $('#hn').onclick=()=>openInfo('notice');$('#hn').onkeydown=e=>{if(e.key==='Enter')openInfo('notice')};
 $('#side').onclick=e=>{const b=e.target.closest('button[data-info]');if(b)openInfo(b.dataset.info)};
 const TM={f:0,a:0,start:0,date:'',last:0,hid:false,dirty:false,on:false,t1:null,t2:null};
