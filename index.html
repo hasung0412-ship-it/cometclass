@@ -112,7 +112,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v96)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v97)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbx5Im0ofFvxyWBgPuCL1CikMjpa-9ISrr2brpLeuYPu26HWEcLLqHz3bTSjLq0ZFn5m/exec';
@@ -257,7 +257,7 @@ const FQN={
   AVERAGE:{사용법:'AVERAGE(범위)',      질문:'평균을 구해 보세요.',                 해설:'평균을 구하라. 여기 범위에서'},
   COUNTIF:{사용법:'COUNTIF(범위, 조건)', 질문:'조건에 맞는 칸이 몇 개인지 세어 보세요.', 해설:'조건에 맞는 칸의 개수를 세어라. 여기 범위에서'}
 };
-function fq(s){return s.replace(/\[\s*함수\s*[:：]\s*(MAX|MIN|AVERAGE|COUNTIF)\s*((?:\|[^\]|]*)*)\][ \t]*\n?/gi,(m,f,o)=>{const kv={};o.split('|').forEach(x=>{const i=x.indexOf('=');if(i>0)kv[x.slice(0,i).trim()]=x.slice(i+1).trim()});f=f.toUpperCase();
+function fq(s){return s.replace(/\[\s*함수\s*[:：]\s*(MAX|MIN|AVERAGE|COUNTIF)\s*((?:\|[^\]|]*)*)\][ \t]*\n?/gi,(m,f,o)=>{const kv={};o.split('|').forEach(x=>{const i=x.search(/[=:：]/);if(i>0)kv[x.slice(0,i).trim()]=x.slice(i+1).trim()});f=f.toUpperCase();
   const rg=(kv['범위']||'').toUpperCase().replace(/\s/g,''),cd=(kv['조건']||'').replace(/^&quot;|&quot;$/g,'');
   if(!rg)return `<div class="fnq bad">⚠ [함수:${f}] 범위를 B2:B6 또는 머리글 이름(예: 범위=1회)으로 적어 주세요.</div>`;const xl=/^[A-Z]\d+(:[A-Z]\d+)?$/.test(rg)?'xl':'';
   return `<div class="fnq" data-f="${f}" data-r="${xl?rg:(kv['범위']||'').trim()}" data-m="${xl}" data-c="${cd}"><div class="fqh"><span class="fqb">🧮 ${FQN[f].사용법}</span>${kv['질문']||FQN[f].질문}</div><div class="row"><div class="fqf"><span class="fqp"><b>${xl?'=':''}${f}</b><small>함수 이름</small></span><span class="fqp"><b>(</b></span><span class="fqp"><b class="fqs">표에서 드래그</b><small>${kv['해설']||FQN[f].해설}</small></span>${f==='COUNTIF'?`<span class="fqp"><b>, "${cd}"</b><small>조건</small></span>`:''}<span class="fqp"><b>)</b></span></div><b class="fqq">=</b> <input class="fqv" placeholder="값" autocomplete="off"><button class="main fqk">확인</button><button class="ghost fqz">다시</button><span class="fqm"></span></div><small class="fqt">👆 위 표에서 값을 찾은 칸들을 드래그(한 칸은 클릭)해서 범위를 골라요.</small></div>`})}
