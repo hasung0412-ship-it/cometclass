@@ -4,7 +4,7 @@
 <title>혜성특급</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌠%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-<style>@font-face{font-family:'GangwonEduSaeeum';font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEduSaeeum_OTFMediumA.woff') format('woff'),url('https://cdn.jsdelivr.net/gh/fonts-archive/GangwonEduSaeeum/GangwonEduSaeeum.woff2') format('woff2')}@font-face{font-family:'KoPubWorld Dotum';font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff') format('woff')}@font-face{font-family:'KoPubWorld Dotum';font-weight:700;font-display:swap;src:url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff') format('woff')}</style>
+<style>@font-face{font-family:'GangwonEduSaeeum';font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEduSaeeum_OTFMediumA.woff') format('woff'),url('https://cdn.jsdelivr.net/gh/fonts-archive/GangwonEduSaeeum/GangwonEduSaeeum.woff2') format('woff2')}@font-face{font-family:'KyoboHand';font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff')}@font-face{font-family:'KoPubWorld Dotum';font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff') format('woff')}@font-face{font-family:'KoPubWorld Dotum';font-weight:700;font-display:swap;src:url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff') format('woff')}</style>
 <style>
 :root{--ink:#3a4256;--sub:#7b8499;--line:#e8ebf3;--mint:#d4f1e4;--sky:#d6e8fb;--lav:#e5dcf6;--peach:#fde3d6;--butter:#fff3c6;--ok:#bfe8d2;--no:#f9d0d0}
 *{box-sizing:border-box}
@@ -112,7 +112,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v100)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성쌤과 함께하는 정보 수업</b><span>배곧해솔중학교 (v101)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbx5Im0ofFvxyWBgPuCL1CikMjpa-9ISrr2brpLeuYPu26HWEcLLqHz3bTSjLq0ZFn5m/exec';
@@ -332,6 +332,7 @@ function fx(s){const st=[],lk=[];s=s.replace(/`([^`\n]+)`/g,(m,c)=>{st.push(c);r
   s=s.replace(/\[\s*색\s*[:：]([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,PAL);return v?`<span style='color:${v}'>${x}</span>`:m})
     .replace(/\[\s*형광\s*[:：]([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,HL);return v?`<mark style='background:${v};border-radius:4px;padding:0 3px'>${x}</mark>`:m})
     .replace(/\[\s*(크게|작게)\s*[:：]([^\]]*)\]/g,(m,k,x)=>`<span style='font-size:${k==='크게'?'1.3em':'.85em'}'>${x}</span>`)
+    .replace(/\[\s*글꼴\s*[:：]\s*(강원|교보)\s*\|([^\]]*)\]/g,(m,k,x)=>`<span style='font-family:${k==='강원'?'GangwonEduSaeeum':'KyoboHand'},KoPubWorld Dotum,sans-serif;font-size:1.2em'>${x}</span>`)
     .replace(/\*\*([^*\n]+?)\*\*/g,'<b>$1</b>').replace(/__([^_\n]+?)__/g,'<u>$1</u>').replace(/~~([^~\n]+?)~~/g,'<s>$1</s>');
   return s.replace(/\u0001(\d+)\u0001/g,(m,i)=>`<code class='ic'>${st[i]}</code>`).replace(/\u0002(\d+)\u0002/g,(m,i)=>lk[i])}
 function pic(s){return s.replace(/\[그림:([^\]\s|]+)(?:\|([^\]]*))?\]/g,(m,u,cap)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<figure class="fig"><img class="pic" src="${u}" alt="${cap?cap.replace(/<[^>]*>/g,'').trim():'그림'}">${cap?`<figcaption>${cap.trim()}</figcaption>`:''}</figure>`:m)}
