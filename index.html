@@ -108,13 +108,13 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .ctr{text-align:center;margin:8px 0}.ctr pre{display:table;margin:8px auto;text-align:left}.ctr .qz,.ctr .box{text-align:center}
 .ib.ii,select.ib{margin:6px 3px;vertical-align:middle}
 .gw{position:relative;display:inline-block;margin:6px 3px;vertical-align:middle;background:#fbfcff;border-radius:6px}.gw .ii{margin:0;position:relative;background:transparent}.gw .gg{position:absolute;inset:0;padding:2px 8px;border-bottom:2px solid transparent;color:#c3c9d9;white-space:nowrap;overflow:hidden;pointer-events:none;display:flex;align-items:center}
-.lst{border-collapse:collapse;margin:2px 0}.lst td{border:1.5px solid #cdbfe8;padding:3px 12px;text-align:center;font-family:Consolas,monospace}.lst td.ix{border:0;font-size:11px;color:var(--sub);padding:0 12px}.lst td.hl{background:#fff3a0;font-weight:700}.lst td.hl2{color:#b8860b;font-weight:700}
+.lsw{width:0;min-width:100%;overflow-x:auto}.vk{width:1%}.lst{border-collapse:collapse;margin:2px 0}.lst td{border:1.5px solid #cdbfe8;padding:3px 12px;text-align:center;font-family:Consolas,monospace}.lst td.ix{border:0;font-size:11px;color:var(--sub);padding:0 12px}.lst td.hl{background:#fff3a0;font-weight:700}.lst td.hl2{color:#b8860b;font-weight:700}
 .tr2.one{grid-template-columns:minmax(0,1fr)!important}.tr2.one .tp:nth-child(2){display:none}
 .sm{text-align:center;padding:26px 12px}.sm .row{justify-content:center}.sm .sp2{text-align:center}.lkm{margin:20px 0;font-weight:700;color:#c25a5a;line-height:1.7}
 .sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v103)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v105)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbx5Im0ofFvxyWBgPuCL1CikMjpa-9ISrr2brpLeuYPu26HWEcLLqHz3bTSjLq0ZFn5m/exec';
@@ -475,9 +475,9 @@ function vizVal(r,name,vs,line){const t=String(r).trim();const isL=t[0]==='['&&t
   if(line){for(const nm of Object.keys(vs)){if(nm!==name)continue;const m=new RegExp('\\b'+nm.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\[\\s*(-?\\d+|[A-Za-z_]\\w*|"[^"]*"|\'[^\']*\')\\s*\\]').exec(line);if(!m)continue;let tk=m[1];
     if(isL){let n=/^-?\d+$/.test(tk)?Number(tk):Number(vs[tk]);if(!isNaN(n)){if(n<0)n+=items.length;if(n>=0&&n<items.length)hi=n}}
     else{const key=/^['"]/.test(tk)?un(tk):(vs[tk]!=null?un(vs[tk]):null);if(key!=null)hi=items.findIndex(it=>{const kv=splitTop(it,':');return un(kv[0])===key})}}}
-  if(isL)return `<table class="lst"><tr>${items.map((_,i)=>`<td class="ix">${i}</td>`).join('')}</tr><tr>${items.map((x,i)=>`<td class="${i===hi?'hl':''}">${esc(x)}</td>`).join('')}</tr></table>`;
+  if(isL)return `<div class="lsw"><table class="lst"><tr>${items.map((_,i)=>`<td class="ix">${i}</td>`).join('')}</tr><tr>${items.map((x,i)=>`<td class="${i===hi?'hl':''}">${esc(x)}</td>`).join('')}</tr></table></div>`;
   const kv=items.map(it=>{const a=splitTop(it,':');return[a[0],a.slice(1).join(':')]});
-  return `<table class="lst"><tr><td class="ix">키</td>${kv.map((x,i)=>`<td class="ix${i===hi?' hl2':''}">${esc(x[0])}</td>`).join('')}</tr><tr><td class="ix">값</td>${kv.map((x,i)=>`<td class="${i===hi?'hl':''}">${esc(x[1])}</td>`).join('')}</tr></table>`}
+  return `<div class="lsw"><table class="lst"><tr><td class="ix">키</td>${kv.map((x,i)=>`<td class="ix${i===hi?' hl2':''}">${esc(x[0])}</td>`).join('')}</tr><tr><td class="ix">값</td>${kv.map((x,i)=>`<td class="${i===hi?'hl':''}">${esc(x[1])}</td>`).join('')}</tr></table></div>`}
 function parseStages(f){
   if(f.length<=2){const lines=(f[0]||'').split(/\s*\/\/\s*/),as=(f[1]||'').split(',').map(x=>x.trim());let k=0;
     return lines.map(l=>{const n=(l.match(/OO/g)||[]).length,a=as.slice(k,k+n);k+=n;return{msg:l,ans:n&&a.length===n&&a.every(Boolean)?a:null}})}
@@ -725,7 +725,7 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
       q('.bzc').innerHTML=clean.map((t,n)=>`<div class="ln${ln===n+1?' cur':''}"><i>${n+1}</i>${esc(t).replace(/^( +)/,x=>`<span class="sp">${'·'.repeat(x.length)}</span>`)}</div>`).join('');
       {const c=q('.bzc .cur');if(c)c.scrollIntoView({block:'nearest'})}
       let tb=itable(cur);
-      if(!tb){const vs=s[1],pv=(S[cur-1]||[0,{}])[1],hl=clean[(s[0]||0)-1]||'';tb=`<div class="wrap"><table class="itb"><thead><tr><th>변수</th><th>값 (이 줄을 실행한 직후)</th></tr></thead><tbody>${Object.keys(vs).map(k=>`<tr class="${pv[k]!==vs[k]?'chg':''}"><td>${esc(k)}</td><td style="text-align:left">${vizVal(vs[k],k,vs,hl)}</td></tr>`).join('')||'<tr><td colspan="2" class="dim">아직 변수가 없어요</td></tr>'}</tbody></table></div>`}
+      if(!tb){const vs=s[1],pv=(S[cur-1]||[0,{}])[1],hl=clean[(s[0]||0)-1]||'';tb=`<div class="wrap"><table class="itb"><thead><tr><th class="vk">변수</th><th>값 (이 줄을 실행한 직후)</th></tr></thead><tbody>${Object.keys(vs).map(k=>`<tr class="${pv[k]!==vs[k]?'chg':''}"><td>${esc(k)}</td><td style="text-align:left">${vizVal(vs[k],k,vs,hl)}</td></tr>`).join('')||'<tr><td colspan="2" class="dim">아직 변수가 없어요</td></tr>'}</tbody></table></div>`}
       q('.bzw').innerHTML=tb;{const r=q('.bzw tr.cur');if(r)r.scrollIntoView({block:'nearest'})}
       q('.bzo').textContent=s[2]||'(아직 출력이 없어요)';q('.sl2').value=cur;q('.bzn').textContent=s[0]?`${cur+1} / ${S.length}단계`:'✅ 끝!'};
     const go=n=>{cur=Math.max(0,Math.min(S.length-1,n));draw();upd()}; // 팝업에서 넘기면 원래 화면도 같이 움직여요
