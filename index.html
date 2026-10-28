@@ -41,6 +41,7 @@ pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:1
 .ln{white-space:pre;padding:0 12px 0 36px;position:relative;min-height:1.8em}.ln i{position:absolute;left:6px;color:#b5bbcb;font-style:normal;font-size:12px}
 .ln.cur{background:#ffe0e0;color:#c0392b;font-weight:bold}.ln.cur::after{content:'▶';position:absolute;left:22px;font-size:10px}
 .hot{font-size:17px;border-bottom:2px dotted #6a8fd8;background:#e4eefc;border-radius:4px;padding:0 3px;cursor:pointer}
+.hot.ok{background:var(--mint);border-bottom-color:#7fc8a9}
 .hot2{font-size:16px;display:inline-block;vertical-align:top;white-space:pre-wrap;border:1px dashed #9aa6c4;background:#fff;border-radius:6px;padding:0 5px;cursor:pointer}.hot2.ok{border-style:solid;border-color:#7fc8a9;background:var(--mint)}
 .gh{position:relative;background:#fff;border-radius:10px}.gh .gt,.gh input{font:16px/1.4 'KoPubWorld Dotum','Malgun Gothic',sans-serif;letter-spacing:0;padding:9px 12px;box-sizing:border-box;text-align:left}.gh .gt{position:absolute;inset:0;border:1px solid transparent;color:#c3c9d9;white-space:nowrap;overflow:hidden;pointer-events:none;display:flex;align-items:center}.gh input{position:relative;width:100%;background:transparent;color:var(--ink)}
 .bigm{z-index:40}.bz{background:#fff;border-radius:20px;width:min(1280px,97vw);height:min(93vh,940px);display:flex;flex-direction:column;padding:16px 20px;overflow:hidden}
@@ -115,7 +116,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v113)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v114)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbx5Im0ofFvxyWBgPuCL1CikMjpa-9ISrr2brpLeuYPu26HWEcLLqHz3bTSjLq0ZFn5m/exec';
@@ -309,7 +310,7 @@ function fqCheck(q){const m=q.querySelector('.fqm'),say=(ok,t)=>{m.className='fq
 document.addEventListener('click',e=>{const b=e.target.closest('.fqk,.fqz');if(!b)return;const q=b.closest('.fnq');if(!q||!q._t)return;
   if(b.classList.contains('fqk'))return fqCheck(q);q._g=null;q._done=null;q.querySelector('.fqv').value='';const s=q.querySelector('.fqs');s.textContent='표에서 드래그';s.classList.remove('on');q.querySelector('.fqm').textContent='';fqPaint(q)});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('fqv')){const q=e.target.closest('.fnq');if(q)fqCheck(q)}});
-function fmt0(t){const PP=String(t??'').split('```');return PP.map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):/^\s*run[ \t]*\n/.test(x)?runDiv(x):`<pre>${esc(x.trim())}</pre>`):fmtTx(x.replace(i>0?/^[ \t]*\n/:/^$/,'').replace(i<PP.length-1?/\n[ \t]*$/:/^$/,''))).join('')}
+function fmt0(t){const PP=String(t??'').split('```');return PP.map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):/^\s*run[ \t]*\n/.test(x)?runDiv(x):`<pre>${hotCode(x.trim())}</pre>`):fmtTx(x.replace(i>0?/^[ \t]*\n/:/^$/,'').replace(i<PP.length-1?/\n[ \t]*$/:/^$/,''))).join('')}
 const BOXR=/\[\s*상자\s*(?:[:：]([^\]]*))?\]([\s\S]*?)\[\s*\/\s*상자\s*\]/;
 function fmt0c(t){const P=String(t??'').split(BOXR);let o='';for(let i=0;i<P.length;i+=3){let a=P[i]||'';if(i+2<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=fmt0c0(a);
   if(i+2<P.length){
@@ -324,7 +325,7 @@ function fmt(t){t=String(t??'').replace(/\r/g,'');const k=t.search(/\[\s*분할/
     if(op==='줄맞춤'){const CF=c=>{const ls=c.replace(/^\s*\n/,'').replace(/\s+$/,'').split('\n'),o=[];let run=null,rn=0;ls.forEach(s=>{const m=/^\s*```\s*(run)?\s*$/.exec(s);if(m&&(run?!m[1]:1)){if(run){const r=run;run=null;r.forEach((t,i)=>o.push('\u0003'+(r.length===1?'o':i===0?'f':i===r.length-1?'l':'m')+t));if(rn)o.push('\u0004'+r.join('\n'))}else{run=[];rn=!!m[1]}return}if(run)run.push(s);else o.push(s)});if(run)run.forEach(t=>o.push('\u0003m'+t));return o},L=cs.map(CF),n=Math.max(...L.map(a=>a.length));let h='';for(let k=0;k<n;k++)L.forEach(a=>{const s=a[k]||'';h+=s[0]==='\u0003'?`<div class="cell cl cl${s[1]}">${esc(s.slice(2))||' '}</div>`:s[0]==='\u0004'?`<div class="cell">${runDiv('run\n'+s.slice(1)).replace('<pre>','<pre style="display:none">')}</div>`:`<div class="cell">${fmt0c(s)}</div>`});out+=`<div class="cols2" style="grid-template-columns:${g}">${h}</div>`}
     else out+=`<div class="cols" style="grid-template-columns:${g}${op==='가운데'?';align-items:center':''}">${cs.map(c=>`<div class="col">${fmt0c(c.trim())}</div>`).join('')}</div>`}}return out+(M?fmt(t.slice(M.index+M[0].length)):'')}
 const nt=x=>String(x||'').replace(/<[^>]*>/g,'').trim();
-function ib(s){return s.replace(/\[\s*입력\s*(?:[:：]([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>{h=nt(h);const pp=String(a||'').split('|').map(nt),op=pp.slice(1),ce=op.some(x=>/^가운데$/.test(x)),wd=op.some(x=>/^넓게$/.test(x)),ml=op.some(x=>/^여러\s*줄$/.test(x));a=pp[0];
+function ib(s){return s.replace(/\[\s*입력\s*(?:[:：]([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>{h=nt(h);const IO=/^(가운데|넓게|여러\s*줄)$/,pp0=String(a||'').split('|').map(nt),pp=pp0.every(x=>IO.test(x))?['',...pp0]:pp0,op=pp.slice(1),ce=op.some(x=>/^가운데$/.test(x)),wd=op.some(x=>/^넓게$/.test(x)),ml=op.some(x=>/^여러\s*줄$/.test(x));a=pp[0];
     let t=ml?`<textarea class="ib ii2" rows="3" placeholder="${h}" data-a="${a}" style="width:100%;min-height:90px;font-family:inherit"></textarea><span class="im"></span>`:`<input class="ib ii" size="${Math.max(8,Math.ceil(h.length*1.7)+2)}" placeholder="${h}" data-a="${a}" autocomplete="off"${wd?' style="width:100%;box-sizing:border-box"':''}><span class="im"></span>`;
     // 힌트 = 정답이면 따라 쓰기: 연한 글씨가 입력해도 안 지워짐
     if(!ml&&h&&a.split('/').some(x=>norm(x)===norm(h)))t=t.replace(' placeholder="'+h+'"',' spellcheck="false"').replace('<input',`<span class="gw"${wd?' style="display:block"':''}><span class="gg" aria-hidden="true">${h}</span><input`).replace('><span class="im">','></span><span class="im">');return ce?`<div class="ctr">${t}</div>`:(wd||ml?`<div>${t}</div>`:t)})
@@ -442,7 +443,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
     box.querySelectorAll('.ib').forEach((el,i)=>{el.dataset.i=i+1;const d=r.drafts&&r.drafts[i+1],lc=loadLocal(i+1);let v=null,t0=-1;[d&&{x:d.text,t:d.t},lc&&{x:lc.text,t:lc.t}].forEach(c=>{if(c&&c.t>t0){t0=c.t;v=c.x}});if(v!=null){if(el.type==='checkbox')el.checked=v==='1';else el.value=v;ibCheck(el)}});
     const sb=S.sub;if(!S.preview&&!(r.saved[0]&&r.saved[0].ok))api('submit',{no,act,q:0,answer:'열람',sub:sb}).then(x=>{if(!x.error&&S.sub===sb)rec(no,act,0,'열람',true)})}
   if(act==='해석'){const isF=i=>i.type==='설명쓰기'||i.type==='서술'||i.type==='기타';
-  const cd=(i,v)=>{if(i.type==='기타')return fmt(i.code||'');if(i.type!=='설명쓰기')return i.code?(/^\s*```\s*(trace|run)/.test(i.code)?fmt(i.code):`<pre>${esc(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
+  const cd=(i,v)=>{if(i.type==='기타')return fmt(i.code||'');if(i.type!=='설명쓰기')return i.code?(/^\s*```\s*(trace|run)/.test(i.code)?fmt(i.code):`<pre>${hotCode(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
   box.innerHTML=r.items.map((i,n)=>{const s=sv(i.q),f=isF(i),v=s&&i.type==='설명쓰기'?String(s.answer).split('\n').map(l=>l.replace(/^\d+:\s?/,'')):[];
     const inp=(i.type==='설명쓰기'||i.type==='기타')?'':i.choices?i.choices.map(c=>`<label class="choice"><input type="radio" name="q${i.q}" value="${esc(c)}" ${s&&String(s.answer)===c?'checked':''}>${esc(c)}</label>`).join(''):i.type==='서술'?`<textarea class="free" style="min-height:90px;font-family:inherit" placeholder="생각을 자유롭게 써 보세요">${esc(s?s.answer:'')}</textarea>`:`<input class="ans" placeholder="답을 입력하세요" value="${esc(s?s.answer:'')}">`;
     return `<div class="box" data-q="${i.q}"${i.type==='기타'?' data-etc="1"':''}>${i.type==='기타'?`<h3>${fmt(i.text)}</h3>`:`<h3>문제 ${n+1}</h3>${fmt(i.text)}`}${cd(i,v)}${inp}<div class="row"><button class="main chk">${f?'제출하기':'정답 확인'}</button></div><div class="msg ${s&&s.submitted&&(f||s.ok)?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.submitted?(f?'📨 이전에 제출했어요 (고쳐서 다시 제출해도 돼요)':(s.ok?'✅ 이전에 맞혔어요':'')):(s?'✏️ 이어서 쓰던 내용이 있어요 (아직 제출 전)':'')}</div></div>`}).join('');
@@ -508,7 +509,29 @@ function mkHot(raw){const p=raw.split('|').map(x=>x.trim()),e=p[0],r=rangeInfo(e
   else if(f[0])st=parseStages(f);
   else st=[{msg:`이 부분은 "${e}" 예요.`,ans:null}];
   return{e,r,st}}
-const hotText=h=>h.r?h.r.L.join(', ')+(h.r.L.length>30?' …':''):h.st.map(s=>{let j=0;return optMsg(s).msg.replace(/OO/g,()=>{const a=s.ans&&s.ans[j++];return a?a.split('/')[0]:'OO'})}).join('//');
+const hotFill=s=>{let j=0;return optMsg(s).msg.replace(/OO/g,()=>{const a=s.ans&&s.ans[j++];return a?a.split('/')[0]:'OO'})};
+const hotText=h=>h.r?h.r.L.join(', ')+(h.r.L.length>30?' …':''):h.st.map(hotFill).join('//');
+/* 일반 코드(```, ```run, 코드 칸)에서도 {{보이는 코드 | 설명 | 답}} 을 쓰면 누르는 칸이 돼요. 실행할 때는 맨 앞 코드만 써요 */
+const HOTS=[];
+function hotCode(src){src=String(src??'');if(src.indexOf('{{')<0)return esc(src);TRLEN={};
+  src.split('\n').forEach(l=>{const m=/^\s*(\w+)\s*=\s*\[(.*)\]\s*(#.*)?$/.exec(l);if(m)TRLEN[m[1]]=m[2].trim()===''?0:splitTop(m[2],',').length});
+  return src.split('\n').map(line=>{let o='',last=0,m;TRQ.lastIndex=0;while((m=TRQ.exec(line))){let pre=line.slice(last,m.index),rw=m[1];{const f0=rw.split('|')[0].trim();if(/range\s*$/.test(pre)&&/^\(.*\)$/.test(f0)){pre=pre.replace(/range\s*$/,'');rw='range'+f0+(rw.indexOf('|')>=0?rw.slice(rw.indexOf('|')):'')}}
+    HOTS.push(mkHot(rw));o+=esc(pre)+`<span class="hot" data-hk="${HOTS.length-1}" onclick="hotPlain(this)">${esc(HOTS[HOTS.length-1].e)}</span>`;last=m.index+m[0].length}return o+esc(line.slice(last))}).join('\n')}
+function hotPlain(sp){const h=HOTS[+sp.dataset.hk];if(!h)return;if(sp.classList.contains('ok'))return hotPop({e:h.e,st:h.st.map(s=>({msg:hotFill(s),ans:null}))},'',()=>{});hotPop(h,'✅ 모두 맞았어요!',()=>sp.classList.add('ok'))}
+/* 🔍 칸을 누르면 뜨는 설명·빈칸 창 (trace와 일반 코드가 같이 씀) */
+function hotPop(h,okMsg,onOk){if(document.querySelector('.modal.hot'))return;const m=document.createElement('div');m.className='modal hot';let si=0,cp=null;const hasQ=h.st.some(s=>s.ans);
+    m.innerHTML=`<div class="mb"><p style="font:bold 22px/1.5 Consolas,monospace;color:var(--ink);margin:0 0 10px"><span style="background:#e4eefc;border-radius:6px;padding:2px 10px">${esc(h.e)}</span></p><div class="hs"></div><div class="msg"></div><div class="row"><button class="main ck">${hasQ?'확인':'알겠어요'}</button><button class="ghost cl">닫기</button></div></div>`;
+    document.body.appendChild(m);const hs=m.querySelector('.hs'),out=m.querySelector('.msg'),ck=m.querySelector('.ck');
+    const add=st=>{const p=document.createElement('p');p.style.margin='0 0 8px';const om=optMsg(st);p.innerHTML=br(esc(om.msg).replace(/OO/g,()=>st.ans?(om.opts?`<select class="bk"><option value="">선택</option>${om.opts.map(o=>`<option>${esc(o)}</option>`).join('')}</select>`:'<input class="bk" autocomplete="off">'):'OO'));hs.appendChild(p);return p};
+    const show=()=>{if(!hasQ){h.st.forEach(add);return}
+      while(si<h.st.length){const st=h.st[si];cp=add(st);if(st.ans){const f=cp.querySelector('.bk');if(f)f.focus();return}si++}
+      onOk();out.className='msg ok';out.textContent=okMsg;ck.remove()};
+    show();m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.cl').onclick=()=>m.remove();
+    ck.onclick=()=>{if(!hasQ){onOk();m.remove();return}
+      const st=h.st[si],ins=[...cp.querySelectorAll('.bk')];
+      if(ins.every((x,i)=>(st.ans[i]||'').split('/').some(a=>norm(a)===norm(x.value)))){ins.forEach((x,i)=>{const b=document.createElement('b');b.textContent=st.ans[i].split('/')[0];x.replaceWith(b)});si++;out.className='msg ok';out.textContent='✅ 맞아요!';show()}
+      else{out.className='msg no';out.textContent='❌ 다시 생각해 봐요.'}};
+    m.addEventListener('keydown',e=>{if(e.key==='Enter'&&ck.isConnected)ck.click()})}
 async function runTrace(code,xj){const p=await loadPy();p.globals.set('UC',code);p.globals.set('XJ',xj);return p.runPython(`import sys,io,json,re
 _X=json.loads(XJ)
 class _Stop(Exception):pass
@@ -624,7 +647,7 @@ json.dumps({'s':_S,'e':_err})`)}
 const S_ADMIN=()=>!!(S.user&&S.user.role==='관리자');
 function traceDiv(x){setTimeout(initTraces,0);return `<div class="trace" data-src="${esc(x.replace(/^\s*trace[ \t]*\n/,'').replace(/\s+$/,''))}"></div>`}
 /* 실행 결과만 보기: 시트 칸에 ```run ... ``` 로 쓰면 코드 아래에 '실행 결과 보기' 버튼이 생겨요 */
-function runDiv(x){return `<div class="runb"><pre>${esc(x.replace(/^\s*run[ \t]*\n/,'').replace(/\s+$/,''))}</pre><button class="ghost" onclick="runBlk(this)">▶ 실행 결과 보기</button><pre class="rout" style="display:none;background:#fffbe8"></pre></div>`}
+function runDiv(x){return `<div class="runb"><pre>${hotCode(x.replace(/^\s*run[ \t]*\n/,'').replace(/\s+$/,''))}</pre><button class="ghost" onclick="runBlk(this)">▶ 실행 결과 보기</button><pre class="rout" style="display:none;background:#fffbe8"></pre></div>`}
 async function runBlk(b){const o=b.nextElementSibling;o.style.display='block';o.textContent='🐍 실행 중... (처음에는 10~30초 걸려요)';b.disabled=true;try{o.textContent='출력:\n'+(await runPy(b.previousElementSibling.textContent)||'(출력 없음)')}catch(e){o.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}b.disabled=false}
 function rgHTML(h,S,c,nx){const L2=h.r.L,more=L2.length>30?' …':'',s=S[c];let idx=-1,fin=false,up=false;
   if(h.lp&&s){const ln=s[0],v=s[1][h.lp.v];idx=v==null?-1:L2.findIndex(x=>String(x)===v);
@@ -758,19 +781,7 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
   {const bg=el.querySelector('.bg');if(bg)bg.onclick=openBig}
   el.querySelector('.sw').onclick=e=>{el.classList.toggle('showsp');e.target.textContent=el.classList.contains('showsp')?'␣ 들여쓰기 숨기기':'␣ 들여쓰기 보기'};
   el.onclick=e=>{const h=e.target.closest('[data-k]');if(h)openHot(+h.dataset.k)};
-  function openHot(k){if(document.querySelector('.modal.hot'))return;const h=H[k],m=document.createElement('div');m.className='modal hot';let si=0,cp=null;const hasQ=h.st.some(s=>s.ans);
-    m.innerHTML=`<div class="mb"><p style="font:bold 22px/1.5 Consolas,monospace;color:var(--ink);margin:0 0 10px"><span style="background:#e4eefc;border-radius:6px;padding:2px 10px">${esc(h.e)}</span></p><div class="hs"></div><div class="msg"></div><div class="row"><button class="main ck">${hasQ?'확인':'알겠어요'}</button><button class="ghost cl">닫기</button></div></div>`;
-    document.body.appendChild(m);const hs=m.querySelector('.hs'),out=m.querySelector('.msg'),ck=m.querySelector('.ck');
-    const add=st=>{const p=document.createElement('p');p.style.margin='0 0 8px';const om=optMsg(st);p.innerHTML=br(esc(om.msg).replace(/OO/g,()=>st.ans?(om.opts?`<select class="bk"><option value="">선택</option>${om.opts.map(o=>`<option>${esc(o)}</option>`).join('')}</select>`:'<input class="bk" autocomplete="off">'):'OO'));hs.appendChild(p);return p};
-    const show=()=>{if(!hasQ){h.st.forEach(add);return}
-      while(si<h.st.length){const st=h.st[si];cp=add(st);if(st.ans){const f=cp.querySelector('.bk');if(f)f.focus();return}si++}
-      solved[k]=1;panes();out.className='msg ok';out.textContent='✅ 모두 맞았어요! 오른쪽 해석이 바뀌었어요.';ck.remove()};
-    show();m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.cl').onclick=()=>m.remove();
-    ck.onclick=()=>{if(!hasQ){solved[k]=1;panes();m.remove();return}
-      const st=h.st[si],ins=[...cp.querySelectorAll('.bk')];
-      if(ins.every((x,i)=>(st.ans[i]||'').split('/').some(a=>norm(a)===norm(x.value)))){ins.forEach((x,i)=>{const b=document.createElement('b');b.textContent=st.ans[i].split('/')[0];x.replaceWith(b)});si++;out.className='msg ok';out.textContent='✅ 맞아요!';show()}
-      else{out.className='msg no';out.textContent='❌ 다시 생각해 봐요.'}};
-    m.addEventListener('keydown',e=>{if(e.key==='Enter'&&ck.isConnected)ck.click()})}
+  function openHot(k){hotPop(H[k],'✅ 모두 맞았어요! 오른쪽 해석이 바뀌었어요.',()=>{solved[k]=1;panes()})}
 })}
 
 let PYP;function loadPy(){return PYP||(PYP=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';s.onload=()=>loadPyodide().then(ok,no);s.onerror=no;document.head.appendChild(s)}))}
