@@ -114,7 +114,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .sm.opened{text-align:left;padding:0}.sm.opened pre{text-align:left}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v106)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v107)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbx5Im0ofFvxyWBgPuCL1CikMjpa-9ISrr2brpLeuYPu26HWEcLLqHz3bTSjLq0ZFn5m/exec';
@@ -308,13 +308,16 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&
 function fmt0(t){const PP=String(t??'').split('```');return PP.map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):/^\s*run[ \t]*\n/.test(x)?runDiv(x):`<pre>${esc(x.trim())}</pre>`):fmtTx(x.replace(i>0?/^[ \t]*\n/:/^$/,'').replace(i<PP.length-1?/\n[ \t]*$/:/^$/,''))).join('')}
 const BOXR=/\[\s*상자\s*(?:[:：]([^\]]*))?\]([\s\S]*?)\[\s*\/\s*상자\s*\]/;
 function fmt0c(t){const P=String(t??'').split(BOXR);let o='';for(let i=0;i<P.length;i+=3){let a=P[i]||'';if(i+2<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=fmt0c0(a);
-  if(i+2<P.length){const pp=String(P[i+1]||'').split('|').map(x=>x.trim()),ti=pp[0],cl=pp[1]||'',bg=colr(cl,HL)||'#f4f6fb',bd=colr(cl,PAL)||(cl&&HL[cl]?'#9aa3b8':'#b8c0d4');
-    o+=`<div class="bxo" style="background:${bg};border-left-color:${bd}">${ti?`<div class="bxt">${esc(ti)}</div>`:''}<div class="bxb">${fmt0c0(P[i+2].replace(/^\s*\n/,'').replace(/\s+$/,''))}</div></div>`}}return o}
+  if(i+2<P.length){
+    o+=bxH(P[i+1],fmt0c0(P[i+2].replace(/^\s*\n/,'').replace(/\s+$/,'')))}}return o}
+function bxH(a,body){const pp=String(a||'').split('|').map(x=>x.trim()),ti=pp[0],cl=pp[1]||'',bg=colr(cl,HL)||'#f4f6fb',bd=colr(cl,PAL)||(cl&&HL[cl]?'#9aa3b8':'#b8c0d4');
+  return `<div class="bxo" style="background:${bg};border-left-color:${bd}">${ti?`<div class="bxt">${esc(ti)}</div>`:''}<div class="bxb">${body}</div></div>`}
 const CTR=/\[\s*가운데\s*\]([\s\S]*?)\[\s*\/\s*가운데\s*\]/;
 function fmt0c0(t){const P=String(t??'').split(CTR);let o='';for(let i=0;i<P.length;i+=2){let a=P[i]||'';if(i+1<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=fmt0(a);if(i+1<P.length)o+=`<div class="ctr">${fmt0(P[i+1].replace(/^\s*\n/,'').replace(/\s+$/,''))}</div>`}return o}
-function fmt(t){const P=String(t??'').replace(/\r/g,'').split(/\[\s*분할\s*(?:[:：]\s*([\d.:：\s]*?))?\s*(?:\|\s*(줄맞춤|가운데)\s*)?\]([\s\S]*?)\[\s*\/\s*분할\s*\]/);let out='';
+function fmt(t){t=String(t??'').replace(/\r/g,'');const B=t.match(BOXR),k=t.search(/\[\s*분할/);if(B&&k>=0&&B.index<k&&B[2].search(/\[\s*분할/)>=0)return fmt(t.slice(0,B.index).replace(/\n$/,''))+bxH(B[1],fmt(B[2].replace(/^\s*\n/,'').replace(/\s+$/,'')))+fmt(t.slice(B.index+B[0].length).replace(/^\n/,''));
+  const P=t.split(/\[\s*분할\s*(?:[:：]\s*([\d.:：\s]*?))?\s*(?:\|\s*(줄맞춤|가운데)\s*)?\]([\s\S]*?)\[\s*\/\s*분할\s*\]/);let out='';
   for(let i=0;i<P.length;i+=4){out+=fmt0c(P[i]||'');if(i+3<P.length){const cs=P[i+3].split(/\[\s*칸\s*\]/),r=P[i+1]?P[i+1].split(/[:：]/).map(x=>x.trim()):[],op=P[i+2],g=cs.map((_,k)=>`minmax(0,${r[k]||1}fr)`).join(' ');
-    if(op==='줄맞춤'){const CF=c=>{const ls=c.replace(/^\s*\n/,'').replace(/\s+$/,'').split('\n'),o=[];let run=null;ls.forEach(s=>{if(/^\s*```\s*$/.test(s)){if(run){const r=run;run=null;r.forEach((t,i)=>o.push('\u0003'+(r.length===1?'o':i===0?'f':i===r.length-1?'l':'m')+t))}else run=[];return}if(run)run.push(s);else o.push(s)});if(run)run.forEach(t=>o.push('\u0003m'+t));return o},L=cs.map(CF),n=Math.max(...L.map(a=>a.length));let h='';for(let k=0;k<n;k++)L.forEach(a=>{const s=a[k]||'';h+=s[0]==='\u0003'?`<div class="cell cl cl${s[1]}">${esc(s.slice(2))||' '}</div>`:`<div class="cell">${fmt0c(s)}</div>`});out+=`<div class="cols2" style="grid-template-columns:${g}">${h}</div>`}
+    if(op==='줄맞춤'){const CF=c=>{const ls=c.replace(/^\s*\n/,'').replace(/\s+$/,'').split('\n'),o=[];let run=null,rn=0;ls.forEach(s=>{const m=/^\s*```\s*(run)?\s*$/.exec(s);if(m&&(run?!m[1]:1)){if(run){const r=run;run=null;r.forEach((t,i)=>o.push('\u0003'+(r.length===1?'o':i===0?'f':i===r.length-1?'l':'m')+t));if(rn)o.push('\u0004'+r.join('\n'))}else{run=[];rn=!!m[1]}return}if(run)run.push(s);else o.push(s)});if(run)run.forEach(t=>o.push('\u0003m'+t));return o},L=cs.map(CF),n=Math.max(...L.map(a=>a.length));let h='';for(let k=0;k<n;k++)L.forEach(a=>{const s=a[k]||'';h+=s[0]==='\u0003'?`<div class="cell cl cl${s[1]}">${esc(s.slice(2))||' '}</div>`:s[0]==='\u0004'?`<div class="cell">${runDiv('run\n'+s.slice(1)).replace('<pre>','<pre style="display:none">')}</div>`:`<div class="cell">${fmt0c(s)}</div>`});out+=`<div class="cols2" style="grid-template-columns:${g}">${h}</div>`}
     else out+=`<div class="cols" style="grid-template-columns:${g}${op==='가운데'?';align-items:center':''}">${cs.map(c=>`<div class="col">${fmt0c(c.trim())}</div>`).join('')}</div>`}}return out}
 const nt=x=>String(x||'').replace(/<[^>]*>/g,'').trim();
 function ib(s){return s.replace(/\[\s*입력\s*(?:[:：]([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>{h=nt(h);const pp=String(a||'').split('|').map(nt),op=pp.slice(1),ce=op.some(x=>/^가운데$/.test(x)),wd=op.some(x=>/^넓게$/.test(x)),ml=op.some(x=>/^여러\s*줄$/.test(x));a=pp[0];
