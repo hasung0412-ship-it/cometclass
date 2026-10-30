@@ -116,7 +116,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v119)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v120)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwUb3G7rOgnIfKB9dLttvRy0CWOam3WplSoT6KuMosZTpCEHZtk23iuWHoN2JuiE_jS/exec';
@@ -341,12 +341,13 @@ document.addEventListener('change',e=>{if(e.target.classList&&e.target.classList
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('ii'))ibCheck(e.target)});
 const PAL={빨강:'#d94a4a',파랑:'#3b6fd4',초록:'#2e8b62',주황:'#e67e22',보라:'#7b5fc4',분홍:'#e0559b',회색:'#7b8499',검정:'#3a4256'},HL={노랑:'#fff3a0',초록:'#c9f2d8',파랑:'#cfe3fb',분홍:'#fbd3e4',주황:'#fde3d6',보라:'#e5dcf6'};
 const colr=(v,M)=>{v=v.trim();return M[v]||(/^#[0-9a-f]{3,8}$/i.test(v)?v:null)};
+const bx=x=>x.replace(/\*\*([^*\n]+?)\*\*/g,'<b>$1</b>').replace(/\*\*([^*\n]*)$/,'<b>$1</b>');
 function fx(s){const st=[],lk=[];s=s.replace(/`([^`\n]+)`/g,(m,c)=>{st.push(c);return '\u0001'+(st.length-1)+'\u0001'});
   s=s.replace(/\[\s*링크\s*[:：]\s*([^|\]]*?)\s*\|\s*(https?:\/\/[^\s"'<>\]|]+)\s*\]/g,(m,t,u)=>{lk.push(`<a class='lk' href='${u}' target='_blank' rel='noopener noreferrer'>${t||u}</a>`);return '\u0002'+(lk.length-1)+'\u0002'});
-  s=s.replace(/\[\s*색\s*[:：]([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,PAL);return v?`<span style='color:${v}'>${x}</span>`:m})
-    .replace(/\[\s*형광\s*[:：]([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,HL);return v?`<mark style='background:${v};border-radius:4px;padding:0 3px'>${x}</mark>`:m})
-    .replace(/\[\s*(크게|작게)\s*[:：]([^\]]*)\]/g,(m,k,x)=>`<span style='font-size:${k==='크게'?'1.3em':'.85em'}'>${x}</span>`)
-    .replace(/\[\s*(?:글꼴|서체)\s*[:：]\s*(강원|교보)\s*\|([^\]]*)\]/g,(m,k,x)=>`<span style='font-family:${k==='강원'?'GangwonEduSaeeum':'KyoboHand'},KoPubWorld Dotum,sans-serif;font-size:1.2em'>${x}</span>`)
+  s=s.replace(/\[\s*색\s*[:：]([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,PAL);return v?`<span style='color:${v}'>${bx(x)}</span>`:m})
+    .replace(/\[\s*형광\s*[:：]([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,HL);return v?`<mark style='background:${v};border-radius:4px;padding:0 3px'>${bx(x)}</mark>`:m})
+    .replace(/\[\s*(크게|작게)\s*[:：]([^\]]*)\]/g,(m,k,x)=>`<span style='font-size:${k==='크게'?'1.3em':'.85em'}'>${bx(x)}</span>`)
+    .replace(/\[\s*(?:글꼴|서체)\s*[:：]\s*(강원|교보)\s*\|([^\]]*)\]/g,(m,k,x)=>`<span style='font-family:${k==='강원'?'GangwonEduSaeeum':'KyoboHand'},KoPubWorld Dotum,sans-serif;font-size:1.2em'>${bx(x)}</span>`)
     .replace(/\*\*([^*\n]+?)\*\*/g,'<b>$1</b>').replace(/__([^_\n]+?)__/g,'<u>$1</u>').replace(/~~([^~\n]+?)~~/g,'<s>$1</s>');
   return s.replace(/\u0001(\d+)\u0001/g,(m,i)=>`<code class='ic'>${st[i]}</code>`).replace(/\u0002(\d+)\u0002/g,(m,i)=>lk[i])}
 function pic(s){return s.replace(/\[그림:([^\]\s|]+)(?:\|([^\]]*))?\]/g,(m,u,cap)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<figure class="fig"><img class="pic" src="${u}" alt="${cap?cap.replace(/<[^>]*>/g,'').trim():'그림'}">${cap?`<figcaption>${cap.trim()}</figcaption>`:''}</figure>`:m)}
