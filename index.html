@@ -42,6 +42,7 @@ pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:1
 .ln.cur{background:#ffe0e0;color:#c0392b;font-weight:bold}.ln.cur::after{content:'▶';position:absolute;left:22px;font-size:10px}
 .hot{font-size:17px;border-bottom:2px dotted #6a8fd8;background:#e4eefc;border-radius:4px;padding:0 3px;cursor:pointer}
 .hot.ok{background:var(--mint);border-bottom-color:#7fc8a9}
+.hotd::after{content:attr(data-d);font-family:'GangwonEduSaeeum','KoPubWorld Dotum',sans-serif;font-size:1.3em;color:#5b6478;margin-left:16px;white-space:normal}
 .hot2{font-size:16px;display:inline-block;vertical-align:top;white-space:pre-wrap;border:1px dashed #9aa6c4;background:#fff;border-radius:6px;padding:0 5px;cursor:pointer}.hot2.ok{border-style:solid;border-color:#7fc8a9;background:var(--mint)}
 .gh{position:relative;background:#fff;border-radius:10px}.gh .gt,.gh input{font:16px/1.4 'KoPubWorld Dotum','Malgun Gothic',sans-serif;letter-spacing:0;padding:9px 12px;box-sizing:border-box;text-align:left}.gh .gt{position:absolute;inset:0;border:1px solid transparent;color:#c3c9d9;white-space:nowrap;overflow:hidden;pointer-events:none;display:flex;align-items:center}.gh input{position:relative;width:100%;background:transparent;color:var(--ink)}
 .bigm{z-index:40}.bz{background:#fff;border-radius:20px;width:min(1280px,97vw);height:min(93vh,940px);display:flex;flex-direction:column;padding:16px 20px;overflow:hidden}
@@ -116,7 +117,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v120)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v121)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwUb3G7rOgnIfKB9dLttvRy0CWOam3WplSoT6KuMosZTpCEHZtk23iuWHoN2JuiE_jS/exec';
@@ -513,14 +514,16 @@ function mkHot(raw){const p=raw.split('|').map(x=>x.trim()),e=p[0],r=rangeInfo(e
   else st=[{msg:`이 부분은 "${e}" 예요.`,ans:null}];
   return{e,r,st}}
 const hotFill=s=>{let j=0;return optMsg(s).msg.replace(/OO/g,()=>{const a=s.ans&&s.ans[j++];return a?a.split('/')[0]:'OO'})};
+/* 칸 옆(줄 끝)에 강원체로 보이는 설명: 풀기 전엔 OO를 ___로, 맞히면 답을 채워서. CSS로만 그려서 실행·복사되는 코드에는 안 섞여요 */
+const hotDesc=(h,done)=>h.st.map(s=>(done?hotFill(s):s.msg.replace(/OO/g,'___')).replace(/\s*\/\/\s*/g,' ')).join(' ');
 const hotText=h=>h.r?h.r.L.join(', ')+(h.r.L.length>30?' …':''):h.st.map(hotFill).join('//');
 /* 일반 코드(```, ```run, 코드 칸)에서도 {{보이는 코드 | 설명 | 답}} 을 쓰면 누르는 칸이 돼요. 실행할 때는 맨 앞 코드만 써요 */
 const HOTS=[];
 function hotCode(src){src=String(src??'');if(src.indexOf('{{')<0)return esc(src);TRLEN={};
   src.split('\n').forEach(l=>{const m=/^\s*(\w+)\s*=\s*\[(.*)\]\s*(#.*)?$/.exec(l);if(m)TRLEN[m[1]]=m[2].trim()===''?0:splitTop(m[2],',').length});
-  return src.split('\n').map(line=>{let o='',last=0,m;TRQ.lastIndex=0;while((m=TRQ.exec(line))){let pre=line.slice(last,m.index),rw=m[1];{const f0=rw.split('|')[0].trim();if(/range\s*$/.test(pre)&&/^\(.*\)$/.test(f0)){pre=pre.replace(/range\s*$/,'');rw='range'+f0+(rw.indexOf('|')>=0?rw.slice(rw.indexOf('|')):'')}}
-    HOTS.push(mkHot(rw));o+=esc(pre)+`<span class="hot" data-hk="${HOTS.length-1}" onclick="hotPlain(this)">${esc(HOTS[HOTS.length-1].e)}</span>`;last=m.index+m[0].length}return o+esc(line.slice(last))}).join('\n')}
-function hotPlain(sp){const h=HOTS[+sp.dataset.hk];if(!h)return;if(sp.classList.contains('ok'))return hotPop({e:h.e,st:h.st.map(s=>({msg:hotFill(s),ans:null}))},'',()=>{});hotPop(h,'✅ 모두 맞았어요!',()=>sp.classList.add('ok'))}
+  return src.split('\n').map(line=>{let o='',ds='',last=0,m;TRQ.lastIndex=0;while((m=TRQ.exec(line))){let pre=line.slice(last,m.index),rw=m[1];{const f0=rw.split('|')[0].trim();if(/range\s*$/.test(pre)&&/^\(.*\)$/.test(f0)){pre=pre.replace(/range\s*$/,'');rw='range'+f0+(rw.indexOf('|')>=0?rw.slice(rw.indexOf('|')):'')}}
+    HOTS.push(mkHot(rw));o+=esc(pre)+`<span class="hot" data-hk="${HOTS.length-1}" onclick="hotPlain(this)">${esc(HOTS[HOTS.length-1].e)}</span>`;if((rw.split('|')[1]||'').trim())ds+=`<span class="hotd" data-hd="${HOTS.length-1}" data-d="${esc(hotDesc(HOTS[HOTS.length-1]))}"></span>`;last=m.index+m[0].length}return o+esc(line.slice(last))+ds}).join('\n')}
+function hotPlain(sp){const h=HOTS[+sp.dataset.hk];if(!h)return;if(sp.classList.contains('ok'))return hotPop({e:h.e,st:h.st.map(s=>({msg:hotFill(s),ans:null}))},'',()=>{});hotPop(h,'✅ 모두 맞았어요!',()=>{sp.classList.add('ok');const d=sp.parentNode.querySelector(`.hotd[data-hd="${sp.dataset.hk}"]`);if(d)d.dataset.d=hotDesc(h,1)})}
 /* 🔍 칸을 누르면 뜨는 설명·빈칸 창 (trace와 일반 코드가 같이 씀) */
 function hotPop(h,okMsg,onOk){if(document.querySelector('.modal.hot'))return;const m=document.createElement('div');m.className='modal hot';let si=0,cp=null;const hasQ=h.st.some(s=>s.ans);
     m.innerHTML=`<div class="mb"><p style="font:bold 22px/1.5 Consolas,monospace;color:var(--ink);margin:0 0 10px"><span style="background:#e4eefc;border-radius:6px;padding:2px 10px">${esc(h.e)}</span></p><div class="hs"></div><div class="msg"></div><div class="row"><button class="main ck">${hasQ?'확인':'알겠어요'}</button><button class="ghost cl">닫기</button></div></div>`;
