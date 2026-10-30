@@ -58,6 +58,7 @@ pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:1
 .vtb{margin-top:10px;width:100%}.vtb td,.vtb th{text-align:left}.vtb tr.chg td{background:var(--butter);font-weight:bold}
 .modal{position:fixed;inset:0;background:#3a425660;display:flex;align-items:center;justify-content:center;z-index:30}.mb{background:#fff;border-radius:18px;padding:22px;max-width:440px;width:90%}
 .bk{width:5.5em;display:inline-block;padding:2px 8px;margin:0 4px}
+.modal.hot .mb{max-height:90vh;overflow-y:auto}.modal.hot .hs p{line-height:2.4;word-break:keep-all}.modal.hot .bk{margin:3px 4px;line-height:1.5} /* 🔍 풀이 창: 빈칸 줄끼리 안 겹치게 줄 간격 넓힘, 창이 길면 안에서 스크롤 */
 .cut{color:#e05a5a;text-decoration:line-through;text-decoration-thickness:2px;opacity:.75}.now{background:#ffe0e0;color:#c0392b;border-radius:4px;padding:0 3px}
 .sp{display:inline-block;position:relative}.showsp .sp::before{content:'·';position:absolute;left:0;right:0;text-align:center;color:#3b6fd4;font-weight:bold}.showsp .sp{background:#eaf1ff}
 button:disabled{opacity:.5;cursor:not-allowed}
@@ -117,7 +118,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v123)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v124)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwUb3G7rOgnIfKB9dLttvRy0CWOam3WplSoT6KuMosZTpCEHZtk23iuWHoN2JuiE_jS/exec';
@@ -528,13 +529,13 @@ function hotCode(src){src=String(src??'');if(src.indexOf('{{')<0)return esc(src)
 function hotPlain(sp){const h=HOTS[+sp.dataset.hk];if(!h)return;if(sp.classList.contains('ok'))return hotPop({e:h.e,st:h.st.map(s=>({msg:hotFill(s),ans:null}))},'',()=>{});hotPop(h,'✅ 모두 맞았어요!',()=>{sp.classList.add('ok');const d=sp.parentNode.querySelector(`.hotd[data-hd="${sp.dataset.hk}"]`);if(d)d.dataset.d=hotDesc(h)})}
 /* 🔍 칸을 누르면 뜨는 설명·빈칸 창 (trace와 일반 코드가 같이 씀) */
 function hotPop(h,okMsg,onOk){if(document.querySelector('.modal.hot'))return;const m=document.createElement('div');m.className='modal hot';let si=0,cp=null;const hasQ=h.st.some(s=>s.ans);
-    m.innerHTML=`<div class="mb"><p style="font:bold 22px/1.5 Consolas,monospace;color:var(--ink);margin:0 0 10px"><span style="background:#e4eefc;border-radius:6px;padding:2px 10px">${esc(h.e)}</span></p><div class="hs"></div><div class="msg"></div><div class="row"><button class="main ck">${hasQ?'확인':'알겠어요'}</button><button class="ghost cl">닫기</button></div></div>`;
-    document.body.appendChild(m);const hs=m.querySelector('.hs'),out=m.querySelector('.msg'),ck=m.querySelector('.ck');
+    m.innerHTML=`<div class="mb"><p style="font:bold 22px/1.5 Consolas,monospace;color:var(--ink);margin:0 0 10px"><span style="background:#e4eefc;border-radius:6px;padding:2px 10px">${esc(h.e)}</span></p><div class="hs"></div><div class="msg"></div><div class="row"><button class="main hck">${hasQ?'확인':'알겠어요'}</button><button class="ghost hcl">닫기</button></div></div>`;
+    document.body.appendChild(m);const hs=m.querySelector('.hs'),out=m.querySelector('.msg'),ck=m.querySelector('.hck');
     const add=st=>{const p=document.createElement('p');p.style.margin='0 0 8px';const om=optMsg(st);p.innerHTML=br(esc(om.msg).replace(/OO/g,()=>st.ans?(om.opts?`<select class="bk"><option value="">선택</option>${om.opts.map(o=>`<option>${esc(o)}</option>`).join('')}</select>`:'<input class="bk" autocomplete="off">'):'OO'));hs.appendChild(p);return p};
     const show=()=>{if(!hasQ){h.st.forEach(add);return}
       while(si<h.st.length){const st=h.st[si];cp=add(st);if(st.ans){const f=cp.querySelector('.bk');if(f)f.focus();return}si++}
       onOk();out.className='msg ok';out.textContent=okMsg;ck.remove()};
-    show();m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.cl').onclick=()=>m.remove();
+    show();m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.hcl').onclick=()=>m.remove();
     ck.onclick=()=>{if(!hasQ){onOk();m.remove();return}
       const st=h.st[si],ins=[...cp.querySelectorAll('.bk')];
       if(ins.every((x,i)=>(st.ans[i]||'').split('/').some(a=>norm(a)===norm(x.value)))){ins.forEach((x,i)=>{const b=document.createElement('b');b.textContent=st.ans[i].split('/')[0];x.replaceWith(b)});si++;out.className='msg ok';out.textContent='✅ 맞아요!';show()}
