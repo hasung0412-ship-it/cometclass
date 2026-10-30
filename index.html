@@ -88,7 +88,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .tb.xl{user-select:none;-webkit-user-select:none}.tb.xl td,.tb.xl th{touch-action:none;cursor:cell}.tb.xl th{cursor:default}.tb .xh{background:#f4f5f9;color:var(--sub);font-size:13px;font-weight:normal;padding:2px 8px;min-width:0;border-color:#e3e6ee;cursor:default}.tb .fsel{background:#cfe3fb;box-shadow:inset 0 0 0 2px #6fa0e0}.tb .fok{background:var(--mint)}.tb .fhit{background:#fff3a0;font-weight:bold}
 code.ic{background:#f1f3fa;border-radius:6px;padding:0 5px;font:.92em Consolas,monospace}
 .ii{display:inline-block;width:auto;min-width:6em;padding:2px 8px;margin:0 4px;border:0;border-bottom:2px solid #b9cdf5;border-radius:6px;background:#fbfcff}.ii::placeholder{color:#b9bfce}
-.is{padding:2px 8px;margin:0 4px;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;width:auto}.im{font-weight:bold}.im.g{color:#2e8b62}.im.r{color:#c25a5a}
+.is{padding:2px 8px;margin:0 4px;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;width:auto}.im{font-weight:bold}.ch{display:inline-flex;gap:4px;margin:2px 4px;vertical-align:middle;white-space:nowrap}.ch .chb{padding:2px 11px;border-radius:999px;background:#fff;border:1px solid var(--line);line-height:1.5;white-space:nowrap}.ch .chb.on{background:var(--lav);border-color:#c3b2e8;font-weight:bold}.im.g{color:#2e8b62}.im.r{color:#c25a5a}
 .ck{display:inline-flex;align-items:center;gap:6px;margin:2px 14px 2px 0;cursor:pointer}.ck input{width:auto}
 details.sec>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}details.sec>summary::-webkit-details-marker{display:none}details.sec>summary h3{margin:0;font-size:21px}.box.sec{padding:24px 30px;margin-bottom:20px}
 details.sec>summary::before{content:'▾';color:var(--sub)}details.sec:not([open])>summary::before{content:'▸'}details.sec[open]>summary{margin-bottom:10px}
@@ -117,7 +117,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v122)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v123)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwUb3G7rOgnIfKB9dLttvRy0CWOam3WplSoT6KuMosZTpCEHZtk23iuWHoN2JuiE_jS/exec';
@@ -332,13 +332,15 @@ function ib(s){return s.replace(/\[\s*입력\s*(?:[:：]([^\]|]*))?(?:\|([^\]]*)
     let t=ml?`<textarea class="ib ii2" rows="3" placeholder="${h}" data-a="${a}" style="width:100%;min-height:90px;font-family:inherit"></textarea><span class="im"></span>`:`<input class="ib ii" size="${Math.max(8,Math.ceil(h.length*1.7)+2)}" placeholder="${h}" data-a="${a}" autocomplete="off"${wd?' style="width:100%;box-sizing:border-box"':''}><span class="im"></span>`;
     // 힌트 = 정답이면 따라 쓰기: 연한 글씨가 입력해도 안 지워짐
     if(!ml&&h&&a.split('/').some(x=>norm(x)===norm(h)))t=t.replace(' placeholder="'+h+'"',' spellcheck="false"').replace('<input',`<span class="gw"${wd?' style="display:block"':''}><span class="gg" aria-hidden="true">${h}</span><input`).replace('><span class="im">','></span><span class="im">');return ce?`<div class="ctr">${t}</div>`:(wd||ml?`<div>${t}</div>`:t)})
-  .replace(/\[\s*선택\s*[:：]([^\]|]*)(?:\|([^\]]*))?\]/g,(m,o,a)=>`<select class="ib is" data-a="${nt(a)}"><option value="">선택</option>${o.split('/').map(nt).filter(Boolean).map(x=>`<option>${x}</option>`).join('')}</select><span class="im"></span>`)
+  .replace(/\[\s*선택\s*[:：]([^\]|]*)(?:\|([^\]]*))?\]/g,(m,o,a)=>{const L=o.split('/').map(nt).filter(Boolean);return `${L.length<=4?`<span class="ch">${L.map((x,k)=>`<button type="button" class="chb" data-k="${k+1}">${x}</button>`).join('')}</span>`:''}<select class="ib is" data-a="${nt(a)}"${L.length<=4?' hidden':''}><option value="">선택</option>${L.map(x=>`<option>${x}</option>`).join('')}</select><span class="im"></span>`})
   .replace(/\[\s*체크\s*(?:[:：]([^\]|]*))?(?:\|([^\]]*))?\]/g,(m,h,a)=>`<label class="ck"><input type="checkbox" class="ib" data-a="${nt(a).toUpperCase()}"><span>${(h||'').trim()}</span><span class="im"></span></label>`)}
-function ibCheck(el){const lb=el.closest('label'),m=lb?lb.querySelector('.im'):(el.nextElementSibling||el.parentElement.nextElementSibling);if(!m||!m.classList.contains('im'))return;const a=el.dataset.a;
+function ibCheck(el){const pc=el.previousElementSibling;if(pc&&pc.classList.contains('ch'))pc.querySelectorAll('.chb').forEach(b=>b.classList.toggle('on',+b.dataset.k===el.selectedIndex));const lb=el.closest('label'),m=lb?lb.querySelector('.im'):(el.nextElementSibling||el.parentElement.nextElementSibling);if(!m||!m.classList.contains('im'))return;const a=el.dataset.a;
   if(el.type==='checkbox'){if(!a){m.textContent='';return}const ok=el.checked===(a==='O');m.textContent=ok?' ✅':' ❌';m.className='im '+(ok?'g':'r');return}
   const v=el.value;if(!a||!String(v).trim()){m.textContent='';return}
   const ok=a.split('/').some(x=>norm(x)===norm(v));m.textContent=ok?' ✅':' ❌';m.className='im '+(ok?'g':'r')}
 document.addEventListener('change',e=>{if(e.target.classList&&e.target.classList.contains('ib'))ibCheck(e.target)});
+/* [선택:A/B|답]은 선택지가 4개 이하면 버튼으로 보이고, 누르면 숨은 선택 상자 값을 바꿉니다(저장·채점은 그대로) */
+document.addEventListener('click',e=>{const b=e.target.closest('.chb');if(!b)return;const sl=b.parentElement.nextElementSibling;if(!sl||sl.disabled)return;const k=+b.dataset.k;sl.selectedIndex=sl.selectedIndex===k?0:k;sl.dispatchEvent(new Event('change',{bubbles:true}))});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('ii'))ibCheck(e.target)});
 const PAL={빨강:'#d94a4a',파랑:'#3b6fd4',초록:'#2e8b62',주황:'#e67e22',보라:'#7b5fc4',분홍:'#e0559b',회색:'#7b8499',검정:'#3a4256'},HL={노랑:'#fff3a0',초록:'#c9f2d8',파랑:'#cfe3fb',분홍:'#fbd3e4',주황:'#fde3d6',보라:'#e5dcf6'};
 const colr=(v,M)=>{v=v.trim();return M[v]||(/^#[0-9a-f]{3,8}$/i.test(v)?v:null)};
