@@ -65,7 +65,9 @@ button:disabled{opacity:.5;cursor:not-allowed}
 #wrap.hasToc{display:grid;grid-template-columns:260px minmax(0,1fr);max-width:none;margin:0}.hasToc main{margin:0 auto;width:100%;max-width:1100px;padding-left:22px;padding-right:22px}
 #side{display:none;position:sticky;top:58px;align-self:start;padding:18px 16px;max-height:calc(100vh - 58px);overflow:auto}
 @media(min-width:1200px){#wrap.hasToc{grid-template-columns:250px minmax(0,1fr) 300px}.hasToc #side{display:block}}
-#mbx:empty{display:none}.mbt{background:#fffbea;border-radius:12px;padding:10px 12px;min-height:64px}.mbs{font-size:17px;font-weight:bold;word-break:keep-all;overflow-wrap:anywhere}.mbn{text-align:right;font-size:14px;margin-top:4px}.mbn small{font-size:12px;color:var(--sub)}.mbi{margin-top:10px;font-size:14px}.mbi input{padding:7px 10px;font-size:14px}.mbi button{padding:4px 12px;font-size:13px;margin:6px 4px 0 0}.mbg{font-size:12px;border-radius:999px;padding:1px 8px;background:#eef1f8}.mbg.승인{background:var(--ok)}.mbg.거절{background:var(--no)}.mbr{color:#c25a5a;font-size:13px}.mbz{color:var(--ink);font-size:13px}
+#mbx:empty{display:none}.mbt{background:#fffbea;border-radius:12px;padding:10px 12px;min-height:64px}.mbs{font-size:17px;font-weight:bold;word-break:keep-all;overflow-wrap:anywhere}.mbn{text-align:right;font-size:14px;margin-top:4px}.mbn small{font-size:12px;color:var(--sub)}.mbi{margin-top:10px;font-size:14px}.mbi input{padding:7px 10px;font-size:14px}.mbi button{padding:4px 12px;font-size:13px;margin:6px 4px 0 0}.mbg{font-size:12px;border-radius:999px;padding:1px 8px;background:#eef1f8}.mbg.승인{background:var(--ok)}.mbg.거절{background:var(--no)}.mbr{color:#c25a5a;font-size:13px}.mbg.대기{background:#eef1f8}
+.mrow{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:#fff}.mrow.승인{background:#f3fbf5}.mrow.거절{opacity:.55}.mtx{flex:1;min-width:0}.mtt{font-weight:bold;word-break:keep-all;overflow-wrap:anywhere}.mtx small{color:var(--sub)}.mrow button{padding:5px 12px;font-size:13px}
+@media(max-width:600px){.mrow{flex-wrap:wrap}.mtx{flex-basis:100%}}.mbz{color:var(--ink);font-size:13px}
 .sbox{border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:12px}.sbox h4{margin:0 0 6px;font-size:14px;color:var(--sub)}
 .yr{padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;width:auto}
 .cnx{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 8px;padding:9px 12px;border-radius:12px;background:#eef1f8;color:var(--sub);font-size:15px;line-height:1.5;white-space:pre-line;transition:opacity .6s}.cnx.ok{background:var(--mint);color:var(--ink)}.cnx.no{background:var(--no);color:var(--ink);flex-direction:column}.cnx.gone{opacity:0}
@@ -119,7 +121,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v134)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v135)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzzYH4WFGHs8NEKimylwxSS1pA4RkqOjddTtJtek7uqhGpDDQJ2kl9nK74LwDQEMb_a/exec';
@@ -184,13 +186,14 @@ function mbBoard(){const e=$('#mbx .mbt');if(!e)return;const B=MB.d.board||[],x=
   e.innerHTML=x?`<div class="mbs">${esc(x.text)}</div><div class="mbn">${esc(x.name)} <small>${esc(x.cls)}</small></div>`:'<span class="mbz">아직 올라온 한마디가 없어요</span>'}
 function mbDraw(){const e=$('#mbx');if(!e||!MB.d)return;const D=MB.d,m=D.mine,op=MB.open=mbOpen(),nx=D.times.find(w=>mbT()<w[0]);let h='';if(!op)MB.ed=false;
   if(S.user.role!=='관리자'){const tm=nx?`다음 쓰기 시간은 ${nx[0]}~${nx[1]}이에요.`:'',no='<div class="mbz">오늘은 이제 쓸 수 없어요 !!</div>'; // 수업 중(뒤에 쓰기 시간 남음) / 이미 썼거나 오늘 끝
-    if(m&&!MB.ed){const st=['승인','거절'].includes(m.status)?m.status:'대기';h=`<div><b>내 한마디</b> <span class="mbg ${st}">${st==='승인'?'✅ 전광판에 올라감':st==='거절'?'❌ 거절됨':'⏳ 확인 중'}</span></div><div style="margin-top:4px;word-break:keep-all;overflow-wrap:anywhere">${esc(m.text)}</div>`+(st==='승인'?'<div class="mbz">승인된 글은 고칠 수 없어요.</div>':op?'<button class="ghost mbe">✏️ 고치기</button>':no)}
+    if(m&&!MB.ed){const st=m.status==='승인'?'승인':'대기';h=`<div><b>내 한마디</b> <span class="mbg ${st}">${st==='승인'?'✅ 전광판에 올라감':'⏳ 확인 중'}</span></div><div style="margin-top:4px;word-break:keep-all;overflow-wrap:anywhere">${esc(m.text)}</div>`+(st==='승인'?'<div class="mbz">승인된 글은 고칠 수 없어요.</div>':op?'<button class="ghost mbe">✏️ 고치기</button>':no)}
+    else if(!m&&D.done)h=no;
     else if(op)h=`<input class="mbq" maxlength="${D.max}" placeholder="오늘의 한마디 (${D.max}자까지)" value="${esc(m?m.text:'')}"><button class="main mbk">${m?'저장':'올리기'}</button>${m?'<button class="ghost mbc">취소</button>':''}<span class="mbz mbl"></span><div class="mbr"></div><div class="mbz">하루에 하나만 쓸 수 있고, 내가 확인한 다음에 올라갑니다 !! .</div>`;
     else h=nx?`<div class="mbz">✏️ 지금 쓰려하지 말고 수업에 집중하세요 !! ${tm}</div>`:no;
     h=`<div class="mbi">${h}</div>`}
   e.innerHTML='<h4>📣 오늘의 한마디</h4><div class="mbz" style="margin:-4px 0 8px">정해진 시간에 댓글을 달면, 승인을 받아 여러분의 말이 올라옵니다.</div><div class="mbt"></div>'+h;mbBoard();const q=e.querySelector('.mbq');if(q){const c=()=>e.querySelector('.mbl').textContent=` ${q.value.length}/${D.max}`;q.oninput=c;c()}}
 async function mbSave(){const e=$('#mbx'),q=e.querySelector('.mbq'),er=e.querySelector('.mbr'),b=e.querySelector('.mbk');if(b.disabled)return;if(!q.value.trim()){er.textContent='한마디를 입력해 주세요.';return}
-  b.disabled=true;er.textContent='저장 중...';const r=await api('msgSave',{text:q.value});b.disabled=false;if(r.error){er.textContent=r.error;return}MB.d.mine=r.mine;MB.ed=false;mbDraw();toast('한마디를 보냈어요. 확인하고 되면 올라갑니다 !!')}
+  b.disabled=true;er.textContent='저장 중...';const r=await api('msgSave',{text:q.value});b.disabled=false;if(r.done){MB.d.done=true;MB.d.mine=null;MB.ed=false;mbDraw();return}if(r.error){er.textContent=r.error;return}MB.d.mine=r.mine;MB.ed=false;mbDraw();toast('한마디를 보냈어요. 확인하고 되면 올라갑니다 !!')}
 $('#side').addEventListener('click',e=>{const t=e.target;if(t.closest('.mbe')){MB.ed=true;mbDraw();const q=$('#mbx .mbq');if(q)q.focus()}else if(t.closest('.mbc')){MB.ed=false;mbDraw()}else if(t.closest('.mbk'))mbSave()});
 $('#side').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('mbq')&&!e.isComposing)mbSave()});
 setInterval(()=>{if(!MB.d||!$('#mbx'))return;mbBoard();if(mbOpen()!==MB.open&&!(MB.ed&&document.activeElement&&document.activeElement.classList.contains('mbq')))mbDraw()},15000);
@@ -420,11 +423,11 @@ function loginView(msg=''){showToc(false);app.innerHTML=`<div class="box narrow 
   $('#fg').onclick=e=>{e.preventDefault();forgotView()};fillYears();$('#go').onclick=go;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('#go').disabled)go()})}
 function resume(){let p=null;try{p=JSON.parse(sessionStorage.getItem('pos')||'null')}catch(e){}const u=S.user;if(!p||p.u!==u.id||u.must||(u.role!=='관리자'&&isPhone()))return start();
   S.asub=p.asub||'';S.ayear=p.ayear||'';S.preview=u.role==='관리자'&&!!p.p;setWho();
-  if(u.role==='관리자'&&!S.preview){showToc(false);tmStop();return p.v==='class'?classView(p.cls):p.v==='detail'?detailView(p.id,p.cls):adminView()}
+  if(u.role==='관리자'&&!S.preview){showToc(false);tmStop();return p.v==='msgs'?msgsView():p.v==='class'?classView(p.cls):p.v==='detail'?detailView(p.id,p.cls):adminView()}
   showToc(true);loadToc();if(u.role!=='관리자')tmStart();p.v==='lesson'?(S.sub=p.sub,lessonView()):p.v==='act'||p.v==='content'?go(p.sub,p.no,p.act).then(()=>{if(!S.at)langView()}):langView(p.g)}
 const isPhone=()=>matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<600; // 휴대폰(태블릿 제외)
 function phoneView(){showToc(false);tmStop();app.innerHTML=`<div class="box narrow" style="text-align:center"><h2>📱 휴대폰에서는 성적 확인만 할 수 있어요</h2><p style="color:var(--sub)">수업 내용은 컴퓨터나 태블릿에서 열어 주세요.</p><button class="main" onclick="openGrades()">🔒 내 성적 보기</button></div>`}
-function start(){setWho();if(S.user.must)return pwView();if(S.user.role!=='관리자'&&isPhone())return phoneView();S.user.role==='관리자'?(showToc(false),tmStop(),adminView()):(showToc(true),loadToc(),tmStart(),langView())}
+function start(){if(S.user.role==='관리자')S.preview=true;setWho();if(S.user.must)return pwView();if(S.user.role!=='관리자'&&isPhone())return phoneView();S.user.role==='관리자'?(showToc(true),loadToc(),tmStop(),langView()):(showToc(true),loadToc(),tmStart(),langView())} // 관리자도 처음엔 '학생 화면 보기'로 시작
 function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 만들기</h2><p>처음 로그인했어요. 비밀번호를 바꿔야 계속할 수 있어요.</p>
 <div class="pwr"><input id="n1" type="password" placeholder="새 비밀번호 (4자 이상)" autocomplete="new-password"><button type="button" class="eye" id="ey" title="비밀번호 보기">👁</button></div><div class="pwr"><input id="n2" type="password" placeholder="한 번 더 입력" autocomplete="new-password"></div><div class="err" id="e"></div><button class="main" id="go">바꾸기</button></div>`;
   const POP=(inner)=>{const m=document.createElement('div');m.className='modal pwm';m.innerHTML=`<div class="mb" style="text-align:center">${inner}</div>`;document.body.appendChild(m);return m};
@@ -836,9 +839,17 @@ async function adminView(force){if(force||!mem.subjects)app.innerHTML='불러오
   if(!sr.subjects.some(s=>s.name===S.asub))S.asub=(sr.subjects.find(s=>s.ready)||sr.subjects[0]||{}).name||'';
   const yr=await get('years',()=>api('years'),force);if(!S.ayear||!(yr.years||[]).includes(S.ayear))S.ayear=yr.cur||(yr.years||[])[0]||'';here('admin',{});const key='classes|'+S.asub+'|'+S.ayear,r=await get(key,()=>api('classes',{sub:S.asub,year:S.ayear}),force);if(r.error)return app.innerHTML=r.error;
   app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>학급 현황</h2><button class="ghost" onclick="adminView(true)">⟳ 새로고침</button></div><div class="row" style="margin-bottom:14px">${sr.subjects.map(s=>`<button class="chip ${s.name===S.asub?'on':''}" data-sub="${esc(s.name)}">${ico(s.icon)} ${esc(s.name)}${s.ready?'':' (준비중)'}</button>`).join('')}</div>
-  <div class="row" style="margin-bottom:14px">📅 ${(yr.years||[]).map(y=>`<button class="chip ${y===S.ayear?'on':''}" data-yr="${y}">${y}년</button>`).join('')}</div><div class="grid">${r.classes.map(c=>`<button class="card" data-c="${c.cls}"><b>${c.cls}반</b><small>${c.count}명 · 전체 진도 ${c.pct}%</small>${bar(c.pct,100)}</button>`).join('')}</div>`;
+  <div class="row" style="margin-bottom:14px">📅 ${(yr.years||[]).map(y=>`<button class="chip ${y===S.ayear?'on':''}" data-yr="${y}">${y}년</button>`).join('')}</div><div class="grid">${r.classes.map(c=>`<button class="card" data-c="${c.cls}"><b>${c.cls}반</b><small>${c.count}명 · 전체 진도 ${c.pct}%</small>${bar(c.pct,100)}</button>`).join('')}<button class="card" data-msgs><b>💬 한마디 모음</b><small>오늘 올라온 한마디 승인 · 거절</small></button></div>`;
   app.querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{S.asub=b.dataset.sub;adminView()});app.querySelectorAll('[data-yr]').forEach(b=>b.onclick=()=>{S.ayear=b.dataset.yr;adminView()});
-  app.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>classView(+b.dataset.c))}
+  app.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>classView(+b.dataset.c));app.querySelector('[data-msgs]').onclick=()=>msgsView()}
+/* 관리자: 오늘 올라온 한마디 모음. 승인하면 전광판에 올라가고, 거절하면 학생 화면에서 조용히 사라짐(학생은 그날 한 번 더 쓸 수 있고, 거절 포함 하루 2번까지) */
+async function msgsView(){here('msgs',{});app.innerHTML='불러오는 중...';const r=await api('msgList');if(r.error)return app.innerHTML=esc(r.error);
+  const L=r.list.slice().reverse(),cnt=k=>r.list.filter(x=>x.status===k).length,lab={승인:'✅ 승인',거절:'🚫 거절',대기:'⏳ 대기'};
+  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>💬 한마디 모음 <small style="font-size:14px;color:var(--sub)">${esc(r.date)}</small></h2><div class="row"><button class="ghost" onclick="adminView()">← 학급 현황</button><button class="ghost" onclick="msgsView()">⟳ 새로고침</button></div></div>
+  <p style="color:var(--sub);margin:0 0 12px">대기 ${cnt('대기')} · 승인 ${cnt('승인')} · 거절 ${cnt('거절')} — 거절해도 학생에게는 알림이 가지 않고, 학생 화면에서 조용히 사라져요.</p>
+  ${L.length?L.map((x,i)=>`<div class="mrow ${x.status}" data-i="${i}"><div class="mtx"><div class="mtt">${esc(x.text)}</div><small>${esc(x.who)} · ${esc(x.time)}${x.edited?' (고침 '+esc(x.edited.slice(11))+')':''}</small></div><span class="mbg ${x.status}">${lab[x.status]||esc(x.status)}</span><button class="ghost" data-s="승인" ${x.status==='승인'?'disabled':''}>승인</button><button class="ghost" data-s="거절" ${x.status==='거절'?'disabled':''}>거절</button></div>`).join(''):'<p>오늘 올라온 한마디가 아직 없어요.</p>'}`;
+  app.querySelectorAll('.mrow [data-s]').forEach(b=>b.onclick=async()=>{const w=b.closest('.mrow'),x=L[+w.dataset.i];w.querySelectorAll('button').forEach(z=>z.disabled=true);const q=await api('msgSet',{row:x.row,who:x.who,text:x.text,status:b.dataset.s});if(q.error){toast(q.error);return msgsView()}
+    x.status=q.status;w.className='mrow '+x.status;w.querySelector('.mbg').className='mbg '+x.status;w.querySelector('.mbg').textContent=lab[x.status];w.querySelectorAll('[data-s]').forEach(z=>z.disabled=z.dataset.s===x.status);MB.t=0;toast(x.status==='승인'?'승인했어요 (전광판에 올라가요)':'거절했어요')})}
 function csvSave(L,name){const q=v=>`"${String(v).replace(/"/g,'""')}"`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+L.map(x=>x.map(q).join(',')).join('\r\n')],{type:'text/csv'}));a.download=name;a.click()}
 async function classView(cls,force){here('class',{cls});const key='ct|'+S.asub+'|'+S.ayear+'|'+cls,sk=S.asub+'|'+S.ayear+'|'+cls;if(force||!mem[key])app.innerHTML='불러오는 중...';const r=await get(key,()=>api('classTable',{cls,sub:S.asub,year:S.ayear}),force);if(r.error)return app.innerHTML=r.error;
   const cols=[];r.lessons.forEach(l=>Object.keys(AN).forEach(k=>l.t[k]>0&&cols.push({l,k,t:l.t[k]})));
@@ -972,4 +983,51 @@ toc.addEventListener('pointerup',end);toc.addEventListener('pointercancel',end);
 toc.addEventListener('click',e=>{if(eat){e.stopPropagation();e.preventDefault()}},true);   // 끌다 놓은 자리의 버튼이 눌리지 않게
 })();
 </script>
+<!-- ===== 🤍 '차분' 디자인 레이어 =====
+     원본은 그대로 두고 </body> 바로 앞에 붙여요. 바탕은 흰색으로, 색은 작은 표식·진도 막대·주요 버튼에만 남겨요.
+     apple-layer·theme-layer와 같이 써도 되고, 같이 쓸 때는 이 블록을 맨 뒤에 붙이세요.
+     괄호 안 숫자는 직접 계산한 글자 대비(작은 글자 기준 4.5:1). -->
+<style id="quiet-layer">
+:root{
+  --sub:#5a637b;              /* 보조 글자 3.75 → 5.99 */
+  --q-surface:#fff;
+  --q-border:#e3e7f0;
+  --q-head:#f3f5fa;           /* 머리글 바탕: 보조 글자 5.49, 본문 글자 9.20 */
+  --q-head-line:#c9d1e0;      /* 머리글 아래 선: 아래 칸 선(#e3e7f0)보다 한 단계 진하게 */
+  --q-soft:#f3f5fb;           /* 고른 줄·표 머리 바탕 */
+  --q-active:#eef4fd;--q-active-ink:#2a5ca8;   /* 지금 보는 활동 5.95 */
+  --accent-solid:#287e5d;--accent-solid-hover:#24785a;  /* 주요 버튼, 흰 글자 4.96 */
+  --danger:#b5403a            /* 오답 글자 5.59 */
+}
+
+/* 머리글: 아래 내용과 확실히 나뉘도록
+   ① 옅은 회청색 바탕 ② 위쪽에 원래 파스텔 두 색으로 3px 띠 ③ 아래쪽에 진한 선 + 옅은 그림자.
+   띠는 배경으로 그려서 머리글 높이가 바뀌지 않아요(목차 서랍 위치 그대로) */
+header{background:linear-gradient(90deg,#bcd6f5,#d3c4f0) top/100% 3px no-repeat,var(--q-head);border-bottom:1px solid var(--q-head-line);box-shadow:0 6px 14px -12px rgba(58,66,86,.35)}
+#hn{background:var(--q-surface);border-color:var(--q-border)}
+@media(hover:hover){#hn:hover{background:#fafbfd}}
+
+/* 카드: 흰 바탕 + 얇은 테두리. 차시 번호만 원래 파스텔 색 알약으로 */
+.card,.card:nth-child(n){background:var(--q-surface);border:1px solid var(--q-border)}
+.card>small:first-child{display:inline-block;padding:0 9px;border-radius:999px;background:var(--sky);color:var(--ink);font-size:13px}
+.card:nth-child(4n+2)>small:first-child{background:var(--mint)}.card:nth-child(4n+3)>small:first-child{background:var(--peach)}.card:nth-child(4n)>small:first-child{background:var(--butter)}
+@media(hover:hover){.card:hover{filter:none;border-color:#c9d1e0}}
+.bar{background:#eef1f6}.bar i{background:#2f8f6a}
+
+/* 버튼: 주요 버튼만 채우고 나머지는 흰 바탕 + 테두리 */
+button{background:var(--q-surface);border:1px solid var(--q-border)}
+button.main{background:var(--accent-solid);color:#fff;border-color:transparent}
+@media(hover:hover){button.main:hover:not(:disabled){background:var(--accent-solid-hover);filter:none}}
+.tt{border:0}
+.chip.on{background:var(--q-active);border-color:#bcd0f0;color:var(--q-active-ink)}
+
+/* 목차·표 */
+.tt.cur{background:var(--q-soft)}
+.tt.on{background:var(--q-active);color:var(--q-active-ink)}
+th{background:var(--q-soft)}th.a{background:var(--q-active)}
+.sbox{background:#fafbfd}
+
+/* 결과: 오답은 흰 바탕에 빨간 테두리·글자(❌ 표시는 그대로) */
+.msg.no{background:var(--q-surface);border:1px solid #f1c4c4;color:var(--danger)}
+</style>
 </body></html>
