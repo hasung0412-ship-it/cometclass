@@ -103,6 +103,7 @@ details.sec>summary::before{content:'▾';color:var(--sub)}details.sec:not([open
 @media(max-width:1199px){.tmc.on{display:inline-block}}@media(min-width:1200px){.th{display:none}}
 .err{color:#c25a5a;min-height:24px;white-space:pre-line}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.box .ans,.box .free{margin-top:12px} /* 문제 글(선택 버튼 등)과 답 칸 사이 띄우기 */
 .choice{display:block;padding:6px 10px;border-radius:10px;cursor:pointer}.choice:hover{background:#f3f5fb}.choice input{width:auto;margin-right:8px}
 table{border-collapse:collapse;font-size:14px;background:#fff}th,td{border:1px solid var(--line);padding:6px 10px;text-align:center;white-space:nowrap}
 th{background:var(--lav)}th.a{background:var(--sky)}td.l{text-align:left;cursor:pointer;background:#fafbff}td.l:hover{background:var(--butter)}
@@ -121,7 +122,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v140)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v141)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzXjsTbtwQg1yy-YPAM9yWvELdMUU6I3N0k_dJJV-MYxNsNJcFyAlYktEAyS5nfwXAn/exec';
