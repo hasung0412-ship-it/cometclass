@@ -121,7 +121,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v137)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v139)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzXjsTbtwQg1yy-YPAM9yWvELdMUU6I3N0k_dJJV-MYxNsNJcFyAlYktEAyS5nfwXAn/exec';
@@ -144,8 +144,9 @@ function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||e.target.closest('.tra
   try{localStorage.setItem(k,JSON.stringify({t:Date.now(),text}))}catch(_){}
   setSv('✏️ 입력 중...','');clearTimeout(dtm);dtm=setTimeout(flushDrafts,3000)}
 async function flushDrafts(){clearTimeout(dretry);const keys=Object.keys(DR);if(!keys.length)return;setSv('💾 저장 중...','');let bad=false;
-  for(const k of keys){const d=DR[k];if(!d)continue;const r=await api('draft',{sub:d.sub,no:d.no,act:d.act,q:d.q,text:d.text});if(r.error){if(/저장할 수 없/.test(r.error)){delete DR[k];continue}bad=true;continue}if(DR[k]&&DR[k].t===d.t)delete DR[k]}
-  if(bad){setSv('⚠ 저장이 안 됐어요. 연결되면 자동으로 다시 저장해요 (내용은 이 기기에 보관 중)','bad');dretry=setTimeout(flushDrafts,8000)}else setSv('💾 저장됐어요','ok')}
+  for(const k of keys){const d=DR[k];if(!d)continue;const r=await api('draft',{sub:d.sub,no:d.no,act:d.act,q:d.q,text:d.text});if(r.error){if(/저장할 수 없/.test(r.error)){delete DR[k];continue}bad=r.busy&&bad!==true?'busy':true;continue}if(DR[k]&&DR[k].t===d.t)delete DR[k]}
+  if(bad==='busy'){setSv('💾 잠시 뒤 다시 저장할게요 (내용은 이 기기에 보관 중)','');dretry=setTimeout(flushDrafts,6000+Math.random()*6000)}
+  else if(bad){setSv('⚠ 저장이 안 됐어요. 연결되면 자동으로 다시 저장해요 (내용은 이 기기에 보관 중)','bad');dretry=setTimeout(flushDrafts,8000)}else setSv('💾 저장됐어요','ok')}
 function beaconDrafts(){Object.values(DR).forEach(d=>{try{navigator.sendBeacon(API,new Blob([JSON.stringify({action:'draft',token:S.token,...d})],{type:'text/plain'}))}catch(e){}})}
 addEventListener('pagehide',beaconDrafts);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')beaconDrafts()});
 app.addEventListener('input',onEdit);app.addEventListener('change',onEdit);
@@ -203,7 +204,8 @@ function hnMore(){const h=$('#hn'),b=h.querySelector('.hb');if(b)h.classList.tog
 addEventListener('resize',hnMore);
 $('#hn').onclick=()=>openInfo('notice');$('#hn').onkeydown=e=>{if(e.key==='Enter')openInfo('notice')};
 $('#side').onclick=e=>{const b=e.target.closest('button[data-info]');if(b)openInfo(b.dataset.info)};
-const TM={f:0,a:0,start:0,date:'',last:0,hid:false,dirty:false,on:false,t1:null,t2:null};
+const TM={f:0,a:0,start:0,date:'',last:0,hid:false,dirty:false,on:false,t1:null,t2:null,mo:0};
+const INFO_MAX=1*60000; // 안내 창(공지·평가 기준표·내 성적 등)은 연 뒤 1분까지만 멈춤, 넘으면 💤로 셈
 const tdy=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`};
 const fmtT=s=>{s=Math.max(0,Math.floor(s));const p=n=>String(n).padStart(2,'0');return `${p(Math.floor(s/3600))}:${p(Math.floor(s%3600/60))}:${p(s%60)}`};
 const tkey=()=>`tm|${S.user?S.user.id:''}`;
@@ -214,7 +216,11 @@ function tmSave(){try{localStorage.setItem(tkey(),JSON.stringify({s:TM.start,f:T
 function tmReset(){TM.start=Date.now();TM.f=0;TM.a=0;TM.date=tdy();TM.dirty=false;tmSave()}
 function tmAccrue(){if(!TM.on)return;const now=Date.now();let dt=TM.last?(now-TM.last)/1000:0;TM.last=now;dt=Math.min(Math.max(dt,0),900);
   if(now-TM.start>=TWIN){tmFlush();tmReset();tmUpd();return}
-  if(document.querySelector('.modal.info'))return; // 공지·수행평가·내 성적 등 안내 창을 보는 동안은 세지 않음
+  if(document.querySelector('.modal.info:not(.ad-out)')&&!TM.hid){ // 안내 창을 보는 동안은 1분까지만 멈춤 (다른 탭으로 가면 바로 💤)
+    if(!TM.mo)TM.mo=now;if(now-TM.mo<INFO_MAX)return;
+    if(!TM.mw){TM.mw=1;toast('💤 안내 창을 1분 넘게 열어 두어서, 지금부터는 딴짓 시간으로 세요')}
+    TM.a+=dt;if(dt>0)TM.dirty=true;return}
+  if(!document.querySelector('.modal.info:not(.ad-out)'))TM.mo=TM.mw=0;
   if(TM.hid)TM.a+=dt;else TM.f+=dt;if(dt>0)TM.dirty=true}
 function tmLoad(){let loc=null;try{loc=JSON.parse(localStorage.getItem(tkey())||'null')}catch(e){}
   if(loc&&loc.s&&Date.now()-loc.s<TWIN){TM.start=loc.s;TM.f=+loc.f||0;TM.a=+loc.a||0;TM.date=loc.d||tdy()}else tmReset();tmUpd()}
@@ -229,7 +235,7 @@ document.addEventListener('visibilitychange',()=>{if(!TM.on)return;const a0=TM.a
 addEventListener('pagehide',()=>{if(TM.on){tmAccrue();tmFlush(true)}});
 /* ---- 학습 도우미: 공지 / 용어 사전 / 오류 모음 / 치트시트 ---- */
 let infoBusy=false;
-async function openInfo(kind,nl){if(kind==='grade')return openGrades();if(infoBusy||document.querySelector('.modal.info'))return;infoBusy=true;let r;try{r=await get('info',()=>api('info'))}finally{infoBusy=false}if(document.querySelector('.modal.info'))return;if(r.error){toast(r.error);return}
+async function openInfo(kind,nl){if(kind==='grade')return openGrades();if(infoBusy||document.querySelector('.modal.info:not(.ad-out)'))return;infoBusy=true;let r;try{r=await get('info',()=>api('info'))}finally{infoBusy=false}if(document.querySelector('.modal.info:not(.ad-out)'))return;if(r.error){toast(r.error);return}
   const T={notice:'📢 공지',term:'📖 용어 사전',err:'🛠 오류 모음',cheat:'📝 치트시트',assess:'📑 평가 기준표'}[kind],m=document.createElement('div');m.className='modal info';
   const tag=x=>x.sub?` <small style="color:var(--sub)">${esc(x.sub)}</small>`:'';
   let h='';
@@ -257,7 +263,7 @@ function gradeHTML(r,I){
     const SM=t=>`<div class="wrap"><table class="gs"><thead><tr><th></th>${t.areas.map(a=>`<th>${esc(a.area)}${a.rows.some(x=>x.score==null)?'<br><span class="ng">평가 중</span>':''}</th>`).join('')}</tr></thead><tbody><tr><th>${esc(r.name)}</th>${t.areas.map(a=>`<td><b>${a.sum}</b><small> / ${a.max}</small></td>`).join('')}</tr></tbody></table></div><p style="margin:14px 0 0;font-size:15px;color:var(--sub)">▼ 세부 점수</p>`; // 맨 위 요약 표: 영역별 점수 한 줄
     return `<div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin:0 0 8px"><span style="white-space:nowrap"><b>${esc(r.name)}</b> · ${esc(r.year)}년</span><span style="flex:1 1 240px;color:#e53935;font-size:14px;word-break:keep-all">지금 확인하는 성적은 학기말에 변동될 가능성이 있으며, 최종 성적은 수행 일람표를 확인할 것</span></div>`+(SS.length?SS.map(t=>`<details class="sbox cd" open><summary style="cursor:pointer;font-size:16px"><b>${t.sem}학기</b> · ${t.total} / ${t.max}점${t.grade?` · 등급 ${esc(t.grade)}`:''}</summary><div style="margin-top:8px">`+SM(t)+(PH?t.areas.map(a=>`<div class="sbox cd" style="margin-top:10px"><div style="font-size:19px"><b>${esc(a.area)}</b> <span style="white-space:nowrap">총 <b>${a.sum}</b> / ${a.max}점</span>${NG(a)}</div><ul style="margin:6px 0 0;padding-left:20px">${a.rows.map(x=>`<li>${esc(x.elem)}${x.item?` <small>(${esc(x.item)})</small>`:''} <span style="white-space:nowrap"><b>${fx(x.score)}</b> / ${x.full}점</span></li>`).join('')}</ul>${CM(a)}</div>`).join(''):t.areas.map(a=>`<details class="sbox cd" style="margin-top:10px"><summary style="cursor:pointer;font-size:21px"><b>${esc(a.area)}</b> <small style="color:var(--sub);font-size:16px">${a.sum} / ${a.max}</small>${a.comment?' <small style="font-size:14px;color:#1e6fd9;white-space:nowrap">💬 피드백 있음</small>':''}${NG(a)}</summary><div class="wrap" style="margin-top:8px">${a.rows.every(x=>cf(t,a,x))?RT(t,a):`<table class="gt"><colgroup><col style="width:60%"><col style="width:20%"><col style="width:20%"></colgroup><thead><tr><th>평가항목</th><th>점수</th><th>만점</th></tr></thead><tbody>${a.rows.map(x=>`<tr><td style="text-align:left;white-space:normal">${esc(x.elem)}${x.item?`<br><small>└ ${esc(x.item)}</small>`:''}</td><td><b>${fx(x.score)}</b></td><td>${x.full}</td></tr>`).join('')}</tbody></table>`}</div>${CM(a)}</details>`).join(''))+(t.note?`<p>📝 ${esc(t.note)}</p>`:'')+`</div></details>`).join(''):'<p>아직 등록된 성적이 없어요.</p>')+'<p style="font-size:12px;color:var(--sub)">화면을 닫으면 성적은 지워져요.</p>'}
 function openGrades(){if(S.preview||!S.user||S.user.role==='관리자'){toast('학생 계정으로 로그인했을 때만 볼 수 있어요');return}
-  if(document.querySelector('.modal.info'))return;
+  if(document.querySelector('.modal.info:not(.ad-out)'))return;
   if(MB.d&&!(mbT()>='16:15'||mbT()<'09:05'||mbOpen())){toast('지금은 성적을 볼 수 없는 시간이에요. 쉬는 시간이나 16:15 이후에 볼 수 있어요.');return} // 서버도 같은 시간 검사(Code.gs gradeOpen)
   const GK='gack|'+(S.user&&S.user.id),today=new Date(Date.now()+9*36e5).toISOString().slice(0,10);let need=true;try{need=localStorage.getItem(GK)!==today}catch(e){} // 따라 쓰기는 하루(한국 날짜)에 한 번
   const m=document.createElement('div');m.className='modal info';m.innerHTML=`<div class="mb" style="max-width:980px;width:96%;max-height:90vh;overflow:auto"><div class="row" style="justify-content:space-between;margin:0 0 10px"><h3 style="margin:0">🔒 내 성적 보기</h3><button class="ghost hcl">닫기</button></div><div class="gb"><p style="margin:0 0 8px">성적은 본인만 볼 수 있어요. 내가 정한 <b>비밀번호</b>를 한 번 더 입력해 주세요.</p><input type="password" class="gp" placeholder="비밀번호" autocomplete="current-password">${need?`<p style="margin:12px 0 6px">이 성적은 최종 확정된 성적이 아니며, 여러 번 검토하며 변동될 가능성이 있습니다. 점수가 정말 궁금하다면 봐도 괜찮지만, 혹시 점수가 떨어지면 기분이 좋지 않을테니 나중에 최종 확정된 성적으로 확인해보는 걸 권합니다. 그래도 보고 싶다면, <b>아래 문구를 따라 입력하세요.</b></p><div class="gh"><div class="gt" aria-hidden="true">이 성적은 최종 확정된 성적이 아니라는 것을 이해했습니다.</div><input class="gf" autocomplete="off" spellcheck="false"></div>`:''}<div class="err ge"></div><button class="main gk"${need?' disabled':''}>확인</button></div></div>`;
@@ -274,13 +280,14 @@ const AN={개념:['📘','개념 배우기'],해석:['🔍','코드 해석하기
 async function api(action,d={},tries=0){
   const retry=async()=>{await new Promise(r=>setTimeout(r,900*(tries+1)));return api(action,d,tries+1)};
   let why='';
-  try{const res=await fetch(API,{method:'POST',body:JSON.stringify({action,token:S.token,sub:S.sub,...d})});let r;const tx=await res.text();
+  const ac=new AbortController(),to=setTimeout(()=>ac.abort(),35000); // 응답이 35초 넘게 없으면 끊고 다시 시도 (버튼이 '저장 중...'에 멈추지 않게)
+  try{const res=await fetch(API,{method:'POST',body:JSON.stringify({action,token:S.token,sub:S.sub,...d}),signal:ac.signal});let r;const tx=await res.text();
     try{r=JSON.parse(tx)}catch(e){const tt=(/<title>([^<]{0,60})/i.exec(tx)||[])[1];why='서버가 오류 페이지를 돌려줬어요 (HTTP '+res.status+(tt?', '+tt.trim():'')+')';throw new Error('x')}
     if(r.error==='auth'){logout();return{error:'다시 로그인해 주세요.'}}
     if(r.error==='알 수 없는 요청이에요.')return{error:'⚠ 서버(Apps Script)가 예전 버전이에요. 선생님께 알려 주세요. (Code.gs를 새 버전으로 다시 배포해야 해요)'};
     if(r.error&&String(r.error).startsWith('서버 오류')&&tries<2)return retry();return r}
-  catch(e){if(!why)why=/Failed to fetch|NetworkError|Load failed/i.test(String(e&&e.message))?'인터넷이 끊겼거나, 이 컴퓨터(학교 네트워크)에서 서버 주소가 막혀 있어요':String(e&&e.message||e).slice(0,80);
-    if(tries<2&&!['forgot','changePw'].includes(action))return retry();return{error:'서버에 연결할 수 없어요. 잠시 뒤 다시 눌러 보세요.\n(원인: '+why+')'}}}
+  catch(e){if(!why&&e&&e.name==='AbortError')why='서버 응답이 너무 늦어요 (학생이 한꺼번에 몰렸을 수 있어요)';if(!why)why=/Failed to fetch|NetworkError|Load failed/i.test(String(e&&e.message))?'인터넷이 끊겼거나, 이 컴퓨터(학교 네트워크)에서 서버 주소가 막혀 있어요':String(e&&e.message||e).slice(0,80);
+    if(tries<2&&!['forgot','changePw'].includes(action))return retry();return{error:'서버에 연결할 수 없어요. 잠시 뒤 다시 눌러 보세요.\n(원인: '+why+')'}}finally{clearTimeout(to)}}
 const TBR=/\[\s*표\s*(?:[:：]\s*([^\]]*))?\]([\s\S]*?)\[\s*\/\s*표\s*\]/;
 function tbl(op,b){op=op||'';const tm=/(?:제목|이름)\s*[=:：]\s*([^|]*)/.exec(op),ttl=tm?tm[1].trim():'';const nh=/머리\s*없음|헤더\s*없음/.test(op),lf=/왼쪽/.test(op),sm=/작게/.test(op),ce=c=>qz(ib(pic(fx(esc(c.trim().replace(/\u0002/g,'|'))))));
   const R=b.replace(/^\n+|\n+$/g,'').split('\n').map(r=>r.trim()).filter(r=>r!=='').map(r=>r.replace(/\\\|/g,'\u0002').replace(/^\|/,'').replace(/\|$/,'').split('|'));
@@ -560,7 +567,7 @@ function hotCode(src){src=String(src??'');if(src.indexOf('{{')<0)return esc(src)
     HOTS.push(mkHot(rw));o+=esc(pre)+`<span class="hot" data-hk="${HOTS.length-1}" onclick="hotPlain(this)">${esc(HOTS[HOTS.length-1].e)}</span>`;if((rw.split('|')[1]||'').trim())ds+=`<span class="hotd" data-hd="${HOTS.length-1}"></span>`;last=m.index+m[0].length}return o+esc(line.slice(last))+ds}).join('\n')}
 function hotPlain(sp){const h=HOTS[+sp.dataset.hk];if(!h)return;if(sp.classList.contains('ok'))return hotPop({e:h.e,st:h.st.map(s=>({msg:hotFill(s),ans:null}))},'',()=>{});hotPop(h,'✅ 모두 맞았어요!',()=>{sp.classList.add('ok');const d=sp.parentNode.querySelector(`.hotd[data-hd="${sp.dataset.hk}"]`);if(d)d.dataset.d=hotDesc(h)})}
 /* 🔍 칸을 누르면 뜨는 설명·빈칸 창 (trace와 일반 코드가 같이 씀) */
-function hotPop(h,okMsg,onOk){if(document.querySelector('.modal.hot'))return;const m=document.createElement('div');m.className='modal hot';let si=0,cp=null;const hasQ=h.st.some(s=>s.ans);
+function hotPop(h,okMsg,onOk){if(document.querySelector('.modal.hot:not(.ad-out)'))return;const m=document.createElement('div');m.className='modal hot';let si=0,cp=null;const hasQ=h.st.some(s=>s.ans);
     m.innerHTML=`<div class="mb"><p style="font:bold 22px/1.5 Consolas,monospace;color:var(--ink);margin:0 0 10px"><span style="background:#e4eefc;border-radius:6px;padding:2px 10px">${esc(h.e)}</span></p><div class="hs"></div><div class="msg"></div><div class="row"><button class="main hck">${hasQ?'확인':'알겠어요'}</button><button class="ghost hcl">닫기</button></div></div>`;
     document.body.appendChild(m);const hs=m.querySelector('.hs'),out=m.querySelector('.msg'),ck=m.querySelector('.hck');
     const add=st=>{const p=document.createElement('p');p.style.margin='0 0 8px';const om=optMsg(st);p.innerHTML=br(esc(om.msg).replace(/OO/g,()=>st.ans?(om.opts?`<select class="bk"><option value="">선택</option>${om.opts.map(o=>`<option>${esc(o)}</option>`).join('')}</select>`:'<input class="bk" autocomplete="off">'):'OO'));hs.appendChild(p);return p};
@@ -795,7 +802,7 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
   el.querySelector('.nx').onclick=()=>{stop();if(!allSolved()){note('🔒 위 코드의 🔍 칸을 먼저 풀어 주세요');return}if(cur>=lock()){note('🤔 먼저 질문에 답해 보세요');return}cur=Math.min(S.length-1,cur+1);upd()};
   el.querySelector('.ap').onclick=()=>{if(tm)return stop();if(!allSolved()){note('🔒 위 코드의 🔍 칸을 먼저 풀어 주세요');return}if(cur>=S.length-1)cur=0;el.querySelector('.ap').textContent='⏸ 멈춤';tm=setInterval(()=>{if(!el.isConnected||cur>=S.length-1){stop();return}if(cur>=lock()){stop();note('🤔 먼저 질문에 답해 보세요');return}cur++;upd()},800)};
   // 관리자 전용: 코드를 팝업으로 크게 띄우고 옆(아래)에 변수값 추적표를 함께 보여 줘요
-  const openBig=()=>{if(document.querySelector('.modal.bigm'))return;
+  const openBig=()=>{if(document.querySelector('.modal.bigm:not(.ad-out)'))return;
     const m=document.createElement('div');m.className='modal bigm';
     m.innerHTML=`<div class="bz"><div class="bzh"><h3>🔎 코드 크게 보기</h3><span class="bzk">← → 단계 이동 · Esc 닫기</span><span style="flex:1"></span><button class="ghost bzx">닫기 ✕</button></div>
 <div class="bzm"><div class="bzc"></div><div class="bzd" title="위아래로 끌어서 코드/표 크기를 조절해요 (더블클릭: 원래대로)"></div><div class="bzt"><h4>📊 변수값 추적표</h4><div class="bzw"></div><h4>🖨 출력</h4><div class="bzo"></div></div></div>
@@ -827,12 +834,20 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
 
 let PYP;function loadPy(){return PYP||(PYP=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';s.onload=()=>loadPyodide().then(ok,no);s.onerror=no;document.head.appendChild(s)}))}
 async function runPy(code,inp){const p=await loadPy();p.globals.set('UC',code);p.globals.set('UI',inp||'');
-  return p.runPython(`import sys,io
+  return p.runPython(`import sys,io,time
 _o=io.StringIO();sys.stdin=io.StringIO(UI);sys.stdout=_o
+_dl=time.time()+5;_k=[0]
+def _tl(f,e,a):
+    _k[0]+=1
+    if _k[0]%500==0 and (time.time()>_dl or _o.tell()>200000):
+        raise TimeoutError('5초가 넘게 걸리거나 출력이 너무 많아서 멈췄어요. 끝나지 않는 반복(while)이 있는지 확인해 보세요.')
+    return _tl
+sys.settrace(_tl)
 try:
     exec(UC,{'__name__':'__main__'})
 except BaseException as e:
     print(type(e).__name__+': '+str(e))
+sys.settrace(None)
 sys.stdout=sys.__stdout__
 _o.getvalue()`)}
 
@@ -1048,4 +1063,91 @@ th{background:var(--q-soft)}th.a{background:var(--q-active)}
 /* 결과: 오답은 흰 바탕에 빨간 테두리·글자(❌ 표시는 그대로) */
 .msg.no{background:var(--q-surface);border:1px solid #f1c4c4;color:var(--danger)}
 </style>
+<!-- ===== 🌙 다크 레이어 (v138~) =====
+     원본·apple-layer·quiet-layer는 그대로 두고 맨 뒤에 붙여요. 이 블록(style#dark-layer + 바로 아래 script)을 지우면 원래 밝은 화면으로 돌아가요.
+     글자 대비는 작은 글자 기준 4.5:1 이상이 되게 골랐어요. -->
+<style id="dark-layer">
+:root{color-scheme:dark;
+  --ink:#e7eaf1;--sub:#a4acbf;--line:#353c4e;
+  --mint:#1e3b31;--sky:#1e2f4b;--lav:#2c2946;--peach:#432d27;--butter:#3d361d;--ok:#1f4634;--no:#4d2629;
+  --d-bg:#14171f;--d-surface:#1d212c;--d-raise:#252a37;--d-code:#191d27;--d-hover:#2a3040;
+  --q-surface:var(--d-surface);--q-border:#353c4e;--q-head:#1a1e29;--q-head-line:#3a4258;--q-soft:#252a37;
+  --q-active:#24345a;--q-active-ink:#a9c6ff;--accent-solid:#2f8f6a;--accent-solid-hover:#2a805f;--danger:#ff8a80}
+body{background:var(--d-bg);color:var(--ink)}
+/* 머리글 */
+header{background:linear-gradient(90deg,#5d8fd6,#9a83d8) top/100% 3px no-repeat,linear-gradient(90deg,#1b2436,#231f36)!important;border-bottom:1px solid var(--q-head-line);box-shadow:0 6px 14px -10px #000}
+header span{color:var(--sub)}
+#hn{background:var(--d-raise)!important;border-color:var(--line)!important}@media(hover:hover){#hn:hover{background:var(--d-hover)!important}}
+/* 바탕·칸 */
+.card,.card:nth-child(n){background:var(--d-surface);border-color:var(--line)}@media(hover:hover){.card:hover{border-color:#4a5368}}
+.box,.sbox,.mrow,.bxo,.trace,table,.tb,.mb,.bz,.hasToc #toc{background:var(--d-surface)}
+.sbox{background:var(--d-surface)}.mrow.승인{background:#1c3329}
+#toc{border-color:var(--line)}
+input,textarea,select,.yr,.is,select.qin,.chip,.ch .chb,.fqf,.gh,.hot2,button.ghost,button{background:var(--d-raise);border-color:var(--line);color:var(--ink)}
+button.main{background:var(--accent-solid);color:#fff;border-color:transparent}
+input::placeholder,textarea::placeholder,.ii::placeholder{color:#7f879a}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline-color:#5d82c9}
+input:focus,textarea:focus,select:focus{border-color:#5d82c9}
+.tt:hover,.choice:hover{background:var(--d-hover)}
+.tt.cur{background:var(--q-soft)}.tt.on,.chip.on{background:var(--q-active);color:var(--q-active-ink);border-color:#3b5590}
+.ch .chb.on{background:var(--lav);border-color:#6f5fb0}
+/* 코드·결과 */
+pre,.tp,.cl,.bzc,.bzo{background:var(--d-code);color:var(--ink)}
+code.ic{background:var(--d-raise)}
+.ln i{color:#6f778b}
+.ln.cur,.bzc .ln.cur,.now{background:#4a2326;color:#ffb3ad}
+.msg.wait,#sv,.cnx,.mbg,.mbg.대기{background:var(--d-raise);color:var(--ink)}
+.msg.ok,.msg.no{color:var(--ink)}.msg.no{background:var(--no);border-color:#7a3a3f}
+.bar{background:#2a3040}.bar i{background:#3fae84}
+.toast{background:#e7eaf1!important;color:#14171f}
+.modal{background:rgba(5,7,12,.62)!important}
+.ad-scrim{background:rgba(5,7,12,.5)}
+/* 빈칸·문제 */
+.blank,.qz,.mbt{background:#2e2a17}
+.ii,.gw{background:var(--d-raise);border-bottom-color:#5d82c9}
+.gw .gg,.gh .gt{color:#6f778b}
+.hot{background:#22355a;border-bottom-color:#6f9be6}.hot.ok,.hot2.ok{background:var(--mint);border-color:#4fae86}
+.hot2{border-color:#6c7894}
+.hotd[data-d]::after,.fqd,.fqp small{color:#b7bed0}
+.fnq{background:#1b2740}.fnq.act{border-color:#4f78c0}.fqp>b.fqs{border-bottom-color:#4f78c0;color:#6f778b}
+.showsp .sp{background:#22355a}.showsp .sp::before{color:#8fb4ff}
+.skn{background:#1b2740;color:#9fc0ff}
+.tmb.on{background:#1c3329;border-color:#3fae84}
+/* 표 */
+th{background:var(--lav)}th.a{background:var(--sky)}
+td.l{background:var(--d-raise)}@media(hover:hover){td.l:hover{background:var(--butter)}}
+.tb th,.tb td,.lst td{border-color:#4b4370}.tb th{background:#2c2946}
+.tb .xh{background:var(--d-raise);border-color:var(--line)}
+.tb .fsel{background:#22355a;box-shadow:inset 0 0 0 2px #6f9be6}
+.tb .fhit,.lst td.hl{background:#5a4f1c;color:#fff3c0}.lst td.hl2{color:#f0c050}
+.itb th{background:#2c2946}.itb td.lbl{background:var(--d-raise)}
+.bzd::after{background:#454d62}.bzd:hover::after{background:#5f6880}
+/* 빨강·파랑 글자는 어두운 바탕에서 잘 보이게 밝힘 */
+.err,.lk,.mbr,.qr2.r,.fqm.r,.im.r,.lkm,.itb .no,.cut{color:#ff8a80}
+.qr2.g{color:#6fd3a5}.ng{color:#ff7b72}
+a,.lk{color:#8fb4ff}
+.spin{border-color:#3a3460;border-top-color:#a993d6}
+/* 화면 코드에 직접 적힌 밝은 색 (성적 창·힌트·피드백 등) */
+[style*="background:#fff"],[style*="background: rgb(255, 251, 232)"]{background:var(--d-surface)!important}
+[style*="background:#eef6ff"],[style*="background:#e4eefc"]{background:#1b2740!important;border-color:#2f4670!important}
+[style*="background:#f5f1fb"]{background:#2c2946!important}
+[style*="color:#e53935"],[style*="color:#c25a5a"]{color:#ff8a80!important}
+[style*="color:#1e6fd9"]{color:#8fb4ff!important}
+[style*="color:#3b8f6a"]{color:#6fd3a5!important}
+.bxo[style*="#f4f6fb"]{background:var(--d-raise)!important}
+/* 변수 추적 표 색 */
+[style*="color:#3b6fd4"]:not(.bxo){color:#7aa7f5!important}[style*="color:#d9731e"]:not(.bxo){color:#f0a35e!important}[style*="color:#2e8b62"]:not(.bxo){color:#5cc596!important}
+[style*="color:#7b5fc4"]:not(.bxo){color:#b39cf5!important}[style*="color:#d0508f"]:not(.bxo){color:#ef86b8!important}[style*="color:#7b8499"]:not(.bxo){color:#a3abbd!important}
+[style*="background:#e1ecfc"]{background:#22324f!important}[style*="background:#fde9d6"]{background:#45311f!important}[style*="background:#d9f2e5"]{background:#1d3d30!important}
+[style*="background:#e8e0f7"]{background:#30294a!important}[style*="background:#fbdfec"]{background:#45263a!important}[style*="background:#eceff5"]{background:#2a303d!important}
+mark{color:var(--ink)}
+.mb,.bz{border:1px solid #3a4258;box-shadow:0 18px 50px -12px #000}
+img.pic,.fig img{background:#fff} /* 투명 배경 그림이 어두운 바탕에 묻히지 않게 */
+@media(max-width:860px){.hasToc #toc{background:var(--d-surface);box-shadow:2px 0 14px #000a}}
+</style>
+<script>
+/* [색:…], [형광:…], [상자:…|색] 이름 색을 어두운 바탕에 맞게 바꿈 */
+try{Object.assign(PAL,{빨강:'#ff7b7b',파랑:'#7aa7f5',초록:'#5cc596',주황:'#f5a25d',보라:'#b39cf5',분홍:'#f285bd',회색:'#a3abbd',검정:'#e7eaf1'});
+  Object.assign(HL,{노랑:'#5a4f1c',초록:'#1f4a35',파랑:'#1f3a5c',분홍:'#532a3e',주황:'#553524',보라:'#3b3160'})}catch(e){}
+</script>
 </body></html>
