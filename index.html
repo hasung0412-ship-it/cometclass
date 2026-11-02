@@ -121,7 +121,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v139)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v140)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbzXjsTbtwQg1yy-YPAM9yWvELdMUU6I3N0k_dJJV-MYxNsNJcFyAlYktEAyS5nfwXAn/exec';
@@ -205,6 +205,7 @@ addEventListener('resize',hnMore);
 $('#hn').onclick=()=>openInfo('notice');$('#hn').onkeydown=e=>{if(e.key==='Enter')openInfo('notice')};
 $('#side').onclick=e=>{const b=e.target.closest('button[data-info]');if(b)openInfo(b.dataset.info)};
 const TM={f:0,a:0,start:0,date:'',last:0,hid:false,dirty:false,on:false,t1:null,t2:null,mo:0};
+const BLUR_MAX=10000; // 화면을 나눠 다른 창을 쓰는 등 이 창이 선택 해제된 채 10초가 넘으면 💤로 셈 (주소창을 잠깐 누르는 정도는 봐줌)
 const INFO_MAX=1*60000; // 안내 창(공지·평가 기준표·내 성적 등)은 연 뒤 1분까지만 멈춤, 넘으면 💤로 셈
 const tdy=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`};
 const fmtT=s=>{s=Math.max(0,Math.floor(s));const p=n=>String(n).padStart(2,'0');return `${p(Math.floor(s/3600))}:${p(Math.floor(s%3600/60))}:${p(s%60)}`};
@@ -216,22 +217,25 @@ function tmSave(){try{localStorage.setItem(tkey(),JSON.stringify({s:TM.start,f:T
 function tmReset(){TM.start=Date.now();TM.f=0;TM.a=0;TM.date=tdy();TM.dirty=false;tmSave()}
 function tmAccrue(){if(!TM.on)return;const now=Date.now();let dt=TM.last?(now-TM.last)/1000:0;TM.last=now;dt=Math.min(Math.max(dt,0),900);
   if(now-TM.start>=TWIN){tmFlush();tmReset();tmUpd();return}
-  if(document.querySelector('.modal.info:not(.ad-out)')&&!TM.hid){ // 안내 창을 보는 동안은 1분까지만 멈춤 (다른 탭으로 가면 바로 💤)
+  const aw=TM.hid||(TM.bl&&now-TM.bl>=BLUR_MAX); // 탭이 안 보이거나, 다른 창이 10초 넘게 선택돼 있으면 딴짓
+  if(document.querySelector('.modal.info:not(.ad-out)')&&!aw){ // 안내 창을 보는 동안은 1분까지만 멈춤 (다른 탭으로 가면 바로 💤)
     if(!TM.mo)TM.mo=now;if(now-TM.mo<INFO_MAX)return;
     if(!TM.mw){TM.mw=1;toast('💤 안내 창을 1분 넘게 열어 두어서, 지금부터는 딴짓 시간으로 세요')}
     TM.a+=dt;if(dt>0)TM.dirty=true;return}
   if(!document.querySelector('.modal.info:not(.ad-out)'))TM.mo=TM.mw=0;
-  if(TM.hid)TM.a+=dt;else TM.f+=dt;if(dt>0)TM.dirty=true}
+  if(aw)TM.a+=dt;else TM.f+=dt;if(dt>0)TM.dirty=true}
 function tmLoad(){let loc=null;try{loc=JSON.parse(localStorage.getItem(tkey())||'null')}catch(e){}
   if(loc&&loc.s&&Date.now()-loc.s<TWIN){TM.start=loc.s;TM.f=+loc.f||0;TM.a=+loc.a||0;TM.date=loc.d||tdy()}else tmReset();tmUpd()}
 function tmFlush(beacon){if(!S.user||!TM.start)return;const p={date:TM.date,start:TM.start,focus:Math.floor(TM.f),away:Math.floor(TM.a)};tmSave();if(!TM.dirty)return;
   if(beacon){try{navigator.sendBeacon(API,new Blob([JSON.stringify({action:'timer',token:S.token,...p})],{type:'text/plain'}))}catch(e){}TM.dirty=false;return}
   TM.dirty=false;api('timer',p).then(r=>{if(r&&r.error)TM.dirty=true})}
-function tmStart(){if(TM.on)return;TM.on=true;TM.hid=document.hidden;TM.last=Date.now();tmLoad();clearInterval(TM.t1);clearInterval(TM.t2);
+function tmStart(){if(TM.on)return;TM.on=true;TM.hid=document.hidden;TM.bl=document.hasFocus()?0:Date.now();TM.last=Date.now();tmLoad();clearInterval(TM.t1);clearInterval(TM.t2);
   TM.t1=setInterval(()=>{tmAccrue();tmUpd();if(TM.on&&Date.now()%5000<1000)tmSave()},1000);TM.t2=setInterval(()=>tmFlush(),120000);tmUpd()}
 function tmStop(){if(!TM.on)return;tmAccrue();tmFlush();TM.on=false;clearInterval(TM.t1);clearInterval(TM.t2);tmUpd()}
 document.addEventListener('visibilitychange',()=>{if(!TM.on)return;const a0=TM.a;tmAccrue();const h=document.hidden;TM.hid=h;TM.last=Date.now();
-  if(h)tmFlush(true);else{const d=TM.a-a0;if(d>=10)toast(`💤 ${fmtT(d)} 동안 다른 곳에 다녀왔어요`);tmFlush()}tmUpd()});
+  if(h)tmFlush(true);else{const d=TM.a-a0;if(d>=10){TM.tt=Date.now();toast(`💤 ${fmtT(d)} 동안 다른 곳에 다녀왔어요`)}tmFlush()}tmUpd()});
+addEventListener('blur',()=>{if(!TM.on||TM.bl)return;tmAccrue();TM.bl=Date.now();TM.ba=TM.a}); // 이 창이 선택 해제됨 (창 분할로 다른 창을 누른 경우 등)
+addEventListener('focus',()=>{if(!TM.on||!TM.bl)return;tmAccrue();const d=TM.a-(TM.ba||0);TM.bl=0;TM.last=Date.now();if(d>=10&&!(Date.now()-(TM.tt||0)<1500))toast(`💤 ${fmtT(d)} 동안 다른 창에 다녀왔어요`);tmUpd()});
 addEventListener('pagehide',()=>{if(TM.on){tmAccrue();tmFlush(true)}});
 /* ---- 학습 도우미: 공지 / 용어 사전 / 오류 모음 / 치트시트 ---- */
 let infoBusy=false;
