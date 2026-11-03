@@ -101,6 +101,8 @@ details.sec>summary::before{content:'▾';color:var(--sub)}details.sec:not([open
 .cl{font:14px/1.6 Consolas,monospace;white-space:pre;background:#f6f7fb;padding:4px 14px;margin:-2px 0;align-self:stretch;display:flex;align-items:center;overflow-x:auto;text-align:left}.clf{border-radius:12px 12px 0 0;margin-top:0}.cll{border-radius:0 0 12px 12px;margin-bottom:0}.clo{border-radius:12px;margin:0}
 
 .clk{font:700 30px/1.2 Consolas,monospace;letter-spacing:1px}.tmb.on{border-color:#7fc8a9;background:#f3fbf7}.tmc{display:none;font-size:13px}
+.tm2{display:grid;grid-template-columns:1fr 1fr;padding:0;overflow:hidden}.tm2 .tmb{padding:10px 8px;text-align:center}.tm2 .tmb+.tmb{border-left:1px solid var(--line)}.tm2 h4{font-size:12px;margin:0 0 4px}.tm2 .clk{font-size:20px;letter-spacing:0}
+.tt.lt{display:flex;align-items:center;gap:6px}.lt .tn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lt .rk{display:flex;flex-direction:column;align-items:center;flex:none}.lt .pk{font-size:11px;font-weight:bold;color:#2e8b62;background:#e3f5ec;border-radius:999px;padding:0 7px;white-space:nowrap}.lt .rk small{font-size:10.5px;margin:1px 0 0;white-space:nowrap}
 @media(max-width:1199px){.tmc.on{display:inline-block}}@media(min-width:1200px){.th{display:none}}
 .err{color:#c25a5a;min-height:24px;white-space:pre-line}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
@@ -123,7 +125,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v147)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v148)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -175,8 +177,8 @@ function renderToc0(){const T=mem.toc;if(!T||!$('#wrap').classList.contains('has
     if(!sj.ready)return `<div class="ts"><button class="tt" data-soon="1">🔒 ${ico(sj.icon)} <b>${esc(sj.name)}</b> <small>준비 중</small></button></div>`;
     const sk='s|'+sj.name,so=S.tocOpen[sk]??true;
     return `<div class="ts"><button class="tt" data-t="${esc(sk)}" data-o="${so?1:0}">${so?'▾':'▸'} ${ico(sj.icon)} <b>${esc(sj.name)}</b></button>`+(so?`<div class="tl">${sj.lessons.map(l=>{
-      const lk=`l|${sj.name}|${l.no}`,cur=at.sub===sj.name&&at.no===l.no,lo=S.tocOpen[lk]??cur,t=l.t.해석+l.t.작성,d=Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성);
-      return `<button class="tt ${cur?'cur':''}" data-t="${esc(lk)}" data-o="${lo?1:0}">${lo?'▾':'▸'} [${l.no}차시] ${esc(l.title)}${t?` <small>${d}/${t}</small>`:''}</button>`+(lo?`<div class="ta">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>`<button class="tt ti ${cur&&at.act===k?'on':''}" data-go="${esc(sj.name)}|${l.no}|${k}">${AN[k][0]} ${nm(sj.name,k)}${k==='개념'?(l.d[k]>0?' ✔':''):` <small>${Math.min(l.d[k],l.t[k])}/${l.t[k]}</small>`}</button>`).join('')}</div>`:'')}).join('')}</div>`:'')+'</div>'};
+      const lk=`l|${sj.name}|${l.no}`,cur=at.sub===sj.name&&at.no===l.no,lo=S.tocOpen[lk]??cur,fd=String(l.fin||'').split('-');
+      return `<button class="tt lt ${cur?'cur':''}" data-t="${esc(lk)}" data-o="${lo?1:0}" title="[${l.no}차시] ${esc(l.title)}"><span class="tn">${lo?'▾':'▸'} [${l.no}차시] ${esc(l.title)}</span>${l.fin!=null?`<span class="rk"><span class="pk">수업 완료!</span>${fd.length===3?`<small>${+fd[1]}월 ${+fd[2]}일</small>`:''}</span>`:''}</button>`+(lo?`<div class="ta">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>`<button class="tt ti ${cur&&at.act===k?'on':''}" data-go="${esc(sj.name)}|${l.no}|${k}">${AN[k][0]} ${nm(sj.name,k)}</button>`).join('')}</div>`:'')}).join('')}</div>`:'')+'</div>'};
   $('#toc').innerHTML='<h4>📚 목차</h4>'+groupSubs(T.subjects).map(x=>{if(x.s)return one(x.s);const gk2='g|'+x.g,go=S.tocOpen[gk2]??true;
     return `<div class="ts"><button class="tt" data-t="${esc(gk2)}" data-o="${go?1:0}">${go?'▾':'▸'} ${ico(x.icon)} <b>${esc(x.g)}</b></button>`+(go?`<div class="tl">${x.subs.map(one).join('')}</div>`:'')+'</div>'}).join('')+helperBtns('th')}
 $('#toc').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.info){openInfo(b.dataset.info);return}if(b.dataset.t){S.tocOpen[b.dataset.t]=!(+b.dataset.o);renderToc();return}if(b.dataset.go){const[s,n,a]=b.dataset.go.split('|');go(s,+n,a);return}if(b.dataset.soon)toast('🛠 아직 준비중입니다!')};
@@ -184,7 +186,7 @@ $('#toc').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.datas
 const helperBtns=c=>`<div class="sbox ${c||''}" style="margin-top:12px"><h4>📚 학습 도우미</h4><button class="tt" data-info="notice">📢 지난 공지 모두 보기</button><button class="tt" data-info="term">📖 용어 사전</button></div>${c==='th'?'':'<div class="sbox" style="margin-top:12px"><h4>🏫 성적</h4><button class="tt" data-info="assess">📑 평가 기준표</button><button class="tt" data-info="grade">🔒 내 성적 보기</button></div>'}`;
 function renderSide(){const e=$('#side');if(!e||!$('#wrap').classList.contains('hasToc'))return;const stu=S.user&&S.user.role!=='관리자';
   hdrNotice();
-  e.innerHTML=(stu?`<div class="sbox tmb" id="tbf"><h4>🎯 오늘 내가 수업에 집중한 시간</h4><div class="clk" id="tf">00:00:00</div></div><div class="sbox tmb" id="tba"><h4>💤 잠시 다른 곳에 다녀온 시간</h4><div class="clk" id="ta">00:00:00</div></div><p style="font-size:12px;color:var(--sub);margin:0 0 12px">제발 딴 짓 하지 말고 수업에 집중 좀 하세요 !!!!</p>`:'<div class="sbox"><small>👀 미리보기에서는 시간이 기록되지 않아요</small></div>')+helperBtns()+'<div class="sbox" id="mbx"></div>';tmUpd();
+  e.innerHTML=(stu?`<div class="sbox tm2"><div class="tmb" id="tbf"><h4>🎯 집중한 시간</h4><div class="clk" id="tf">00:00:00</div></div><div class="tmb" id="tba"><h4>💤 다른 곳</h4><div class="clk" id="ta">00:00:00</div></div></div><p style="font-size:12px;color:var(--sub);margin:0 0 12px">제발 딴 짓 하지 말고 수업에 집중 좀 하세요 !!!!</p>`:'<div class="sbox"><small>👀 미리보기에서는 시간이 기록되지 않아요</small></div>')+helperBtns()+'<div class="sbox" id="mbx"></div>';tmUpd();
   if(!MB.d||MB.u!==S.user.id||Date.now()-MB.t>60000)mbLoad();else mbDraw()}
 /* 전광판: 승인된 '오늘의 한마디'가 5분씩 돌아가며 보임. 학생은 정해진 쉬는 시간에만 하루 한 개 쓰고, 승인 전까지 고칠 수 있음 (시간 검사는 서버 시각 기준) */
 const MB={d:null,u:'',t:0,ed:false,open:null};
@@ -1124,7 +1126,7 @@ code.ic{background:var(--d-raise)}
 .fnq{background:#1b2740}.fnq.act{border-color:#4f78c0}.fqp>b.fqs{border-bottom-color:#4f78c0;color:#6f778b}
 .showsp .sp{background:#22355a}.showsp .sp::before{color:#8fb4ff}
 .skn{background:#1b2740;color:#9fc0ff}
-.tmb.on{background:#1c3329;border-color:#3fae84}
+.tmb.on{background:#1c3329;border-color:#3fae84}.lt .pk{background:#1c3329;color:#7fd8ad}
 /* 표 */
 th{background:var(--lav)}th.a{background:var(--sky)}
 td.l{background:var(--d-raise)}@media(hover:hover){td.l:hover{background:var(--butter)}}
