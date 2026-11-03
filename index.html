@@ -79,6 +79,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .tt.cur{background:var(--butter)}.tt.on{background:var(--sky);font-weight:bold}.tl{margin-left:10px}.ta{margin-left:16px}.ti{font-size:14px}
 #tg{display:none}#tg.on{display:inline-block}
 .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#3a4256;color:#fff;padding:10px 18px;border-radius:12px;z-index:50}
+#secx{position:fixed;right:16px;bottom:58px;z-index:40;max-width:min(360px,calc(100vw - 32px));padding:9px 16px;border-radius:999px;box-shadow:0 4px 14px #0003;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:none}#secx.on{display:block}
 #sv{position:fixed;right:16px;bottom:16px;padding:6px 12px;border-radius:10px;background:#eef1f8;font-size:13px;display:none;z-index:40}#sv.ok{background:var(--ok)}#sv.bad{background:var(--no)}
 @media(max-width:860px){#wrap.hasToc{display:block}.hasToc #toc{position:fixed;left:0;top:56px;bottom:0;max-height:none;width:290px;background:#fff;z-index:15;transform:translateX(-105%);transition:transform .2s;box-shadow:2px 0 12px #0002}.hasToc #toc.open{transform:none}}
 @media(min-width:861px){#tg{display:none!important}}
@@ -122,7 +123,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v144)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v147)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -159,6 +160,11 @@ function showToc(on){$('#wrap').classList.toggle('hasToc',on);$('#tg').classList
 async function loadToc(){await get('toc',()=>api('toc'));renderToc();get('info',()=>api('info')).then(r=>{if(r&&!r.error)renderSide()})}
 let NSEEN=false;function autoNotice(){if(NSEEN||!S.user||S.user.role==='관리자'||S.preview)return;const I=mem.info,k='seen|'+S.user.id;let seen=[];try{seen=JSON.parse(localStorage.getItem(k)||'[]')}catch(e){}
   const nw=((I&&I.notices)||[]).filter(x=>!seen.includes(x.date+'|'+x.title));NSEEN=true;if(!nw.length)return;try{localStorage.setItem(k,JSON.stringify(seen.concat(nw.map(x=>x.date+'|'+x.title)).slice(-200)))}catch(e){}openInfo('notice',nw)}
+/* 개념익히기: 열린 목차(토글)가 화면 높이의 70% 이상을 차지하면 오른쪽 아래에 '접기' 버튼이 따라다님. 누르면 그 목차를 접고 제목으로 화면을 옮김 */
+let SECX=null;function secChk(){if(!SECX){SECX=document.createElement('button');SECX.id='secx';SECX.className='main';document.body.appendChild(SECX);
+  SECX.onclick=()=>{const d=SECX._d;if(!d||!d.isConnected)return secChk();d.open=false;const y=d.getBoundingClientRect().top;if(y<60)scrollBy(0,y-70);secChk()};addEventListener('scroll',secChk,{passive:true});addEventListener('resize',secChk);new MutationObserver(secChk).observe(app,{childList:true})}
+  const H=innerHeight;let f=null;document.querySelectorAll('#items details.sec[open]').forEach(d=>{const r=d.getBoundingClientRect(),v=Math.min(r.bottom,H)-Math.max(r.top,0);if(!f&&v>=H*.7)f=d});
+  SECX._d=f;SECX.classList.toggle('on',!!f);if(f)SECX.textContent=`📕 현재 보고 있는 목차 (${f.querySelector('summary').textContent.trim()}) 접기`}
 function renderToc(){renderToc0();renderSide()}
 /* 목차 묶음: [상위 탭 이름, 아이콘, [묶을 과목들]] — 여기에 없는 과목(예: 파이썬 방과후)은 맨 위 칸에 그대로 보여요 */
 const GRP=[['프로그래밍','💻',['엔트리','파이썬']],['데이터','📊',['데이터 분석']]],gk=s=>String(s).replace(/\s/g,'');
@@ -185,7 +191,7 @@ const MB={d:null,u:'',t:0,ed:false,open:null};
 async function mbLoad(){const u=S.user&&S.user.id;const r=await api('msgGet');if(!r||r.error||!S.user||S.user.id!==u)return;if(MB.u!==u)MB.ed=false;Object.assign(MB,{d:r,u,t:Date.now(),off:r.now-Date.now()});mbDraw()}
 const mbT=()=>new Date(Date.now()+MB.off+9*36e5).toISOString().slice(11,16),mbOpen=()=>MB.d.times.some(w=>mbT()>=w[0]&&mbT()<w[1]);
 function mbBoard(){const e=$('#mbx .mbt');if(!e)return;const B=MB.d.board||[],x=B.length?B[Math.floor((Date.now()+MB.off)/300000)%B.length]:null;
-  e.innerHTML=x?`<div class="mbs">${esc(x.text)}</div><div class="mbn">${esc(x.name)} <small>${esc(x.cls)}</small></div>`:'<span class="mbz">아직 올라온 한마디가 없어요</span>'}
+  e.innerHTML=x?`<div class="mbs">${esc(x.text)}</div><div class="mbn">${esc(x.cls)}</div>`:'<span class="mbz">아직 올라온 한마디가 없어요</span>'}
 function mbDraw(){const e=$('#mbx');if(!e||!MB.d)return;const D=MB.d,m=D.mine,op=MB.open=mbOpen(),nx=D.times.find(w=>mbT()<w[0]);let h='';if(!op)MB.ed=false;
   if(S.user.role!=='관리자'){const tm=nx?`다음 쓰기 시간은 ${nx[0]}~${nx[1]}이에요.`:'',no='<div class="mbz">오늘은 이제 쓸 수 없어요 !!</div>'; // 수업 중(뒤에 쓰기 시간 남음) / 이미 썼거나 오늘 끝
     if(m&&!MB.ed){const st=m.status==='승인'?'승인':'대기';h=`<div><b>내 한마디</b> <span class="mbg ${st}">${st==='승인'?'✅ 전광판에 올라감':'⏳ 확인 중'}</span></div><div style="margin-top:4px;word-break:keep-all;overflow-wrap:anywhere">${esc(m.text)}</div>`+(st==='승인'?'<div class="mbz">승인된 글은 고칠 수 없어요.</div>':op?'<button class="ghost mbe">✏️ 고치기</button>':no)}
@@ -490,7 +496,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
   $('#back').onclick=()=>actView(no);
   const box=$('#items');
   if(act==='개념'){box.innerHTML=r.items.map((i,n)=>`<details class="box sec" data-s="${n}" open><summary><h3>${esc(i.title)}</h3></summary><div>${fmt(i.body)}</div></details>`).join('');
-    box.querySelectorAll('details.sec').forEach(d=>{const k=`cf|${S.user.id}|${S.sub}|${no}|${d.dataset.s}`;try{if(localStorage.getItem(k)==='0')d.open=false}catch(e){}d.addEventListener('toggle',()=>{try{localStorage.setItem(k,d.open?'1':'0')}catch(e){}})});
+    box.querySelectorAll('details.sec').forEach(d=>{const k=`cf|${S.user.id}|${S.sub}|${no}|${d.dataset.s}`;try{if(localStorage.getItem(k)==='0')d.open=false}catch(e){}d.addEventListener('toggle',()=>{try{localStorage.setItem(k,d.open?'1':'0')}catch(e){}secChk()})});secChk();
     box.querySelectorAll('.ib').forEach((el,i)=>{el.dataset.i=i+1;const d=r.drafts&&r.drafts[i+1],lc=loadLocal(i+1);let v=null,t0=-1;[d&&{x:d.text,t:d.t},lc&&{x:lc.text,t:lc.t}].forEach(c=>{if(c&&c.t>t0){t0=c.t;v=c.x}});if(v!=null){if(el.type==='checkbox')el.checked=v==='1';else el.value=v;ibCheck(el)}});
     const sb=S.sub;if(!S.preview&&!(r.saved[0]&&r.saved[0].ok))api('submit',{no,act,q:0,answer:'열람',sub:sb}).then(x=>{if(!x.error&&S.sub===sb)rec(no,act,0,'열람',true)})}
   if(act==='해석'){const isF=i=>i.type==='설명쓰기'||i.type==='서술'||i.type==='기타';
@@ -1096,7 +1102,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline-color:#5
 input:focus,textarea:focus,select:focus{border-color:#5d82c9}
 .tt:hover,.choice:hover{background:var(--d-hover)}
 .tt.cur{background:var(--q-soft)}.tt.on,.chip.on{background:var(--q-active);color:var(--q-active-ink);border-color:#3b5590}
-.ch .chb.on{background:var(--lav);border-color:#6f5fb0}
+.ch .chb.on{background:#ffc93c;border-color:#ffe08a;color:#1d1d1f;font-weight:bold;box-shadow:0 0 0 2px #ffc93c55}
 /* 코드·결과 */
 pre,.tp,.cl,.bzc,.bzo{background:var(--d-code);color:var(--ink)}
 code.ic{background:var(--d-raise)}
