@@ -101,7 +101,7 @@ details.sec>summary::before{content:'▾';color:var(--sub)}details.sec:not([open
 .cl{font:14px/1.6 Consolas,monospace;white-space:pre;background:#f6f7fb;padding:4px 14px;margin:-2px 0;align-self:stretch;display:flex;align-items:center;overflow-x:auto;text-align:left}.clf{border-radius:12px 12px 0 0;margin-top:0}.cll{border-radius:0 0 12px 12px;margin-bottom:0}.clo{border-radius:12px;margin:0}
 
 .clk{font:700 30px/1.2 Consolas,monospace;letter-spacing:1px}.tmb.on{border-color:#7fc8a9;background:#f3fbf7}.tmc{display:none;font-size:13px}
-.nowc{font-size:12px;color:var(--sub);text-align:right;margin:0 2px 4px}.nowc b{font-variant-numeric:tabular-nums;color:var(--ink)}
+.sbox.nowc{font-size:13px;color:var(--sub);text-align:center;padding:6px 10px;margin-bottom:8px}.nowc b{font-variant-numeric:tabular-nums;color:var(--ink);font-size:15px}
 .tm2{display:grid;grid-template-columns:1fr 1fr;padding:0;overflow:hidden}.tm2 .tmb{padding:10px 8px;text-align:center}.tm2 .tmb+.tmb{border-left:1px solid var(--line)}.tm2 h4{font-size:12px;margin:0 0 4px}.tm2 .clk{font-size:20px;letter-spacing:0}
 .tt.lt{display:flex;align-items:center;gap:6px}.lt .tn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lt .rk{display:flex;flex-direction:column;align-items:center;flex:none}.lt .pk{font-size:11px;font-weight:bold;color:#2e8b62;background:#e3f5ec;border-radius:999px;padding:0 7px;white-space:nowrap}.lt .rk small{font-size:10.5px;margin:1px 0 0;white-space:nowrap}
 @media(max-width:1199px){.tmc.on{display:inline-block}}@media(min-width:1200px){.th{display:none}}
@@ -126,7 +126,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v150)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v151)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -187,7 +187,7 @@ $('#toc').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.datas
 const helperBtns=c=>`<div class="sbox ${c||''}" style="margin-top:12px"><h4>📚 학습 도우미</h4><button class="tt" data-info="notice">📢 지난 공지 모두 보기</button><button class="tt" data-info="term">📖 용어 사전</button></div>${c==='th'?'':'<div class="sbox" style="margin-top:12px"><h4>🏫 성적</h4><button class="tt" data-info="assess">📑 평가 기준표</button><button class="tt" data-info="grade">🔒 내 성적 보기</button></div>'}`;
 function renderSide(){const e=$('#side');if(!e||!$('#wrap').classList.contains('hasToc'))return;const stu=S.user&&S.user.role!=='관리자';
   hdrNotice();
-  e.innerHTML=(stu?`<div class="nowc">🕒 지금 <b id="nowc"></b></div><div class="sbox tm2"><div class="tmb" id="tbf"><h4>🎯 집중한 시간</h4><div class="clk" id="tf">00:00:00</div></div><div class="tmb" id="tba"><h4>💤 다른 곳</h4><div class="clk" id="ta">00:00:00</div></div></div><p style="font-size:12px;color:var(--sub);margin:0 0 12px">제발 딴 짓 하지 말고 수업에 집중 좀 하세요 !!!!</p>`:'<div class="sbox"><small>👀 미리보기에서는 시간이 기록되지 않아요</small></div>')+helperBtns()+'<div class="sbox" id="mbx"></div>';tmUpd();
+  e.innerHTML=(stu?`<div class="sbox nowc">🕒 지금 <b id="nowc"></b></div><div class="sbox tm2"><div class="tmb" id="tbf"><h4>🎯 집중한 시간</h4><div class="clk" id="tf">00:00:00</div></div><div class="tmb" id="tba"><h4>💤 다른 곳</h4><div class="clk" id="ta">00:00:00</div></div></div><p style="font-size:12px;color:var(--sub);margin:0 0 12px">제발 딴 짓 하지 말고 수업에 집중 좀 하세요 !!!!</p>`:'<div class="sbox"><small>👀 미리보기에서는 시간이 기록되지 않아요</small></div>')+helperBtns()+'<div class="sbox" id="mbx"></div>';tmUpd();
   if(!MB.d||MB.u!==S.user.id||Date.now()-MB.t>60000)mbLoad();else mbDraw()}
 /* 전광판: 승인된 '오늘의 한마디'가 5분씩 돌아가며 보임. 학생은 정해진 쉬는 시간에만 하루 한 개 쓰고, 승인 전까지 고칠 수 있음 (시간 검사는 서버 시각 기준) */
 const MB={d:null,u:'',t:0,ed:false,open:null};
