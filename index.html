@@ -125,7 +125,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v148)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v149)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -531,7 +531,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
         bx.querySelector('.sk').onclick=()=>{if(pw.value.trim())open(pw.value.trim())};pw.addEventListener('keydown',e=>{if(e.key==='Enter')bx.querySelector('.sk').click()});
         let sv0=null,lk0=null;try{sv0=sessionStorage.getItem(sk);lk0=sessionStorage.getItem(sk+'|L')}catch(e){}if(lk0&&!(S.user&&S.user.role==='관리자'))lockMsg();else if(sv0!=null||(S.user&&S.user.role==='관리자'))open(sv0||'',true)}
       ta.onkeydown=e=>{if(e.key==='Tab'){e.preventDefault();document.execCommand('insertText',false,'    ')}};
-      bx.querySelector('.run').onclick=async()=>{out.style.display='block';out.textContent='실행 중...';try{out.textContent=await runPy(ta.value,it.ins[0])||'(출력 없음)'}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
+      bx.querySelector('.run').onclick=async()=>{out.style.display='block';out.textContent='실행 중...';try{putOut(out,await runPy(ta.value,it.ins[0])||'(출력 없음)')}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
       bx.querySelector('.sub').onclick=async()=>{const b=bx.querySelector('.sub');if(!ta.value.trim()){m.className='msg no';m.textContent='코드를 먼저 써 주세요';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';
         const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='💾 저장했어요! 고쳐서 다시 저장해도 돼요.'}})}}
 async function lessonView0(){const r=await api('menu');if(!r.error)S.menu=r}
@@ -710,7 +710,7 @@ const S_ADMIN=()=>!!(S.user&&S.user.role==='관리자');
 function traceDiv(x){setTimeout(initTraces,0);return `<div class="trace" data-src="${esc(x.replace(/^\s*trace[ \t]*\n/,'').replace(/\s+$/,''))}"></div>`}
 /* 실행 결과만 보기: 시트 칸에 ```run ... ``` 로 쓰면 코드 아래에 '실행 결과 보기' 버튼이 생겨요 */
 function runDiv(x){return `<div class="runb"><pre>${hotCode(x.replace(/^\s*run[ \t]*\n/,'').replace(/\s+$/,''))}</pre><button class="ghost" onclick="runBlk(this)">▶ 실행 결과 보기</button><pre class="rout" style="display:none;background:#fffbe8"></pre></div>`}
-async function runBlk(b){const o=b.nextElementSibling;o.style.display='block';o.textContent='🐍 실행 중... (처음에는 10~30초 걸려요)';b.disabled=true;try{o.textContent='출력:\n'+(await runPy(b.previousElementSibling.textContent)||'(출력 없음)')}catch(e){o.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}b.disabled=false}
+async function runBlk(b){const o=b.nextElementSibling;o.style.display='block';o.textContent='🐍 실행 중... (처음에는 10~30초 걸려요)';b.disabled=true;try{putOut(o,'출력:\n'+(await runPy(b.previousElementSibling.textContent)||'(출력 없음)'))}catch(e){o.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}b.disabled=false}
 function rgHTML(h,S,c,nx){const L2=h.r.L,more=L2.length>30?' …':'',s=S[c];let idx=-1,fin=false,up=false;
   if(h.lp&&s){const ln=s[0],v=s[1][h.lp.v];idx=v==null?-1:L2.findIndex(x=>String(x)===v);
     if(ln===0||ln>h.lp.end)fin=true;else if(ln<h.lp.fl)idx=-1;else if(ln===h.lp.fl&&c>0&&idx>=0&&S[c-1][1][h.lp.v]===v)fin=true;
@@ -849,9 +849,21 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
 let PYP;function loadPy(){return PYP||(PYP=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';s.onload=()=>loadPyodide().then(ok,no);s.onerror=no;document.head.appendChild(s)}))}
 async function runPy(code,inp){const p=await loadPy();p.globals.set('UC',code);p.globals.set('UI',inp||'');
   return p.runPython(`import sys,io,time
-_o=io.StringIO();sys.stdin=io.StringIO(UI);sys.stdout=_o
+class _Rep(BaseException):pass
+_b=[''];_n={};_st=[False]
+class _O(io.StringIO):
+    def write(s,t):
+        r=super().write(t);_b[0]+=t
+        if '\\n' in _b[0]:
+            *ls,_b[0]=_b[0].split('\\n')
+            for l in ls:
+                _n[l]=_n.get(l,0)+1
+                if _n[l]>=100:_st[0]=True;raise _Rep()
+        return r
+_o=_O();sys.stdin=io.StringIO(UI);sys.stdout=_o
 _dl=time.time()+5;_k=[0]
 def _tl(f,e,a):
+    if _st[0]:raise _Rep()
     _k[0]+=1
     if _k[0]%500==0 and (time.time()>_dl or _o.tell()>200000):
         raise TimeoutError('5초가 넘게 걸리거나 출력이 너무 많아서 멈췄어요. 끝나지 않는 반복(while)이 있는지 확인해 보세요.')
@@ -860,10 +872,12 @@ sys.settrace(_tl)
 try:
     exec(UC,{'__name__':'__main__'})
 except BaseException as e:
-    print(type(e).__name__+': '+str(e))
+    if not _st[0]:print(type(e).__name__+': '+str(e))
 sys.settrace(None)
 sys.stdout=sys.__stdout__
-_o.getvalue()`)}
+_o.getvalue()+('\\n#STOP#' if _st[0] else '')`)}
+/* 같은 출력이 100번 나와 멈췄으면 끝에 빨간 굵은 '중지되었습니다!' */
+function putOut(o,t){const st=t.endsWith('#STOP#');o.textContent=st?t.slice(0,-6):t;if(st){const b=document.createElement('b');b.style.color='#e53935';b.textContent='중지되었습니다!';o.appendChild(b)}}
 
 /* 관리자 */
 async function adminView(force){if(force||!mem.subjects)app.innerHTML='불러오는 중...';
