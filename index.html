@@ -126,7 +126,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v160)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v162)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -200,7 +200,8 @@ function mbBoard(){const e=$('#mbx .mbt');if(!e)return;const B=MB.d.board||[],n=
   e.innerHTML=x?`<div class="mbs">${esc(x.text)}</div><div class="mbn">${x.pub&&x.name?`${esc(x.name)} <small>${esc(x.cls)}</small>`:esc(x.cls)}</div>`:'<span class="mbz">아직 올라온 한마디가 없어요</span>'}
 function mbDraw(){const e=$('#mbx');if(!e||!MB.d)return;const D=MB.d,m=D.mine,op=MB.open=mbOpen(),nx=D.times.find(w=>mbT()<w[0]);let h='';if(!op)MB.ed=false;
   if(S.user.role!=='관리자'){const tm=nx?`다음 쓰기 시간은 ${nx[0]}~${nx[1]}이에요.`:'',no='<div class="mbz">오늘은 이제 쓸 수 없어요 !!</div>'; // 수업 중(뒤에 쓰기 시간 남음) / 이미 썼거나 오늘 끝
-    if(m&&!MB.ed){const st=m.status==='승인'?'승인':'대기';h=`<div><b>내 한마디</b> <span class="mbg ${st}">${st==='승인'?'✅ 전광판에 올라감':'⏳ 확인 중'}</span></div><div style="margin-top:4px;word-break:keep-all;overflow-wrap:anywhere">${esc(m.text)}</div>`+(st==='승인'?'<div class="mbz">승인된 글은 고칠 수 없어요.</div>':op?'<button class="ghost mbe">✏️ 고치기</button>':no)}
+    if(D.yearOff)h='<div class="mbz">지금 2학년들만 쓸 수 있습니다. 선배들은 구경이나 하세요!</div>'; // 계정 연도 ≠ 현재연도
+    else if(m&&!MB.ed){const st=m.status==='승인'?'승인':'대기';h=`<div><b>내 한마디</b> <span class="mbg ${st}">${st==='승인'?'✅ 전광판에 올라감':'⏳ 확인 중'}</span></div><div style="margin-top:4px;word-break:keep-all;overflow-wrap:anywhere">${esc(m.text)}</div>`+(st==='승인'?'<div class="mbz">승인된 글은 고칠 수 없어요.</div>':op?'<button class="ghost mbe">✏️ 고치기</button>':no)}
     else if(!m&&D.done)h=no;
     else if(op)h=`<input class="mbq" maxlength="${D.max}" placeholder="오늘의 한마디 (${D.max}자까지)" value="${esc(m?m.text:'')}"><button class="main mbk">${m?'저장':'올리기'}</button>${m?'<button class="ghost mbc">취소</button>':''}<span class="mbz mbl"></span><div class="mbr"></div><div class="mbz">하루에 하나만 쓸 수 있고, 내가 확인한 다음에 올라갑니다 !! .</div>`;
     else h=nx?`<div class="mbz">✏️ 지금 쓰려하지 말고 수업에 집중하세요 !! ${tm}</div>`:no;
