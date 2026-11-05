@@ -126,13 +126,15 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v167)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v168)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
 const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:'',at:null,tocOpen:{},ayear:''};let mem={};
-const memT={};async function get(k,fn,force){if(!force&&mem[k]&&Date.now()-(memT[k]||0)<60000)return mem[k];const r=await fn();if(!r.error){mem[k]=r;memT[k]=Date.now()}return r}
+// 받아 둔 내용이 있으면 1분이 지났어도 바로 보여 주고, 새 내용은 뒤에서 조용히 받아 둠 (화면 넘길 때마다 서버를 3~4초씩 기다리지 않게). force면 지금 새로 받아 옴
+const memT={},memR={},memP={};async function get(k,fn,force){if(!force&&mem[k]){if(Date.now()-(memT[k]||0)>=60000&&!memR[k]){const tk=S.token;memR[k]=Promise.resolve().then(fn).then(r=>{if(r&&!r.error&&S.token===tk){mem[k]=r;memT[k]=Date.now();if(k==='toc')renderToc();if(k==='info')hdrNotice()}}).catch(()=>{}).finally(()=>{delete memR[k]})}return mem[k]}
+  const r=await(force?fn():(memP[k]=memP[k]||Promise.resolve().then(fn).finally(()=>{delete memP[k]})));if(!r.error){mem[k]=r;memT[k]=Date.now()}return r} // 같은 내용을 받는 중이면 한 번만 물어봄
 /* ---- 임시저장(입력 중인 답 자동 저장) ---- */
 const DR={};let dtm=null,dretry=null;
 const dkey=(s,n,a,q)=>`hd|${S.user?S.user.id:''}|${s}|${n}|${a}|${q}`;
@@ -160,7 +162,7 @@ function rec(no,act,q,answer,ok){clearDraft(no,act,q);if(isAft()&&!S.preview){tr
 /* ---- 왼쪽 목차 ---- */
 function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
 function showToc(on){$('#wrap').classList.toggle('hasToc',on);$('#tg').classList.toggle('on',on);if(on)renderToc();else $('#toc').classList.remove('open')}
-async function loadToc(){await get('toc',()=>api('toc'));renderToc();get('info',()=>api('info')).then(r=>{if(r&&!r.error)renderSide()})}
+async function loadToc(){const pi=get('info',()=>api('info'));await get('toc',()=>api('toc'));renderToc();pi.then(r=>{if(r&&!r.error)renderSide()})} // 목차와 학습 도우미 내용을 한꺼번에 받아 옴
 /* 개념익히기: 열린 목차(토글)가 화면 높이의 70% 이상을 차지하면 오른쪽 아래에 '접기' 버튼이 따라다님. 누르면 그 목차를 접고 제목으로 화면을 옮김 */
 let SECX=null;function secChk(){if(!SECX){SECX=document.createElement('button');SECX.id='secx';SECX.className='main';document.body.appendChild(SECX);
   SECX.onclick=()=>{const d=SECX._d;if(!d||!d.isConnected)return secChk();d.open=false;const y=d.getBoundingClientRect().top;if(y<60)scrollBy(0,y-70);secChk()};addEventListener('scroll',secChk,{passive:true});addEventListener('resize',secChk);new MutationObserver(secChk).observe(app,{childList:true})}
@@ -255,7 +257,7 @@ addEventListener('focus',()=>{if(!TM.on||!TM.bl)return;tmAccrue();const d=TM.a-(
 addEventListener('pagehide',()=>{if(TM.on){tmAccrue();tmFlush(true)}});
 /* ---- 학습 도우미: 공지 / 용어 사전 / 오류 모음 / 치트시트 ---- */
 let infoBusy=false;
-async function openInfo(kind,nl){if(kind==='grade')return openGrades();if(infoBusy||document.querySelector('.modal.info:not(.ad-out)'))return;infoBusy=true;let r;try{r=await get('info',()=>api('info'))}finally{infoBusy=false}if(document.querySelector('.modal.info:not(.ad-out)'))return;if(r.error){toast(r.error);return}
+async function openInfo(kind,nl){if(kind==='grade')return openGrades();if(infoBusy||document.querySelector('.modal.info:not(.ad-out)'))return;infoBusy=true;if(!mem.info)toast('불러오는 중...');let r;try{r=await get('info',()=>api('info'))}finally{infoBusy=false}if(document.querySelector('.modal.info:not(.ad-out)'))return;if(r.error){toast(r.error);return}
   const T={notice:'📢 공지',term:'📖 용어 사전',err:'🛠 오류 모음',cheat:'📝 치트시트',assess:'📑 평가 기준표'}[kind],m=document.createElement('div');m.className='modal info';
   const tag=x=>x.sub?` <small style="color:var(--sub)">${esc(x.sub)}</small>`:'';
   let h='';
@@ -460,11 +462,11 @@ function loginView(msg=''){showToc(false);app.innerHTML=`<div class="box narrow 
   $('#fg').onclick=e=>{e.preventDefault();forgotView()};fillYears();$('#go').onclick=go;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('#go').disabled)go()})}
 function resume(){let p=null;try{p=JSON.parse(sessionStorage.getItem('pos')||'null')}catch(e){}const u=S.user;if(!p||p.u!==u.id||u.must||(u.role!=='관리자'&&isPhone()))return start();
   S.asub=p.asub||'';S.ayear=p.ayear||'';S.preview=u.role==='관리자'&&!!p.p;setWho();
-  if(u.role==='관리자'&&!S.preview){showToc(false);tmStop();return p.v==='msgs'?msgsView():p.v==='notice'?noticeView():p.v==='grades'?gradesView(p.cls):p.v==='class'?classView(p.cls):p.v==='detail'?detailView(p.id,p.cls):adminView()}
+  if(u.role==='관리자'&&!S.preview){showToc(false);tmStop();S.atab=['amenu','msgs','notice','grades'].includes(p.v)?'menu':'class';return p.v==='amenu'?adminMenu():p.v==='msgs'?msgsView():p.v==='notice'?noticeView():p.v==='grades'?gradesView(p.cls):p.v==='class'?classView(p.cls):p.v==='detail'?detailView(p.id,p.cls):adminView()}
   showToc(true);loadToc();if(u.role!=='관리자')tmStart();p.v==='lesson'?(S.sub=p.sub,lessonView()):p.v==='act'||p.v==='content'?go(p.sub,p.no,p.act).then(()=>{if(!S.at)langView()}):langView(p.g)}
 const isPhone=()=>matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<600; // 휴대폰(태블릿 제외)
 function phoneView(){showToc(false);tmStop();app.innerHTML=`<div class="box narrow" style="text-align:center"><h2>📱 휴대폰에서는 성적 확인만 할 수 있어요</h2><p style="color:var(--sub)">수업 내용은 컴퓨터나 태블릿에서 열어 주세요.</p><button class="main" onclick="openGrades()">🔒 내 성적 보기</button></div>`}
-function start(){if(S.user.role==='관리자')S.preview=true;setWho();if(S.user.must)return pwView();if(S.user.role!=='관리자'&&isPhone())return phoneView();S.user.role==='관리자'?(showToc(true),loadToc(),tmStop(),langView()):(showToc(true),loadToc(),tmStart(),langView())} // 관리자도 처음엔 '학생 화면 보기'로 시작
+function start(){if(S.user.role==='관리자')S.preview=true;setWho();if(S.user.must)return pwView();if(S.user.role!=='관리자'&&isPhone())return phoneView();S.user.role==='관리자'?(showToc(true),loadToc(),tmStop(),langView(),adminData()):(showToc(true),loadToc(),tmStart(),langView())} // 관리자도 처음엔 '학생 화면 보기'로 시작
 function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 만들기</h2><p>처음 로그인했어요. 비밀번호를 바꿔야 계속할 수 있어요.</p>
 <div class="pwr"><input id="n1" type="password" placeholder="새 비밀번호 (4자 이상)" autocomplete="new-password"><button type="button" class="eye" id="ey" title="비밀번호 보기">👁</button></div><div class="pwr"><input id="n2" type="password" placeholder="한 번 더 입력" autocomplete="new-password"></div><div class="err" id="e"></div><button class="main" id="go">바꾸기</button></div>`;
   const POP=(inner)=>{const m=document.createElement('div');m.className='modal pwm';m.innerHTML=`<div class="mb" style="text-align:center">${inner}</div>`;document.body.appendChild(m);return m};
@@ -892,18 +894,23 @@ _o.getvalue()+('\\n#STOP#' if _st[0] else '')`)}
 function putOut(o,t){const st=t.endsWith('#STOP#');o.textContent=st?t.slice(0,-6):t;if(st){const b=document.createElement('b');b.style.color='#e53935';b.textContent='중지되었습니다!';o.appendChild(b)}}
 
 /* 관리자 */
-async function adminView(force){if(force||!mem.subjects)app.innerHTML='불러오는 중...';
-  const sr=await get('subjects',()=>api('subjects'),force);if(sr.error)return app.innerHTML=sr.error;
+// 학급 현황에 쓸 자료(과목·연도·반 목록): 과목과 연도는 한꺼번에 물어봄. 관리자가 로그인하면 학생 화면을 보는 동안 미리 받아 둠(adminData())
+async function adminData(force){const [sr,yr]=await Promise.all([get('subjects',()=>api('subjects'),force),get('years',()=>api('years'),force)]);if(sr.error)return{err:sr.error};
   if(!sr.subjects.some(s=>s.name===S.asub))S.asub=(sr.subjects.find(s=>s.ready)||sr.subjects[0]||{}).name||'';
-  const yr=await get('years',()=>api('years'),force);if(!S.ayear||!(yr.years||[]).includes(S.ayear))S.ayear=yr.cur||(yr.years||[])[0]||'';here('admin',{});const key='classes|'+S.asub+'|'+S.ayear,r=await get(key,()=>api('classes',{sub:S.asub,year:S.ayear}),force);if(r.error)return app.innerHTML=r.error;
-  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>학급 현황</h2><button class="ghost" onclick="adminView(true)">⟳ 새로고침</button></div><div class="row" style="margin-bottom:14px">${sr.subjects.map(s=>`<button class="chip ${s.name===S.asub?'on':''}" data-sub="${esc(s.name)}">${ico(s.icon)} ${esc(s.name)}${s.ready?'':' (준비중)'}</button>`).join('')}</div>
-  <div class="row" style="margin-bottom:14px">📅 ${(yr.years||[]).map(y=>`<button class="chip ${y===S.ayear?'on':''}" data-yr="${y}">${y}년</button>`).join('')}</div><div class="grid">${r.classes.map(c=>`<button class="card" data-c="${c.cls}"><b>${c.cls}반</b><small>${c.count}명 · 전체 진도 ${c.pct}%</small>${bar(c.pct,100)}</button>`).join('')}<button class="card" data-msgs><b>💬 한마디 모음</b><small>오늘 올라온 한마디 승인 · 거절</small></button><button class="card" data-grd><b>📊 성적 조회</b><small>학생이 보는 성적 창 그대로 보기</small></button><button class="card" data-ntc><b>📢 공지 관리</b><small>공지 등록 · 수정 · 학생 화면에 보이기</small></button></div>`;
+  if(!S.ayear||!(yr.years||[]).includes(S.ayear))S.ayear=yr.cur||(yr.years||[])[0]||'';const r=await get('classes|'+S.asub+'|'+S.ayear,()=>api('classes',{sub:S.asub,year:S.ayear}),force);return r.error?{err:r.error}:{sr,yr,r}}
+const aTabs=t=>`<div class="row"><button class="chip ${t==='class'?'on':''}" onclick="S.atab='class';adminView()">🏫 학급 현황</button><button class="chip ${t==='menu'?'on':''}" onclick="S.atab='menu';adminView()">🛠 관리자 메뉴</button></div>`;
+function adminMenu(){here('amenu',{});app.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:14px">${aTabs('menu')}</div><div class="grid"><button class="card" data-msgs><b>💬 한마디 모음</b><small>오늘 올라온 한마디 승인 · 거절</small></button><button class="card" data-grd><b>📊 성적 조회</b><small>학생이 보는 성적 창 그대로 보기</small></button><button class="card" data-ntc><b>📢 공지 관리</b><small>공지 등록 · 수정 · 학생 화면에 보이기</small></button></div>`;
+  app.querySelector('[data-msgs]').onclick=()=>msgsView();app.querySelector('[data-grd]').onclick=()=>gradesView();app.querySelector('[data-ntc]').onclick=()=>noticeView()}
+async function adminView(force){if(S.atab==='menu')return adminMenu();here('admin',{});if(force||!mem.subjects||!mem.years||!mem['classes|'+S.asub+'|'+S.ayear])app.innerHTML='불러오는 중...';
+  const D=await adminData(force);if(D.err)return app.innerHTML=D.err;if(S.atab==='menu'||S.preview)return;const {sr,yr,r}=D; // 기다리는 사이 다른 탭·학생 화면으로 옮겼으면 그리지 않음
+  app.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:14px">${aTabs('class')}<button class="ghost" onclick="adminView(true)">⟳ 새로고침</button></div><div class="row" style="margin-bottom:14px">${sr.subjects.map(s=>`<button class="chip ${s.name===S.asub?'on':''}" data-sub="${esc(s.name)}">${ico(s.icon)} ${esc(s.name)}${s.ready?'':' (준비중)'}</button>`).join('')}</div>
+  <div class="row" style="margin-bottom:14px">📅 ${(yr.years||[]).map(y=>`<button class="chip ${y===S.ayear?'on':''}" data-yr="${y}">${y}년</button>`).join('')}</div><div class="grid">${r.classes.map(c=>`<button class="card" data-c="${c.cls}"><b>${c.cls}반</b><small>${c.count}명 · 전체 진도 ${c.pct}%</small>${bar(c.pct,100)}</button>`).join('')}</div>`;
   app.querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{S.asub=b.dataset.sub;adminView()});app.querySelectorAll('[data-yr]').forEach(b=>b.onclick=()=>{S.ayear=b.dataset.yr;adminView()});
-  app.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>classView(+b.dataset.c));app.querySelector('[data-msgs]').onclick=()=>msgsView();app.querySelector('[data-grd]').onclick=()=>gradesView();app.querySelector('[data-ntc]').onclick=()=>noticeView()}
+  app.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>classView(+b.dataset.c))}
 /* 관리자: 오늘 올라온 한마디 모음. 승인하면 전광판에 올라가고, 거절하면 학생 화면에서 조용히 사라짐(학생은 그날 한 번 더 쓸 수 있고, 거절 포함 하루 2번까지) */
 async function msgsView(){here('msgs',{});app.innerHTML='불러오는 중...';const r=await api('msgList');if(r.error)return app.innerHTML=esc(r.error);
   const KD=(d,t)=>{const a=String(d).split('-').map(Number),b=String(t||'').split(':').map(Number);return esc(a.length===3?`${a[0]}년 ${a[1]}월 ${a[2]}일`:d)+(b.length>=2&&!isNaN(b[0])?` ${b[0]}시 ${b[1]}분`:'')},L=r.list.slice().reverse(),TD=L.filter(x=>!x.date||x.date===r.date),cnt=k=>TD.filter(x=>x.status===k).length,lab={승인:'✅ 승인',거절:'🚫 거절',대기:'⏳ 대기'};
-  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>💬 한마디 모음 <small style="font-size:14px;color:var(--sub)">${esc(r.date)}</small></h2><div class="row"><button class="ghost" onclick="adminView()">← 학급 현황</button><button class="ghost" onclick="msgsView()">⟳ 새로고침</button></div></div>
+  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>💬 한마디 모음 <small style="font-size:14px;color:var(--sub)">${esc(r.date)}</small></h2><div class="row"><button class="ghost" onclick="S.atab='menu';adminView()">← 관리자 메뉴</button><button class="ghost" onclick="msgsView()">⟳ 새로고침</button></div></div>
   <p style="color:var(--sub);margin:0 0 12px">대기 ${cnt('대기')} · 승인 ${cnt('승인')} · 거절 ${cnt('거절')} — 거절해도 학생에게는 알림이 가지 않고, 학생 화면에서 조용히 사라져요.</p><input id="mq" placeholder="🔍 날짜(예: 11월 4일, 11-04) 또는 이름·학번으로 찾기" style="width:100%;max-width:420px;box-sizing:border-box">
   ${(()=>{const row=(x,i)=>`<div class="mrow ${x.status}" data-i="${i}" data-k="${esc((KD(x.date||r.date,x.time)+(x.date||'')+x.who).replace(/\s/g,''))}"><div class="mtx"><div class="mdt">${KD(x.date||r.date,x.time)}${x.edited?` · 고침 ${KD(x.edited.slice(0,10),x.edited.slice(11))}`:''}</div><div class="mtt">${esc(x.text)} <span class="mwh">${esc(x.who)}</span></div></div><span class="mbg ${x.status}">${lab[x.status]||esc(x.status)}</span><button class="ghost mpb" title="전광판에 이름까지 보일지 정해요 (기본은 반만)">${x.pub?'👤 이름 보임':'🙈 반만 보임'}</button><button class="ghost mth" title="test 계정 전광판에 이 글을 보일지 정해요">${x.hide?'🚫 test 숨김':'🧪 test 보임'}</button><button class="ghost" data-s="승인" ${x.status==='승인'?'disabled':''}>승인</button><button class="ghost" data-s="거절" ${x.status==='거절'?'disabled':''}>거절</button></div>`,sec=(t,a,e)=>`<div class="msc"><h3 class="msh">${t} <small>${a.length}개</small></h3>`+(a.length?a.map(x=>row(x,L.indexOf(x))).join(''):`<p>${e}</p>`)+'</div>';return sec('📌 오늘 올라온 한마디',TD,'오늘 올라온 한마디가 아직 없어요.')+sec('🗂 예전 한마디 (최근 3개월)',L.filter(x=>!TD.includes(x)),'예전 한마디가 없어요.')})()}`;
   const mq=app.querySelector('#mq');mq.oninput=()=>{const q=mq.value.replace(/\s/g,'');app.querySelectorAll('.msc').forEach(c=>{let n=0;c.querySelectorAll('.mrow').forEach(w=>{const ok=!q||w.dataset.k.includes(q);w.style.display=ok?'':'none';n+=ok});const h=c.querySelector('.msh small');if(h)h.textContent=(q?`찾은 글 ${n}개`:`${c.querySelectorAll('.mrow').length}개`)})};
@@ -916,7 +923,7 @@ async function msgsView(){here('msgs',{});app.innerHTML='불러오는 중...';co
 /* 관리자: 공지 관리. 위 칸에 적고 저장하면 '공지' 탭에 한 줄 추가(수정이면 그 줄을 고침). '보이기/숨기기' 버튼으로 학생 화면에 띄울 공지를 고름(시트 '숨김' 칸 O) */
 async function noticeView(){here('notice',{});app.innerHTML='불러오는 중...';const r=await api('noticeList');if(r.error)return app.innerHTML=esc(r.error==='알 수 없는 요청이에요.'?'서버(Code.gs)를 새 버전으로 배포해야 쓸 수 있어요.':r.error);
   let ed=null;const L=r.list,row=(x,i)=>`<div class="mrow ${x.hide?'거절':''}" data-i="${i}"><div class="mtx"><div class="mdt">${esc(x.date)}${x.target?` · 대상: ${esc(x.target)}`:' · 모두에게'}</div><div class="mtt">${esc(x.title)}</div><div class="nbd">${fmt(x.body)}</div></div><span class="mbg ${x.hide?'거절':'승인'}">${x.hide?'🙈 숨김':'👀 보임'}</span><button class="ghost nhd">${x.hide?'보이기':'숨기기'}</button><button class="ghost ned">수정</button></div>`;
-  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>📢 공지 관리</h2><div class="row"><button class="ghost" onclick="adminView()">← 학급 현황</button><button class="ghost" onclick="noticeView()">⟳ 새로고침</button></div></div>
+  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>📢 공지 관리</h2><div class="row"><button class="ghost" onclick="S.atab='menu';adminView()">← 관리자 메뉴</button><button class="ghost" onclick="noticeView()">⟳ 새로고침</button></div></div>
   <div class="sbox nfm"><h3 class="msh" style="margin-top:0" id="nfh">✏️ 새 공지 쓰기</h3><div class="row"><input id="nd" type="date" value="${esc(r.date)}" style="max-width:170px"><input id="nt" placeholder="제목" style="flex:1;min-width:200px"></div>
   <textarea id="nb" rows="5" placeholder="내용 (화면 입력 문법 그대로 쓸 수 있어요. 예: **굵게**)" style="width:100%;box-sizing:border-box;margin-top:8px"></textarea>
   <input id="ng" placeholder="대상 학번 (비우면 모두에게. 여러 명은 쉼표로 구분)" style="width:100%;box-sizing:border-box;margin-top:8px">
@@ -928,10 +935,10 @@ async function noticeView(){here('notice',{});app.innerHTML='불러오는 중...
   app.querySelectorAll('.mrow .ned').forEach(b=>b.onclick=()=>{const x=L[+b.closest('.mrow').dataset.i];ed=x;$$('#nfh').textContent='✏️ 공지 수정: '+x.title;$$('#nd').value=x.date;$$('#nt').value=x.title;$$('#nb').value=x.body;$$('#ng').value=x.target;$$('#nh').checked=x.hide;$$('#nc').style.display='';$$('#ns').textContent='수정 저장';$$('.nfm').scrollIntoView({behavior:'smooth',block:'start'});$$('#nt').focus()});
   app.querySelectorAll('.mrow .nhd').forEach(b=>b.onclick=async()=>{const w=b.closest('.mrow'),x=L[+w.dataset.i];w.querySelectorAll('button').forEach(z=>z.disabled=true);const q=await api('noticeSave',{only:'hide',row:x.row,oldTitle:x.title,oldDate:x.date,hide:!x.hide});if(q.error){toast(q.error);return noticeView()}done(x.hide?'학생 화면에 보여요':'학생 화면에서 숨겼어요')})}
 /* 관리자: 성적 조회. 반을 고르고 학생을 누르면 학생 '내 성적 보기'와 같은 창을 띄움(관리자는 시간·성적공개 설정과 상관없이 항상 볼 수 있음, 이번 학년도만) */
-async function gradesView(cls){const ck='classes|'+S.asub+'|'+S.ayear,cr=await get(ck,()=>api('classes',{sub:S.asub,year:S.ayear}));if(cr.error)return app.innerHTML=esc(cr.error);
+async function gradesView(cls){if(!mem['classes|'+S.asub+'|'+S.ayear])app.innerHTML='불러오는 중...';const D=await adminData();if(D.err)return app.innerHTML=esc(D.err);const cr=D.r;
   const CL=cr.classes.map(c=>c.cls);if(!CL.includes(cls))cls=CL[0];here('grades',{cls});app.innerHTML='불러오는 중...';
   const r=cls==null?{students:[]}:await get('ct|'+S.asub+'|'+S.ayear+'|'+cls,()=>api('classTable',{cls,sub:S.asub,year:S.ayear}));if(r.error)return app.innerHTML=esc(r.error);
-  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>📊 성적 조회 <small style="font-size:14px;color:var(--sub)">${esc(S.ayear)}년</small></h2><button class="ghost" onclick="adminView()">← 학급 현황</button></div>
+  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>📊 성적 조회 <small style="font-size:14px;color:var(--sub)">${esc(S.ayear)}년</small></h2><button class="ghost" onclick="S.atab='menu';adminView()">← 관리자 메뉴</button></div>
   <div class="row" style="margin-bottom:10px">${CL.map(c=>`<button class="chip ${c===cls?'on':''}" data-gc="${c}">${c}반</button>`).join('')}</div>
   <input class="gq" placeholder="🔍 학번이나 이름으로 찾기" style="margin-bottom:12px;max-width:320px">
   <div class="grid">${r.students.map(x=>`<button class="card" data-gid="${esc(x.id)}" data-k="${esc((x.sid||x.id)+' '+x.name)}"><b>${esc(x.sid||x.id)}</b><small>${esc(x.name)}</small></button>`).join('')||'<p>이 반에는 학생이 없어요.</p>'}</div>`;
