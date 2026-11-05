@@ -28,6 +28,7 @@ textarea{font-family:Consolas,monospace;font-size:14px;min-height:150px;tab-size
 .bar{height:7px;border-radius:5px;background:#ffffffa0;margin-top:10px;overflow:hidden}.bar i{display:block;height:100%;background:#7fc8a9}
 .box{border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:16px}
 .pwr{position:relative}.pwr .eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;font-size:18px;cursor:pointer;padding:4px 8px}.pwr input{padding-right:44px}
+.capw{display:none;position:absolute;left:0;top:100%;z-index:5;margin-top:2px;background:#fff4d6;color:#b26a00;border:1px solid #ffd27a;border-radius:8px;padding:3px 10px;font-size:13px;font-weight:bold;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.08)}.capw.on{display:block}
 .narrow{max-width:360px;margin:50px auto;text-align:center}.lgbox{max-width:440px}.lgi{display:flex;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.lgt{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 6px;border-radius:14px;background:var(--sky)}.lgt:first-child{background:var(--mint)}.lgt small{color:var(--sub);font-size:13px}.lgt b{font-size:24px;font-weight:normal;color:var(--ink);font-variant-numeric:tabular-nums}.narrow input{margin:6px 0}
 pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:14px/1.6 Consolas,monospace;margin:8px 0;white-space:pre-wrap}
 .msg{margin-top:8px;padding:8px 12px;border-radius:10px;display:none}.msg.ok{background:var(--ok);display:block}.msg.no{background:var(--no);display:block}
@@ -126,7 +127,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v169)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v170)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -355,6 +356,12 @@ function fqBind(){document.querySelectorAll('.fnq:not(.on):not(.bad)').forEach(q
   if(!T){const m=q.querySelector('.fqm');m.className='fqm r';m.textContent='⚠ 이 줄보다 위에 [표]가 있어야 해요.';return}
   q._t=T;fqNum(T);if(q.dataset.m)fqXL(T);else if(!(q._A=fqH(T,q.dataset.r))){const m=q.querySelector('.fqm');m.className='fqm r';m.textContent=`⚠ 표 머리글에서 '${q.dataset.r}'을(를) 찾지 못했어요.`}if(!T._q)fqAct(q)})}
 new MutationObserver(fqBind).observe(document.body,{childList:true,subtree:true});
+function pwBind(){document.querySelectorAll('input[type=password]:not([data-pw])').forEach(i=>{i.dataset.pw=1;let w=i.parentElement;
+  if(!w.classList.contains('pwr')){w=document.createElement('div');w.className='pwr';if(i.style.maxWidth){w.style.maxWidth=i.style.maxWidth;w.style.flex='1'}i.before(w);w.appendChild(i);
+    const b=document.createElement('button');b.type='button';b.className='eye';b.title='비밀번호 보기';b.textContent='👁';b.onclick=()=>{const h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'🙈':'👁';b.title=h?'비밀번호 숨기기':'비밀번호 보기';i.focus()};w.appendChild(b)}
+  const c=document.createElement('div');c.className='capw';c.textContent='⇪ 지금 대문자로 입력되고 있어요!';w.appendChild(c);
+  const k=e=>{if(e.getModifierState)c.classList.toggle('on',e.getModifierState('CapsLock'))};i.addEventListener('keydown',k);i.addEventListener('keyup',k);i.addEventListener('blur',()=>c.classList.remove('on'))})}
+new MutationObserver(pwBind).observe(document.body,{childList:true,subtree:true});pwBind();
 let fqD=null;
 function fqSel(q,a,b){q._done=null;q._g={r1:Math.min(+a.dataset.r,+b.dataset.r),r2:Math.max(+a.dataset.r,+b.dataset.r),c1:Math.min(+a.dataset.c,+b.dataset.c),c2:Math.max(+a.dataset.c,+b.dataset.c)};
   const s=q.querySelector('.fqs');s.innerHTML=fqSh(q,q._g);s.classList.add('on');q.querySelector('.fqm').textContent='';fqPaint(q)}
