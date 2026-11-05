@@ -67,7 +67,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 @media(min-width:1200px){#wrap.hasToc{grid-template-columns:250px minmax(0,1fr) 300px}.hasToc #side{display:block}}
 #mbx:empty{display:none}.mbt{background:#fffbea;border-radius:12px;padding:10px 12px;min-height:64px}.mbs{font-size:17px;font-weight:bold;word-break:keep-all;overflow-wrap:anywhere}.mbn{text-align:right;font-size:14px;margin-top:4px}.mbn small{font-size:12px;color:var(--sub)}.mbi{margin-top:10px;font-size:14px}.mbi input{padding:7px 10px;font-size:14px}.mbi button{padding:4px 12px;font-size:13px;margin:6px 4px 0 0}.mbg{font-size:12px;border-radius:999px;padding:1px 8px;background:#eef1f8}.mbg.승인{background:var(--ok)}.mbg.거절{background:var(--no)}.mbr{color:#c25a5a;font-size:13px}.mbg.대기{background:#eef1f8}
 .mrow{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:#fff}.mrow.승인{background:#f3fbf5}.mrow.거절{opacity:.55}.mtx{flex:1;min-width:0}.mtt{font-weight:bold;word-break:keep-all;overflow-wrap:anywhere}.mtx small{color:var(--sub)}.mrow button{padding:5px 12px;font-size:13px}.mdt{color:var(--sub);font-size:12px;margin-bottom:2px}.mwh{font-weight:normal;font-size:14px;color:var(--sub);white-space:nowrap;margin-left:6px}.msh{margin:18px 0 8px;font-size:17px}.msh small{font-size:13px;color:var(--sub);font-weight:normal}
-@media(max-width:600px){.mrow{flex-wrap:wrap}.mtx{flex-basis:100%}}.mbz{color:var(--ink);font-size:13px}
+.nbd{font-size:14px;color:var(--sub);margin-top:4px;max-height:120px;overflow:auto}@media(max-width:600px){.mrow{flex-wrap:wrap}.mtx{flex-basis:100%}}.mbz{color:var(--ink);font-size:13px}
 .sbox{border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:12px}.sbox h4{margin:0 0 6px;font-size:14px;color:var(--sub)}
 .yr{padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;width:auto}
 .cnx{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 8px;padding:9px 12px;border-radius:12px;background:#eef1f8;color:var(--sub);font-size:15px;line-height:1.5;white-space:pre-line;transition:opacity .6s}.cnx.ok{background:var(--mint);color:var(--ink)}.cnx.no{background:var(--no);color:var(--ink);flex-direction:column}.cnx.gone{opacity:0}
@@ -126,7 +126,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v163)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v167)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -161,8 +161,6 @@ function rec(no,act,q,answer,ok){clearDraft(no,act,q);if(isAft()&&!S.preview){tr
 function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
 function showToc(on){$('#wrap').classList.toggle('hasToc',on);$('#tg').classList.toggle('on',on);if(on)renderToc();else $('#toc').classList.remove('open')}
 async function loadToc(){await get('toc',()=>api('toc'));renderToc();get('info',()=>api('info')).then(r=>{if(r&&!r.error)renderSide()})}
-let NSEEN=false;function autoNotice(){if(NSEEN||!S.user||S.user.role==='관리자'||S.preview)return;const I=mem.info,k='seen|'+S.user.id;let seen=[];try{seen=JSON.parse(localStorage.getItem(k)||'[]')}catch(e){}
-  const nw=((I&&I.notices)||[]).filter(x=>!seen.includes(x.date+'|'+x.title));NSEEN=true;if(!nw.length)return;try{localStorage.setItem(k,JSON.stringify(seen.concat(nw.map(x=>x.date+'|'+x.title)).slice(-200)))}catch(e){}openInfo('notice',nw)}
 /* 개념익히기: 열린 목차(토글)가 화면 높이의 70% 이상을 차지하면 오른쪽 아래에 '접기' 버튼이 따라다님. 누르면 그 목차를 접고 제목으로 화면을 옮김 */
 let SECX=null;function secChk(){if(!SECX){SECX=document.createElement('button');SECX.id='secx';SECX.className='main';document.body.appendChild(SECX);
   SECX.onclick=()=>{const d=SECX._d;if(!d||!d.isConnected)return secChk();d.open=false;const y=d.getBoundingClientRect().top;if(y<60)scrollBy(0,y-70);secChk()};addEventListener('scroll',secChk,{passive:true});addEventListener('resize',secChk);new MutationObserver(secChk).observe(app,{childList:true})}
@@ -298,7 +296,7 @@ function openGrades(){if(S.preview||!S.user||S.user.role==='관리자'){toast('�
 async function go(sub,no,act){const T=mem.toc||await get('toc',()=>api('toc'));if(!T||T.error)return;const sj=T.subjects.find(x=>x.name===sub);if(!sj||!sj.ready){toast('🛠 아직 준비중입니다!');return}
   S.sub=sub;S.menu={lessons:sj.lessons};$('#toc').classList.remove('open');act?contentView(no,act):actView(no)}
 const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const ico=x=>/^https?:\/\//i.test(String(x))||/\.(png|jpe?g|gif|svg|webp)$/i.test(String(x))?`<img class="ico" src="${esc(x)}" alt="">`:esc(x);
+const ico=x=>/^https?:\/\//i.test(String(x))||/\.(png|jpe?g|gif|svg|webp)$/i.test(String(x))?`<img class="ico" loading="lazy" decoding="async" src="${esc(x)}" alt="">`:esc(x);
 const AN={개념:['📘','개념 배우기'],해석:['🔍','코드 해석하기'],작성:['✍️','코드 작성하기']};
 async function api(action,d={},tries=0){
   const retry=async()=>{await new Promise(r=>setTimeout(r,900*(tries+1)));return api(action,d,tries+1)};
@@ -417,7 +415,8 @@ function fx(s){const st=[],lk=[];s=s.replace(/`([^`\n]+)`/g,(m,c)=>{st.push(c);r
     .replace(/\[\s*(?:글꼴|서체)\s*[:：]\s*(강원|교보)\s*\|([^\]]*)\]/g,(m,k,x)=>`<span style='font-family:${k==='강원'?'GangwonEduSaeeum':'KyoboHand'},KoPubWorld Dotum,sans-serif;font-size:1.2em'>${bx(x)}</span>`)
     .replace(/\*\*([^*\n]+?)\*\*/g,'<b>$1</b>').replace(/__([^_\n]+?)__/g,'<u>$1</u>').replace(/~~([^~\n]+?)~~/g,'<s>$1</s>');
   return s.replace(/\u0001(\d+)\u0001/g,(m,i)=>`<code class='ic'>${st[i]}</code>`).replace(/\u0002(\d+)\u0002/g,(m,i)=>lk[i])}
-function pic(s){return s.replace(/\[그림:([^\]\s|]+)(?:\|([^\]]*))?\]/g,(m,u,cap)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<figure class="fig"><img class="pic" src="${u}" alt="${cap?cap.replace(/<[^>]*>/g,'').trim():'그림'}">${cap?`<figcaption>${cap.trim()}</figcaption>`:''}</figure>`:m)}
+const wp=u=>/^https?:/i.test(u)?u:u.replace(/\.(png|jpe?g)$/i,'.webp'); // [그림:사진.png] → 같은 이름 사진.webp를 먼저 띄우고, 없으면 원래 파일
+function pic(s){return s.replace(/\[그림:([^\]\s|]+)(?:\|([^\]]*))?\]/g,(m,u,cap)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<figure class="fig"><img class="pic" loading="lazy" decoding="async" src="${wp(u)}"${wp(u)!==u?` onerror="this.onerror=null;this.src='${u}'"`:''} alt="${cap?cap.replace(/<[^>]*>/g,'').trim():'그림'}">${cap?`<figcaption>${cap.trim()}</figcaption>`:''}</figure>`:m)}
 function qz(s){return s.replace(/\[\s*(주관식|드롭다운|객관식|예아니오)\s*[:：]([^\]]*)\]/g,(m,k,b)=>{const p=b.split('|').map(x=>x.trim());let q=p[0],ans,opts,h;
   const sp2=x=>(x||'').replace(/<[^>]*>/g,'');if(k==='주관식'){ans=sp2(p[1]);h=sp2(p[2])}else if(k==='예아니오'){opts=['예','아니오'];ans=sp2(p[1]);h=sp2(p[2])}else{opts=(p[1]||'').split('/').map(x=>sp2(x).trim());ans=sp2(p[2]);h=sp2(p[3])}
   const body=k==='주관식'?'<input class="qin" placeholder="답을 써 보세요" autocomplete="off">':k==='드롭다운'?`<select class="qin"><option value="">선택하세요</option>${opts.map(o=>`<option>${o}</option>`).join('')}</select>`:opts.map(o=>`<button class="ghost qo" data-v="${o}">${o}</button>`).join('');
@@ -438,7 +437,7 @@ function goHome(){const u=S.user;if(!u||u.must)return;if(u.role!=='관리자'&&i
   if(u.role==='관리자'&&!S.preview){showToc(false);adminView();return}showToc(true);loadToc();langView()}
 $('#hm').onclick=goHome;$('#hm').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();goHome()}});
 function togglePrev(){S.preview=!S.preview;setWho();S.preview?(showToc(true),loadToc(),langView()):(showToc(false),adminView())}
-function logout(){NSEEN=false;tmStop();mem={};S.preview=false;S.sel={};S.sub='';S.asub='';S.ayear='';sessionStorage.removeItem('t');sessionStorage.removeItem('pos');S.token='';S.user=null;setWho();hdrNotice();loginView()}
+function logout(){tmStop();mem={};S.preview=false;S.sel={};S.sub='';S.asub='';S.ayear='';sessionStorage.removeItem('t');sessionStorage.removeItem('pos');S.token='';S.user=null;setWho();hdrNotice();loginView()}
 
 /* 로그인 */
 let cnxT=null;
@@ -461,7 +460,7 @@ function loginView(msg=''){showToc(false);app.innerHTML=`<div class="box narrow 
   $('#fg').onclick=e=>{e.preventDefault();forgotView()};fillYears();$('#go').onclick=go;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('#go').disabled)go()})}
 function resume(){let p=null;try{p=JSON.parse(sessionStorage.getItem('pos')||'null')}catch(e){}const u=S.user;if(!p||p.u!==u.id||u.must||(u.role!=='관리자'&&isPhone()))return start();
   S.asub=p.asub||'';S.ayear=p.ayear||'';S.preview=u.role==='관리자'&&!!p.p;setWho();
-  if(u.role==='관리자'&&!S.preview){showToc(false);tmStop();return p.v==='msgs'?msgsView():p.v==='grades'?gradesView(p.cls):p.v==='class'?classView(p.cls):p.v==='detail'?detailView(p.id,p.cls):adminView()}
+  if(u.role==='관리자'&&!S.preview){showToc(false);tmStop();return p.v==='msgs'?msgsView():p.v==='notice'?noticeView():p.v==='grades'?gradesView(p.cls):p.v==='class'?classView(p.cls):p.v==='detail'?detailView(p.id,p.cls):adminView()}
   showToc(true);loadToc();if(u.role!=='관리자')tmStart();p.v==='lesson'?(S.sub=p.sub,lessonView()):p.v==='act'||p.v==='content'?go(p.sub,p.no,p.act).then(()=>{if(!S.at)langView()}):langView(p.g)}
 const isPhone=()=>matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<600; // 휴대폰(태블릿 제외)
 function phoneView(){showToc(false);tmStop();app.innerHTML=`<div class="box narrow" style="text-align:center"><h2>📱 휴대폰에서는 성적 확인만 할 수 있어요</h2><p style="color:var(--sub)">수업 내용은 컴퓨터나 태블릿에서 열어 주세요.</p><button class="main" onclick="openGrades()">🔒 내 성적 보기</button></div>`}
@@ -548,7 +547,6 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
       bx.querySelector('.run').onclick=async()=>{out.style.display='block';out.textContent='실행 중...';try{putOut(out,await runPy(ta.value,it.ins[0])||'(출력 없음)')}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
       bx.querySelector('.sub').onclick=async()=>{const b=bx.querySelector('.sub');if(!ta.value.trim()){m.className='msg no';m.textContent='코드를 먼저 써 주세요';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';
         const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='💾 저장했어요! 고쳐서 다시 저장해도 돼요.'}})}}
-async function lessonView0(){const r=await api('menu');if(!r.error)S.menu=r}
 
 /* 파이썬 실행 (브라우저 안, Pyodide) */
 /* 실행 과정 보기: 시트 칸에 ```trace ... ``` 로 쓰면 이 화면으로 바뀝니다 */
@@ -899,9 +897,9 @@ async function adminView(force){if(force||!mem.subjects)app.innerHTML='불러오
   if(!sr.subjects.some(s=>s.name===S.asub))S.asub=(sr.subjects.find(s=>s.ready)||sr.subjects[0]||{}).name||'';
   const yr=await get('years',()=>api('years'),force);if(!S.ayear||!(yr.years||[]).includes(S.ayear))S.ayear=yr.cur||(yr.years||[])[0]||'';here('admin',{});const key='classes|'+S.asub+'|'+S.ayear,r=await get(key,()=>api('classes',{sub:S.asub,year:S.ayear}),force);if(r.error)return app.innerHTML=r.error;
   app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>학급 현황</h2><button class="ghost" onclick="adminView(true)">⟳ 새로고침</button></div><div class="row" style="margin-bottom:14px">${sr.subjects.map(s=>`<button class="chip ${s.name===S.asub?'on':''}" data-sub="${esc(s.name)}">${ico(s.icon)} ${esc(s.name)}${s.ready?'':' (준비중)'}</button>`).join('')}</div>
-  <div class="row" style="margin-bottom:14px">📅 ${(yr.years||[]).map(y=>`<button class="chip ${y===S.ayear?'on':''}" data-yr="${y}">${y}년</button>`).join('')}</div><div class="grid">${r.classes.map(c=>`<button class="card" data-c="${c.cls}"><b>${c.cls}반</b><small>${c.count}명 · 전체 진도 ${c.pct}%</small>${bar(c.pct,100)}</button>`).join('')}<button class="card" data-msgs><b>💬 한마디 모음</b><small>오늘 올라온 한마디 승인 · 거절</small></button><button class="card" data-grd><b>📊 성적 조회</b><small>학생이 보는 성적 창 그대로 보기</small></button></div>`;
+  <div class="row" style="margin-bottom:14px">📅 ${(yr.years||[]).map(y=>`<button class="chip ${y===S.ayear?'on':''}" data-yr="${y}">${y}년</button>`).join('')}</div><div class="grid">${r.classes.map(c=>`<button class="card" data-c="${c.cls}"><b>${c.cls}반</b><small>${c.count}명 · 전체 진도 ${c.pct}%</small>${bar(c.pct,100)}</button>`).join('')}<button class="card" data-msgs><b>💬 한마디 모음</b><small>오늘 올라온 한마디 승인 · 거절</small></button><button class="card" data-grd><b>📊 성적 조회</b><small>학생이 보는 성적 창 그대로 보기</small></button><button class="card" data-ntc><b>📢 공지 관리</b><small>공지 등록 · 수정 · 학생 화면에 보이기</small></button></div>`;
   app.querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{S.asub=b.dataset.sub;adminView()});app.querySelectorAll('[data-yr]').forEach(b=>b.onclick=()=>{S.ayear=b.dataset.yr;adminView()});
-  app.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>classView(+b.dataset.c));app.querySelector('[data-msgs]').onclick=()=>msgsView();app.querySelector('[data-grd]').onclick=()=>gradesView()}
+  app.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>classView(+b.dataset.c));app.querySelector('[data-msgs]').onclick=()=>msgsView();app.querySelector('[data-grd]').onclick=()=>gradesView();app.querySelector('[data-ntc]').onclick=()=>noticeView()}
 /* 관리자: 오늘 올라온 한마디 모음. 승인하면 전광판에 올라가고, 거절하면 학생 화면에서 조용히 사라짐(학생은 그날 한 번 더 쓸 수 있고, 거절 포함 하루 2번까지) */
 async function msgsView(){here('msgs',{});app.innerHTML='불러오는 중...';const r=await api('msgList');if(r.error)return app.innerHTML=esc(r.error);
   const KD=(d,t)=>{const a=String(d).split('-').map(Number),b=String(t||'').split(':').map(Number);return esc(a.length===3?`${a[0]}년 ${a[1]}월 ${a[2]}일`:d)+(b.length>=2&&!isNaN(b[0])?` ${b[0]}시 ${b[1]}분`:'')},L=r.list.slice().reverse(),TD=L.filter(x=>!x.date||x.date===r.date),cnt=k=>TD.filter(x=>x.status===k).length,lab={승인:'✅ 승인',거절:'🚫 거절',대기:'⏳ 대기'};
@@ -915,6 +913,20 @@ async function msgsView(){here('msgs',{});app.innerHTML='불러오는 중...';co
     x.pub=q.pub;b.textContent=x.pub?'👤 이름 보임':'🙈 반만 보임';w.querySelectorAll('button').forEach(z=>z.disabled=z.dataset.s===x.status);MB.t=0;toast(x.pub?'전광판에 이름까지 보여요':'전광판에 반만 보여요')});
   app.querySelectorAll('.mrow .mth').forEach(b=>b.onclick=async()=>{const w=b.closest('.mrow'),x=L[+w.dataset.i];w.querySelectorAll('button').forEach(z=>z.disabled=true);const q=await api('msgSet',{row:x.row,who:x.who,text:x.text,hide:!x.hide});if(q.error||typeof q.hide!=='boolean'){toast(q.error||'서버를 새 버전으로 배포해야 쓸 수 있어요');return msgsView()}
     x.hide=q.hide;b.textContent=x.hide?'🚫 test 숨김':'🧪 test 보임';w.querySelectorAll('button').forEach(z=>z.disabled=z.dataset.s===x.status);MB.t=0;toast(x.hide?'test 계정 전광판에서 이 글을 숨겨요':'test 계정 전광판에도 이 글이 보여요')})}
+/* 관리자: 공지 관리. 위 칸에 적고 저장하면 '공지' 탭에 한 줄 추가(수정이면 그 줄을 고침). '보이기/숨기기' 버튼으로 학생 화면에 띄울 공지를 고름(시트 '숨김' 칸 O) */
+async function noticeView(){here('notice',{});app.innerHTML='불러오는 중...';const r=await api('noticeList');if(r.error)return app.innerHTML=esc(r.error==='알 수 없는 요청이에요.'?'서버(Code.gs)를 새 버전으로 배포해야 쓸 수 있어요.':r.error);
+  let ed=null;const L=r.list,row=(x,i)=>`<div class="mrow ${x.hide?'거절':''}" data-i="${i}"><div class="mtx"><div class="mdt">${esc(x.date)}${x.target?` · 대상: ${esc(x.target)}`:' · 모두에게'}</div><div class="mtt">${esc(x.title)}</div><div class="nbd">${fmt(x.body)}</div></div><span class="mbg ${x.hide?'거절':'승인'}">${x.hide?'🙈 숨김':'👀 보임'}</span><button class="ghost nhd">${x.hide?'보이기':'숨기기'}</button><button class="ghost ned">수정</button></div>`;
+  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>📢 공지 관리</h2><div class="row"><button class="ghost" onclick="adminView()">← 학급 현황</button><button class="ghost" onclick="noticeView()">⟳ 새로고침</button></div></div>
+  <div class="sbox nfm"><h3 class="msh" style="margin-top:0" id="nfh">✏️ 새 공지 쓰기</h3><div class="row"><input id="nd" type="date" value="${esc(r.date)}" style="max-width:170px"><input id="nt" placeholder="제목" style="flex:1;min-width:200px"></div>
+  <textarea id="nb" rows="5" placeholder="내용 (화면 입력 문법 그대로 쓸 수 있어요. 예: **굵게**)" style="width:100%;box-sizing:border-box;margin-top:8px"></textarea>
+  <input id="ng" placeholder="대상 학번 (비우면 모두에게. 여러 명은 쉼표로 구분)" style="width:100%;box-sizing:border-box;margin-top:8px">
+  <div class="row" style="margin-top:8px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="nh" style="width:auto;margin:0"> 숨긴 채로 저장 (학생 화면에 안 보임)</label><span style="flex:1"></span><button class="ghost" id="nc" style="display:none">수정 취소</button><button id="ns">저장</button></div></div>
+  <h3 class="msh">📋 공지 목록 <small>${L.length}개 · 보임 ${L.filter(x=>!x.hide).length}개</small></h3><p style="color:var(--sub);margin:0 0 8px;font-size:14px">'보임' 공지만 학생 화면에 떠요. 보임 공지 중 날짜가 가장 최근인 것이 머리글 가운데에 나와요.</p>${L.map(row).join('')||'<p>등록된 공지가 없어요.</p>'}`;
+  const $$=q=>app.querySelector(q),reset=()=>{ed=null;$$('#nfh').textContent='✏️ 새 공지 쓰기';$$('#nd').value=r.date;['#nt','#nb','#ng'].forEach(q=>$$(q).value='');$$('#nh').checked=false;$$('#nc').style.display='none';$$('#ns').textContent='저장'},done=t=>{delete mem.info;get('info',()=>api('info'),true).then(x=>{if(x&&!x.error){hdrNotice();renderSide()}});toast(t);noticeView()};
+  $$('#nc').onclick=reset;
+  $$('#ns').onclick=async()=>{const b=$$('#ns');if(!$$('#nt').value.trim())return toast('제목을 적어 주세요.');b.disabled=true;const q=await api('noticeSave',{row:ed?ed.row:0,oldTitle:ed?ed.title:'',oldDate:ed?ed.date:'',date:$$('#nd').value,title:$$('#nt').value,body:$$('#nb').value,target:$$('#ng').value,hide:$$('#nh').checked});b.disabled=false;if(q.error)return toast(q.error);done(ed?'공지를 고쳤어요':'공지를 등록했어요')};
+  app.querySelectorAll('.mrow .ned').forEach(b=>b.onclick=()=>{const x=L[+b.closest('.mrow').dataset.i];ed=x;$$('#nfh').textContent='✏️ 공지 수정: '+x.title;$$('#nd').value=x.date;$$('#nt').value=x.title;$$('#nb').value=x.body;$$('#ng').value=x.target;$$('#nh').checked=x.hide;$$('#nc').style.display='';$$('#ns').textContent='수정 저장';$$('.nfm').scrollIntoView({behavior:'smooth',block:'start'});$$('#nt').focus()});
+  app.querySelectorAll('.mrow .nhd').forEach(b=>b.onclick=async()=>{const w=b.closest('.mrow'),x=L[+w.dataset.i];w.querySelectorAll('button').forEach(z=>z.disabled=true);const q=await api('noticeSave',{only:'hide',row:x.row,oldTitle:x.title,oldDate:x.date,hide:!x.hide});if(q.error){toast(q.error);return noticeView()}done(x.hide?'학생 화면에 보여요':'학생 화면에서 숨겼어요')})}
 /* 관리자: 성적 조회. 반을 고르고 학생을 누르면 학생 '내 성적 보기'와 같은 창을 띄움(관리자는 시간·성적공개 설정과 상관없이 항상 볼 수 있음, 이번 학년도만) */
 async function gradesView(cls){const ck='classes|'+S.asub+'|'+S.ayear,cr=await get(ck,()=>api('classes',{sub:S.asub,year:S.ayear}));if(cr.error)return app.innerHTML=esc(cr.error);
   const CL=cr.classes.map(c=>c.cls);if(!CL.includes(cls))cls=CL[0];here('grades',{cls});app.innerHTML='불러오는 중...';
