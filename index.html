@@ -31,6 +31,7 @@ textarea{font-family:Consolas,monospace;font-size:14px;min-height:150px;tab-size
 .capw{display:none;position:absolute;left:0;top:100%;z-index:5;margin-top:2px;background:#fff4d6;color:#b26a00;border:1px solid #ffd27a;border-radius:8px;padding:3px 10px;font-size:13px;font-weight:bold;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.08)}.capw.on{display:block}
 .narrow{max-width:360px;margin:50px auto;text-align:center}.lgbox{max-width:440px}.lgi{display:flex;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.lgt{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 6px;border-radius:14px;background:var(--sky)}.lgt:first-child{background:var(--mint)}.lgt small{color:var(--sub);font-size:13px}.lgt b{font-size:24px;font-weight:normal;color:var(--ink);font-variant-numeric:tabular-nums}.narrow input{margin:6px 0}
 pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:14px/1.6 Consolas,monospace;margin:8px 0;white-space:pre-wrap}
+.hb{background:linear-gradient(transparent 58%,#ffe27a 58%);padding:0 2px} /* **굵게** 노란 밑줄 형광 */
 .msg{margin-top:8px;padding:8px 12px;border-radius:10px;display:none}.msg.ok{background:var(--ok);display:block}.msg.no{background:var(--no);display:block}
 .msg.wait{background:#eef1f8;display:block}.chip{padding:6px 14px;background:#fff;border:1px solid var(--line)}.chip.on{background:var(--sky)}
 .bc{line-height:2.2}.blank{display:inline-block;width:min(24em,70vw);padding:2px 8px;margin:0 4px;font:14px/1.6 'KoPubWorld Dotum','Malgun Gothic',sans-serif;background:#fffbe8}
@@ -127,7 +128,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v174)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v175)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -419,14 +420,17 @@ document.addEventListener('click',e=>{const b=e.target.closest('.chb');if(!b)ret
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('ii'))ibCheck(e.target)});
 const PAL={빨강:'#d94a4a',파랑:'#3b6fd4',초록:'#2e8b62',주황:'#e67e22',보라:'#7b5fc4',분홍:'#e0559b',회색:'#7b8499',검정:'#3a4256'},HL={노랑:'#fff3a0',초록:'#c9f2d8',파랑:'#cfe3fb',분홍:'#fbd3e4',주황:'#fde3d6',보라:'#e5dcf6'};
 const colr=(v,M)=>{v=v.trim();return M[v]||(/^#[0-9a-f]{3,8}$/i.test(v)?v:null)};
-const bx=x=>x.replace(/\*\*([^*\n]+?)\*\*/g,'<b>$1</b>').replace(/\*\*([^*\n]*)$/,'<b>$1</b>');
+const bx=x=>x.replace(/\*\*([^*\n]+?)\*\*/g,'<b class=hb>$1</b>').replace(/\*\*([^*\n]*)$/,'<b class=hb>$1</b>');
+const CMK=/\[\[([^<\[\]\n|]+?)\|([^<\[\]\n]+?)\]\]/g; // ``` 안 [[글자|색]] [[글자|색|동그라미]] [[글자|색|밑줄]]
+function cmkV(o){const p=o.split('|').map(x=>x.trim()),c=colr(p[0],PAL),sh=p[1]||'네모';return c&&['네모','동그라미','밑줄'].includes(sh)?{c,sh}:null}
+const cmk=h=>h.replace(CMK,(m,t,o)=>{const v=cmkV(o);if(!v)return m;const bg=`background:color-mix(in srgb,${v.c} 16%,transparent)`;return `<span class="cmk" style="${v.sh==='밑줄'?`border-bottom:3px solid ${v.c};${bg}`:`border:2px solid ${v.c};${bg};border-radius:${v.sh==='동그라미'?'999px;padding:0 6px':'5px;padding:0 3px'}`}">${t}</span>`}),cmkS=s=>s.replace(CMK,(m,t,o)=>cmkV(o)?t:m);
 function fx(s){const st=[],lk=[];s=s.replace(/`([^`\n]+)`/g,(m,c)=>{st.push(c);return '\u0001'+(st.length-1)+'\u0001'});
   s=s.replace(/\[\s*링크\s*[:：]\s*([^|\]]*?)\s*\|\s*(https?:\/\/[^\s"'<>\]|]+)\s*\]/g,(m,t,u)=>{lk.push(`<a class='lk' href='${u}' target='_blank' rel='noopener noreferrer'>${t||u}</a>`);return '\u0002'+(lk.length-1)+'\u0002'});
   s=s.replace(/\[\s*색\s*[:：]([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,PAL);return v?`<span style='color:${v}'>${bx(x)}</span>`:m})
     .replace(/\[\s*형광\s*[:：]([^|\]]+)\|([^\]]*)\]/g,(m,c,x)=>{const v=colr(c,HL);return v?`<mark style='background:${v};border-radius:4px;padding:0 3px'>${bx(x)}</mark>`:m})
     .replace(/\[\s*(크게|작게)\s*[:：]([^\]]*)\]/g,(m,k,x)=>`<span style='font-size:${k==='크게'?'1.3em':'.85em'}'>${bx(x)}</span>`)
     .replace(/\[\s*(?:글꼴|서체)\s*[:：]\s*(강원|교보)\s*\|([^\]]*)\]/g,(m,k,x)=>`<span style='font-family:${k==='강원'?'GangwonEduSaeeum':'KyoboHand'},KoPubWorld Dotum,sans-serif;font-size:1.2em'>${bx(x)}</span>`)
-    .replace(/\*\*([^*\n]+?)\*\*/g,'<b>$1</b>').replace(/__([^_\n]+?)__/g,'<u>$1</u>').replace(/~~([^~\n]+?)~~/g,'<s>$1</s>');
+    .replace(/\*\*([^*\n]+?)\*\*/g,'<b class=hb>$1</b>').replace(/__([^_\n]+?)__/g,'<u>$1</u>').replace(/~~([^~\n]+?)~~/g,'<s>$1</s>');
   return s.replace(/\u0001(\d+)\u0001/g,(m,i)=>`<code class='ic'>${st[i]}</code>`).replace(/\u0002(\d+)\u0002/g,(m,i)=>lk[i])}
 const wp=u=>/^https?:/i.test(u)?u:u.replace(/\.(png|jpe?g)$/i,'.webp'); // [그림:사진.png] → 같은 이름 사진.webp를 먼저 띄우고, 없으면 원래 파일
 function pic(s){return s.replace(/\[그림:([^\]\s|]+)(?:\|([^\]]*))?\]/g,(m,u,cap)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<figure class="fig"><img class="pic" loading="lazy" decoding="async" src="${wp(u)}"${wp(u)!==u?` onerror="this.onerror=null;this.src='${u}'"`:''} alt="${cap?cap.replace(/<[^>]*>/g,'').trim():'그림'}">${cap?`<figcaption>${cap.trim()}</figcaption>`:''}</figure>`:m)}
@@ -600,7 +604,8 @@ const hotDesc=h=>h.st.map(s=>hotFill(s).replace(/\s*\/\/\s*/g,' ')).join(' ');
 const hotText=h=>h.r?h.r.L.join(', ')+(h.r.L.length>30?' …':''):h.st.map(hotFill).join('//');
 /* 일반 코드(```, ```run, 코드 칸)에서도 {{보이는 코드 | 설명 | 답}} 을 쓰면 누르는 칸이 돼요. 실행할 때는 맨 앞 코드만 써요 */
 const HOTS=[];
-function hotCode(src){src=String(src??'');if(src.indexOf('{{')<0)return esc(src);TRLEN={};
+function hotCode(src){return cmk(hotCode0(src))}
+function hotCode0(src){src=String(src??'');if(src.indexOf('{{')<0)return esc(src);TRLEN={};
   src.split('\n').forEach(l=>{const m=/^\s*(\w+)\s*=\s*\[(.*)\]\s*(#.*)?$/.exec(l);if(m)TRLEN[m[1]]=m[2].trim()===''?0:splitTop(m[2],',').length});
   return src.split('\n').map(line=>{let o='',ds='',last=0,m;TRQ.lastIndex=0;while((m=TRQ.exec(line))){let pre=line.slice(last,m.index),rw=m[1];{const f0=rw.split('|')[0].trim();if(/range\s*$/.test(pre)&&/^\(.*\)$/.test(f0)){pre=pre.replace(/range\s*$/,'');rw='range'+f0+(rw.indexOf('|')>=0?rw.slice(rw.indexOf('|')):'')}}
     HOTS.push(mkHot(rw));o+=esc(pre)+`<span class="hot" data-hk="${HOTS.length-1}" onclick="hotPlain(this)">${esc(HOTS[HOTS.length-1].e)}</span>`;if((rw.split('|')[1]||'').trim())ds+=`<span class="hotd" data-hd="${HOTS.length-1}"></span>`;last=m.index+m[0].length}return o+esc(line.slice(last))+ds}).join('\n')}
@@ -736,7 +741,7 @@ function traceDiv(x){setTimeout(initTraces,0);return `<div class="trace" data-sr
 /* 실행 결과만 보기: 시트 칸에 ```run ... ``` 로 쓰면 코드 아래에 '실행 결과 보기' 버튼이 생겨요 */
 function runDiv(x){return `<div class="runb"><pre>${hotCode(x.replace(/^\s*run[ \t]*\n/,'').replace(/\s+$/,''))}</pre><button class="ghost" onclick="runBlk(this)">▶ 실행 결과 보기</button><pre class="rout" style="display:none;background:#fffbe8"></pre></div>`}
 /* 학생이 직접 고쳐 실행: 시트 칸에 ```코딩 ... ``` 로 쓰면 처음 코드가 든 입력 칸 + ▶ 실행 / ↺ 처음 코드로 버튼이 생겨요 (연습용, 저장 안 함) */
-function cdDiv(x){const c=x.replace(/^\s*코딩[ \t]*\n?/,'').replace(/\s+$/,'');return `<div class="runb cdb"><textarea spellcheck="false" rows="${Math.max(5,c.split('\n').length+1)}" style="min-height:0" placeholder="여기에 코드를 써 보세요" data-o="${esc(c)}" onkeydown="if(event.key==='Tab'){event.preventDefault();document.execCommand('insertText',false,'    ')}">${esc(c)}</textarea><div class="row" style="margin-top:6px"><button class="ghost" onclick="cdRun(this)">▶ 실행</button><button class="ghost" onclick="cdRst(this)">↺ 처음 코드로</button></div><pre class="rout" style="display:none;background:#fffbe8"></pre></div>`}
+function cdDiv(x){const c=cmkS(x).replace(/^\s*코딩[ \t]*\n?/,'').replace(/\s+$/,'');return `<div class="runb cdb"><textarea spellcheck="false" rows="${Math.max(5,c.split('\n').length+1)}" style="min-height:0" placeholder="여기에 코드를 써 보세요" data-o="${esc(c)}" onkeydown="if(event.key==='Tab'){event.preventDefault();document.execCommand('insertText',false,'    ')}">${esc(c)}</textarea><div class="row" style="margin-top:6px"><button class="ghost" onclick="cdRun(this)">▶ 실행</button><button class="ghost" onclick="cdRst(this)">↺ 처음 코드로</button></div><pre class="rout" style="display:none;background:#fffbe8"></pre></div>`}
 async function cdRun(b){const w=b.closest('.cdb'),o=w.querySelector('.rout');o.style.display='block';o.textContent='🐍 실행 중... (처음에는 10~30초 걸려요)';b.disabled=true;try{putOut(o,'출력:\n'+(await runPy(w.querySelector('textarea').value)||'(출력 없음)'))}catch(e){o.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}b.disabled=false}
 function cdRst(b){const w=b.closest('.cdb'),t=w.querySelector('textarea'),o=w.querySelector('.rout');t.value=t.dataset.o;o.style.display='none';o.textContent=''}
 async function runBlk(b){const o=b.nextElementSibling;o.style.display='block';o.textContent='🐍 실행 중... (처음에는 10~30초 걸려요)';b.disabled=true;try{putOut(o,'출력:\n'+(await runPy(b.previousElementSibling.textContent)||'(출력 없음)'))}catch(e){o.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}b.disabled=false}
@@ -1228,6 +1233,7 @@ a,.lk{color:#8fb4ff}
 [style*="background:#e8e0f7"]{background:#30294a!important}[style*="background:#fbdfec"]{background:#45263a!important}[style*="background:#eceff5"]{background:#2a303d!important}
 mark{color:var(--ink)}
 .mb,.bz{border:1px solid #3a4258;box-shadow:0 18px 50px -12px #000}
+b.hb{background:linear-gradient(transparent 58%,#9a8418 58%)}
 img.pic,.fig img{background:#fff} /* 투명 배경 그림이 어두운 바탕에 묻히지 않게 */
 @media(max-width:860px){.hasToc #toc{background:var(--d-surface);box-shadow:2px 0 14px #000a}}
 </style>
