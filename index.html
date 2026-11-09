@@ -127,7 +127,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v173)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v174)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -383,7 +383,7 @@ function fqCheck(q){const m=q.querySelector('.fqm'),say=(ok,t)=>{m.className='fq
 document.addEventListener('click',e=>{const b=e.target.closest('.fqk,.fqz');if(!b)return;const q=b.closest('.fnq');if(!q||!q._t)return;
   if(b.classList.contains('fqk'))return fqCheck(q);q._g=null;q._done=null;q.querySelector('.fqv').value='';const s=q.querySelector('.fqs');s.textContent='표에서 드래그';s.classList.remove('on');q.querySelector('.fqm').textContent='';fqPaint(q)});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('fqv')){const q=e.target.closest('.fnq');if(q)fqCheck(q)}});
-function fmt0(t){const PP=String(t??'').split('```');return PP.map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):/^\s*run[ \t]*\n/.test(x)?runDiv(x):`<pre>${hotCode(x.trim())}</pre>`):fmtTx(x.replace(i>0?/^[ \t]*\n/:/^$/,'').replace(i<PP.length-1?/\n[ \t]*$/:/^$/,''))).join('')}
+function fmt0(t){const PP=String(t??'').split('```');return PP.map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):/^\s*run[ \t]*\n/.test(x)?runDiv(x):/^\s*코딩[ \t]*(\n|$)/.test(x)?cdDiv(x):`<pre>${hotCode(x.trim())}</pre>`):fmtTx(x.replace(i>0?/^[ \t]*\n/:/^$/,'').replace(i<PP.length-1?/\n[ \t]*$/:/^$/,''))).join('')}
 const BOXR=/\[\s*상자\s*(?:[:：]([^\]]*))?\]([\s\S]*?)\[\s*\/\s*상자\s*\]/;
 function fmt0c(t){const P=String(t??'').split(BOXR);let o='';for(let i=0;i<P.length;i+=3){let a=P[i]||'';if(i+2<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=fmt0c0(a);
   if(i+2<P.length){
@@ -735,6 +735,10 @@ const S_ADMIN=()=>!!(S.user&&S.user.role==='관리자');
 function traceDiv(x){setTimeout(initTraces,0);return `<div class="trace" data-src="${esc(x.replace(/^\s*trace[ \t]*\n/,'').replace(/\s+$/,''))}"></div>`}
 /* 실행 결과만 보기: 시트 칸에 ```run ... ``` 로 쓰면 코드 아래에 '실행 결과 보기' 버튼이 생겨요 */
 function runDiv(x){return `<div class="runb"><pre>${hotCode(x.replace(/^\s*run[ \t]*\n/,'').replace(/\s+$/,''))}</pre><button class="ghost" onclick="runBlk(this)">▶ 실행 결과 보기</button><pre class="rout" style="display:none;background:#fffbe8"></pre></div>`}
+/* 학생이 직접 고쳐 실행: 시트 칸에 ```코딩 ... ``` 로 쓰면 처음 코드가 든 입력 칸 + ▶ 실행 / ↺ 처음 코드로 버튼이 생겨요 (연습용, 저장 안 함) */
+function cdDiv(x){const c=x.replace(/^\s*코딩[ \t]*\n?/,'').replace(/\s+$/,'');return `<div class="runb cdb"><textarea spellcheck="false" rows="${Math.max(5,c.split('\n').length+1)}" style="min-height:0" placeholder="여기에 코드를 써 보세요" data-o="${esc(c)}" onkeydown="if(event.key==='Tab'){event.preventDefault();document.execCommand('insertText',false,'    ')}">${esc(c)}</textarea><div class="row" style="margin-top:6px"><button class="ghost" onclick="cdRun(this)">▶ 실행</button><button class="ghost" onclick="cdRst(this)">↺ 처음 코드로</button></div><pre class="rout" style="display:none;background:#fffbe8"></pre></div>`}
+async function cdRun(b){const w=b.closest('.cdb'),o=w.querySelector('.rout');o.style.display='block';o.textContent='🐍 실행 중... (처음에는 10~30초 걸려요)';b.disabled=true;try{putOut(o,'출력:\n'+(await runPy(w.querySelector('textarea').value)||'(출력 없음)'))}catch(e){o.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}b.disabled=false}
+function cdRst(b){const w=b.closest('.cdb'),t=w.querySelector('textarea'),o=w.querySelector('.rout');t.value=t.dataset.o;o.style.display='none';o.textContent=''}
 async function runBlk(b){const o=b.nextElementSibling;o.style.display='block';o.textContent='🐍 실행 중... (처음에는 10~30초 걸려요)';b.disabled=true;try{putOut(o,'출력:\n'+(await runPy(b.previousElementSibling.textContent)||'(출력 없음)'))}catch(e){o.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}b.disabled=false}
 function rgHTML(h,S,c,nx){const L2=h.r.L,more=L2.length>30?' …':'',s=S[c];let idx=-1,fin=false,up=false;
   if(h.lp&&s){const ln=s[0],v=s[1][h.lp.v];idx=v==null?-1:L2.findIndex(x=>String(x)===v);
