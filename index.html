@@ -129,7 +129,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v177)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v178)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -187,7 +187,7 @@ function renderToc0(){const T=mem.toc;if(!T||!$('#wrap').classList.contains('has
     return `<div class="ts"><button class="tt" data-t="${esc(gk2)}" data-o="${go?1:0}">${go?'▾':'▸'} ${ico(x.icon)} <b>${esc(x.g)}</b></button>`+(go?`<div class="tl">${x.subs.map(one).join('')}</div>`:'')+'</div>'}).join('')+helperBtns('th')}
 $('#toc').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.info){openInfo(b.dataset.info);return}if(b.dataset.t){S.tocOpen[b.dataset.t]=!(+b.dataset.o);renderToc();return}if(b.dataset.go){const[s,n,a]=b.dataset.go.split('|');go(s,+n,a);return}if(b.dataset.soon)toast('🛠 아직 준비중입니다!')};
 /* ---- 오른쪽 칸: 집중 시간 스톱워치 + 학습 도우미 ---- */
-const helperBtns=c=>`<div class="sbox ${c||''}" style="margin-top:12px"><h4>📚 학습 도우미</h4><button class="tt" data-info="notice">📢 지난 공지 모두 보기</button><button class="tt" data-info="term">📖 용어 사전</button></div>${c==='th'?'':'<div class="sbox" style="margin-top:12px"><h4>🏫 성적</h4><button class="tt" data-info="assess">📑 평가 기준표</button><button class="tt" data-info="grade">🔒 내 성적 보기</button></div>'}`;
+const helperBtns=c=>`<div class="sbox ${c||''}" style="margin-top:12px"><h4>📚 학습 도우미</h4><button class="tt" data-info="notice">📢 지난 공지 모두 보기</button><button class="tt" data-info="term">📖 용어 사전</button><button class="tt" data-info="essay">✍️ 글 피드백 받기</button></div>${c==='th'?'':'<div class="sbox" style="margin-top:12px"><h4>🏫 성적</h4><button class="tt" data-info="assess">📑 평가 기준표</button><button class="tt" data-info="grade">🔒 내 성적 보기</button></div>'}`;
 function renderSide(){const e=$('#side');if(!e||!$('#wrap').classList.contains('hasToc'))return;const stu=S.user&&S.user.role!=='관리자';
   hdrNotice();
   e.innerHTML=(stu?`<div class="sbox nowc">🕒 지금 시각은 <b id="nowc"></b></div><div class="sbox tm2"><div class="tmb" id="tbf"><h4>🎯 집중한 시간</h4><div class="clk" id="tf">00:00:00</div></div><div class="tmb" id="tba"><h4>💤 다른 곳</h4><div class="clk" id="ta">00:00:00</div></div></div><p style="font-size:12px;color:var(--sub);margin:0 0 12px">제발 딴 짓 하지 말고 수업에 집중 좀 하세요 !!!!</p>`:'<div class="sbox"><small>👀 미리보기에서는 시간이 기록되지 않아요</small></div>')+helperBtns()+'<div class="sbox" id="mbx"></div>';tmUpd();
@@ -264,7 +264,7 @@ addEventListener('focus',()=>{if(!TM.on||!TM.bl)return;tmAccrue();const d=TM.a-(
 addEventListener('pagehide',()=>{if(TM.on){tmAccrue();tmFlush(true)}});
 /* ---- 학습 도우미: 공지 / 용어 사전 / 오류 모음 / 치트시트 ---- */
 let infoBusy=false;
-async function openInfo(kind,nl){if(kind==='grade')return openGrades();if(infoBusy||document.querySelector('.modal.info:not(.ad-out)'))return;infoBusy=true;if(!mem.info)toast('불러오는 중...');let r;try{r=await get('info',()=>api('info'))}finally{infoBusy=false}if(document.querySelector('.modal.info:not(.ad-out)'))return;if(r.error){toast(r.error);return}
+async function openInfo(kind,nl){if(kind==='grade')return openGrades();if(kind==='essay')return essayView();if(infoBusy||document.querySelector('.modal.info:not(.ad-out)'))return;infoBusy=true;if(!mem.info)toast('불러오는 중...');let r;try{r=await get('info',()=>api('info'))}finally{infoBusy=false}if(document.querySelector('.modal.info:not(.ad-out)'))return;if(r.error){toast(r.error);return}
   const T={notice:'📢 공지',term:'📖 용어 사전',err:'🛠 오류 모음',cheat:'📝 치트시트',assess:'📑 평가 기준표'}[kind],m=document.createElement('div');m.className='modal info';
   const tag=x=>x.sub?` <small style="color:var(--sub)">${esc(x.sub)}</small>`:'';
   let h='';
@@ -449,7 +449,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches&&e.
 const DEF={'데이터분석':{해석:'데이터 해석하기'}};
 function nm(sub,k){const L=[...(mem.toc?mem.toc.subjects:[]),...(mem.subjects?mem.subjects.subjects:[])],s=L.find(x=>x.name===sub),o=s&&s.names&&s.names[k];return o||(DEF[String(sub).replace(/\s/g,'')]||{})[k]||AN[k][1]}
 function bar(d,t){return `<div class="bar"><i style="width:${t?Math.min(100,d/t*100):0}%"></i></div>`}
-function setWho(){const u=S.user;$('#who').innerHTML=u?`${S.preview?'<span>👀 미리보기 중 (기록 안 됨)</span>':''}<span>${u.cls!==''&&u.cls!=null&&String(u.cls).trim()!==''?esc(String(u.cls).trim())+'반 ':''}${esc(u.name)}</span>`+(u.role==='관리자'?`<button class="ghost" onclick="togglePrev()">${S.preview?'관리자 화면':'학생 화면 보기'}</button>`:'')+`<button class="ghost" onclick="logout()">로그아웃</button>`:''}
+function setWho(){const u=S.user;$('#who').innerHTML=u?`${S.preview?'<span>👀 미리보기 중 (기록 안 됨)</span>':''}<span>${u.cls!==''&&u.cls!=null&&String(u.cls).trim()!==''?esc(String(u.cls).trim())+'반 ':''}${esc(u.name)}</span>`+(u.role==='관리자'?`<button class="ghost" onclick="togglePrev()">${S.preview?'관리자 화면':'학생 화면 보기'}</button>`:'')+(u.role!=='관리자'||S.preview?`<button class="ghost" onclick="essayView()">✍️ 피드백 받기</button>`:'')+`<button class="ghost" onclick="logout()">로그아웃</button>`:''}
 function here(v,o){try{sessionStorage.setItem('pos',JSON.stringify({v,...o,u:S.user&&S.user.id,p:S.preview,asub:S.asub,ayear:S.ayear}))}catch(e){}} // 새로고침해도 보던 화면으로 돌아오게 위치를 기억해요
 function goHome(){const u=S.user;if(!u||u.must)return;if(u.role!=='관리자'&&isPhone())return phoneView();document.querySelectorAll('.modal.info,.modal.hot').forEach(x=>x.remove());
   if(u.role==='관리자'&&!S.preview){showToc(false);adminView();return}showToc(true);loadToc();langView()}
@@ -479,7 +479,7 @@ function loginView(msg=''){showToc(false);app.innerHTML=`<div class="box narrow 
 function resume(){let p=null;try{p=JSON.parse(sessionStorage.getItem('pos')||'null')}catch(e){}const u=S.user;if(!p||p.u!==u.id||u.must||(u.role!=='관리자'&&isPhone()))return start();
   S.asub=p.asub||'';S.ayear=p.ayear||'';S.preview=u.role==='관리자'&&!!p.p;setWho();
   if(u.role==='관리자'&&!S.preview){showToc(false);tmStop();S.atab=['amenu','msgs','notice','grades'].includes(p.v)?'menu':'class';return p.v==='amenu'?adminMenu():p.v==='msgs'?msgsView():p.v==='notice'?noticeView():p.v==='grades'?gradesView(p.cls):p.v==='class'?classView(p.cls):p.v==='detail'?detailView(p.id,p.cls):adminView()}
-  showToc(true);loadToc();if(u.role!=='관리자')tmStart();p.v==='lesson'?(S.sub=p.sub,lessonView()):p.v==='act'||p.v==='content'?go(p.sub,p.no,p.act).then(()=>{if(!S.at)langView()}):langView(p.g)}
+  showToc(true);loadToc();if(u.role!=='관리자')tmStart();p.v==='essay'?essayView(p.tid):p.v==='lesson'?(S.sub=p.sub,lessonView()):p.v==='act'||p.v==='content'?go(p.sub,p.no,p.act).then(()=>{if(!S.at)langView()}):langView(p.g)}
 const isPhone=()=>matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<600; // 휴대폰(태블릿 제외)
 function phoneView(){showToc(false);tmStop();app.innerHTML=`<div class="box narrow" style="text-align:center"><h2>📱 휴대폰에서는 성적 확인만 할 수 있어요</h2><p style="color:var(--sub)">수업 내용은 컴퓨터나 태블릿에서 열어 주세요.</p><button class="main" onclick="openGrades()">🔒 내 성적 보기</button></div>`}
 function start(){if(S.user.role==='관리자')S.preview=true;setWho();if(S.user.must)return pwView();if(S.user.role!=='관리자'&&isPhone())return phoneView();S.user.role==='관리자'?(showToc(true),loadToc(),tmStop(),langView(),adminData()):(showToc(true),loadToc(),tmStart(),langView())} // 관리자도 처음엔 '학생 화면 보기'로 시작
@@ -994,9 +994,168 @@ async function classView(cls,force){here('class',{cls});const key='ct|'+S.asub+'
   $('#csv1').onclick=()=>dl(vis,`${S.asub}_${S.ayear}_${cls}반_${sel==='all'?'전체':sel+'차시'}.csv`);$('#csv2').onclick=()=>dl(cols,`${S.asub}_${S.ayear}_${cls}반_전체차시.csv`)}
 async function detailView(id,cls){here('detail',{id,cls});app.innerHTML='불러오는 중...';const r=await api('detail',{id});if(r.error)return app.innerHTML=r.error;
   const g={};r.recs.forEach(x=>{const k=x.sub+'|'+x.no;(g[k]=g[k]||{sub:x.sub,no:x.no,list:[]}).list.push(x)});const ks=Object.values(g).sort((a,b)=>(b.sub===S.asub)-(a.sub===S.asub)||b.no-a.no);
-  app.innerHTML=`<p><button class="ghost" id="b">← ${cls}반 현황</button></p><h2>${esc(r.sid||id)} ${esc(r.name)}</h2><div class="row" style="margin-bottom:14px"><button id="rs">비밀번호 초기화 (학번으로)</button></div>${(r.times&&r.times.length)?`<details class="box"><summary><b>⏱ 수업 집중 시간 (최근 ${r.times.length}일)</b></summary><div class="wrap"><table><thead><tr><th>날짜</th><th>집중</th><th>다른 곳</th></tr></thead><tbody>${r.times.map(x=>`<tr><td>${x.date}</td><td>${fmtT(x.focus)}</td><td>${fmtT(x.away)}</td></tr>`).join('')}</tbody></table></div></details>`:''}`+(ks.map((k,i)=>`<details class="box" ${i===0?'open':''}><summary><b>${esc(k.sub)} · ${k.no}차시</b> · 기록 ${k.list.length}건</summary><div class="wrap"><table><thead><tr><th>활동</th><th>문항</th><th>정답</th><th>시도</th><th>최근 제출</th><th>답안</th></tr></thead><tbody>${k.list.map(x=>`<tr><td>${AN[x.act]?nm(x.sub,x.act):x.act}</td><td>${x.q||'-'}</td><td>${x.free?'✍️ 제출':(x.ok?'⭕':'❌')}</td><td>${x.tries}</td><td>${x.last}</td><td style="text-align:left"><details><summary>보기</summary><pre>${esc(x.answer)}</pre></details></td></tr>`).join('')}</tbody></table></div></details>`).join('')||'<p>아직 기록이 없어요.</p>');
+  app.innerHTML=`<p><button class="ghost" id="b">← ${cls}반 현황</button></p><h2>${esc(r.sid||id)} ${esc(r.name)}</h2><div class="row" style="margin-bottom:14px"><button id="rs">비밀번호 초기화 (학번으로)</button></div>${(r.times&&r.times.length)?`<details class="box"><summary><b>⏱ 수업 집중 시간 (최근 ${r.times.length}일)</b></summary><div class="wrap"><table><thead><tr><th>날짜</th><th>집중</th><th>다른 곳</th></tr></thead><tbody>${r.times.map(x=>`<tr><td>${x.date}</td><td>${fmtT(x.focus)}</td><td>${fmtT(x.away)}</td></tr>`).join('')}</tbody></table></div></details>`:''}`+essayRows(r.essays)+(ks.map((k,i)=>`<details class="box" ${i===0?'open':''}><summary><b>${esc(k.sub)} · ${k.no}차시</b> · 기록 ${k.list.length}건</summary><div class="wrap"><table><thead><tr><th>활동</th><th>문항</th><th>정답</th><th>시도</th><th>최근 제출</th><th>답안</th></tr></thead><tbody>${k.list.map(x=>`<tr><td>${AN[x.act]?nm(x.sub,x.act):x.act}</td><td>${x.q||'-'}</td><td>${x.free?'✍️ 제출':(x.ok?'⭕':'❌')}</td><td>${x.tries}</td><td>${x.last}</td><td style="text-align:left"><details><summary>보기</summary><pre>${esc(x.answer)}</pre></details></td></tr>`).join('')}</tbody></table></div></details>`).join('')||'<p>아직 기록이 없어요.</p>');
   $('#b').onclick=()=>classView(cls);
   $('#rs').onclick=async()=>{if(!confirm(`${r.name} 학생의 비밀번호를 학번으로 되돌릴까요?`))return;const x=await api('resetPw',{id});alert(x.error||'초기화했어요. 다음 로그인 때 비밀번호를 새로 만들게 됩니다.')}}
+
+/* ===== 논술 피드백: 규칙 검사 (ESSAY-ENGINE) =====
+   AI 없이 '판정규칙' 탭의 단어 목록으로 글의 구조만 봅니다. 내용이 맞는지·오탈자·말투는 판정에 넣지 않아요.
+   ES.rules: {kind: [단어…]}, ES.spell: [[틀린말, 고친말, 설명]], ES.ph: {문구ID: 문구} (서버 essayInfo가 시트에서 보내 줌) */
+const ESDEF={ // 시트가 비어 있을 때 쓰는 기본값 (Code.gs의 ESSAY_RULES와 같게 유지)
+  rules:{'연결어':['므로','때문','따라서','그러므로','그래서','그리하여','그렇기','이를 통해','이를통해','보아','보았을 때','봤을 때','왜냐하면','결과적으로','결론적으로','어서','아서','해서','여서','이니','보니','으니','니까','결국','이로써','그 결과','바탕으로','토대로','기에','마지막으로','이처럼','하지만','반면','그런데','그러나','이 때','이때','또한','즉'],
+    '연결어(문장 처음)':['또'],'덧붙임어':['그리고'],
+    '변화어':['늘어','늘면','늘수록','늘 때','늘때','증가','감소','높아','낮아','커지','커질','커져','작아','올라','내려','줄어','줄면','짧아','길어질','길어지','향하','향한'],
+    '라벨어':['상관','분산형','양의','음의'],
+    '제안말투':['하자','좋다','좋겠다','좋을 것','해야','늘리자','줄이자','두자','준비하자','필요하다','바란다','추천']},
+  spell:[],ph:{}};
+const esEsc=s=>String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const esRe=(L,start)=>L&&L.length?new RegExp((start?'^\\s*(?:':'(?:')+L.map(esEsc).sort((a,b)=>b.length-a.length).join('|')+(start?')(?=[\\s,])':')')):/(?!)/;
+const esNorm=t=>String(t||'').normalize('NFC').replace(/\r/g,'');
+const ES_END=/(다|요|음|함|임|니다|것)\s*$/;
+function esSents(t){ // 문장 나누기: 마침표·물음표, 줄바꿈(줄 끝이 '~다/~요'로 끝날 때), 마침표 없이 '~이다 ' 처럼 끝낸 곳
+  const out=[];let buf='';
+  esNorm(t).split('\n').forEach(l=>{l=l.trim();if(!l)return;buf=(buf+' '+l).trim();if(ES_END.test(buf)||/[.?!]$/.test(buf)){out.push(buf);buf=''}});
+  if(buf)out.push(buf);
+  let res=[];
+  out.forEach(s=>{s=s.replace(/((?:이|한|있|된|없|었|았|였|는|진|난)다|니다)\s+/g,'$1. ');s.split(/(?<=[.?!])\s*/).forEach(p=>{p=p.trim();if(p)res.push(p)})});
+  if(res.length>1&&!(ES_END.test(res[res.length-1])||/[.?!]$/.test(res[res.length-1]))&&res[res.length-1].length<15)res=res.slice(0,-1); // 끝이 끊긴 짧은 조각은 빼기
+  return res}
+const esClauses=s=>(s.match(/(?<![다라])고,|며,|(?<![다라])고\s|며\s/g)||[]).length+1; // 나열 마디 수: '~고', '~며'만 셈('~다고', '~라고' 제외)
+function esJudge(text,task,R){
+  R=R||ESDEF.rules;const kind=task&&task.kind==='제안'?'제안':'해석';
+  const CONN=esRe(R['연결어']),CONN0=esRe(R['연결어(문장 처음)'],true),ADD=esRe(R['덧붙임어'],true),CHG=esRe(R['변화어']),LAB=esRe(R['라벨어']),SUG=esRe(R['제안말투']);
+  const names=s=>String(s||'').split(/[,/·]/).map(x=>x.trim()).filter(Boolean);
+  const XN=names(task&&task.x).concat(names(task&&task.xs)),YN=names(task&&task.y).concat(names(task&&task.ys)),KW=names(task&&task.kw);
+  const hasAny=(L,s)=>L.some(w=>s.indexOf(w)>=0);
+  const S=esSents(text),T=esNorm(text),o={kind,S,el:{},quote:{},tips:[]};
+  const big=S.map(esClauses);const bi=big.findIndex(n=>n>=5);
+  if(bi>=0){o.all='다시';o.over=S[bi];return o} // 한 문장에 5마디 이상
+  if(S.length<2||!(hasAny(XN,T)||hasAny(YN,T))){o.all='판정안함';return o}
+  const isConn=s=>CONN.test(s)||CONN0.test(s);
+  const axisOnly=s=>/축/.test(s)&&!CHG.test(s);
+  const seen=new Set(),key=s=>s.replace(/[\s.,!?]/g,'').replace(CONN,'');
+  // 연결: 첫 문장을 빼고, 연결어가 든 문장이 절반 넘으면 충족
+  const rest=S.slice(1);let n=0,circ=null,circAll=[],gaps=[],firstGap=null,addOnly=null,cnt={};
+  seen.add(key(S[0]));
+  rest.forEach((s,i)=>{const prev=S[i];
+    const k=key(s);if(seen.has(k)){if(!firstGap)firstGap=[prev,s];return}seen.add(k); // 같은 말 되풀이는 세지 않음
+    const m=/(이니까|이니|이므로|이기 때문|이라서)/.exec(s);
+    if(m&&/축/.test(s.slice(0,m.index))&&!CHG.test(s.slice(0,m.index))){circ=circ||s;circAll.push(s);return} // 축 설명을 근거로 씀(순환)
+    if(isConn(s)){
+      if(axisOnly(prev)&&/^\s*(따라서|그러므로|그래서)/.test(s)){circ=circ||s;circAll.push(s);return}
+      n++;(s.match(new RegExp(CONN.source,'g'))||[]).forEach(w=>cnt[w]=(cnt[w]||0)+1);return}
+    if(ADD.test(s)&&!addOnly)addOnly=s;
+    gaps.push([prev,s,i])});
+  firstGap=firstGap||(gaps.find(g=>g[2]>0)||gaps[0]||null); // 고칠 점은 축 설명 다음보다 그 뒤의 끊긴 곳을 먼저 짚기
+  let lk;
+  if(!rest.length)lk='충족';else if(circ&&n===0)lk='근거없음';else if(n*2>rest.length)lk='충족';else lk='나열';
+  o.linkN=n;o.linkOf=rest.length;o.gap=firstGap;o.circ=circ;o.circAll=circAll;o.addOnly=addOnly;
+  Object.keys(cnt).forEach(w=>{if(cnt[w]>=3)o.tips.push({id:'반복연결어',w})});
+  if(kind==='해석'){
+    o.el.target=hasAny(XN,T)&&hasAny(YN,T)?'충족':(hasAny(XN,T)||hasAny(YN,T)?'부족':'없음');
+    const circS=new Set(o.circAll||[]),body=(S.length>=3?S.slice(0,-1):S).filter(s=>!circS.has(s)),tr=body.find(s=>CHG.test(s)); // ②: 문장이 3개 이상이면 마지막(결론) 문장은 빼고, 순환 문장도 빼고 찾기
+    o.el.trend=tr?'충족':(S.some(s=>LAB.test(s))?'라벨만':'없음');o.quote.trend=tr||S.find(s=>LAB.test(s));
+    const last=S.slice(-2).join(' ');o.el.concl=hasAny(XN,last)&&hasAny(YN,last)&&CHG.test(last)?'충족':'없음';
+    o.el.link=lk;
+    const miss=(o.el.trend!=='충족')+(lk!=='충족');
+    o.all=miss===0&&(o.el.target==='충족'||o.el.concl==='충족')?'통과':(miss<=1?'조금':'다시');
+  }else{
+    const sg=S.find(s=>SUG.test(s)&&(hasAny(KW,s)||/\d/.test(s)));
+    o.el.sugg=sg?'충족':(S.some(s=>SUG.test(s))?'부족':'없음');o.quote.sugg=sg;
+    const ev=S.find(s=>(hasAny(XN,s)||hasAny(YN,s))&&(CHG.test(s)||/\d|보다|평균|순위|위였|등이|등으로/.test(s))); // 제안형 근거: 경향(변화어) 또는 값·비교·순위를 짚은 문장
+    o.el.data=ev?'충족':'없음';o.quote.data=ev;
+    o.el.link=lk;
+    const miss=['sugg','data','link'].filter(k=>o.el[k]!=='충족').length;
+    o.all=miss===0?'통과':(miss===1?'조금':'다시');
+  }
+  if(lk==='충족')o.tips.push({id:'되묻기'});
+  return o}
+function esSpell(text,spell){const T=esNorm(text);return (spell||[]).filter(r=>r[0]&&T.indexOf(r[0])>=0)}
+/* 화면 문구: '피드백문구' 탭에서 고칠 수 있어요. {앞} {뒤} {문장} {단어} 자리에 학생 글이 들어가요. */
+const ESPH={
+  '안내':'자동 점검이라 틀릴 수 있어요. 최종 판단은 선생님이 해요.',
+  '판정안함':'자료를 보고 알 수 있는 것을 두 문장 이상 써 보자. 무엇에 대한 자료인지(축 이름)도 꼭 넣어 줘요.',
+  '전체_통과':'논리적인 글이에요! 문장마다 근거와 주장이 잘 이어져 있어요.',
+  '전체_조금':'조금 더 다듬으면 논리적인 글이 돼요.',
+  '전체_다시':'다시 써 보기를 추천해요. 아래 고칠 점부터 하나씩 해 봐요.',
+  '5마디':'「{문장}」 한 문장에 너무 많은 내용이 들어 있어요. 문장을 나누고, 문장마다 왜 그렇게 말할 수 있는지 이어 주는 말을 넣어 보자.',
+  '연결_나열':'「{앞}」 다음 문장 「{뒤}」에는 왜 그렇게 말할 수 있는지 이어 주는 말이 없어요. 각 문장이 "무엇을 보고 → 왜 그렇게 말할 수 있는지"로 이어지도록 \'~므로\', \'~때문에\', \'~로 보아\'를 넣어 보세요.',
+  '연결_그리고':'「{문장}」의 \'그리고\'는 덧붙이는 말이라, 앞 문장이 이 문장의 이유라는 게 드러나지 않아요. \'그래서\', \'~므로\'처럼 이유를 잇는 말을 써 보자.',
+  '연결_순환':'「{문장}」은 축 이름을 근거로 삼았어요. 축이 무엇인지는 근거가 아니에요. 그래프에서 눈으로 본 것(점이 올라가는 모양, 추세선 근처에 모인 점, 예외인 점)을 근거로 써 보자.',
+  '경향_라벨':'「{문장}」처럼 \'양의 상관관계\' 같은 이름만 쓰면 그래프에서 무엇을 봤는지 알 수 없어요. X가 늘 때 Y가 어떻게 변하는지 문장으로 풀어 써 보자.',
+  '경향_없음':'그래프에서 본 변화가 아직 없어요. X가 늘 때 Y가 어떻게 변하는지 써 보자.',
+  '결론_없음':'마지막에 X, Y 대신 실제 이름(예: 기온, 검색량)으로 결론을 한 문장 써 보자.',
+  '대상_없음':'무엇에 대한 자료인지 아직 안 밝혔어요. X축과 Y축이 무엇을 나타내는지 써 보자.',
+  '제안_부족':'제안이 조금 막연해요. 무엇을, 얼마나, 어떻게 할지 구체적으로 써 보자(예: 양, 사람 수, 장소).',
+  '제안_없음':'분석 결과로 무엇을 하자는 건지 제안 문장이 없어요. \'~하자\', \'~하는 것이 좋다\'로 제안을 써 보자.',
+  '근거_없음':'제안의 근거가 되는 분석 결과가 글에 없어요. 자료에서 본 변화를 한 문장 넣어 보자.',
+  '잘함_경향':'「{문장}」처럼 그래프에서 본 변화를 문장으로 잘 풀어 썼어요.',
+  '잘함_연결':'문장마다 이어 주는 말을 넣어 근거와 주장을 잘 묶었어요.',
+  '잘함_대상':'무엇에 대한 자료인지 처음에 분명히 밝혔어요.',
+  '잘함_결론':'마지막에 실제 이름으로 결론을 잘 정리했어요.',
+  '잘함_제안':'「{문장}」처럼 구체적으로 제안했어요.',
+  '잘함_근거':'「{문장}」처럼 분석 결과를 근거로 썼어요.',
+  '되묻기':'한 번 더 확인: 앞 문장이 정말 뒤 문장의 이유가 되는지 소리 내어 읽어 보자.',
+  '반복연결어':'\'{단어}\'를 여러 번 썼어요. 다른 이어 주는 말도 써 보자.',
+  '맞춤법':'맞춤법 한번 볼까요? (판정과는 상관없어요)'};
+const ESLAB={target:'① 대상 밝히기',trend:'② 관찰한 경향',concl:'③ 실제 이름으로 쓴 결론',link:'④ 근거와 주장 잇기',sugg:'① 구체적인 제안',data:'② 데이터 근거',linkP:'③ 근거와 제안 잇기'};
+function esFeedback(o,ph){
+  const P=Object.assign({},ESPH,ph||{}),cut=s=>{s=String(s||'');return s.length>70?s.slice(0,68)+'…':s},
+    f=(id,v)=>String(P[id]||'').replace(/\{앞\}/g,cut(v&&v.a)).replace(/\{뒤\}/g,cut(v&&v.b)).replace(/\{문장\}/g,cut(v&&v.s)).replace(/\{단어\}/g,(v&&v.w)||'');
+  const r={head:P['안내'],els:[],fix:[],good:'',tips:[],all:o.all};
+  if(o.all==='판정안함'){r.msg=f('판정안함');return r}
+  if(o.over){r.msg=f('전체_다시');r.fix.push(f('5마디',{s:o.over}));return r}
+  r.msg=f({통과:'전체_통과',조금:'전체_조금',다시:'전체_다시'}[o.all]);
+  Object.keys(o.el).forEach(k=>r.els.push([o.kind==='제안'&&k==='link'?ESLAB.linkP:ESLAB[k],o.el[k]]));
+  const E=o.el,F=[];
+  if(E.link==='나열'&&o.addOnly)F.push(f('연결_그리고',{s:o.addOnly}));
+  else if(E.link==='나열'&&o.gap)F.push(f('연결_나열',{a:o.gap[0],b:o.gap[1]}));
+  else if(E.link==='근거없음')F.push(f('연결_순환',{s:o.circ}));
+  if(o.kind==='해석'){
+    if(E.trend==='라벨만')F.push(f('경향_라벨',{s:o.quote.trend}));else if(E.trend==='없음')F.push(f('경향_없음'));
+    if(E.concl==='없음')F.push(f('결론_없음'));
+    if(E.target!=='충족')F.push(f('대상_없음'));
+    r.good=E.trend==='충족'?f('잘함_경향',{s:o.quote.trend}):E.link==='충족'?f('잘함_연결'):E.target==='충족'?f('잘함_대상'):E.concl==='충족'?f('잘함_결론'):'';
+  }else{
+    if(E.data!=='충족')F.push(f('근거_없음'));
+    if(E.sugg==='부족')F.push(f('제안_부족'));else if(E.sugg==='없음')F.push(f('제안_없음'));
+    r.good=E.sugg==='충족'?f('잘함_제안',{s:o.quote.sugg}):E.data==='충족'?f('잘함_근거',{s:o.quote.data}):E.link==='충족'?f('잘함_연결'):'';
+  }
+  r.fix=F.slice(0,2);
+  o.tips.forEach(t=>r.tips.push(f(t.id,t)));
+  return r}
+/* ===== /ESSAY-ENGINE ===== */
+/* ===== 논술 피드백 화면 ('✍️ 피드백 받기') =====
+   과제·판정규칙·문구는 서버(essayInfo)가 시트에서 보내 주고, 점검은 이 화면에서 바로 해요. 결과와 글은 essaySave로 가명ID와 함께 저장돼요. */
+const ESALL={통과:'논리적임',조금:'조금 더',다시:'다시 써 보기',판정안함:'판정 안 함'};
+function esHTML(fb,sp,ph){const P=Object.assign({},ESPH,ph||{}),tone=v=>v==='충족'?'var(--ok)':(v==='부족'||v==='라벨만')?'var(--butter)':'var(--no)',
+    word=v=>({라벨만:'이름만 씀',나열:'문장이 따로 놓임',근거없음:'근거가 없음'}[v]||v),top={통과:['🎉','var(--ok)'],조금:['🙂','var(--butter)'],다시:['✏️','var(--peach)'],판정안함:['📝','#eef1f8']}[fb.all]||['📝','#eef1f8'];
+  return `<div class="box" style="margin-top:14px"><p style="margin:0 0 10px;font-size:13px;color:var(--sub)">ⓘ ${esc(fb.head)}</p><div style="background:${top[1]};border-radius:12px;padding:10px 14px;font-weight:600">${top[0]} ${esc(fb.msg)}</div>`
+  +(fb.els.length?`<div class="row" style="flex-wrap:wrap;gap:6px;margin:12px 0">${fb.els.map(([k,v])=>`<span style="background:${tone(v)};border-radius:999px;padding:4px 12px;font-size:14px">${esc(k)}: <b>${esc(word(v))}</b></span>`).join('')}</div>`:'')
+  +(fb.fix.length?`<h4 style="margin:12px 0 6px">고칠 점</h4><ol style="margin:0;padding-left:20px;line-height:1.7">${fb.fix.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:'')
+  +(fb.good?`<h4 style="margin:12px 0 6px">잘한 점</h4><p style="margin:0;line-height:1.7">${esc(fb.good)}</p>`:'')
+  +(fb.tips.length?`<p style="margin:12px 0 0;color:var(--sub);line-height:1.7">${fb.tips.map(esc).join('<br>')}</p>`:'')
+  +(sp.length?`<h4 style="margin:14px 0 6px">${esc(P['맞춤법'])}</h4><ul style="margin:0;padding-left:20px;line-height:1.7">${sp.map(s=>`<li>'${esc(s[0])}' → '${esc(s[1])}'${s[2]?` <small style="color:var(--sub)">${esc(s[2])}</small>`:''}</li>`).join('')}</ul>`:'')+'</div>'}
+async function essayView(tid){here('essay',{tid});document.querySelectorAll('.modal.info').forEach(x=>x.remove());app.innerHTML='불러오는 중...';
+  const r=await get('essay',()=>api('essayInfo'));if(!r||r.error)return app.innerHTML=esc((r&&r.error)||'불러오지 못했어요.');
+  const T=r.tasks||[];
+  if(!T.length){app.innerHTML=`<h2>✍️ 글 피드백 받기</h2><div class="box"><p style="margin:0">지금 열린 과제가 없어요. 선생님이 과제를 열면 여기서 내 글을 점검할 수 있어요.</p></div>`;return}
+  const t=T.find(x=>x.id===tid)||T[0],dk='essay|'+(S.user&&S.user.id)+'|'+t.id;let draft='';try{draft=sessionStorage.getItem(dk)||''}catch(e){} // 쓰던 글은 이 창을 닫기 전까지만 남아요(학교 PC를 같이 쓰니까)
+  app.innerHTML=`<h2>✍️ 글 피드백 받기</h2>`+(T.length>1?`<div class="row" style="margin-bottom:10px;flex-wrap:wrap">${T.map(x=>`<button class="chip${x.id===t.id?' on':''}" data-t="${esc(x.id)}">${esc(x.title||x.id)}</button>`).join('')}</div>`:'')
+    +`<div class="box"><p style="margin:0 0 6px"><b>${esc(t.title||'과제')}</b> · ${t.kind==='제안'?'분석 결과로 제안하는 글':'자료를 해석하는 글'}</p>`
+    +(t.data||t.x?`<p style="margin:0 0 6px;color:var(--sub)">${t.data?'자료: '+esc(t.data):''}${t.x?` (X: ${esc(t.x)} / Y: ${esc(t.y)})`:''}</p>`:'')+(t.sit?`<p style="margin:0 0 6px;color:var(--sub)">${esc(t.sit)}</p>`:'')
+    +`<textarea id="eswr" rows="10" style="width:100%;box-sizing:border-box;font-size:16px;line-height:1.7" placeholder="내가 쓴 수행평가 글을 붙여 넣거나 여기에 써 보세요.">${esc(draft)}</textarea>
+    <div class="row" style="align-items:center"><button class="main" id="esgo">점검하기</button><span id="esn" style="color:var(--sub);font-size:14px"></span></div></div><div id="esout"></div>`;
+  app.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>essayView(b.dataset.t));
+  const ta=$('#eswr'),cnt=()=>{$('#esn').textContent=ta.value.trim().length+'자'};cnt();
+  ta.oninput=()=>{cnt();try{sessionStorage.setItem(dk,ta.value)}catch(e){}};
+  $('#esgo').onclick=async()=>{const x=ta.value;if(!x.trim()){toast('글을 먼저 써 주세요');return}
+    const o=esJudge(x,t,r.rules||ESDEF.rules),fb=esFeedback(o,r.ph),sp=esSpell(x,r.spell);
+    $('#esout').innerHTML=esHTML(fb,sp,r.ph);$('#esout').scrollIntoView({behavior:'smooth',block:'start'});
+    const b=$('#esgo');b.disabled=true;
+    const s=await api('essaySave',{task:t.id,text:x,kind:o.kind,el:o.el,all:o.all,fb:[fb.msg].concat(fb.fix,fb.good?['잘한 점: '+fb.good]:[],fb.tips,sp.map(q=>'맞춤법: '+q[0]+' → '+q[1])).join('\n')});
+    b.disabled=false;$('#esn').textContent=x.trim().length+'자 · '+(s.error?'저장하지 못했어요: '+s.error:s.nolog?'미리보기라 저장하지 않아요':s.ver+'번째 점검이 저장됐어요')}}
+const essayRows=E=>(E&&E.length)?`<details class="box" open><summary><b>✍️ 글 피드백 기록 (${E.length}번)</b></summary><div class="wrap"><table><thead><tr><th>과제</th><th>번째</th><th>시각</th><th>점검 결과</th><th>글과 피드백</th></tr></thead><tbody>${E.slice().reverse().map(e=>`<tr><td>${esc(e.task)}</td><td>${esc(e.ver)}</td><td>${esc(e.at)}</td><td>${esc(ESALL[e.all]||e.all)}</td><td style="text-align:left"><details><summary>보기</summary><pre>${esc(e.text)}</pre><pre style="color:var(--sub)">${esc(e.fb)}</pre></details></td></tr>`).join('')}</tbody></table></div></details>`:'';
 
 /* 시작 */
 (async()=>{if(S.token){const u=await api('me');if(!u.error){S.user=u;return resume()}}loginView()})();
