@@ -32,6 +32,8 @@ textarea{font-family:Consolas,monospace;font-size:14px;min-height:150px;tab-size
 .narrow{max-width:360px;margin:50px auto;text-align:center}.lgbox{max-width:440px}.lgi{display:flex;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.lgt{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 6px;border-radius:14px;background:var(--sky)}.lgt:first-child{background:var(--mint)}.lgt small{color:var(--sub);font-size:13px}.lgt b{font-size:24px;font-weight:normal;color:var(--ink);font-variant-numeric:tabular-nums}.narrow input{margin:6px 0}
 pre{background:#f6f7fb;border-radius:12px;padding:12px 14px;overflow:auto;font:14px/1.6 Consolas,monospace;margin:8px 0;white-space:pre-wrap}
 .hb{background:linear-gradient(transparent 58%,#ffe27a 58%);padding:0 2px} /* **굵게** 노란 밑줄 형광 */
+.nt b.hb,#hn b.hb{background:none;padding:0} /* 공지에선 밑줄 형광 없이 굵게만 */
+.esq{display:block;font-weight:bold;color:#3b6fd4;margin:2px 0} /* 피드백 속 학생 문장 */
 .sh{color:#3b6fd4} /* 한 줄에 혼자 있는 **굵게** = 소제목: 형광 없이 파랑 굵게 */
 .msg{margin-top:8px;padding:8px 12px;border-radius:10px;display:none}.msg.ok{background:var(--ok);display:block}.msg.no{background:var(--no);display:block}
 .msg.wait{background:#eef1f8;display:block}.chip{padding:6px 14px;background:#fff;border:1px solid var(--line)}.chip.on{background:var(--sky)}
@@ -129,7 +131,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v178)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v179)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -187,7 +189,7 @@ function renderToc0(){const T=mem.toc;if(!T||!$('#wrap').classList.contains('has
     return `<div class="ts"><button class="tt" data-t="${esc(gk2)}" data-o="${go?1:0}">${go?'▾':'▸'} ${ico(x.icon)} <b>${esc(x.g)}</b></button>`+(go?`<div class="tl">${x.subs.map(one).join('')}</div>`:'')+'</div>'}).join('')+helperBtns('th')}
 $('#toc').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.info){openInfo(b.dataset.info);return}if(b.dataset.t){S.tocOpen[b.dataset.t]=!(+b.dataset.o);renderToc();return}if(b.dataset.go){const[s,n,a]=b.dataset.go.split('|');go(s,+n,a);return}if(b.dataset.soon)toast('🛠 아직 준비중입니다!')};
 /* ---- 오른쪽 칸: 집중 시간 스톱워치 + 학습 도우미 ---- */
-const helperBtns=c=>`<div class="sbox ${c||''}" style="margin-top:12px"><h4>📚 학습 도우미</h4><button class="tt" data-info="notice">📢 지난 공지 모두 보기</button><button class="tt" data-info="term">📖 용어 사전</button><button class="tt" data-info="essay">✍️ 글 피드백 받기</button></div>${c==='th'?'':'<div class="sbox" style="margin-top:12px"><h4>🏫 성적</h4><button class="tt" data-info="assess">📑 평가 기준표</button><button class="tt" data-info="grade">🔒 내 성적 보기</button></div>'}`;
+const helperBtns=c=>`<div class="sbox ${c||''}" style="margin-top:12px"><h4>📚 학습 도우미</h4><button class="tt" data-info="notice">📢 지난 공지 모두 보기</button><button class="tt" data-info="term">📖 용어 사전</button></div>${c==='th'?'':'<div class="sbox" style="margin-top:12px"><h4>🏫 성적</h4><button class="tt" data-info="assess">📑 평가 기준표</button><button class="tt" data-info="grade">🔒 내 성적 보기</button></div>'}`;
 function renderSide(){const e=$('#side');if(!e||!$('#wrap').classList.contains('hasToc'))return;const stu=S.user&&S.user.role!=='관리자';
   hdrNotice();
   e.innerHTML=(stu?`<div class="sbox nowc">🕒 지금 시각은 <b id="nowc"></b></div><div class="sbox tm2"><div class="tmb" id="tbf"><h4>🎯 집중한 시간</h4><div class="clk" id="tf">00:00:00</div></div><div class="tmb" id="tba"><h4>💤 다른 곳</h4><div class="clk" id="ta">00:00:00</div></div></div><p style="font-size:12px;color:var(--sub);margin:0 0 12px">제발 딴 짓 하지 말고 수업에 집중 좀 하세요 !!!!</p>`:'<div class="sbox"><small>👀 미리보기에서는 시간이 기록되지 않아요</small></div>')+helperBtns()+'<div class="sbox" id="mbx"></div>';tmUpd();
@@ -268,7 +270,7 @@ async function openInfo(kind,nl){if(kind==='grade')return openGrades();if(kind==
   const T={notice:'📢 공지',term:'📖 용어 사전',err:'🛠 오류 모음',cheat:'📝 치트시트',assess:'📑 평가 기준표'}[kind],m=document.createElement('div');m.className='modal info';
   const tag=x=>x.sub?` <small style="color:var(--sub)">${esc(x.sub)}</small>`:'';
   let h='';
-  if(kind==='notice')h=((nl||r.notices).length?(nl||r.notices).map(x=>`<div class="sbox"><b>${esc(x.title)}</b> <small style="color:var(--sub)">${esc(x.date)}</small><div>${fmt(x.body)}</div></div>`).join(''):'<p>등록된 공지가 없어요.</p>');
+  if(kind==='notice')h=((nl||r.notices).length?(nl||r.notices).map(x=>`<div class="sbox nt"><b>${esc(x.title)}</b> <small style="color:var(--sub)">${esc(x.date)}</small><div>${fmt(x.body)}</div></div>`).join(''):'<p>등록된 공지가 없어요.</p>');
   if(kind==='term')h=r.terms.length?r.terms.map(x=>`<div class="sbox" data-k="${esc((x.name+' '+x.body).toLowerCase())}"><b>${esc(x.name)}</b>${tag(x)}<div>${fmt(x.body)}</div>${x.ex?`<div style="color:var(--sub)">예) ${fmt(x.ex)}</div>`:''}</div>`).join(''):'<p>등록된 용어가 없어요.</p>';
   if(kind==='err')h=r.errors.length?r.errors.map(x=>`<div class="sbox" data-k="${esc((x.name+' '+x.body+' '+x.fix).toLowerCase())}"><b>${esc(x.name)}</b>${tag(x)}<div>${fmt(x.body)}</div><div>🔧 ${fmt(x.fix)}</div></div>`).join(''):'<p>등록된 오류가 없어요.</p>';
   if(kind==='cheat'){const g={};r.cheats.forEach(x=>(g[x.cat]=g[x.cat]||[]).push(x));h=Object.keys(g).length?Object.keys(g).map(c=>`<h4 style="margin:14px 0 6px">${esc(c)}</h4>`+g[c].map(x=>`<div class="sbox"><b>${esc(x.title)}</b><div>${fmt(x.body)}</div></div>`).join('')).join(''):'<p>등록된 치트시트가 없어요.</p>'}
@@ -1079,7 +1081,7 @@ const ESPH={
   '전체_조금':'조금 더 다듬으면 논리적인 글이 돼요.',
   '전체_다시':'다시 써 보기를 추천해요. 아래 고칠 점부터 하나씩 해 봐요.',
   '5마디':'「{문장}」 한 문장에 너무 많은 내용이 들어 있어요. 문장을 나누고, 문장마다 왜 그렇게 말할 수 있는지 이어 주는 말을 넣어 보자.',
-  '연결_나열':'「{앞}」 다음 문장 「{뒤}」에는 왜 그렇게 말할 수 있는지 이어 주는 말이 없어요. 각 문장이 "무엇을 보고 → 왜 그렇게 말할 수 있는지"로 이어지도록 \'~므로\', \'~때문에\', \'~로 보아\'를 넣어 보세요.',
+  '연결_나열':'「{앞}」의 다음 문장 「{뒤}」에는 왜 그렇게 말할 수 있는지 이어 주는 말이 없어요. 각 문장이 "무엇을 보고 → 왜 그렇게 말할 수 있는지"로 이어지도록 \'~므로\', \'~때문에\', \'~로 보아\'를 넣어 보세요.',
   '연결_그리고':'「{문장}」의 \'그리고\'는 덧붙이는 말이라, 앞 문장이 이 문장의 이유라는 게 드러나지 않아요. \'그래서\', \'~므로\'처럼 이유를 잇는 말을 써 보자.',
   '연결_순환':'「{문장}」은 축 이름을 근거로 삼았어요. 축이 무엇인지는 근거가 아니에요. 그래프에서 눈으로 본 것(점이 올라가는 모양, 추세선 근처에 모인 점, 예외인 점)을 근거로 써 보자.',
   '경향_라벨':'「{문장}」처럼 \'양의 상관관계\' 같은 이름만 쓰면 그래프에서 무엇을 봤는지 알 수 없어요. X가 늘 때 Y가 어떻게 변하는지 문장으로 풀어 써 보자.',
@@ -1128,13 +1130,12 @@ function esFeedback(o,ph){
 /* ===== 논술 피드백 화면 ('✍️ 피드백 받기') =====
    과제·판정규칙·문구는 서버(essayInfo)가 시트에서 보내 주고, 점검은 이 화면에서 바로 해요. 결과와 글은 essaySave로 가명ID와 함께 저장돼요. */
 const ESALL={통과:'논리적임',조금:'조금 더',다시:'다시 써 보기',판정안함:'판정 안 함'};
-function esHTML(fb,sp,ph){const P=Object.assign({},ESPH,ph||{}),tone=v=>v==='충족'?'var(--ok)':(v==='부족'||v==='라벨만')?'var(--butter)':'var(--no)',
-    word=v=>({라벨만:'이름만 씀',나열:'문장이 따로 놓임',근거없음:'근거가 없음'}[v]||v),top={통과:['🎉','var(--ok)'],조금:['🙂','var(--butter)'],다시:['✏️','var(--peach)'],판정안함:['📝','#eef1f8']}[fb.all]||['📝','#eef1f8'];
+function esHTML(fb,sp,ph){const P=Object.assign({},ESPH,ph||{}),
+    qh=x=>esc(String(x).replace(/」\s*(?:의\s*)?다음 문장\s*「/g,'」의 다음 문장「')).replace(/「([^」]*)」\s*/g,'<span class="esq">「$1」</span>'),top={통과:['🎉','var(--ok)'],조금:['🙂','var(--butter)'],다시:['✏️','var(--peach)'],판정안함:['📝','#eef1f8']}[fb.all]||['📝','#eef1f8'];
   return `<div class="box" style="margin-top:14px"><p style="margin:0 0 10px;font-size:13px;color:var(--sub)">ⓘ ${esc(fb.head)}</p><div style="background:${top[1]};border-radius:12px;padding:10px 14px;font-weight:600">${top[0]} ${esc(fb.msg)}</div>`
-  +(fb.els.length?`<div class="row" style="flex-wrap:wrap;gap:6px;margin:12px 0">${fb.els.map(([k,v])=>`<span style="background:${tone(v)};border-radius:999px;padding:4px 12px;font-size:14px">${esc(k)}: <b>${esc(word(v))}</b></span>`).join('')}</div>`:'')
-  +(fb.fix.length?`<h4 style="margin:12px 0 6px">고칠 점</h4><ol style="margin:0;padding-left:20px;line-height:1.7">${fb.fix.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:'')
-  +(fb.good?`<h4 style="margin:12px 0 6px">잘한 점</h4><p style="margin:0;line-height:1.7">${esc(fb.good)}</p>`:'')
-  +(fb.tips.length?`<p style="margin:12px 0 0;color:var(--sub);line-height:1.7">${fb.tips.map(esc).join('<br>')}</p>`:'')
+  +(fb.fix.length>1?`<h4 style="margin:12px 0 6px">고칠 점</h4><ol style="margin:0;padding-left:20px;line-height:1.7">${fb.fix.map(x=>`<li>${qh(x)}</li>`).join('')}</ol>`:fb.fix.length?`<h4 style="margin:12px 0 6px">고칠 점</h4><p style="margin:0;line-height:1.7">${qh(fb.fix[0])}</p>`:'')
+  +(fb.good?`<h4 style="margin:12px 0 6px">잘한 점</h4><p style="margin:0;line-height:1.7">${qh(fb.good)}</p>`:'')
+  +(fb.tips.length?`<p style="margin:12px 0 0;color:var(--sub);line-height:1.7">${fb.tips.map(qh).join('<br>')}</p>`:'')
   +(sp.length?`<h4 style="margin:14px 0 6px">${esc(P['맞춤법'])}</h4><ul style="margin:0;padding-left:20px;line-height:1.7">${sp.map(s=>`<li>'${esc(s[0])}' → '${esc(s[1])}'${s[2]?` <small style="color:var(--sub)">${esc(s[2])}</small>`:''}</li>`).join('')}</ul>`:'')+'</div>'}
 async function essayView(tid){here('essay',{tid});document.querySelectorAll('.modal.info').forEach(x=>x.remove());app.innerHTML='불러오는 중...';
   const r=await get('essay',()=>api('essayInfo'));if(!r||r.error)return app.innerHTML=esc((r&&r.error)||'불러오지 못했어요.');
@@ -1143,7 +1144,7 @@ async function essayView(tid){here('essay',{tid});document.querySelectorAll('.mo
   const t=T.find(x=>x.id===tid)||T[0],dk='essay|'+(S.user&&S.user.id)+'|'+t.id;let draft='';try{draft=sessionStorage.getItem(dk)||''}catch(e){} // 쓰던 글은 이 창을 닫기 전까지만 남아요(학교 PC를 같이 쓰니까)
   app.innerHTML=`<h2>✍️ 글 피드백 받기</h2>`+(T.length>1?`<div class="row" style="margin-bottom:10px;flex-wrap:wrap">${T.map(x=>`<button class="chip${x.id===t.id?' on':''}" data-t="${esc(x.id)}">${esc(x.title||x.id)}</button>`).join('')}</div>`:'')
     +`<div class="box"><p style="margin:0 0 6px"><b>${esc(t.title||'과제')}</b> · ${t.kind==='제안'?'분석 결과로 제안하는 글':'자료를 해석하는 글'}</p>`
-    +(t.data||t.x?`<p style="margin:0 0 6px;color:var(--sub)">${t.data?'자료: '+esc(t.data):''}${t.x?` (X: ${esc(t.x)} / Y: ${esc(t.y)})`:''}</p>`:'')+(t.sit?`<p style="margin:0 0 6px;color:var(--sub)">${esc(t.sit)}</p>`:'')
+    +(t.sit?`<p style="margin:0 0 6px;color:var(--sub)">${esc(t.sit)}</p>`:'')
     +`<textarea id="eswr" rows="10" style="width:100%;box-sizing:border-box;font-size:16px;line-height:1.7" placeholder="내가 쓴 수행평가 글을 붙여 넣거나 여기에 써 보세요.">${esc(draft)}</textarea>
     <div class="row" style="align-items:center"><button class="main" id="esgo">점검하기</button><span id="esn" style="color:var(--sub);font-size:14px"></span></div></div><div id="esout"></div>`;
   app.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>essayView(b.dataset.t));
@@ -1393,7 +1394,9 @@ a,.lk{color:#8fb4ff}
 [style*="background:#e8e0f7"]{background:#30294a!important}[style*="background:#fbdfec"]{background:#45263a!important}[style*="background:#eceff5"]{background:#2a303d!important}
 mark{color:var(--ink)}
 .mb,.bz{border:1px solid #3a4258;box-shadow:0 18px 50px -12px #000}
-b.hb{background:linear-gradient(transparent 58%,#9a8418 58%)}
+b.hb{background:linear-gradient(transparent 58%,#9a8418 58%)}.nt b.hb,#hn b.hb{background:none}
+.esq{color:#7aa7f5}
+[style*="background:#eef1f8"]{background:var(--d-raise)!important}
 b.sh{color:#7aa7f5}
 img.pic,.fig img{background:#fff} /* 투명 배경 그림이 어두운 바탕에 묻히지 않게 */
 @media(max-width:860px){.hasToc #toc{background:var(--d-surface);box-shadow:2px 0 14px #000a}}
