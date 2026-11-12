@@ -131,7 +131,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v183)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v184)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -1084,9 +1084,9 @@ const ESPH={
   '연결_나열':'「{앞}」의 다음 문장 「{뒤}」에는 왜 그렇게 말할 수 있는지 이어 주는 말이 없어요. 각 문장이 "무엇을 보고 → 왜 그렇게 말할 수 있는지"로 이어지도록 \'~므로\', \'~때문에\', \'~로 보아\'를 넣어 보세요.',
   '연결_그리고':'「{문장}」의 \'그리고\'는 덧붙이는 말이라, 앞 문장이 이 문장의 이유라는 게 드러나지 않아요. \'그래서\', \'~므로\'처럼 이유를 잇는 말을 써 보자.',
   '연결_순환':'「{문장}」은 축 이름을 근거로 삼았어요. 축이 무엇인지는 근거가 아니에요. 그래프에서 눈으로 본 것(점이 올라가는 모양, 추세선 근처에 모인 점, 예외인 점)을 근거로 써 보자.',
-  '경향_라벨':'「{문장}」처럼 \'양의 상관관계\' 같은 이름만 쓰면 그래프에서 무엇을 봤는지 알 수 없어요. X가 늘 때 Y가 어떻게 변하는지 문장으로 풀어 써 보자.',
+  '경향_라벨':'「{문장}」처럼 \'○○ 상관관계\' 같은 이름만 쓰면 그래프에서 무엇을 봤는지 알 수 없어요. X가 늘 때 Y가 어떻게 변하는지 문장으로 풀어 써 보자.',
   '경향_없음':'그래프에서 본 변화가 아직 없어요. X가 늘 때 Y가 어떻게 변하는지 써 보자.',
-  '결론_없음':'마지막에 X, Y 대신 실제 이름(예: 기온, 검색량)으로 결론을 한 문장 써 보자.',
+  '결론_없음':'마지막에 X, Y 대신 실제 이름(예: {X}, {Y})으로 결론을 한 문장 써 보자.',
   '대상_없음':'무엇에 대한 자료인지 아직 안 밝혔어요. X축과 Y축이 무엇을 나타내는지 써 보자.',
   '제안_부족':'제안이 조금 막연해요. 무엇을, 얼마나, 어떻게 할지 구체적으로 써 보자(예: 양, 사람 수, 장소).',
   '제안_없음':'분석 결과로 무엇을 하자는 건지 제안 문장이 없어요. \'~하자\', \'~하는 것이 좋다\'로 제안을 써 보자.',
@@ -1101,9 +1101,9 @@ const ESPH={
   '반복연결어':'\'{단어}\'를 여러 번 썼어요. 다른 이어 주는 말도 써 보자.',
   '맞춤법':'맞춤법 한번 볼까요? (판정과는 상관없어요)'};
 const ESLAB={target:'① 대상 밝히기',trend:'② 관찰한 경향',concl:'③ 실제 이름으로 쓴 결론',link:'④ 근거와 주장 잇기',sugg:'① 구체적인 제안',data:'② 데이터 근거',linkP:'③ 근거와 제안 잇기'};
-function esFeedback(o,ph){
+function esFeedback(o,ph,task){
   const P=Object.assign({},ESPH,ph||{}),cut=s=>{s=String(s||'');return s.length>70?s.slice(0,68)+'…':s},
-    f=(id,v)=>String(P[id]||'').replace(/\{앞\}/g,cut(v&&v.a)).replace(/\{뒤\}/g,cut(v&&v.b)).replace(/\{문장\}/g,cut(v&&v.s)).replace(/\{단어\}/g,(v&&v.w)||'');
+    f=(id,v)=>String(P[id]||'').replace(/\{앞\}/g,cut(v&&v.a)).replace(/\{뒤\}/g,cut(v&&v.b)).replace(/\{문장\}/g,cut(v&&v.s)).replace(/\{단어\}/g,(v&&v.w)||'').replace(/\{X\}/g,(task&&task.x)||'X').replace(/\{Y\}/g,(task&&task.y)||'Y');
   const r={head:P['안내'],els:[],fix:[],good:'',tips:[],all:o.all};
   if(o.all==='판정안함'){r.msg=f('판정안함');return r}
   if(o.over){r.msg=f('전체_다시');r.fix.push(f('5마디',{s:o.over}));return r}
@@ -1159,7 +1159,7 @@ async function essayView(tid){here('essay',{tid});document.querySelectorAll('.mo
   if(gf){['paste','drop'].forEach(ev=>gf.addEventListener(ev,e=>e.preventDefault()));gf.oninput=gf.onscroll=()=>{$('#esgo').disabled=nz(gf.value)!==nz(EAT);gf.previousSibling.scrollLeft=gf.scrollLeft}}
   $('#esgo').onclick=async()=>{const x=ta.value;if(!x.trim()){toast('글을 먼저 써 주세요');return}
     if(gf){try{localStorage.setItem(EK,today)}catch(e){}$('#esak').remove()}
-    const o=esJudge(x,t,r.rules||ESDEF.rules),fb=esFeedback(o,r.ph),sp=esSpell(x,r.spell);
+    const o=esJudge(x,t,r.rules||ESDEF.rules),fb=esFeedback(o,r.ph,t),sp=esSpell(x,r.spell);
     $('#esout').innerHTML=esHTML(fb,sp,r.ph);$('#esout').scrollIntoView({behavior:'smooth',block:'start'});
     const b=$('#esgo');b.disabled=true;
     const s=await api('essaySave',{task:t.id,text:x,kind:o.kind,el:o.el,all:o.all,fb:[fb.msg].concat(fb.fix,fb.good?['잘한 점: '+fb.good]:[],fb.tips,sp.map(q=>'맞춤법: '+q[0]+' → '+q[1])).join('\n')});
