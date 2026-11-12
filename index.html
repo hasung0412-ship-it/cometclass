@@ -1062,7 +1062,7 @@ function esJudge(text,task,R){
   }else{
     const sg=S.find(s=>SUG.test(s)&&(hasAny(KW,s)||/\d/.test(s)));
     o.el.sugg=sg?'충족':(S.some(s=>SUG.test(s))?'부족':'없음');o.quote.sugg=sg;
-    const ev=S.find(s=>(hasAny(XN,s)||hasAny(YN,s))&&CHG.test(s));
+    const ev=S.find(s=>(hasAny(XN,s)||hasAny(YN,s))&&(CHG.test(s)||/\d|보다|평균|순위|위였|등이|등으로/.test(s))); // 제안형 근거: 경향(변화어) 또는 값·비교·순위를 짚은 문장
     o.el.data=ev?'충족':'없음';o.quote.data=ev;
     o.el.link=lk;
     const miss=['sugg','data','link'].filter(k=>o.el[k]!=='충족').length;
