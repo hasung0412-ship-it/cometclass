@@ -131,7 +131,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v181)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v182)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -1148,7 +1148,7 @@ async function essayView(tid){here('essay',{tid});document.querySelectorAll('.mo
   app.innerHTML=`<h2>✍️ 글 피드백 받기</h2><p style="margin:-4px 0 12px;color:#e53935;word-break:keep-all">내가 다른 친구 봐주느라 너네 글 못봐줄 때 미리 테스트해보는 '보조' 도구이며, 여기서 완벽하다고 해도 완벽하지 않을 수 있다는 점 꼭 알아두세요.</p>`
     +(T.length>1?G.map(([g,L])=>g?`<details class="sbox" style="margin-bottom:10px"${L.includes(t)?' open':''}><summary style="cursor:pointer"><b>📂 ${esc(g)}</b> <small style="color:var(--sub)">주제 ${L.length}개</small></summary><div class="row" style="margin-top:8px;flex-wrap:wrap">${L.map(chip).join('')}</div></details>`:`<div class="row" style="margin-bottom:10px;flex-wrap:wrap">${L.map(chip).join('')}</div>`).join(''):'')
     +`<div class="box"><p style="margin:0 0 6px"><b>${esc(gp(t)[1]||'과제')}</b> · ${t.kind==='제안'?'분석 결과로 제안하는 글':'자료를 해석하는 글'}</p>`
-    +(t.sit?`<p style="margin:0 0 6px;color:var(--sub)">${esc(t.sit)}</p>`:'')
+    
     +`<textarea id="eswr" rows="10" style="width:100%;box-sizing:border-box;font-size:16px;line-height:1.7" placeholder="내가 쓴 수행평가 글을 붙여 넣거나 여기에 써 보세요.">${esc(draft)}</textarea>
     ${need?`<div id="esak" style="margin:12px 0 4px"><p style="margin:0 0 6px"><b>피드백을 받기 위해선 따라 입력하세요.</b></p><div class="gh"><div class="gt" aria-hidden="true">${esc(EAT)}</div><input class="gf" autocomplete="off" spellcheck="false"></div><p style="margin:6px 0 0;color:#e53935;font-weight:bold">나중에 피드백이 된다했는데 왜 깎아요?? 하지 마세요!!!!!</p></div>`:''}
     <div class="row" style="align-items:center"><button class="main" id="esgo"${need?' disabled':''}>점검하기</button><span id="esn" style="color:var(--sub);font-size:14px"></span></div></div><div id="esout"></div>`;
