@@ -135,7 +135,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v185)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v186)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -1081,6 +1081,7 @@ function esJudge(text,task,R){
   const tl=s=>s.replace(/[\s.?!"'”’)]+$/,''),pol=s=>{const t=tl(s),c=t.charCodeAt(t.length-3)-0xAC00;return /요$/.test(t)||(/니다$/.test(t)&&c>=0&&c<11172&&c%28===17)}; // '~습니다/~합니다'(ㅂ받침+니다)와 '~요'만 높임말, '아니다'는 '~다'체
   const pl=S.filter(s=>/다$/.test(tl(s))&&!pol(s)),po=S.filter(pol);
   if(pl.length&&po.length)o.mix=[pl[0],po[0]];
+  if((o.cut||o.mix)&&o.all==='통과')o.all='조금'; // C·H가 있으면 '논리적임' 대신 '조금 더'
   return o}
 function esSpell(text,spell){const T=esNorm(text);return (spell||[]).filter(r=>r[0]&&T.indexOf(r[0])>=0)}
 /* 화면 문구: '피드백문구' 탭에서 고칠 수 있어요. {앞} {뒤} {문장} {단어} 자리에 학생 글이 들어가요. */
