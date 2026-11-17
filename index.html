@@ -135,7 +135,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v186)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v187)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -1012,18 +1012,18 @@ const ESDEF={ // 시트가 비어 있을 때 쓰는 기본값 (Code.gs의 ESSAY_
     '연결어(문장 처음)':['또'],'덧붙임어':['그리고'],
     '변화어':['늘어','늘면','늘수록','늘 때','늘때','증가','감소','높아','낮아','커지','커질','커져','작아','올라','내려','줄어','줄면','짧아','길어질','길어지','향하','향한'],
     '라벨어':['상관','분산형','양의','음의'],
-    '제안말투':['하자','좋다','좋겠다','좋을 것','해야','늘리자','줄이자','두자','준비하자','필요하다','바란다','추천']},
+    '제안말투':['하자','좋다','좋겠다','좋을 것','해야','늘리자','줄이자','두자','준비하자','필요하다','바란다','추천','좋을것','할것','할 것','만들것','만들 것','넣고 싶','넣고싶']},
   spell:[],ph:{}};
 const esEsc=s=>String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 const esRe=(L,start)=>L&&L.length?new RegExp((start?'^\\s*(?:':'(?:')+L.map(esEsc).sort((a,b)=>b.length-a.length).join('|')+(start?')(?=[\\s,])':')')):/(?!)/;
 const esNorm=t=>String(t||'').normalize('NFC').replace(/\r/g,'');
-const ES_END=/(다|요|음|함|임|니다|것)\s*$/;
+const ES_END=/(다|요|음|함|임|니다|것|자)\s*$/;
 function esSents(t){ // 문장 나누기: 마침표·물음표, 줄바꿈(줄 끝이 '~다/~요'로 끝날 때), 마침표 없이 '~이다 ' 처럼 끝낸 곳
   const out=[];let buf='';
   esNorm(t).split('\n').forEach(l=>{l=l.trim();if(!l)return;buf=(buf+' '+l).trim();if(ES_END.test(buf)||/[.?!]$/.test(buf)){out.push(buf);buf=''}});
   if(buf)out.push(buf);
   let res=[];
-  out.forEach(s=>{s=s.replace(/((?:이|한|있|된|없|었|았|였|는|진|난)다|니다)\s+/g,'$1. ');s.split(/(?<=[.?!])\s*/).forEach(p=>{p=p.trim();if(p)res.push(p)})});
+  out.forEach(s=>{s=s.replace(/((?:이|한|있|된|없|었|았|였|는|진|난|인|든)다|니다)\s+/g,'$1. ');s.split(/(?<=[.?!])\s*/).forEach(p=>{p=p.trim();if(p&&/[가-힣A-Za-z]/.test(p))res.push(p)})});
   esSents.all=res.slice(); // 끊긴 조각까지 든 목록 (C 미완결 검사용)
   if(res.length>1&&!(ES_END.test(res[res.length-1])||/[.?!]$/.test(res[res.length-1]))&&res[res.length-1].length<15)res=res.slice(0,-1); // 끝이 끊긴 짧은 조각은 빼기
   return res}
@@ -1037,7 +1037,8 @@ function esJudge(text,task,R){
   const S=esSents(text),T=esNorm(text),o={kind,S,el:{},quote:{},tips:[]};
   const big=S.map(esClauses);const bi=big.findIndex(n=>n>=5);
   if(bi>=0){o.all='다시';o.over=S[bi];return o} // 한 문장에 5마디 이상
-  if(S.length<2||!(hasAny(XN,T)||hasAny(YN,T))){o.all='판정안함';return o}
+  if(!(hasAny(XN,T)||hasAny(YN,T)||hasAny(KW,T))){o.all='판정안함';return o} // 과제와 상관없는 글 → '판정안함' 문구
+  if(S.length<2){o.all='판정안함';o.short=true;return o} // 과제 얘기지만 한 문장뿐 → '판정_짧음' 문구
   const isConn=s=>CONN.test(s)||CONN0.test(s);
   const axisOnly=s=>/축/.test(s)&&!CHG.test(s);
   const seen=new Set(),key=s=>s.replace(/[\s.,!?]/g,'').replace(CONN,'');
@@ -1064,30 +1065,36 @@ function esJudge(text,task,R){
     o.el.trend=tr?'충족':(S.some(s=>LAB.test(s))?'라벨만':'없음');o.quote.trend=tr||S.find(s=>LAB.test(s));
     const last=S.slice(-2).join(' ');o.el.concl=hasAny(XN,last)&&hasAny(YN,last)&&CHG.test(last)?'충족':'없음';
     o.el.link=lk;
+    const dir=String(task&&task.dir||'');if(/증가|감소|양|음/.test(dir)){const neg=/감소|음/.test(dir),INC=/증가|늘|높아|커지|커질|커져|올라|길어/g,DEC=/감소|줄|낮아|작아|내려|짧아|떨어/g,ax=(L,c)=>s=>hasAny(L,s)||new RegExp(c+'\\s*축','i').test(s);
+      o.wrong=S.find(s=>{if(/데이터도|예외|도 있/.test(s))return false;if((neg?/(?<![가-힣])양의\s*상관/:/(?<![가-힣])음의\s*상관/).test(s))return true;if(!(ax(XN,'x')(s)&&ax(YN,'y')(s)))return false;const i=(s.match(INC)||[]).length,d=(s.match(DEC)||[]).length;return neg?(i>=2&&d===0):(i>=1&&d>=1)})} // 논술과제 '방향'(증가/감소)과 반대로 쓴 문장
     const miss=(o.el.trend!=='충족')+(lk!=='충족');
     o.all=miss===0&&(o.el.target==='충족'||o.el.concl==='충족')?'통과':(miss<=1?'조금':'다시');
   }else{
-    const sg=S.find(s=>SUG.test(s)&&(hasAny(KW,s)||/\d/.test(s)));
-    o.el.sugg=sg?'충족':(S.some(s=>SUG.test(s))?'부족':'없음');o.quote.sugg=sg;
-    const ev=S.find(s=>(hasAny(XN,s)||hasAny(YN,s))&&(CHG.test(s)||/\d|보다|평균|순위|위였|등이|등으로/.test(s))); // 제안형 근거: 경향(변화어) 또는 값·비교·순위를 짚은 문장
+    const isSug=s=>SUG.test(s)||/[가-힣]자[\s.!]*$/.test(s); // '~하자', '~쓰자'처럼 '~자'로 끝나는 문장도 제안
+    const sg=S.find(s=>isSug(s)&&(hasAny(KW,s)||/\d/.test(s)));
+    o.el.sugg=sg?'충족':(S.some(isSug)?'부족':'없음');o.quote.sugg=sg;
+    const ev=S.find(s=>(hasAny(XN,s)||hasAny(YN,s)||/[xy]\s*축/i.test(s))&&(CHG.test(s)||/\d|보다|평균|순위|위였|등이|등으로/.test(s))); // 제안형 근거: 경향(변화어) 또는 값·비교·순위를 짚은 문장
     o.el.data=ev?'충족':'없음';o.quote.data=ev;
     o.el.link=lk;
     const miss=['sugg','data','link'].filter(k=>o.el[k]!=='충족').length;
-    o.all=miss===0?'통과':(miss===1?'조금':'다시');
+    o.all=o.el.sugg==='없음'?'다시':miss===0?'통과':(miss===1?'조금':'다시'); // 제안이 아예 없으면 '다시'
   }
   if(lk==='충족')o.tips.push({id:'되묻기'});
-  const END=/(다|요|니다|까|죠|음|함|임)[\s.?!"'”’)]*$/; // C: 끝맺지 못한 문장, H: '~다'와 '~요/~니다'가 섞인 글 (판정에는 안 들어감)
+  const END=/(다|요|니다|까|죠|음|함|임|자)[\s.?!"'”’)]*$/; // C: 끝맺지 못한 문장, H: '~다'와 '~요/~니다'가 섞인 글 (판정에는 안 들어감)
   o.cut=(esSents.all||S).find(s=>!END.test(s));
   const tl=s=>s.replace(/[\s.?!"'”’)]+$/,''),pol=s=>{const t=tl(s),c=t.charCodeAt(t.length-3)-0xAC00;return /요$/.test(t)||(/니다$/.test(t)&&c>=0&&c<11172&&c%28===17)}; // '~습니다/~합니다'(ㅂ받침+니다)와 '~요'만 높임말, '아니다'는 '~다'체
   const pl=S.filter(s=>/다$/.test(tl(s))&&!pol(s)),po=S.filter(pol);
   if(pl.length&&po.length)o.mix=[pl[0],po[0]];
-  if((o.cut||o.mix)&&o.all==='통과')o.all='조금'; // C·H가 있으면 '논리적임' 대신 '조금 더'
+  if((o.cut||o.mix||o.wrong)&&o.all==='통과')o.all='조금'; // C·H가 있으면 '논리적임' 대신 '조금 더'
   return o}
 function esSpell(text,spell){const T=esNorm(text);return (spell||[]).filter(r=>r[0]&&T.indexOf(r[0])>=0)}
 /* 화면 문구: '피드백문구' 탭에서 고칠 수 있어요. {앞} {뒤} {문장} {단어} 자리에 학생 글이 들어가요. */
 const ESPH={
   '안내':'자동 점검이라 틀릴 수 있어요. 최종 판단은 선생님이 해요.',
   '판정안함':'자료를 보고 알 수 있는 것을 두 문장 이상 써 보자. 무엇에 대한 자료인지(축 이름)도 꼭 넣어 줘요.',
+  '판정_짧음':'글이 아직 한 문장뿐이라 점검할 수 없어요. 마침표(.)로 문장을 끊어서 두 문장 이상으로 써 보자.',
+  '방향_반대':'「{문장}」은 그래프의 방향과 맞지 않아요. X가 늘 때 Y가 늘어나는지 줄어드는지, 그게 양의 상관관계인지 음의 상관관계인지 그래프를 다시 보고 확인해 보자.',
+  '자기점검':'그래프가 올라가는지 내려가는지와 내가 쓴 상관관계 이름(양의/음의)이 맞나요?|결론이 앞의 근거와 같은 방향인가요? (예: 요인이 많다 → 영향을 미친다고 단정할 수 없다)|같은 말을 두 번 되풀이하지 않았나요?|주어와 서술어가 어울리나요? (예: \'인과관계는 ~사용하였지만\'은 어색해요)',
   '전체_통과':'논리적인 글이에요! 문장마다 근거와 주장이 잘 이어져 있어요.',
   '전체_조금':'조금 더 다듬으면 논리적인 글이 돼요.',
   '전체_다시':'다시 써 보기를 추천해요. 아래 고칠 점부터 하나씩 해 봐요.',
@@ -1119,11 +1126,12 @@ function esFeedback(o,ph,task){
   const P=Object.assign({},ESPH,ph||{}),cut=s=>{s=String(s||'');return s.length>70?s.slice(0,68)+'…':s},
     f=(id,v)=>String(P[id]||'').replace(/\{앞\}/g,cut(v&&v.a)).replace(/\{뒤\}/g,cut(v&&v.b)).replace(/\{문장\}/g,cut(v&&v.s)).replace(/\{단어\}/g,(v&&v.w)||'').replace(/\{X\}/g,(task&&task.x)||'X').replace(/\{Y\}/g,(task&&task.y)||'Y');
   const r={head:P['안내'],els:[],fix:[],fixT:[],good:'',tips:[],all:o.all};
-  if(o.all==='판정안함'){r.msg=f('판정안함');return r}
+  if(o.all==='판정안함'){r.msg=f(o.short?'판정_짧음':'판정안함');return r}
   if(o.over){r.msg=f('전체_다시');r.fix.push(f('5마디',{s:o.over}));r.fixT.push(ESCODE['5마디']);return r}
   r.msg=f({통과:'전체_통과',조금:'전체_조금',다시:'전체_다시'}[o.all]);
   Object.keys(o.el).forEach(k=>r.els.push([o.kind==='제안'&&k==='link'?ESLAB.linkP:ESLAB[k],o.el[k]]));
   const E=o.el,F=[],FT=[],add=(id,v)=>{F.push(f(id,v));FT.push(ESCODE[id]||'')};
+  if(o.wrong)add('방향_반대',{s:o.wrong});
   if(E.link==='나열'&&o.addOnly)add('연결_그리고',{s:o.addOnly});
   else if(E.link==='나열'&&o.gap)add('연결_나열',{a:o.gap[0],b:o.gap[1]});
   else if(E.link==='근거없음')add('연결_순환',{s:o.circ});
@@ -1131,7 +1139,7 @@ function esFeedback(o,ph,task){
     if(E.trend==='라벨만')add('경향_라벨',{s:o.quote.trend});else if(E.trend==='없음')add('경향_없음');
     if(E.concl==='없음')add('결론_없음');
     if(E.target!=='충족')add('대상_없음');
-    r.good=E.trend==='충족'?f('잘함_경향',{s:o.quote.trend}):E.link==='충족'?f('잘함_연결'):E.target==='충족'?f('잘함_대상'):E.concl==='충족'?f('잘함_결론'):'';
+    r.good=E.trend==='충족'&&o.quote.trend!==o.wrong?f('잘함_경향',{s:o.quote.trend}):E.link==='충족'?f('잘함_연결'):E.target==='충족'?f('잘함_대상'):E.concl==='충족'?f('잘함_결론'):'';
   }else{
     if(E.data!=='충족')add('근거_없음');
     if(E.sugg==='부족')add('제안_부족');else if(E.sugg==='없음')add('제안_없음');
@@ -1141,6 +1149,7 @@ function esFeedback(o,ph,task){
   if(o.cut){r.fix.push(f('미완결',{s:o.cut}));r.fixT.push('C')}
   if(o.mix){r.fix.push(f('문체',{a:o.mix[0],b:o.mix[1]}));r.fixT.push('H')}
   o.tips.forEach(t=>r.tips.push(f(t.id,t)));
+  r.check=o.all==='통과'?String(P['자기점검']||'').split('|').map(x=>x.trim()).filter(Boolean):[]; // 통과해도 스스로 한 번 더 볼 것
   return r}
 /* ===== /ESSAY-ENGINE ===== */
 /* ===== 글 피드백 받기 첫 화면: '논리적 오류 모음' / '글 피드백 받기' 고르기 ===== */
@@ -1167,6 +1176,7 @@ function esHTML(fb,sp,ph){const P=Object.assign({},ESPH,ph||{}),
   +(fb.fix.length>1?`<h4 style="margin:12px 0 6px">고칠 점</h4><ol style="margin:0;padding-left:20px;line-height:1.7">${fb.fix.map((x,i)=>`<li>${qh(x)}${leLink((fb.fixT||[])[i])}</li>`).join('')}</ol>`:fb.fix.length?`<h4 style="margin:12px 0 6px">고칠 점</h4><p style="margin:0;line-height:1.7">${qh(fb.fix[0])}</p>${leLink((fb.fixT||[])[0])}`:'')
   +(fb.good?`<h4 style="margin:12px 0 6px">잘한 점</h4><p style="margin:0;line-height:1.7">${qh(fb.good)}</p>`:'')
   +(fb.tips.length?`<p style="margin:12px 0 0;color:var(--sub);line-height:1.7">${fb.tips.map(qh).join('<br>')}</p>`:'')
+  +((fb.check||[]).length?`<h4 style="margin:14px 0 6px">✅ 통과했어도 스스로 한 번 더</h4><ul style="margin:0;padding-left:20px;line-height:1.7">${fb.check.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><p style="margin:6px 0 0;font-size:13px;color:var(--sub)">자동 점검은 내용이 맞는지까지는 못 봐요.</p>`:'')
   +(sp.length?`<h4 style="margin:14px 0 6px">${esc(P['맞춤법'])}</h4><ul style="margin:0;padding-left:20px;line-height:1.7">${sp.map(s=>`<li>'${esc(s[0])}' → '${esc(s[1])}'${s[2]?` <small style="color:var(--sub)">${esc(s[2])}</small>`:''}</li>`).join('')}</ul>`:'')+'</div>'}
 async function essayView(tid){here('essay',{tid});document.querySelectorAll('.modal.info').forEach(x=>x.remove());app.innerHTML='불러오는 중...';
   const r=await get('essay',()=>api('essayInfo'));if(!r||r.error)return app.innerHTML=esc((r&&r.error)||'불러오지 못했어요.');
@@ -1188,7 +1198,11 @@ async function essayView(tid){here('essay',{tid});document.querySelectorAll('.mo
   ta.oninput=()=>{cnt();try{sessionStorage.setItem(dk,ta.value)}catch(e){}};
   const gf=app.querySelector('#esak .gf'),nz=x=>String(x).replace(/\s+/g,'').replace(/[.。]+$/,'');
   if(gf){['paste','drop'].forEach(ev=>gf.addEventListener(ev,e=>e.preventDefault()));gf.oninput=gf.onscroll=()=>{$('#esgo').disabled=nz(gf.value)!==nz(EAT);gf.previousSibling.scrollLeft=gf.scrollLeft}}
+  const lk='eslast|'+(S.user&&S.user.id)+'|'+t.id,sq=v=>String(v).replace(/\s+/g,''); // 바로 전에 점검한 글 (이 창을 닫기 전까지)
   $('#esgo').onclick=async()=>{const x=ta.value;if(!x.trim()){toast('글을 먼저 써 주세요');return}
+    let last='';try{last=sessionStorage.getItem(lk)||''}catch(e){}
+    if(last&&last===sq(x)){toast('바로 전에 점검한 글과 똑같아요. 고칠 점을 보고 글을 고친 뒤 다시 점검해 보세요.');return}
+    try{sessionStorage.setItem(lk,sq(x))}catch(e){}
     if(gf){try{localStorage.setItem(EK,today)}catch(e){}$('#esak').remove()}
     const o=esJudge(x,t,r.rules||ESDEF.rules),fb=esFeedback(o,r.ph,t),sp=esSpell(x,r.spell);
     $('#esout').innerHTML=esHTML(fb,sp,r.ph);$('#esout').scrollIntoView({behavior:'smooth',block:'start'});
