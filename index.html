@@ -135,7 +135,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v188)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v189)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -534,8 +534,8 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
   app.innerHTML=`<p><button class="ghost" id="back">← 활동 선택</button></p><h2>${AN[act][0]} ${nm(S.sub,act)}</h2><div id="items"></div>`;
   $('#back').onclick=()=>actView(no);
   const box=$('#items');
-  if(act==='개념'){box.innerHTML=r.items.map((i,n)=>`<details class="box sec" data-s="${n}" open><summary><h3>${esc(i.title)}</h3></summary><div>${fmt(i.body)}</div></details>`).join('');
-    box.querySelectorAll('details.sec').forEach(d=>{const k=`cf|${S.user.id}|${S.sub}|${no}|${d.dataset.s}`;try{if(localStorage.getItem(k)==='0')d.open=false}catch(e){}d.addEventListener('toggle',()=>{try{localStorage.setItem(k,d.open?'1':'0')}catch(e){}secChk()})});secChk();
+  if(act==='개념'){box.innerHTML=r.items.map((i,n)=>`<details class="box sec" data-s="${n}"><summary><h3>${esc(i.title)}</h3></summary><div>${fmt(i.body)}</div></details>`).join('');
+    box.querySelectorAll('details.sec').forEach(d=>d.addEventListener('toggle',secChk));secChk();
     box.querySelectorAll('.ib').forEach((el,i)=>{el.dataset.i=i+1;const d=r.drafts&&r.drafts[i+1],lc=loadLocal(i+1);let v=null,t0=-1;[d&&{x:d.text,t:d.t},lc&&{x:lc.text,t:lc.t}].forEach(c=>{if(c&&c.t>t0){t0=c.t;v=c.x}});if(v!=null){if(el.type==='checkbox')el.checked=v==='1';else el.value=v;ibCheck(el)}});
     const sb=S.sub;if(!S.preview&&!(r.saved[0]&&r.saved[0].ok))api('submit',{no,act,q:0,answer:'열람',sub:sb}).then(x=>{if(!x.error&&S.sub===sb)rec(no,act,0,'열람',true)})}
   if(act==='해석'){const isF=i=>i.type==='설명쓰기'||i.type==='서술'||i.type==='기타';
