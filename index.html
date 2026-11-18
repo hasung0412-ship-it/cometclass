@@ -135,7 +135,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v187)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v188)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -1199,13 +1199,14 @@ async function essayView(tid){here('essay',{tid});document.querySelectorAll('.mo
   const gf=app.querySelector('#esak .gf'),nz=x=>String(x).replace(/\s+/g,'').replace(/[.。]+$/,'');
   if(gf){['paste','drop'].forEach(ev=>gf.addEventListener(ev,e=>e.preventDefault()));gf.oninput=gf.onscroll=()=>{$('#esgo').disabled=nz(gf.value)!==nz(EAT);gf.previousSibling.scrollLeft=gf.scrollLeft}}
   const lk='eslast|'+(S.user&&S.user.id)+'|'+t.id,sq=v=>String(v).replace(/\s+/g,''); // 바로 전에 점검한 글 (이 창을 닫기 전까지)
+  try{const h=sessionStorage.getItem(lk+'|h');if(h&&sessionStorage.getItem(lk)===sq(ta.value))$('#esout').innerHTML=h}catch(e){} // 화면을 다시 열어도 같은 글이면 지난 피드백 그대로
   $('#esgo').onclick=async()=>{const x=ta.value;if(!x.trim()){toast('글을 먼저 써 주세요');return}
     let last='';try{last=sessionStorage.getItem(lk)||''}catch(e){}
-    if(last&&last===sq(x)){toast('바로 전에 점검한 글과 똑같아요. 고칠 점을 보고 글을 고친 뒤 다시 점검해 보세요.');return}
+    if(last&&last===sq(x)){let h='';try{h=sessionStorage.getItem(lk+'|h')||''}catch(e){}if(h&&!$('#esout').innerHTML){$('#esout').innerHTML=h;$('#esout').scrollIntoView({behavior:'smooth',block:'start'})}toast(h?'바로 전에 점검한 글과 똑같아요. 아래 피드백을 보고 글을 고친 뒤 다시 점검해 보세요.':'바로 전에 점검한 글과 똑같아요. 고칠 점을 보고 글을 고친 뒤 다시 점검해 보세요.');return}
     try{sessionStorage.setItem(lk,sq(x))}catch(e){}
     if(gf){try{localStorage.setItem(EK,today)}catch(e){}$('#esak').remove()}
     const o=esJudge(x,t,r.rules||ESDEF.rules),fb=esFeedback(o,r.ph,t),sp=esSpell(x,r.spell);
-    $('#esout').innerHTML=esHTML(fb,sp,r.ph);$('#esout').scrollIntoView({behavior:'smooth',block:'start'});
+    $('#esout').innerHTML=esHTML(fb,sp,r.ph);try{sessionStorage.setItem(lk+'|h',$('#esout').innerHTML)}catch(e){}$('#esout').scrollIntoView({behavior:'smooth',block:'start'});
     const b=$('#esgo');b.disabled=true;
     const s=await api('essaySave',{task:t.id,text:x,kind:o.kind,el:o.el,all:o.all,fb:[fb.msg].concat(fb.fix,fb.good?['잘한 점: '+fb.good]:[],fb.tips,sp.map(q=>'맞춤법: '+q[0]+' → '+q[1])).join('\n')});
     b.disabled=false;$('#esn').textContent=x.trim().length+'자 · '+(s.error?'저장하지 못했어요: '+s.error:s.nolog?'미리보기라 저장하지 않아요':s.ver+'번째 점검이 저장됐어요')}}
