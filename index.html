@@ -135,7 +135,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v191)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v192)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -1039,12 +1039,15 @@ function esJudge(text,task,R){
   const big=S.map(esClauses);const bi=big.findIndex(n=>n>=5);
   if(bi>=0){o.all='다시';o.over=S[bi];return o} // 한 문장에 5마디 이상
   if(!(hasAny(XN,T)||hasAny(YN,T)||hasAny(KW,T))){o.all='판정안함';return o} // 과제와 상관없는 글 → '판정안함' 문구
-  if(S.length<2){o.all='판정안함';o.short=true;return o} // 과제 얘기지만 한 문장뿐 → '판정_짧음' 문구
-  const isConn=s=>CONN.test(s)||CONN0.test(s);
+  const rel=s=>hasAny(XN,s)&&hasAny(YN,s)&&CHG.test(s); // 관계 문장: 실제 X 이름·Y 이름·변화어가 한 문장에 (예: 기온이 높으면 검색량이 늘어난다)
+  const r1=kind==='해석'; // 해석형: 결론(관계 문장) 필수 + 짧은 답 인정 (2026-11-19 사용자: 모든 해석 과제)
+  const relIn=s=>r1&&rel(s)&&/(면|수록|때)[\s,]/.test(s); // 한 문장 안에서 '~면/~수록/~때'로 원인과 결과를 이어 씀 → 이어진 문장으로 인정(규칙 3·6)
+  if(S.length<2&&!(r1&&rel(S[0]))){o.all='판정안함';o.short=true;return o} // 과제 얘기지만 한 문장뿐 → '판정_짧음' 문구 (관계까지 다 쓴 한 문장은 점검함: 길이로 감점 안 함)
+  const isConn=s=>CONN.test(s)||CONN0.test(s)||relIn(s);
   const axisOnly=s=>/축/.test(s)&&!CHG.test(s);
   const seen=new Set(),key=s=>s.replace(/[\s.,!?]/g,'').replace(CONN,'');
   // 연결: 첫 문장을 빼고, 연결어가 든 문장이 절반 넘으면 충족
-  const rest=S.slice(1);let n=0,circ=null,circAll=[],gaps=[],firstGap=null,addOnly=null,cnt={};
+  const rest=S.slice(1);let n=0,nc=0,circ=null,circAll=[],gaps=[],firstGap=null,addOnly=null,cnt={};
   seen.add(key(S[0]));
   rest.forEach((s,i)=>{const prev=S[i];
     const k=key(s);if(seen.has(k)){if(!firstGap)firstGap=[prev,s];return}seen.add(k); // 같은 말 되풀이는 세지 않음
@@ -1052,7 +1055,7 @@ function esJudge(text,task,R){
     if(m&&/축/.test(s.slice(0,m.index))&&!CHG.test(s.slice(0,m.index))){circ=circ||s;circAll.push(s);return} // 축 설명을 근거로 씀(순환)
     if(isConn(s)){
       if(axisOnly(prev)&&/^\s*(따라서|그러므로|그래서)/.test(s)){circ=circ||s;circAll.push(s);return}
-      n++;(s.match(new RegExp(CONN.source,'g'))||[]).forEach(w=>cnt[w]=(cnt[w]||0)+1);return}
+      n++;if(CONN.test(s)||CONN0.test(s))nc++;(s.match(new RegExp(CONN.source,'g'))||[]).forEach(w=>cnt[w]=(cnt[w]||0)+1);return}
     if(ADD.test(s)&&!addOnly)addOnly=s;
     gaps.push([prev,s,i])});
   firstGap=firstGap||(gaps.find(g=>g[2]>0)||gaps[0]||null); // 고칠 점은 축 설명 다음보다 그 뒤의 끊긴 곳을 먼저 짚기
@@ -1064,12 +1067,16 @@ function esJudge(text,task,R){
     o.el.target=hasAny(XN,T)&&hasAny(YN,T)?'충족':(hasAny(XN,T)||hasAny(YN,T)?'부족':'없음');
     const circS=new Set(o.circAll||[]),body=(S.length>=3?S.slice(0,-1):S).filter(s=>!circS.has(s)),tr=body.find(s=>CHG.test(s)); // ②: 문장이 3개 이상이면 마지막(결론) 문장은 빼고, 순환 문장도 빼고 찾기
     o.el.trend=tr?'충족':(S.some(s=>LAB.test(s))?'라벨만':'없음');o.quote.trend=tr||S.find(s=>LAB.test(s));
-    const last=S.slice(-2).join(' ');o.el.concl=hasAny(XN,last)&&hasAny(YN,last)&&CHG.test(last)?'충족':'없음';
+    const last=S.slice(-2).join(' ');o.el.concl=hasAny(XN,last)&&hasAny(YN,last)&&CHG.test(last)?'충족':(S.some(rel)?'중간':'없음'); // '중간': 결론은 없지만 가운데에 관계 문장이 있음(규칙 1의 예외 → '조금')
     o.el.link=lk;
+    const ord=s=>{const P=[];[['X',XN],['Y',YN]].forEach(([c,L])=>L.forEach(w=>{let i=s.indexOf(w);while(i>=0){P.push([i,c]);i=s.indexOf(w,i+1)}}));P.sort((a,b)=>a[0]-b[0]);return P.filter((x,i)=>!i||x[1]!==P[i-1][1])};
+    o.loop=S.find(s=>{if(/지만|하지만|그러나|않|없|아니|모르/.test(s))return false;const q=ord(s);if(q.length<3||q[0][1]!==q[q.length-1][1])return false;return isConn(s)&&CHG.test(s.slice(q[q.length-1][0]))}); // 규칙 5 순환: 한 문장에서 'X가 늘면 Y가 늘어서 X가 는다'처럼 처음 말한 변화를 다시 결론으로 씀 (반대·부정 문장은 제외)
+    o.rev=S.find(s=>{const m=/(?<!보)(어서|아서|해서|여서|므로|니까)/.exec(s);if(!m||!CHG.test(s))return false;const a=s.slice(0,m.index),b=s.slice(m.index);return hasAny(YN,a)&&!hasAny(XN,a)&&hasAny(XN,b)&&!hasAny(YN,b)}); // 규칙 4 원인·결과 뒤바뀜 '의심'(Y가 ~해서 X가 ~): 판정엔 안 넣고 되묻기만
     const dir=String(task&&task.dir||'');if(/증가|감소|양|음/.test(dir)){const neg=/감소|음/.test(dir),INC=/증가|늘|높아|커지|커질|커져|올라|길어/g,DEC=/감소|줄|낮아|작아|내려|짧아|떨어/g,ax=(L,c)=>s=>hasAny(L,s)||new RegExp(c+'\\s*축','i').test(s);
       o.wrong=S.find(s=>{if(/데이터도|예외|도 있/.test(s))return false;if((neg?/(?<![가-힣])양의\s*상관/:/(?<![가-힣])음의\s*상관/).test(s))return true;if(!(ax(XN,'x')(s)&&ax(YN,'y')(s)))return false;const i=(s.match(INC)||[]).length,d=(s.match(DEC)||[]).length;return neg?(i>=2&&d===0):(i>=1&&d>=1)})} // 논술과제 '방향'(증가/감소)과 반대로 쓴 문장
-    const miss=(o.el.trend!=='충족')+(lk!=='충족');
-    o.all=miss===0&&(o.el.target==='충족'||o.el.concl==='충족')?'통과':(miss<=1?'조금':'다시');
+    const E=o.el,ok=(E.target==='충족')+(E.trend==='충족')+(E.concl!=='없음')+(lk==='충족'); // ①~④ 중 몇 개 (3개 이상이면 맞음)
+    if((lk==='나열'&&nc===0&&rest.length>=2)||o.loop)o.all='다시'; // 규칙 2·3 문장이 3개 이상인데 문장 사이를 잇는 말이 하나도 없는 나열·분절, 규칙 5 순환 (모든 해석 과제)
+    else o.all=E.concl==='없음'?'다시':ok>=3&&lk==='충족'&&E.concl==='충족'?'통과':(ok>=2?'조금':'다시'); // 규칙 1 결론 없음 → 다시, 결론이 가운데에만 있으면 '조금'
   }else{
     const isSug=s=>SUG.test(s)||/[가-힣]자[\s.!]*$/.test(s); // '~하자', '~쓰자'처럼 '~자'로 끝나는 문장도 제안
     const sg=S.find(s=>isSug(s)&&(hasAny(KW,s)||/\d/.test(s)));
@@ -1120,9 +1127,11 @@ const ESPH={
   '반복연결어':'\'{단어}\'를 여러 번 썼어요. 다른 이어 주는 말도 써 보자.',
   '맞춤법':'맞춤법 한번 볼까요? (판정과는 상관없어요)',
   '미완결':'「{문장}」은 끝맺지 못한 문장이에요. \'~다\', \'~이다\'처럼 끝까지 써서 문장을 마무리해 보자.',
+  '연결_되풀이':'「{문장}」은 처음에 말한 것을 결론에서 다시 말하고 있어요(순환). 결론에는 앞 문장들로 알게 된 두 자료 사이의 관계를 한 번만 써 보자.',
+  '인과_확인':'「{문장}」 이 문장을 다시 읽어 보며 무엇이 원인이고 무엇이 결과인지 맞게 썼는지 확인해 보자.',
   '문체':'「{앞}」은 \'~다\'로, 「{뒤}」는 \'~요/~니다\'로 끝나요. 한 글 안에서는 \'~다\'체로 맞춰 써 보자.'};
 const ESLAB={target:'① 대상 밝히기',trend:'② 관찰한 경향',concl:'③ 실제 이름으로 쓴 결론',link:'④ 근거와 주장 잇기',sugg:'① 구체적인 제안',data:'② 데이터 근거',linkP:'③ 근거와 제안 잇기'};
-const ESCODE={'5마디':'B','연결_나열':'G','연결_그리고':'G','연결_순환':'E'}; // 고칠 점 → 논리적 오류 모음 유형(A~I). 짝이 있으면 피드백 아래에서 그 유형을 바로 펼쳐 볼 수 있어요
+const ESCODE={'5마디':'B','연결_나열':'G','연결_그리고':'G','연결_순환':'E','연결_되풀이':'D'}; // 고칠 점 → 논리적 오류 모음 유형(A~I). 짝이 있으면 피드백 아래에서 그 유형을 바로 펼쳐 볼 수 있어요
 function esFeedback(o,ph,task){
   const P=Object.assign({},ESPH,ph||{}),cut=s=>{s=String(s||'');return s.length>70?s.slice(0,68)+'…':s},
     f=(id,v)=>String(P[id]||'').replace(/\{앞\}/g,cut(v&&v.a)).replace(/\{뒤\}/g,cut(v&&v.b)).replace(/\{문장\}/g,cut(v&&v.s)).replace(/\{단어\}/g,(v&&v.w)||'').replace(/\{X\}/g,(task&&task.x)||'X').replace(/\{Y\}/g,(task&&task.y)||'Y');
@@ -1133,12 +1142,13 @@ function esFeedback(o,ph,task){
   Object.keys(o.el).forEach(k=>r.els.push([o.kind==='제안'&&k==='link'?ESLAB.linkP:ESLAB[k],o.el[k]]));
   const E=o.el,F=[],FT=[],add=(id,v)=>{F.push(f(id,v));FT.push(ESCODE[id]||'')};
   if(o.wrong)add('방향_반대',{s:o.wrong});
+  if(o.loop)add('연결_되풀이',{s:o.loop});
   if(E.link==='나열'&&o.addOnly)add('연결_그리고',{s:o.addOnly});
   else if(E.link==='나열'&&o.gap)add('연결_나열',{a:o.gap[0],b:o.gap[1]});
   else if(E.link==='근거없음')add('연결_순환',{s:o.circ});
   if(o.kind==='해석'){
     if(E.trend==='라벨만')add('경향_라벨',{s:o.quote.trend});else if(E.trend==='없음')add('경향_없음');
-    if(E.concl==='없음')add('결론_없음');
+    if(E.concl!=='충족')add('결론_없음');
     if(E.target!=='충족')add('대상_없음');
     r.good=E.trend==='충족'&&o.quote.trend!==o.wrong?f('잘함_경향',{s:o.quote.trend}):E.link==='충족'?f('잘함_연결'):E.target==='충족'?f('잘함_대상'):E.concl==='충족'?f('잘함_결론'):'';
   }else{
@@ -1147,6 +1157,7 @@ function esFeedback(o,ph,task){
     r.good=E.sugg==='충족'?f('잘함_제안',{s:o.quote.sugg}):E.data==='충족'?f('잘함_근거',{s:o.quote.data}):E.link==='충족'?f('잘함_연결'):'';
   }
   r.fix=F.slice(0,2);r.fixT=FT.slice(0,2);
+  if(o.rev){r.fix.push(f('인과_확인',{s:o.rev}));r.fixT.push('')} // 단정하지 않고 되묻기 (판정에는 안 들어감)
   if(o.cut){r.fix.push(f('미완결',{s:o.cut}));r.fixT.push('C')}
   if(o.mix){r.fix.push(f('문체',{a:o.mix[0],b:o.mix[1]}));r.fixT.push('H')}
   o.tips.forEach(t=>r.tips.push(f(t.id,t)));
