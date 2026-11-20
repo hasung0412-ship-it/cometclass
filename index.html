@@ -274,7 +274,9 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 .lel{font-size:12px;color:var(--sub);font-weight:bold}.esl{margin:8px 0 4px;border:1px solid var(--line);border-radius:var(--r2);padding:8px 12px}
 
 /* ---- 글 피드백 ---- */
-.fbq{font-weight:bold;margin:12px 0 4px;word-break:keep-all}.fbq small{display:block;font-weight:normal;color:var(--sub);font-size:12px;margin-top:2px}
+.fbq{font-weight:bold;margin:12px 0 4px;word-break:keep-all}
+.fbtt{margin:0 0 14px;padding:12px 16px;border-radius:var(--r2);background:var(--info-bg);border:1px solid var(--info-line);font-size:20px} /* 글 피드백: 대주제(과제 제목) 상자 */
+.fbh{font-size:20px;margin:22px 0 6px;word-break:keep-all} /* 중주제 */.fbh small{font-size:14px;font-weight:normal;color:var(--sub);margin-left:8px}.fbh small b{color:var(--warn-ink)}.fbq small{display:block;font-weight:normal;color:var(--sub);font-size:12px;margin-top:2px}
 .fbck{display:flex;gap:8px;align-items:flex-start;margin:12px 0 2px;font-weight:bold;line-height:1.6;cursor:pointer;word-break:keep-all}.fbck input{width:auto!important;margin:5px 0 0;flex:none;transform:scale(1.2)}
 .fbex{font-family:'GangwonEduSaeeum','KoPubWorld Dotum',sans-serif;font-size:20px;line-height:1.5;color:var(--sub);margin:2px 0 6px 28px;word-break:keep-all}
 .fbt,.fba,.fbf{width:100%;box-sizing:border-box;font-size:16px;line-height:1.7}.fbs{border-radius:var(--r2);padding:10px 14px;font-weight:600;margin:6px 0 10px}
@@ -320,7 +322,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v210</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v211</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1240,12 +1242,12 @@ const fbAnsH=x=>`<div class="fbans">${x.k==='체크'?(x.a?'그렇다고 체크�
 const fbRes=(x,lab,mine)=>`<div class="fbq">${lab}</div>${mine}`+(x[0]==='통과'?`<div class="fbr p">✅ 피드백 없음!</div>`:`<div class="fbr f"><b>피드백 내용 :</b> ${esc(x[1])}</div>`);
 async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const r=await api('fbMine',{task:t.id});if(!$('#fbw'))return;if(r.error)return w.innerHTML=`<div class="box">${esc(r.error)}</div>`;
   const L=r.list||[],last=L[L.length-1],src=edit||(!last||last.st==='취소')?(last||{}):null,dk='fbd|'+(S.user&&S.user.id)+'|'+t.id;
-  const head=`<p style="margin:0 0 6px"><b>${esc(title||'과제')}</b> · 내가 직접 피드백해요${last&&!src?` <small style="color:var(--sub)">(${last.ver}번째 요청 · ${esc(last.at)})</small>`:''}</p>`;
+  const head=`<p class="fbtt"><b>${esc(title||'과제')}</b> · 내가 직접 피드백해요${last&&!src?` <small style="color:var(--sub)">(${last.ver}번째 요청 · ${esc(last.at)})</small>`:''}</p>`;
   if(src){let d=null;try{d=JSON.parse(sessionStorage.getItem(dk)||'null')}catch(e){}const pa=src.ans||[],v=d||{text:src.text||'',ans:I.map((x,i)=>pa[i]&&pa[i].q===x.q?pa[i].a:'')}; // 다시 보낼 때는 학생이 쓴 답 그대로
     const lab=fbLab(I),W=I.map((x,i)=>[x,i]).filter(z=>z[0].k!=='체크'),C=I.map((x,i)=>[x,i]).filter(z=>z[0].k==='체크');
-    w.innerHTML=`<div class="box">${head}<div class="fbq">내가 쓴 글</div><textarea class="fbt" rows="8" placeholder="내가 쓴 수행평가 글을 붙여 넣거나 여기에 써 보세요.">${esc(v.text)}</textarea>`
-      +(W.length?`<h4 style="margin:16px 0 4px">내 글에서 찾아 적을 내용</h4>`+W.map(([x,i])=>`<div class="fbq">${lab[i]}${x.h?`<small>${esc(x.h)}</small>`:''}</div><textarea class="fba" rows="2" data-i="${i}">${esc(v.ans[i]||'')}</textarea>`).join(''):'')
-      +(C.length?`<h4 style="margin:18px 0 4px">내 글을 읽고 생각할 내용</h4>`+C.map(([x,i])=>`<label class="fbck"><input type="checkbox" data-i="${i}"${v.ans[i]===true?' checked':''}> ${esc(x.q)}</label>${x.h?`<div class="fbex">${esc(x.h)}</div>`:''}`).join(''):'')
+    w.innerHTML=`<div class="box">${head}<h4 class="fbh" style="margin-top:4px">내가 쓴 글</h4><textarea class="fbt" rows="8" placeholder="내가 쓴 수행평가 글을 붙여 넣거나 여기에 써 보세요.">${esc(v.text)}</textarea>`
+      +(W.length?`<h4 class="fbh">내 글에서 찾아 적을 내용 <small>글에서 <b>그대로</b> 찾아 복사 붙여넣기 하기!</small></h4>`+W.map(([x,i])=>`<div class="fbq">${lab[i]}${x.h?`<small>${esc(x.h)}</small>`:''}</div><textarea class="fba" rows="2" data-i="${i}">${esc(v.ans[i]||'')}</textarea>`).join(''):'')
+      +(C.length?`<h4 class="fbh">내 글을 읽고 생각할 내용</h4>`+C.map(([x,i])=>`<label class="fbck"><input type="checkbox" data-i="${i}"${v.ans[i]===true?' checked':''}> ${esc(x.q)}</label>${x.h?`<div class="fbex">${esc(x.h)}</div>`:''}`).join(''):'')
       +`<div class="row" style="align-items:center;margin-top:12px"><button class="main" id="fbgo">선생님께 보내기</button>${edit?`<button class="ghost" id="fbbk">되돌아가기</button>`:''}<span id="fbm" style="color:var(--sub);font-size:14px">글과 적는 칸을 모두 쓰고, 체크 항목을 모두 체크해야 보낼 수 있어요</span></div></div>`;
     const T=w.querySelector('.fbt'),E=i=>w.querySelector(`[data-i="${i}"]`),val=()=>({text:T.value,ans:I.map((x,i)=>x.k==='체크'?E(i).checked:E(i).value)}),chk=()=>{const x=val();$('#fbgo').disabled=!x.text.trim()||I.some((q,i)=>q.k==='체크'?x.ans[i]!==true:!String(x.ans[i]).trim())}; // v205: 체크 항목도 모두 체크해야 보냄
     [T,...w.querySelectorAll('[data-i]')].forEach(e=>e.oninput=e.onchange=()=>{chk();try{sessionStorage.setItem(dk,JSON.stringify(val()))}catch(er){}});chk();
