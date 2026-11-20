@@ -87,6 +87,14 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .tt{display:block;width:100%;text-align:left;background:none;padding:6px 8px;border-radius:10px;font-size:15px;line-height:1.4}.tt:hover{background:#f3f5fb}.tt small{color:var(--sub);margin-left:4px}
 .tt.cur{background:var(--butter)}.tt.on{background:var(--sky);font-weight:bold}.tl{margin-left:10px}.ta{margin-left:16px}.ti{font-size:14px}
 #tg{display:none}#tg.on{display:inline-block}
+.fbq{font-weight:bold;margin:12px 0 4px;word-break:keep-all}.fbq small{display:block;font-weight:normal;color:var(--sub);font-size:13px;margin-top:2px}
+.fbt,.fba,.fbf{width:100%;box-sizing:border-box;font-size:16px;line-height:1.7}.fbs{border-radius:12px;padding:10px 14px;font-weight:600;margin:6px 0 10px}
+.fbr{border-radius:10px;padding:8px 12px;line-height:1.7;word-break:keep-all;white-space:pre-wrap}.fbr.p{background:var(--ok)}.fbr.f{background:var(--butter)}
+.fbans{border-left:4px solid #5d8fd6;background:var(--sky);border-radius:8px;padding:6px 12px;line-height:1.7;white-space:pre-wrap;word-break:keep-all;margin-bottom:6px}.fbp{white-space:pre-wrap;word-break:keep-all;line-height:1.7;font-family:inherit;margin:8px 0 0}
+.fbc{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;padding:4px 12px;margin:0 6px 6px 0;cursor:pointer}.fbc{width:auto!important;white-space:nowrap}.fbc input{width:auto!important;margin:0}.fbc:has(input:checked){background:var(--ok)}.fbc:has(input[data-p="피드백"]:checked){background:var(--butter)}
+.fbli{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:10px;color:inherit;font:inherit;cursor:pointer;border-radius:8px}.fbli:last-child{border-bottom:0}.fbli.on{background:var(--sky)}.fbli small{color:var(--sub)}
+.fbn.on{background:#e53935;color:#fff;border-radius:20px;padding:1px 8px;font-size:12px;margin-left:6px;font-weight:bold}
+#fbnote{position:fixed;right:20px;bottom:20px;z-index:60;max-width:320px;background:var(--q-surface,#fff);border:2px solid #4caf8a;border-radius:14px;padding:12px 16px;box-shadow:0 12px 30px -12px rgba(0,0,0,.5)}#fbnote p{margin:6px 0 10px;line-height:1.6;word-break:keep-all}
 .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#3a4256;color:#fff;padding:10px 18px;border-radius:12px;z-index:50}
 #secx{position:fixed;right:16px;bottom:58px;z-index:40;max-width:min(360px,calc(100vw - 32px));padding:9px 16px;border-radius:999px;box-shadow:0 4px 14px #0003;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:none}#secx.on{display:block}
 #sv{position:fixed;right:16px;bottom:16px;padding:6px 12px;border-radius:10px;background:#eef1f8;font-size:13px;display:none;z-index:40}#sv.ok{background:var(--ok)}#sv.bad{background:var(--no)}
@@ -135,7 +143,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v196)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v197)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -201,7 +209,7 @@ function renderSide(){const e=$('#side');if(!e||!$('#wrap').classList.contains('
 /* 전광판: 승인된 '오늘의 한마디'가 5분씩 돌아가며 보임. 학생은 정해진 쉬는 시간에만 하루 한 개 쓰고, 승인 전까지 고칠 수 있음 (시간 검사는 서버 시각 기준) */
 const MB={d:null,u:'',t:0,ed:false,open:null};
 setInterval(()=>{const e=$('#nowc');if(e)e.textContent=new Date(Date.now()+(MB.off||0)+9*36e5).toISOString().slice(11,19)},1000); // 오른쪽 타이머 위 현재 시각 (서버 시계 기준 한국 시간 = 성적·한마디 시간 판단과 같은 시계)
-async function mbLoad(){const u=S.user&&S.user.id;if(MB.ld)return;MB.ld=1;const r=await api('msgGet').finally(()=>MB.ld=0);if(!r||r.error||!S.user||S.user.id!==u)return;if(MB.u!==u)MB.ed=false;Object.assign(MB,{d:r,u,t:Date.now(),off:r.now-Date.now()});mbDraw()}
+async function mbLoad(){const u=S.user&&S.user.id;if(MB.ld)return;MB.ld=1;const r=await api('msgGet').finally(()=>MB.ld=0);if(!r||r.error||!S.user||S.user.id!==u)return;if(MB.u!==u)MB.ed=false;Object.assign(MB,{d:r,u,t:Date.now(),off:r.now-Date.now()});mbDraw();fbNote(r.fb)}
 const mbT=()=>new Date(Date.now()+MB.off+9*36e5).toISOString().slice(11,16),mbOpen=()=>MB.d.times.some(w=>mbT()>=w[0]&&mbT()<w[1]);
 function mbBoard(){const e=$('#mbx .mbt');if(!e)return;const B=MB.d.board||[],n=B.length,k=Math.floor((Date.now()+MB.off)/300000);let x=null;
   if('cur' in MB.d)x=MB.d.cur; // v126 서버: 5분마다 서버가 고른 글 (모든 학생 같음)
@@ -223,7 +231,7 @@ $('#side').addEventListener('click',e=>{const t=e.target;if(t.closest('.mbe')){M
 $('#side').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('mbq')&&!e.isComposing)mbSave()});
 MB.j=3000+Math.floor(Math.random()*30000); // 5분이 바뀌면 학생마다 3~33초 사이에 흩어서 새 글을 받음 (서버에 한꺼번에 몰리지 않게)
 MB.c=Date.now(); // 1분마다 전광판 글만 가볍게 다시 확인 (관리자가 '지금 띄우기'로 고른 글이 바로 보이게; 옛 서버면 조용히 무시)
-async function mbCur(){MB.c=Date.now();const u=S.user&&S.user.id,r=await api('msgCur');if(!r||r.error||!('cur' in r)||!MB.d||MB.u!==u)return;MB.d.cur=r.cur;MB.d.slotEnd=r.slotEnd;mbBoard()}
+async function mbCur(){MB.c=Date.now();const u=S.user&&S.user.id,r=await api('msgCur');if(!r||r.error||!('cur' in r)||!MB.d||MB.u!==u)return;MB.d.cur=r.cur;MB.d.slotEnd=r.slotEnd;mbBoard();fbNote(r.fb)}
 setInterval(()=>{if(!MB.d||!$('#mbx'))return;if(MB.d.slotEnd&&Date.now()+MB.off>MB.d.slotEnd+MB.j)mbLoad();else if(!MB.ld&&!document.hidden&&Date.now()-MB.c>60000+MB.j)mbCur();mbBoard();if(mbOpen()!==MB.open&&!(MB.ed&&document.activeElement&&document.activeElement.classList.contains('mbq')))mbDraw()},15000);
 function hdrNotice(){const h=$('#hn'),I=S.user&&mem.info,x=I&&(I.notices||[])[0];if(!x){h.innerHTML='';return} // 머리글 가운데: 가장 최근 공지 한 줄
   const t=document.createElement('div');t.innerHTML=fmt(x.body);h.innerHTML=`<div class="ht"><b>📢 ${esc(x.title)}</b><span class="hd">${esc(x.date)}</span></div><div class="hx"><span class="hb">${esc(t.textContent.replace(/\s+/g,' ').trim())}</span><span class="hm">(더보기)</span></div>`;hnMore()}
@@ -484,7 +492,7 @@ function loginView(msg=''){showToc(false);app.innerHTML=`<div class="box narrow 
   $('#fg').onclick=e=>{e.preventDefault();forgotView()};fillYears();$('#go').onclick=go;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('#go').disabled)go()})}
 function resume(){let p=null;try{p=JSON.parse(sessionStorage.getItem('pos')||'null')}catch(e){}const u=S.user;if(!p||p.u!==u.id||u.must||(u.role!=='관리자'&&isPhone()))return start();
   S.asub=p.asub||'';S.ayear=p.ayear||'';S.preview=u.role==='관리자'&&!!p.p;setWho();
-  if(u.role==='관리자'&&!S.preview){showToc(false);tmStop();S.atab=['amenu','msgs','notice','grades'].includes(p.v)?'menu':'class';return p.v==='amenu'?adminMenu():p.v==='msgs'?msgsView():p.v==='notice'?noticeView():p.v==='grades'?gradesView(p.cls):p.v==='class'?classView(p.cls):p.v==='detail'?detailView(p.id,p.cls):adminView()}
+  if(u.role==='관리자'&&!S.preview){showToc(false);tmStop();S.atab=['amenu','msgs','notice','grades','fbreq'].includes(p.v)?'menu':'class';return p.v==='fbreq'?fbAdmin():p.v==='amenu'?adminMenu():p.v==='msgs'?msgsView():p.v==='notice'?noticeView():p.v==='grades'?gradesView(p.cls):p.v==='class'?classView(p.cls):p.v==='detail'?detailView(p.id,p.cls):adminView()}
   showToc(true);loadToc();if(u.role!=='관리자')tmStart();p.v==='essay'?essayView(p.tid):p.v==='ehome'?essayHome():p.v==='lerr'?lerrView():p.v==='lesson'?(S.sub=p.sub,lessonView()):p.v==='act'||p.v==='content'?go(p.sub,p.no,p.act).then(()=>{if(!S.at)langView()}):langView(p.g)}
 const isPhone=()=>matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<600; // 휴대폰(태블릿 제외)
 function phoneView(){showToc(false);tmStop();app.innerHTML=`<div class="box narrow" style="text-align:center"><h2>📱 휴대폰에서는 성적 확인만 할 수 있어요</h2><p style="color:var(--sub)">수업 내용은 컴퓨터나 태블릿에서 열어 주세요.</p><button class="main" onclick="openGrades()">🔒 내 성적 보기</button></div>`}
@@ -955,9 +963,9 @@ function putOut(o,t){const st=t.endsWith('#STOP#');o.textContent=st?t.slice(0,-6
 async function adminData(force){const [sr,yr]=await Promise.all([get('subjects',()=>api('subjects'),force),get('years',()=>api('years'),force)]);if(sr.error)return{err:sr.error};
   if(!sr.subjects.some(s=>s.name===S.asub))S.asub=(sr.subjects.find(s=>s.ready)||sr.subjects[0]||{}).name||'';
   if(!S.ayear||!(yr.years||[]).includes(S.ayear))S.ayear=yr.cur||(yr.years||[])[0]||'';const r=await get('classes|'+S.asub+'|'+S.ayear,()=>api('classes',{sub:S.asub,year:S.ayear}),force);return r.error?{err:r.error}:{sr,yr,r}}
-const aTabs=t=>`<div class="row"><button class="chip ${t==='class'?'on':''}" onclick="S.atab='class';adminView()">🏫 학급 현황</button><button class="chip ${t==='menu'?'on':''}" onclick="S.atab='menu';adminView()">🛠 관리자 메뉴</button></div>`;
-function adminMenu(){here('amenu',{});app.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:14px">${aTabs('menu')}</div><div class="grid"><button class="card" data-msgs><b>💬 한마디 모음</b><small>오늘 올라온 한마디 승인 · 거절</small></button><button class="card" data-grd><b>📊 성적 조회</b><small>학생이 보는 성적 창 그대로 보기</small></button><button class="card" data-ntc><b>📢 공지 관리</b><small>공지 등록 · 수정 · 학생 화면에 보이기</small></button></div>`;
-  app.querySelector('[data-msgs]').onclick=()=>msgsView();app.querySelector('[data-grd]').onclick=()=>gradesView();app.querySelector('[data-ntc]').onclick=()=>noticeView()}
+const aTabs=t=>`<div class="row"><button class="chip ${t==='class'?'on':''}" onclick="S.atab='class';adminView()">🏫 학급 현황</button><button class="chip ${t==='menu'?'on':''}" onclick="S.atab='menu';adminView()">🛠 관리자 메뉴<span class="fbn"></span></button></div>`;
+function adminMenu(){here('amenu',{});app.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:14px">${aTabs('menu')}</div><div class="grid"><button class="card" data-msgs><b>💬 한마디 모음</b><small>오늘 올라온 한마디 승인 · 거절</small></button><button class="card" data-grd><b>📊 성적 조회</b><small>학생이 보는 성적 창 그대로 보기</small></button><button class="card" data-ntc><b>📢 공지 관리</b><small>공지 등록 · 수정 · 학생 화면에 보이기</small></button><button class="card" data-fbq><b>📝 피드백 요청<span class="fbn"></span></b><small>제안형 논술: 학생이 보낸 글에 직접 피드백</small></button></div>`;fbBadge();
+  app.querySelector('[data-msgs]').onclick=()=>msgsView();app.querySelector('[data-grd]').onclick=()=>gradesView();app.querySelector('[data-ntc]').onclick=()=>noticeView();app.querySelector('[data-fbq]').onclick=()=>fbAdmin()}
 async function adminView(force){if(S.atab==='menu')return adminMenu();here('admin',{});if(force||!mem.subjects||!mem.years||!mem['classes|'+S.asub+'|'+S.ayear])app.innerHTML='불러오는 중...';
   const D=await adminData(force);if(D.err)return app.innerHTML=D.err;if(S.atab==='menu'||S.preview)return;const {sr,yr,r}=D; // 기다리는 사이 다른 탭·학생 화면으로 옮겼으면 그리지 않음
   app.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:14px">${aTabs('class')}<button class="ghost" onclick="adminView(true)">⟳ 새로고침</button></div><div class="row" style="margin-bottom:14px">${sr.subjects.map(s=>`<button class="chip ${s.name===S.asub?'on':''}" data-sub="${esc(s.name)}">${ico(s.icon)} ${esc(s.name)}${s.ready?'':' (준비중)'}</button>`).join('')}</div>
@@ -1227,14 +1235,14 @@ async function essayView(tid){here('essay',{tid});document.querySelectorAll('.mo
   const t=T.find(x=>x.id===tid)||T[0],dk='essay|'+(S.user&&S.user.id)+'|'+t.id;let draft='';try{draft=sessionStorage.getItem(dk)||''}catch(e){} // 쓰던 글은 이 창을 닫기 전까지만 남아요(학교 PC를 같이 쓰니까)
   const EAT='이 글 피드백의 내용을 완벽하게 신뢰하진 않고 보조 도구로만 사용하겠습니다.',EK='eack|'+(S.user&&S.user.id),today=new Date(Date.now()+9*36e5).toISOString().slice(0,10);let need=true;try{need=localStorage.getItem(EK)!==today}catch(e){} // 따라 쓰기는 하루(한국 날짜)에 한 번, 성적 창과 같은 방식
   const chip=x=>`<button class="chip${x.id===t.id?' on':''}" data-t="${esc(x.id)}">${esc(gp(x)[1])}</button>`,G=[];T.forEach(x=>{const g=gp(x)[0];let e=G.find(z=>z[0]===g);if(!e)G.push(e=[g,[]]);e[1].push(x)});
-  app.innerHTML=`<p><button class="ghost" onclick="essayHome()">← 글 피드백 받기</button></p><h2>✍️ 글 피드백 받기</h2><p style="margin:-4px 0 12px;color:#e53935;word-break:keep-all">내가 다른 친구 봐주느라 너네 글 못봐줄 때 미리 테스트해보는 '보조' 도구이며, 여기서 완벽하다고 해도 완벽하지 않을 수 있다는 점 꼭 알아두세요.</p>`
+  app.innerHTML=`<p><button class="ghost" onclick="essayHome()">← 글 피드백 받기</button></p><h2>✍️ 글 피드백 받기</h2><p style="margin:-4px 0 12px;color:#e53935;word-break:keep-all${t.kind==='제안'?';display:none':''}">내가 다른 친구 봐주느라 너네 글 못봐줄 때 미리 테스트해보는 '보조' 도구이며, 여기서 완벽하다고 해도 완벽하지 않을 수 있다는 점 꼭 알아두세요.</p>`
     +(T.length>1?G.map(([g,L])=>g?`<details class="sbox" style="margin-bottom:10px"${L.includes(t)?' open':''}><summary style="cursor:pointer"><b>📂 ${esc(g)}</b> <small style="color:var(--sub)">주제 ${L.length}개</small></summary><div class="row" style="margin-top:8px;flex-wrap:wrap">${L.map(chip).join('')}</div></details>`:`<div class="row" style="margin-bottom:10px;flex-wrap:wrap">${L.map(chip).join('')}</div>`).join(''):'')
-    +`<div class="box"><p style="margin:0 0 6px"><b>${esc(gp(t)[1]||'과제')}</b> · ${t.kind==='제안'?'분석 결과로 제안하는 글':'자료를 해석하는 글'}</p>`
+    +(t.kind==='제안'?`<div id="fbw">불러오는 중...</div>`:`<div class="box"><p style="margin:0 0 6px"><b>${esc(gp(t)[1]||'과제')}</b> · 자료를 해석하는 글</p>`
     
     +`<textarea id="eswr" rows="10" style="width:100%;box-sizing:border-box;font-size:16px;line-height:1.7" placeholder="내가 쓴 수행평가 글을 붙여 넣거나 여기에 써 보세요.">${esc(draft)}</textarea>
     ${need?`<div id="esak" style="margin:12px 0 4px"><p style="margin:0 0 6px"><b>피드백을 받기 위해선 따라 입력하세요.</b></p><div class="gh"><div class="gt" aria-hidden="true">${esc(EAT)}</div><input class="gf" autocomplete="off" spellcheck="false"></div><p style="margin:6px 0 0;color:#e53935;font-weight:bold">나중에 피드백이 된다했는데 왜 깎아요?? 하지 마세요!!!!!</p></div>`:''}
-    <div class="row" style="align-items:center"><button class="main" id="esgo"${need?' disabled':''}>점검하기</button><span id="esn" style="color:var(--sub);font-size:14px"></span></div></div><div id="esout"></div>`;
-  app.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>essayView(b.dataset.t));
+    <div class="row" style="align-items:center"><button class="main" id="esgo"${need?' disabled':''}>점검하기</button><span id="esn" style="color:var(--sub);font-size:14px"></span></div></div><div id="esout"></div>`);
+  app.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>essayView(b.dataset.t));if(t.kind==='제안')return fbStu(t,gp(t)[1],r.ph);
   const ta=$('#eswr'),cnt=()=>{$('#esn').textContent=ta.value.trim().length+'자'};cnt();
   ta.oninput=()=>{cnt();try{sessionStorage.setItem(dk,ta.value)}catch(e){}};
   const gf=app.querySelector('#esak .gf'),nz=x=>String(x).replace(/\s+/g,'').replace(/[.。]+$/,'');
@@ -1252,6 +1260,63 @@ async function essayView(tid){here('essay',{tid});document.querySelectorAll('.mo
     const s=await api('essaySave',{task:t.id,text:x,kind:o.kind,el:o.el,all:o.all,fb:[fb.msg].concat(fb.fix,fb.good?['잘한 점: '+fb.good]:[],fb.tips,sp.map(q=>'맞춤법: '+q[0]+' → '+q[1])).join('\n')});
     b.disabled=false;$('#esn').textContent=x.trim().length+'자 · '+(s.error?'저장하지 못했어요: '+s.error:s.nolog?'미리보기라 저장하지 않아요':s.ver+'번째 점검이 저장됐어요')}}
 const essayRows=E=>(E&&E.length)?`<details class="box" open><summary><b>✍️ 글 피드백 기록 (${E.length}번)</b></summary><div class="wrap"><table><thead><tr><th>과제</th><th>번째</th><th>시각</th><th>점검 결과</th><th>글과 피드백</th></tr></thead><tbody>${E.slice().reverse().map(e=>`<tr><td>${esc(e.task)}</td><td>${esc(e.ver)}</td><td>${esc(e.at)}</td><td>${esc(ESALL[e.all]||e.all)}</td><td style="text-align:left"><details><summary>보기</summary><pre>${esc(e.text)}</pre><pre style="color:var(--sub)">${esc(e.fb)}</pre></details></td></tr>`).join('')}</tbody></table></div></details>`:'';
+
+/* ===== 제안형 논술: 선생님이 직접 피드백 (v197, 서버 Code.gs v135) =====
+   학생: 글 + 스스로 점검 4칸 → 보내기 (선생님이 열기 전까지만 취소 가능). 선생님이 피드백하면 전광판 1분 확인에 실려 와서 '피드백 완료!' 알림
+   선생님: 관리자 메뉴 '📝 피드백 요청' → 글 전체 + 4문항마다 통과/피드백(문장). 질문 문구는 시트 피드백문구 탭 '교사점검_질문1~4'·'교사점검_안내1~4' */
+const FBQ=['내가 데이터를 통해 얻은 정보는?','그 정보는 데이터의 어느 부분을 보고 알았나요?','내가 생각한 데이터의 활용 방안은?','그렇게 활용하면 어떤 효과가 있나요?'],FBH=['','그래프 모양, 특정 값이나 구간, 두 값의 비교처럼 눈으로 본 것을 써요.','','기대 효과나 예시를 들어 써요.'];
+const fbQ=(P,i)=>{P=P||{};const q=P['교사점검_질문'+(i+1)],h=P['교사점검_안내'+(i+1)];return [q&&q.trim()?q:FBQ[i],h!=null?h:FBH[i]]};
+const fbRes=(x,lab)=>`<div class="fbq">${lab}</div>`+(x[0]==='통과'?`<div class="fbr p">✅ 통과!</div>`:`<div class="fbr f">✏️ ${esc(x[1])}</div>`);
+async function fbStu(t,title,P,edit){const w=$('#fbw');if(!w)return;const r=await api('fbMine',{task:t.id});if(!$('#fbw'))return;if(r.error)return w.innerHTML=`<div class="box">${esc(r.error)}</div>`;
+  const L=r.list||[],last=L[L.length-1],src=edit||(!last||last.st==='취소')?(last||{}):null,dk='fbd|'+(S.user&&S.user.id)+'|'+t.id;
+  const head=`<p style="margin:0 0 6px"><b>${esc(title||'과제')}</b> · 선생님이 직접 피드백해요${last&&!src?` <small style="color:var(--sub)">(${last.ver}번째 요청 · ${esc(last.at)})</small>`:''}</p>`;
+  if(src){let d=null;try{d=JSON.parse(sessionStorage.getItem(dk)||'null')}catch(e){}const v=d||{text:src.text||'',ans:src.ans||['','','','']}; // 다시 보낼 때는 학생이 쓴 답 그대로
+    w.innerHTML=`<div class="box">${head}<div class="fbq">📄 내가 쓴 글</div><textarea class="fbt" rows="8" placeholder="내가 쓴 수행평가 글을 붙여 넣거나 여기에 써 보세요.">${esc(v.text)}</textarea><h4 style="margin:14px 0 4px">🔎 스스로 점검하기</h4>`
+      +[0,1,2,3].map(i=>{const q=fbQ(P,i);return `<div class="fbq">${i+1}. ${esc(q[0])}${q[1]?`<small>${esc(q[1])}</small>`:''}</div><textarea class="fba" rows="2">${esc(v.ans[i]||'')}</textarea>`}).join('')
+      +`<div class="row" style="align-items:center;margin-top:12px"><button class="main" id="fbgo">📨 선생님께 보내기</button>${edit?`<button class="ghost" id="fbbk">되돌아가기</button>`:''}<span id="fbm" style="color:var(--sub);font-size:14px">글과 4칸을 모두 써야 보낼 수 있어요</span></div></div>`;
+    const T=w.querySelector('.fbt'),A=[...w.querySelectorAll('.fba')],val=()=>({text:T.value,ans:A.map(a=>a.value)}),chk=()=>{const x=val();$('#fbgo').disabled=!x.text.trim()||x.ans.some(a=>!a.trim())};
+    [T,...A].forEach(e=>e.oninput=()=>{chk();try{sessionStorage.setItem(dk,JSON.stringify(val()))}catch(er){}});chk();
+    if(edit)$('#fbbk').onclick=()=>{try{sessionStorage.removeItem(dk)}catch(e){}fbStu(t,title,P)};
+    $('#fbgo').onclick=async()=>{const b=$('#fbgo');b.disabled=true;b.textContent='보내는 중...';const s=await api('fbSend',{task:t.id,...val()});
+      if(s.error){b.disabled=false;b.textContent='📨 선생님께 보내기';$('#fbm').textContent=s.error;return}try{sessionStorage.removeItem(dk)}catch(e){}toast('📨 선생님께 보냈어요');fbStu(t,title,P)};return}
+  const mine=`<details class="sbox" style="margin-top:10px"><summary style="cursor:pointer">📄 내가 보낸 글과 답 보기</summary><pre class="fbp">${esc(last.text)}</pre>${last.ans.map((a,i)=>`<div class="fbq">${i+1}. ${esc(fbQ(P,i)[0])}</div><div class="fbans">${esc(a)}</div>`).join('')}</details>`;
+  if(last.st==='대기'||last.st==='읽는 중'){const rd=last.st==='읽는 중';
+    w.innerHTML=`<div class="box">${head}<div class="fbs" style="background:${rd?'var(--lav)':'var(--sky)'}">${rd?'👀 선생님이 지금 읽고 있어요. 조금만 기다려 주세요.':'⏳ 선생님께 보냈어요. 아직 읽기 전이에요.'}</div>`
+      +`<div class="row" style="align-items:center"><button class="ghost" id="fbx"${rd?' disabled':''}>보내기 취소</button><span id="fbm" style="color:var(--sub);font-size:14px">${rd?'선생님이 읽는 중이라 취소할 수 없어요.':'취소하면 글을 고쳐서 다시 보낼 수 있어요.'}</span></div>${mine}</div>`;
+    if(!rd)$('#fbx').onclick=async()=>{const b=$('#fbx');b.disabled=true;const s=await api('fbCancel',{id:last.id});if(s.error){toast(s.error);return fbStu(t,title,P)}toast('보내기를 취소했어요');fbStu(t,title,P,1)};return}
+  const R=last.res||{g:['',''],q:[]},np=[R.g].concat(R.q).filter(x=>x[0]==='통과').length;
+  w.innerHTML=`<div class="box">${head}<div class="fbs" style="background:var(--ok)">🎉 피드백 완료! <small style="font-weight:normal">(통과 ${np} / 5 · ${esc(last.fat)})</small></div>`
+    +fbRes(R.g,'📄 글 전체')+R.q.map((x,i)=>fbRes(x,`${i+1}. ${esc(fbQ(P,i)[0])}`)).join('')
+    +`<div class="row" style="margin-top:12px"><button class="main" id="fbre">✏️ 고쳐서 다시 보내기</button></div>${mine}</div>`;
+  $('#fbre').onclick=()=>fbStu(t,title,P,1);
+  if(last.st==='완료'){api('fbSeen',{id:last.id});FB.hide=last.id;$('#fbnote')&&$('#fbnote').remove()}}
+const FB={n:null,hide:''};
+function fbNote(x){const o=$('#fbnote');if(!x||FB.hide===x.id||!S.user||S.user.role==='관리자'){if(o&&(!x||FB.hide===x.id))o.remove();return}if(o)return;
+  const d=document.createElement('div');d.id='fbnote';d.innerHTML=`<b>🎉 피드백 완료!</b><p>선생님이 「${esc(String(x.title||x.task).split('|').pop().trim())}」에 피드백을 보냈어요.</p><div class="row"><button class="main" data-go>지금 보기</button><button class="ghost" data-later>나중에</button></div>`;
+  document.body.appendChild(d);d.querySelector('[data-go]').onclick=()=>{FB.hide=x.id;d.remove();essayView(x.task)};d.querySelector('[data-later]').onclick=()=>{FB.hide=x.id;d.remove()}}
+function fbBadge(){document.querySelectorAll('.fbn').forEach(e=>{e.textContent=FB.n>0?FB.n:'';e.classList.toggle('on',FB.n>0)})}
+async function fbPoll(){if(!S.user||S.user.role!=='관리자'||document.hidden)return;const r=await api('fbCount');if(!r||r.error||!S.user||S.user.role!=='관리자')return;
+  if(FB.n!=null&&r.n>FB.n){toast('📝 새 피드백 요청 '+(r.n-FB.n)+'개');if($('#fbal')&&!$('#fbrv'))fbAdmin()}FB.n=r.n;fbBadge()}
+setInterval(fbPoll,60000);setTimeout(fbPoll,3000);
+async function fbAdmin(open){here('fbreq',{});if(!open)app.innerHTML='불러오는 중...';const r=await api('fbList');if(r.error)return app.innerHTML=esc(r.error);FB.n=r.wait.length;FB.L=r;
+  const ttl=o=>esc(String(r.titles[o.task]||o.task).split('|').pop().trim()),li=(o,dn)=>`<button class="fbli${open===o.id?' on':''}" data-id="${esc(o.id)}"><span><b>${esc(o.who)}</b><br><small>${ttl(o)} · ${o.ver}번째${o.st==='읽는 중'?' · 👀 읽는 중':''}</small></span><small>${esc(dn?o.fat:o.at)}</small></button>`;
+  app.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:14px">${aTabs('menu')}<button class="ghost" onclick="fbAdmin()">⟳ 새로고침</button></div><p><button class="ghost" onclick="adminMenu()">← 관리자 메뉴</button></p><h2>📝 피드백 요청 <span class="fbn"></span></h2>`
+    +`<div class="box" id="fbal" style="padding:6px">${r.wait.length?r.wait.map(o=>li(o)).join(''):'<p style="margin:8px">기다리는 요청이 없어요. 1분마다 새로 확인해요.</p>'}</div><div id="fbrv"></div>`
+    +(r.done.length?`<details class="box"><summary><b>최근 피드백한 요청 (${r.done.length})</b></summary>${r.done.map(o=>li(o,1)).join('')}</details>`:'');
+  fbBadge();app.querySelectorAll('.fbli').forEach(b=>b.onclick=()=>fbOpen(b.dataset.id));if(open)fbOpen(open)}
+async function fbOpen(id){const v=$('#fbrv');if(!v)return;app.querySelectorAll('.fbli').forEach(b=>b.classList.toggle('on',b.dataset.id===id));v.innerHTML='<div class="box">불러오는 중...</div>';
+  const r=await api('fbOpen',{id});if(!$('#fbrv'))return;if(r.error)return v.innerHTML=`<div class="box">${esc(r.error)}</div>`;const o=r.item,P=(FB.L||{}).ph,done=!!o.res,R=o.res||{g:['',''],q:[['',''],['',''],['',''],['','']]},I=[R.g].concat(R.q);
+  const item=(k,lab,ans)=>`<div class="fbi" data-k="${k}"><div class="fbq">${lab}</div>${ans!=null?`<div class="fbans">${esc(ans)}</div>`:''}`
+    +(done?(I[k][0]==='통과'?`<div class="fbr p">✅ 통과!</div>`:`<div class="fbr f">✏️ ${esc(I[k][1])}</div>`):`<label class="fbc"><input type="checkbox" data-p="통과"> 통과!</label><label class="fbc"><input type="checkbox" data-p="피드백"> 피드백</label><textarea class="fbf" rows="2" placeholder="학생에게 보낼 피드백" style="display:none"></textarea>`)+`</div>`;
+  v.innerHTML=`<div class="box"><p style="margin:0 0 8px"><b>${esc(o.who)}</b> · ${o.ver}번째 요청 · ${esc(o.at)}${done?' · 피드백 '+esc(o.fat):''}</p><details class="sbox" open><summary style="cursor:pointer">📄 학생이 쓴 글</summary><pre class="fbp">${esc(o.text)}</pre></details>`
+    +item(0,'📄 글 전체',null)+o.ans.map((a,i)=>item(i+1,`${i+1}. ${esc(fbQ(P,i)[0])}`,a)).join('')
+    +(done?'':`<div class="row" style="align-items:center;margin-top:12px"><button class="main" id="fbsend" disabled>✅ 피드백 보내기</button><span id="fbm" style="color:var(--sub);font-size:14px">5개 모두 고르면 보낼 수 있어요. '피드백'은 문장을 써 주세요.</span></div>`)+`</div>`;
+  v.scrollIntoView({behavior:'smooth',block:'start'});if(done)return;
+  const it=[...v.querySelectorAll('.fbi')],pick=e=>{const c=e.querySelector('input:checked');return c?c.dataset.p:''},chk=()=>{$('#fbsend').disabled=!it.every(e=>{const p=pick(e);return p==='통과'||(p==='피드백'&&e.querySelector('.fbf').value.trim())})};
+  it.forEach(e=>{const cs=[...e.querySelectorAll('input')],f=e.querySelector('.fbf');cs.forEach(c=>c.onchange=()=>{if(c.checked)cs.forEach(z=>{if(z!==c)z.checked=false});f.style.display=pick(e)==='피드백'?'block':'none';if(pick(e)==='피드백')f.focus();chk()});f.oninput=chk});
+  $('#fbsend').onclick=async()=>{const b=$('#fbsend');b.disabled=true;b.textContent='보내는 중...';const x=it.map(e=>[pick(e),pick(e)==='피드백'?e.querySelector('.fbf').value.trim():'']);
+    const s=await api('fbReply',{id,res:{g:x[0],q:x.slice(1)}});if(s.error){b.disabled=false;b.textContent='✅ 피드백 보내기';$('#fbm').textContent=s.error;return}
+    toast('✅ 피드백을 보냈어요');const L=(FB.L&&FB.L.wait)||[],k=L.findIndex(z=>z.id===id),nx=L[k+1]||L.find(z=>z.id!==id);fbAdmin(nx?nx.id:'')}}
 
 /* 시작 */
 (async()=>{if(S.token){const u=await api('me');if(!u.error){S.user=u;return resume()}}loginView()})();
