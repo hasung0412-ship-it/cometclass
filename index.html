@@ -309,7 +309,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-reduced-transparency:reduce){.modal{-webkit-backdrop-filter:none;backdrop-filter:none}}
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span>배곧해솔중학교 (v206)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span>배곧해솔중학교 (v207)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -661,8 +661,8 @@ function resume(){let p=null;try{p=JSON.parse(sessionStorage.getItem('pos')||'nu
   S.asub=p.asub||'';S.ayear=p.ayear||'';S.preview=u.role==='관리자'&&!!p.p;setWho();
   if(u.role==='관리자'&&!S.preview){showToc(false);tmStop();S.atab=['amenu','msgs','notice','grades','fbreq'].includes(p.v)?'menu':'class';return p.v==='fbreq'?fbAdmin():p.v==='amenu'?adminMenu():p.v==='msgs'?msgsView():p.v==='notice'?noticeView():p.v==='grades'?gradesView(p.cls):p.v==='class'?classView(p.cls):p.v==='detail'?detailView(p.id,p.cls):adminView()}
   showToc(true);loadToc();if(u.role!=='관리자')tmStart();p.v==='essay'?essayView(p.tid):p.v==='ehome'?essayHome():p.v==='lerr'?lerrView():p.v==='lesson'?(S.sub=p.sub,lessonView()):p.v==='act'||p.v==='content'?go(p.sub,p.no,p.act).then(()=>{if(!S.at)langView()}):langView(p.g)}
-const isPhone=()=>matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<600; // 휴대폰(태블릿 제외)
-function phoneView(){showToc(false);tmStop();app.innerHTML=`<div class="box narrow" style="text-align:center"><h2>휴대폰에서는 성적 확인만 할 수 있어요</h2><p style="color:var(--sub)">수업 내용은 컴퓨터나 태블릿에서 열어 주세요.</p><button class="main" onclick="openGrades()">내 성적 보기</button></div>`}
+const isPhone=()=>matchMedia('(pointer:coarse)').matches||/Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(navigator.userAgent)||(/Mac/.test(navigator.platform)&&navigator.maxTouchPoints>1) /* v207: PC가 아닌 기기(휴대폰·태블릿)는 모두 성적 조회만 */; // 휴대폰(태블릿 제외)
+function phoneView(){showToc(false);tmStop();app.innerHTML=`<div class="box narrow" style="text-align:center"><h2>성적 조회만 가능해요!</h2><p style="color:var(--sub)">수업 내용은 컴퓨터에서 열어 주세요.</p><button class="main" onclick="openGrades()">내 성적 보기</button></div>`}
 function start(){if(S.user.role==='관리자')S.preview=true;setWho();if(S.user.must)return pwView();if(S.user.role!=='관리자'&&isPhone())return phoneView();S.user.role==='관리자'?(showToc(true),loadToc(),tmStop(),langView(),adminData()):(showToc(true),loadToc(),tmStart(),langView())} // 관리자도 처음엔 '학생 화면 보기'로 시작
 function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 만들기</h2><p>처음 로그인했어요. 비밀번호를 바꿔야 계속할 수 있어요.</p>
 <div class="pwr"><input id="n1" type="password" placeholder="새 비밀번호 (4자 이상)" autocomplete="new-password"><button type="button" class="eye" id="ey" title="비밀번호 보기">👁</button></div><div class="pwr"><input id="n2" type="password" placeholder="한 번 더 입력" autocomplete="new-password"></div><div class="err" id="e"></div><button class="main" id="go">바꾸기</button></div>`;
