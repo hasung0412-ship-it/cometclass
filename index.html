@@ -135,7 +135,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v195)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v196)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -153,7 +153,7 @@ function clearDraft(no,act,q){const k=dkey(S.sub,no,act,q);delete DR[k];if(isAft
 function loadLocal(q){try{const a=S.at;return a&&a.act?JSON.parse(localStorage.getItem(dkey(a.sub,a.no,a.act,q))||'null'):null}catch(e){return null}}
 function setSv(t,c){const e=$('#sv');e.textContent=t;e.className=c||'';e.style.display='block';clearTimeout(setSv.h);if(c==='ok')setSv.h=setTimeout(()=>e.style.display='none',2500)}
 function collect(bx){if(bx.dataset.etc)return [...bx.querySelectorAll('.ib')].map((x,k)=>`${k+1}: ${x.type==='checkbox'?(x.checked?'1':'0'):x.value}`).join('\n');const bl=[...bx.querySelectorAll('.blank')];if(bl.length)return bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n');const rd=bx.querySelector('input[type=radio]:checked');if(rd)return rd.value;const el=bx.querySelector('.ans,.free,textarea');return el?el.value:''}
-function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||e.target.closest('.trace,.runb,.qz,.sp2'))return;let q,text;
+function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||e.target.closest('.trace,.runb,.qz,.sp2,.asm'))return;let q,text;
   if(a.act==='개념'){const el=e.target.closest('.ib');if(!el)return;q=+el.dataset.i;text=el.type==='checkbox'?(el.checked?'1':'0'):el.value}
   else{const bx=e.target.closest('.box[data-q]');if(!bx||(e.target.closest('.ib')&&!bx.dataset.etc))return;q=+bx.dataset.q;text=collect(bx)}
   const k=dkey(a.sub,a.no,a.act,q);DR[k]={sub:a.sub,no:a.no,act:a.act,q,text,t:Date.now()};
@@ -554,10 +554,10 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
     if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,q,a,x.correct);
     if(x.free){m.className='msg ok';m.innerHTML='📨 제출했어요! 고쳐서 다시 제출해도 돼요. '+fmt(x.explain||'');return}
     m.className='msg '+(x.correct?'ok':'no');m.innerHTML=(x.correct?'✅ 정답! ':'❌ 조금만 다시 생각해보자! ')+fmt(x.explain||'')})}
-  if(act==='작성'){box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니니까, 가만히 있지 말고 뭐라도 해봐요!</p>`+r.items.map((i,n)=>{const s=sv(i.q);return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}
+  if(act==='작성'){box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니니까, 가만히 있지 말고 뭐라도 해봐요!</p>`+r.items.map((i,n)=>{if(ASMQ.test(i.text))return asmBox(i);const s=sv(i.q);return `<div class="box" data-q="${i.q}"><h3>문제 ${n+1}</h3>${fmt(i.text)}
   <div class="tr2${i.hasSample?'':' one'}"><div class="tp"><h4>✍️ 내가 짠 코드</h4><textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">💾 저장</button>${String(i.hint||'').trim()?'<button class="ghost hb"></button>':''}</div><div class="hl"></div>${!i.hasSample&&S.user&&S.user.role==='관리자'?'<p style="color:var(--sub);font-size:13px;margin:6px 0">※ 관리자에게만 보이는 안내: 이 문제는 예시 코드가 비어 있어서 오른쪽 칸이 없어요. 응용해보기 시트의 <b>예시코드</b> 열 제목과 칸을 확인하세요.</p>':''}<pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.ok?'💾 저장해 둔 코드예요':(s&&!s.submitted?'✏️ 이어서 쓰던 코드가 있어요 (아직 저장 전)':'')}</div></div>
   ${i.hasSample?`<div class="tp"><h4>🔒 선생님 예시 코드</h4><div class="sm"><p style="margin:0 0 8px;color:var(--sub)">선생님이 알려 주는 비밀번호를 입력하면 열려요.</p><div class="row"><input type="password" class="sp2" placeholder="비밀번호" autocomplete="off" style="max-width:200px"><button class="main sk">열기</button></div><div class="err se"></div></div></div>`:''}</div></div>`}).join('');
-    box.querySelectorAll('.box').forEach((bx,n)=>{const it=r.items[n],ta=bx.querySelector('textarea'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
+    box.querySelectorAll('.box').forEach((bx,n)=>{const it=r.items[n];if(bx.dataset.asm)return asmInit(bx,it,r.items,no,act);const ta=bx.querySelector('textarea'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
       const hb=bx.querySelector('button.hb');if(hb){const hs=String(it.hint).split(/\r?\n---\r?\n/).map(x=>x.trim()).filter(Boolean),hl=bx.querySelector('.hl');let hn=0;
         const hbt=()=>{hb.textContent=hn<hs.length?`💡 ${hn?'다음 ':''}힌트 보기 (${hn}/${hs.length})`:`💡 힌트를 모두 봤어요 (${hs.length}/${hs.length})`;hb.disabled=hn>=hs.length};hbt();
         hb.onclick=()=>{if(hn>=hs.length)return;const d=document.createElement('div');d.className='sbox';d.style.background='#fffbe8';d.innerHTML=`<b>💡 힌트 ${hn+1}</b><div>${fmt(hs[hn])}</div>`;hl.appendChild(d);hn++;hbt()}}
@@ -572,6 +572,33 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
       bx.querySelector('.sub').onclick=async()=>{const b=bx.querySelector('.sub');if(!ta.value.trim()){m.className='msg no';m.textContent='코드를 먼저 써 주세요';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';
         const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='💾 저장했어요! 고쳐서 다시 저장해도 돼요.'}})}}
 
+/* 블록 조립: 응용해보기 문제 칸에 [조립]이 있으면 그 문항은 '조립하기' 상자. 같은 차시의 다른 응용해보기 문항 = 블록(학생이 쓴 코드 그대로 가져옴).
+   시작코드 칸: '# 블록' 한 줄 위 = 시작 코드, 아래 = 실행 코드 (둘 다 선생님 고정). 테스트입력 칸 = 입력값 처음 값. 붙인 순서는 이 기기에만 기억 */
+const ASMQ=/\[\s*조립\s*\]/,ASMC=['var(--mint)','var(--peach)','var(--butter)','var(--lav)','var(--sky)'];
+const asmName=(i,k)=>{const t=String(i.text||'').split('\n').map(x=>x.replace(/\[[^\]]*\]/g,'').replace(/[*`#]/g,'').trim()).find(Boolean)||'';return `문제 ${k+1}`+(t?' · '+(t.length>22?t.slice(0,22)+'…':t):'')};
+function asmBox(i){return `<div class="box asm" data-q="${i.q}" data-asm="1"><h3>🔧 조립하기</h3>${fmt(String(i.text).replace(ASMQ,''))}
+  <div class="asw"><div><h4>🧱 내 블록 <small>(클릭하면 붙어요)</small></h4><div class="achips"></div><h4>⌨️ 입력값</h4><textarea class="ain" spellcheck="false" style="min-height:90px" placeholder="input()에 차례로 들어갈 값 (한 줄에 하나)">${esc(i.ins&&i.ins[0]||'')}</textarea></div>
+  <div><h4>🛠 조립대</h4><div class="astk"></div><div class="row"><button class="main arun">▶ 프로젝트 실행</button><button class="ghost aall">📄 합친 코드 보기</button><button class="ghost asv">💾 저장</button></div><pre class="out" style="display:none"></pre><pre class="acd" style="display:none"></pre><div class="msg"></div></div></div></div>`}
+function asmInit(bx,it,items,no,act){
+  const parts=String(it.start||'').replace(/^\s*```[^\n]*\n/,'').replace(/\n?\s*```\s*$/,'').split(/^[ \t]*#[ \t]*블록[ \t]*$/m),head=(parts[0]||'').replace(/\s+$/,''),tail=(parts.slice(1).join('\n')||'').replace(/^\s*\n/,'').replace(/\s+$/,'');
+  const bl=[];items.forEach((x,k)=>{if(x!==it&&!ASMQ.test(x.text))bl.push({k,q:x.q,name:asmName(x,k)})});
+  const code=b=>{const t=document.querySelector(`#items .box[data-q="${b.q}"]:not(.asm) textarea`);return t?t.value.replace(/\s+$/,''):''};
+  const key=`asm|${S.user.id}|${S.sub}|${no}|${it.q}`;let ord=[];try{ord=JSON.parse(localStorage.getItem(key)||'[]').filter(q=>bl.some(b=>b.q===q))}catch(e){}
+  const keep=()=>{try{localStorage.setItem(key,JSON.stringify(ord))}catch(e){}};
+  const ch=bx.querySelector('.achips'),stk=bx.querySelector('.astk'),out=bx.querySelector('.out'),cd=bx.querySelector('.acd'),m=bx.querySelector('.msg');
+  const col=b=>ASMC[bl.indexOf(b)%ASMC.length],B=q=>bl.find(b=>b.q===q);
+  const pc=(t,c,bg,ctl)=>`<div class="apc"><div class="aph" style="background:${bg}">${t}${ctl||''}</div><pre>${esc(c)||'<span style="color:var(--sub)">(아직 비어 있어요)</span>'}</pre></div>`;
+  const all=()=>[head,...ord.map(q=>code(B(q))),tail].filter(x=>x.trim()).join('\n\n');
+  const draw=()=>{ch.innerHTML=bl.length?bl.map(b=>{const on=ord.includes(b.q);return `<button class="achip${on?' on':''}" data-q="${b.q}" style="background:${col(b)}">${esc(b.name)}<span>${on?'붙임 ✔':'＋'}</span></button>`}).join(''):'<p style="color:var(--sub)">이 차시에 블록(다른 응용해보기 문제)이 없어요.</p>';
+    stk.innerHTML=(head.trim()?pc('📌 시작 코드 (선생님)',head,'var(--q-soft,#f3f5fb)'):'')+(ord.length?ord.map((q,j)=>pc(esc(B(q).name),code(B(q)),col(B(q)),`<span class="actl"><button data-m="${j}" data-d="-1">▲</button><button data-m="${j}" data-d="1">▼</button><button data-x="${j}">✕ 빼기</button></span>`)).join(''):'<div class="aslot">⬚ 왼쪽 블록을 클릭해서 여기에 붙여요</div>')+(tail.trim()?pc('📌 실행 코드 (선생님)',tail,'var(--q-soft,#f3f5fb)'):'');
+    ch.querySelectorAll('.achip').forEach(b=>b.onclick=()=>{const q=+b.dataset.q,j=ord.indexOf(q);if(j<0)ord.push(q);else ord.splice(j,1);keep();draw()});
+    stk.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const j=+b.dataset.m,t=j+(+b.dataset.d);if(t<0||t>=ord.length)return;[ord[j],ord[t]]=[ord[t],ord[j]];keep();draw()});
+    stk.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{ord.splice(+b.dataset.x,1);keep();draw()});
+    if(cd.style.display!=='none')cd.textContent=all()};
+  draw();bx.addEventListener('pointerenter',draw); // 위에서 블록 코드를 고치고 오면 바로 반영
+  bx.querySelector('.arun').onclick=async()=>{draw();out.style.display='block';out.textContent='🐍 실행 중... (처음에는 10~30초 걸려요)';try{putOut(out,'출력:\n'+(await runPy(all(),bx.querySelector('.ain').value)||'(출력 없음)'))}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
+  bx.querySelector('.aall').onclick=()=>{const on=cd.style.display==='none';cd.style.display=on?'block':'none';if(on)cd.textContent=all()};
+  bx.querySelector('.asv').onclick=async e=>{const b=e.currentTarget;if(!ord.length){m.className='msg no';m.textContent='블록을 먼저 붙여 주세요';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';const a=all(),x=await api('submit',{no,act,q:it.q,answer:a,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,a,true);m.className='msg ok';m.textContent='💾 조립한 코드를 저장했어요!'}}
 /* 파이썬 실행 (브라우저 안, Pyodide) */
 /* 실행 과정 보기: 시트 칸에 ```trace ... ``` 로 쓰면 이 화면으로 바뀝니다 */
 const br=s=>s.replace(/\s*\/\/\s*/g,'<br>'),TRQ=/\{\{([^{}\n]*?)\}\}/g,norm=s=>String(s).replace(/\s/g,'').toLowerCase(),spl=s=>s.replace(/^( +)/,m=>m.replace(/ /g,'<span class="sp"> </span>'));
@@ -1578,4 +1605,12 @@ button.main{font-weight:700}
   setInterval(()=>{if(free()){show(false);return}const t=performance.now();debugger;show(performance.now()-t>100)},1000);
 })();
 </script>
+<style id="asm-style">/* 블록 조립 */
+.asw{display:grid;grid-template-columns:250px 1fr;gap:14px;margin-top:8px}@media(max-width:700px){.asw{grid-template-columns:1fr}}
+.asw h4{margin:6px 0}.asw h4 small{color:var(--sub);font-weight:normal}
+.achip{display:flex;width:100%;align-items:center;gap:8px;text-align:left;border-radius:14px;padding:9px 12px;margin-bottom:8px;border:2px solid transparent}.achip span{margin-left:auto;font-size:13px;color:var(--sub);white-space:nowrap}.achip.on{opacity:.5}
+.apc{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:6px}.aph{display:flex;align-items:center;gap:8px;padding:4px 12px;font-size:14px}.apc pre{margin:0;border-radius:0;font-size:13px}
+.actl{margin-left:auto;display:flex;gap:4px}.actl button{padding:0 8px;font-size:12px;border-radius:6px;background:var(--d-surface,#fff);border:1px solid var(--line)}
+.aslot{border:2px dashed var(--line);border-radius:14px;padding:12px;text-align:center;color:var(--sub);margin-bottom:6px;font-size:14px}
+</style>
 </body></html>
