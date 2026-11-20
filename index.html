@@ -143,7 +143,7 @@ td.done{background:var(--ok)}tfoot td{background:var(--butter);font-weight:bold}
 .skn{margin:8px 0;padding:8px 12px;background:#eef6ff;border-radius:10px;color:#3b6fd4;font-size:14px}
 @media(max-width:600px){header{gap:6px;padding:10px 12px}header b{font-size:17px;white-space:nowrap}header>span{font-size:11px;line-height:1.4;word-break:keep-all}#who{gap:6px}#who span{white-space:nowrap;font-size:13px}#who button{padding:5px 9px;font-size:13px;white-space:nowrap}.narrow{margin:24px auto;padding:18px 14px}.narrow h2{font-size:21px}.lgt b{font-size:21px}.narrow,.modal.info,.cnx{word-break:keep-all;overflow-wrap:break-word}.modal.info .mb{padding:16px 12px}.modal.info .sbox{padding:10px 12px}} /* 휴대폰 폭: 머리글 한 줄, 글자 단어 단위 줄바꿈 */
 </style></head><body>
-<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v199)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
+<header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급 </b><span>배곧해솔중학교 (v200)</span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
 <div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
@@ -1266,7 +1266,7 @@ const essayRows=E=>(E&&E.length)?`<details class="box" open><summary><b>✍️ �
    선생님: 관리자 메뉴 '📝 피드백 요청' → 글 전체 + 4문항마다 통과/피드백(문장). 질문 문구는 시트 피드백문구 탭 '교사점검_질문1~4'·'교사점검_안내1~4' */
 const FBQ=['내가 데이터를 통해 얻은 정보는?','그 정보는 데이터의 어느 부분을 보고 알았나요?','내가 생각한 데이터의 활용 방안은?','그렇게 활용하면 어떤 효과가 있나요?'],FBH=['','그래프 모양, 특정 값이나 구간, 두 값의 비교처럼 눈으로 본 것을 써요.','','기대 효과나 예시를 들어 써요.'];
 const fbQ=(P,i)=>{P=P||{};const q=P['교사점검_질문'+(i+1)],h=P['교사점검_안내'+(i+1)];return [q&&q.trim()?q:FBQ[i],h!=null?h:FBH[i]]};
-const fbRes=(x,lab)=>`<div class="fbq">${lab}</div>`+(x[0]==='통과'?`<div class="fbr p">✅ 통과!</div>`:`<div class="fbr f">✏️ ${esc(x[1])}</div>`);
+const fbRes=(x,lab,mine)=>`<div class="fbq">${lab}</div><div class="fbans">${esc(mine||'')}</div>`+(x[0]==='통과'?`<div class="fbr p">✅ 통과!</div>`:`<div class="fbr f">✏️ <b>피드백 내용 :</b> ${esc(x[1])}</div>`);
 async function fbStu(t,title,P,edit){const w=$('#fbw');if(!w)return;const r=await api('fbMine',{task:t.id});if(!$('#fbw'))return;if(r.error)return w.innerHTML=`<div class="box">${esc(r.error)}</div>`;
   const L=r.list||[],last=L[L.length-1],src=edit||(!last||last.st==='취소')?(last||{}):null,dk='fbd|'+(S.user&&S.user.id)+'|'+t.id;
   const head=`<p style="margin:0 0 6px"><b>${esc(title||'과제')}</b> · 선생님이 직접 피드백해요${last&&!src?` <small style="color:var(--sub)">(${last.ver}번째 요청 · ${esc(last.at)})</small>`:''}</p>`;
@@ -1284,10 +1284,10 @@ async function fbStu(t,title,P,edit){const w=$('#fbw');if(!w)return;const r=awai
     w.innerHTML=`<div class="box">${head}<div class="fbs" style="background:${rd?'var(--lav)':'var(--sky)'}">${rd?'👀 선생님이 지금 읽고 있어요. 조금만 기다려 주세요.':'⏳ 선생님께 보냈어요. 아직 읽기 전이에요.'}</div>`
       +`<div class="row" style="align-items:center"><button class="ghost" id="fbx"${rd?' disabled':''}>보내기 취소</button><span id="fbm" style="color:var(--sub);font-size:14px">${rd?'선생님이 읽는 중이라 취소할 수 없어요.':'취소하면 글을 고쳐서 다시 보낼 수 있어요.'}</span></div>${mine}</div>`;
     if(!rd)$('#fbx').onclick=async()=>{const b=$('#fbx');b.disabled=true;const s=await api('fbCancel',{id:last.id});if(s.error){toast(s.error);return fbStu(t,title,P)}toast('보내기를 취소했어요');fbStu(t,title,P,1)};return}
-  const R=last.res||{g:['',''],q:[]},np=[R.g].concat(R.q).filter(x=>x[0]==='통과').length;
-  w.innerHTML=`<div class="box">${head}<div class="fbs" style="background:var(--ok)">🎉 피드백 완료! <small style="font-weight:normal">(통과 ${np} / 5 · ${esc(last.fat)})</small></div>`
-    +fbRes(R.g,'📄 글 전체')+R.q.map((x,i)=>fbRes(x,`${i+1}. ${esc(fbQ(P,i)[0])}`)).join('')
-    +`<div class="row" style="margin-top:12px"><button class="main" id="fbre">✏️ 고쳐서 다시 보내기</button></div>${mine}</div>`;
+  const R=last.res||{g:['',''],q:[]}; // v200: 통과 개수는 보이지 않고, 문항마다 내가 쓴 내용 아래에 피드백
+  w.innerHTML=`<div class="box">${head}<div class="fbs" style="background:var(--ok)">🎉 피드백 완료! <small style="font-weight:normal">(${esc(last.fat)})</small></div>`
+    +fbRes(R.g,'📄 글 전체',last.text)+R.q.map((x,i)=>fbRes(x,`${i+1}. ${esc(fbQ(P,i)[0])}`,last.ans[i])).join('')
+    +`<div class="row" style="margin-top:12px"><button class="main" id="fbre">✏️ 고쳐서 다시 보내기</button></div></div>`;
   $('#fbre').onclick=()=>fbStu(t,title,P,1);
   if(last.st==='완료'){api('fbSeen',{id:last.id});FB.hide=last.id;$('#fbnote')&&$('#fbnote').remove()}}
 const FB={n:null,hide:''};
