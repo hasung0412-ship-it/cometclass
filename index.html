@@ -320,7 +320,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v209</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v210</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1141,7 +1141,7 @@ async function adminData(force){const [sr,yr]=await Promise.all([get('subjects',
   if(!sr.subjects.some(s=>s.name===S.asub))S.asub=(sr.subjects.find(s=>s.ready)||sr.subjects[0]||{}).name||'';
   if(!S.ayear||!(yr.years||[]).includes(S.ayear))S.ayear=yr.cur||(yr.years||[])[0]||'';const r=await get('classes|'+S.asub+'|'+S.ayear,()=>api('classes',{sub:S.asub,year:S.ayear}),force);return r.error?{err:r.error}:{sr,yr,r}}
 function adminMenu(){here('amenu',{});app.innerHTML=`<h2 style="margin:0 0 14px">관리자 메뉴</h2><div class="amenu">
-  <button class="card amw" data-grd><b>성적 조회</b><small>학생이 보는 성적 창 그대로 보기</small></button>
+  <button class="card amw" data-grd><b>성적 조회 및 계정 관리</b><small>학생을 골라 성적 보기 · 비밀번호 초기화</small></button>
   <button class="card amw" data-fbq><b>피드백 요청<span class="fbn"></span></b><small>학생이 보낸 글에 직접 피드백</small></button>
   <div class="amr" data-msgs role="button" tabindex="0"><b>한마디 모음</b><div class="amx" id="amm"><small>불러오는 중...</small></div></div>
   <div class="amr"><b>공지 관리</b><div class="amx"><button class="aml" data-nnew>- 공지 등록</button><button class="aml" data-nedt>- 공지 수정</button></div></div></div>`;fbBadge();
@@ -1185,39 +1185,24 @@ async function noticeView(go){here('notice',{});app.innerHTML='불러오는 중.
 async function gradesView(cls){if(!mem['classes|'+S.asub+'|'+S.ayear])app.innerHTML='불러오는 중...';const D=await adminData();if(D.err)return app.innerHTML=esc(D.err);const cr=D.r;
   const CL=cr.classes.map(c=>c.cls);if(!CL.includes(cls))cls=CL[0];here('grades',{cls});app.innerHTML='불러오는 중...';
   const r=cls==null?{students:[]}:await get('ct|'+S.asub+'|'+S.ayear+'|'+cls,()=>api('classTable',{cls,sub:S.asub,year:S.ayear}));if(r.error)return app.innerHTML=esc(r.error);
-  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>성적 조회 <small style="font-size:14px;color:var(--sub)">${esc(S.ayear)}년</small></h2><button class="ghost" onclick="S.atab='menu';adminView()">← 관리자 메뉴</button></div>
+  app.innerHTML=`<div class="row" style="justify-content:space-between"><h2>성적 조회 및 계정 관리 <small style="font-size:14px;color:var(--sub)">${esc(S.ayear)}년</small></h2><button class="ghost" onclick="S.atab='menu';adminView()">← 관리자 메뉴</button></div>
   <div class="row" style="margin-bottom:10px">${CL.map(c=>`<button class="chip ${c===cls?'on':''}" data-gc="${c}">${c}반</button>`).join('')}</div>
   <input class="gq" placeholder="학번이나 이름으로 찾기" style="margin-bottom:12px;max-width:320px">
   <div class="grid">${r.students.map(x=>`<button class="card" data-gid="${esc(x.id)}" data-k="${esc((x.sid||x.id)+' '+x.name)}"><b>${esc(x.sid||x.id)}</b><small>${esc(x.name)}</small></button>`).join('')||'<p>이 반에는 학생이 없어요.</p>'}</div>`;
   app.querySelectorAll('[data-gc]').forEach(b=>b.onclick=()=>gradesView(+b.dataset.gc));
   const q=app.querySelector('.gq');q.oninput=()=>{const v=q.value.replace(/\s/g,'');app.querySelectorAll('[data-gid]').forEach(b=>b.style.display=b.dataset.k.replace(/\s/g,'').includes(v)?'':'none')};
-  app.querySelectorAll('[data-gid]').forEach(b=>b.onclick=()=>gradeOf(b.dataset.gid))}
+  app.querySelectorAll('[data-gid]').forEach(b=>b.onclick=()=>stuPick(b.dataset.gid,b.dataset.k))}
+/* v210: 학생을 누르면 '성적 보기' 또는 '비밀번호 초기화'를 고름 (예전 학급 현황 → 학생 상세의 초기화 버튼을 여기로 옮김) */
+function stuPick(id,k){document.querySelectorAll('.modal.info').forEach(x=>x.remove());const m=document.createElement('div');m.className='modal info';
+  m.innerHTML=`<div class="mb" style="max-width:420px"><div class="row" style="justify-content:space-between;margin:0 0 14px"><h3 style="margin:0">${esc(k)}</h3><button class="ghost hcl">닫기</button></div><div class="amenu"><button class="main" data-pg>성적 보기</button><button class="ghost" data-pr>비밀번호 초기화 (학번으로)</button></div></div>`;
+  document.body.appendChild(m);m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.hcl').onclick=()=>m.remove();
+  m.querySelector('[data-pg]').onclick=()=>{m.remove();gradeOf(id)};
+  m.querySelector('[data-pr]').onclick=async()=>{if(!confirm(`${k} 학생의 비밀번호를 학번으로 되돌릴까요?`))return;const x=await api('resetPw',{id});m.remove();alert(x.error||'초기화했어요. 다음 로그인 때 비밀번호를 새로 만들게 됩니다.')}}
 async function gradeOf(id){document.querySelectorAll('.modal.info').forEach(x=>x.remove());
   const m=document.createElement('div');m.className='modal info';m.innerHTML=`<div class="mb" style="max-width:980px;width:96%;max-height:90vh;overflow:auto"><div class="row" style="justify-content:space-between;margin:0 0 10px"><h3 style="margin:0">성적 조회 <small style="font-size:12px;color:var(--sub)">학생 화면과 같은 내용</small></h3><button class="ghost hcl">닫기</button></div><div class="gb">불러오는 중...</div></div>`;
   document.body.appendChild(m);m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.hcl').onclick=()=>m.remove();
   const [r,I]=await Promise.all([api('gradesOf',{id}),get('info',()=>api('info'))]);m.querySelector('.gb').innerHTML=r.error?`<p class="err">${esc(r.error)}</p>`:gradeHTML(r,I)}
-function csvSave(L,name){const q=v=>`"${String(v).replace(/"/g,'""')}"`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+L.map(x=>x.map(q).join(',')).join('\r\n')],{type:'text/csv'}));a.download=name;a.click()}
-async function classView(cls,force){here('class',{cls});const key='ct|'+S.asub+'|'+S.ayear+'|'+cls,sk=S.asub+'|'+S.ayear+'|'+cls;if(force||!mem[key])app.innerHTML='불러오는 중...';const r=await get(key,()=>api('classTable',{cls,sub:S.asub,year:S.ayear}),force);if(r.error)return app.innerHTML=r.error;
-  const cols=[];r.lessons.forEach(l=>Object.keys(AN).forEach(k=>l.t[k]>0&&cols.push({l,k,t:l.t[k]})));
-  const sel=S.sel[sk]??(r.lessons.length?r.lessons[r.lessons.length-1].no:'all'),vis=sel==='all'?cols:cols.filter(c=>c.l.no===sel);
-  const cell=(s,c)=>{const d=Math.min(s.d[c.l.no+'|'+c.k]||0,c.t);return{d,full:d>=c.t,txt:c.k==='개념'?(d?'완료':''):`${d}/${c.t}`}};
-  const head1=r.lessons.filter(l=>vis.some(c=>c.l===l)).map(l=>`<th colspan="${vis.filter(c=>c.l===l).length}">[${l.no}차시] ${esc(l.title)}</th>`).join('');
-  const body=r.students.map(s=>`<tr><td class="l" data-id="${s.id}">${s.sid||s.id} ${esc(s.name)}</td>${vis.map(c=>{const x=cell(s,c);return `<td class="${x.full?'done':''}">${x.txt}</td>`}).join('')}</tr>`).join('');
-  const foot=vis.map(c=>`<td>${r.students.filter(s=>cell(s,c).full).length}/${r.students.length}</td>`).join('');
-  const chips=`<button class="chip ${sel==='all'?'on':''}" data-s="all">전체</button>`+r.lessons.map(l=>`<button class="chip ${sel===l.no?'on':''}" data-s="${l.no}">${l.no}차시</button>`).join('');
-  app.innerHTML=`<p><button class="ghost" onclick="adminView()">← 학급 목록</button></p><h2>${esc(S.asub)} · ${S.ayear}년 ${cls}반 진도 현황</h2><div class="row" style="margin-bottom:10px">${chips}</div>
-  <div class="row" style="margin-bottom:12px"><button class="main" id="csv1">이 화면 CSV</button><button class="ghost" id="csv2">전체 차시 CSV</button><button class="ghost" id="rf">⟳ 새로고침</button><span style="color:var(--sub)">학생 이름을 누르면 답안을 볼 수 있어요.</span></div>
-  <div class="wrap"><table><thead><tr><th rowspan="2">학번 이름</th>${head1}</tr><tr>${vis.map(c=>`<th class="a">${nm(S.asub,c.k)}</th>`).join('')}</tr></thead><tbody>${body}</tbody><tfoot><tr><td>완료 학생 수</td>${foot}</tr></tfoot></table></div>`;
-  app.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{S.sel[sk]=b.dataset.s==='all'?'all':+b.dataset.s;classView(cls)});
-  app.querySelectorAll('[data-id]').forEach(t=>t.onclick=()=>detailView(t.dataset.id,cls));
-  $('#rf').onclick=()=>classView(cls,true);
-  const dl=(cs,n)=>csvSave([['학번 이름',...cs.map(c=>`[${c.l.no}차시] ${c.l.title}`)],['',...cs.map(c=>nm(S.asub,c.k))],...r.students.map(s=>[(s.sid||s.id)+' '+s.name,...cs.map(c=>cell(s,c).txt)])],n);
-  $('#csv1').onclick=()=>dl(vis,`${S.asub}_${S.ayear}_${cls}반_${sel==='all'?'전체':sel+'차시'}.csv`);$('#csv2').onclick=()=>dl(cols,`${S.asub}_${S.ayear}_${cls}반_전체차시.csv`)}
-async function detailView(id,cls){here('detail',{id,cls});app.innerHTML='불러오는 중...';const r=await api('detail',{id});if(r.error)return app.innerHTML=r.error;
-  const g={};r.recs.forEach(x=>{const k=x.sub+'|'+x.no;(g[k]=g[k]||{sub:x.sub,no:x.no,list:[]}).list.push(x)});const ks=Object.values(g).sort((a,b)=>(b.sub===S.asub)-(a.sub===S.asub)||b.no-a.no);
-  app.innerHTML=`<p><button class="ghost" id="b">← ${cls}반 현황</button></p><h2>${esc(r.sid||id)} ${esc(r.name)}</h2><div class="row" style="margin-bottom:14px"><button id="rs">비밀번호 초기화 (학번으로)</button></div>${(r.times&&r.times.length)?`<details class="box"><summary><b>수업 집중 시간 (최근 ${r.times.length}일)</b></summary><div class="wrap"><table><thead><tr><th>날짜</th><th>집중</th><th>다른 곳</th></tr></thead><tbody>${r.times.map(x=>`<tr><td>${x.date}</td><td>${fmtT(x.focus)}</td><td>${fmtT(x.away)}</td></tr>`).join('')}</tbody></table></div></details>`:''}`+(ks.map((k,i)=>`<details class="box" ${i===0?'open':''}><summary><b>${esc(k.sub)} · ${k.no}차시</b> · 기록 ${k.list.length}건</summary><div class="wrap"><table><thead><tr><th>활동</th><th>문항</th><th>정답</th><th>시도</th><th>최근 제출</th><th>답안</th></tr></thead><tbody>${k.list.map(x=>`<tr><td>${AN[x.act]?nm(x.sub,x.act):x.act}</td><td>${x.q||'-'}</td><td>${x.free?'제출':(x.ok?'⭕':'❌')}</td><td>${x.tries}</td><td>${x.last}</td><td style="text-align:left"><details><summary>보기</summary><pre>${esc(x.answer)}</pre></details></td></tr>`).join('')}</tbody></table></div></details>`).join('')||'<p>아직 기록이 없어요.</p>');
-  $('#b').onclick=()=>classView(cls);
-  $('#rs').onclick=async()=>{if(!confirm(`${r.name} 학생의 비밀번호를 학번으로 되돌릴까요?`))return;const x=await api('resetPw',{id});alert(x.error||'초기화했어요. 다음 로그인 때 비밀번호를 새로 만들게 됩니다.')}}
+
 
 /* ===== 글 피드백 받기 첫 화면: '논리적 오류 모음' / '글 피드백 받기' 고르기 ===== */
 function essayHome(){here('ehome',{});document.querySelectorAll('.modal.info').forEach(x=>x.remove());
