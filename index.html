@@ -598,7 +598,7 @@ function asmInit(bx,it,items,no,act){
   const pc=(t,c,bg,ctl)=>`<div class="apc"><div class="aph" style="background:${bg}">${t}${ctl||''}</div><pre>${esc(c)||'<span style="color:var(--sub)">(아직 비어 있어요)</span>'}</pre></div>`;
   const all=()=>[head,...ord.map(q=>code(B(q))),tail].filter(x=>x.trim()).join('\n\n');
   const draw=()=>{ch.innerHTML=bl.length?bl.map(b=>{const on=ord.includes(b.q);return `<button class="achip${on?' on':''}" data-q="${b.q}" style="background:${col(b)}">${esc(b.name)}<span>${on?'붙임 ✔':'＋'}</span></button>`}).join(''):'<p style="color:var(--sub)">이 차시에 블록(다른 응용해보기 문제)이 없어요.</p>';
-    stk.innerHTML=(head.trim()?pc('📌 시작 코드 (선생님)',head,'var(--q-soft,#f3f5fb)'):'')+(ord.length?ord.map((q,j)=>pc(esc(B(q).name),code(B(q)),col(B(q)),`<span class="actl"><button data-m="${j}" data-d="-1">▲</button><button data-m="${j}" data-d="1">▼</button><button data-x="${j}">✕ 빼기</button></span>`)).join(''):'<div class="aslot">⬚ 왼쪽 블록을 클릭해서 여기에 붙여요</div>')+(tail.trim()?pc('📌 실행 코드 (선생님)',tail,'var(--q-soft,#f3f5fb)'):'');
+    stk.innerHTML=(head.trim()?pc('📌 시작 코드',head,'var(--q-soft,#f3f5fb)'):'')+(ord.length?ord.map((q,j)=>pc(esc(B(q).name),code(B(q)),col(B(q)),`<span class="actl"><button data-m="${j}" data-d="-1">▲</button><button data-m="${j}" data-d="1">▼</button><button data-x="${j}">✕ 빼기</button></span>`)).join(''):'<div class="aslot">⬚ 왼쪽 블록을 클릭해서 여기에 붙여요</div>')+(tail.trim()?pc('📌 실행 코드 (선생님)',tail,'var(--q-soft,#f3f5fb)'):'');
     ch.querySelectorAll('.achip').forEach(b=>b.onclick=()=>{const q=+b.dataset.q,j=ord.indexOf(q);if(j<0)ord.push(q);else ord.splice(j,1);keep();draw()});
     stk.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const j=+b.dataset.m,t=j+(+b.dataset.d);if(t<0||t>=ord.length)return;[ord[j],ord[t]]=[ord[t],ord[j]];keep();draw()});
     stk.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{ord.splice(+b.dataset.x,1);keep();draw()});
@@ -1135,7 +1135,7 @@ function esJudge(text,task,R){
 function esSpell(text,spell){const T=esNorm(text);return (spell||[]).filter(r=>r[0]&&T.indexOf(r[0])>=0)}
 /* 화면 문구: '피드백문구' 탭에서 고칠 수 있어요. {앞} {뒤} {문장} {단어} 자리에 학생 글이 들어가요. */
 const ESPH={
-  '안내':'자동 점검이라 틀릴 수 있어요. 최종 판단은 선생님이 해요.',
+  '안내':'자동 점검이라 틀릴 수 있고, 최종 판단은 내가 합니다.',
   '판정안함':'자료를 보고 알 수 있는 것을 두 문장 이상 써 보자. 무엇에 대한 자료인지(축 이름)도 꼭 넣어 줘요.',
   '판정_짧음':'글이 아직 한 문장뿐이라 점검할 수 없어요. 마침표(.)로 문장을 끊어서 두 문장 이상으로 써 보자.',
   '방향_반대':'「{문장}」은 그래프의 방향과 맞지 않아요. X가 늘 때 Y가 늘어나는지 줄어드는지, 그게 양의 상관관계인지 음의 상관관계인지 그래프를 다시 보고 확인해 보자.',
@@ -1230,7 +1230,7 @@ function esHTML(fb,sp,ph){const P=Object.assign({},ESPH,ph||{}),
 async function essayView(tid){here('essay',{tid});document.querySelectorAll('.modal.info').forEach(x=>x.remove());app.innerHTML='불러오는 중...';
   const r=await get('essay',()=>api('essayInfo'));if(!r||r.error)return app.innerHTML=esc((r&&r.error)||'불러오지 못했어요.');
   const T=r.tasks||[];
-  if(!T.length){app.innerHTML=`<p><button class="ghost" onclick="essayHome()">← 글 피드백 받기</button></p><h2>✍️ 글 피드백 받기</h2><div class="box"><p style="margin:0">지금 열린 과제가 없어요. 선생님이 과제를 열면 여기서 내 글을 점검할 수 있어요.</p></div>`;return}
+  if(!T.length){app.innerHTML=`<p><button class="ghost" onclick="essayHome()">← 글 피드백 받기</button></p><h2>✍️ 글 피드백 받기</h2><div class="box"><p style="margin:0">지금 열린 과제가 없고, 내가 과제를 열면 여기서 당신의 글을 점검할 수 있어요.</p></div>`;return}
   const gp=x=>{const v=String(x.title||x.id),i=v.indexOf('|');return i<0?['',v.trim()]:[v.slice(0,i).trim(),v.slice(i+1).trim()]}; // 제목 '수행평가명 | 주제' → 수행평가별로 묶기
   const t=T.find(x=>x.id===tid)||T[0],dk='essay|'+(S.user&&S.user.id)+'|'+t.id;let draft='';try{draft=sessionStorage.getItem(dk)||''}catch(e){} // 쓰던 글은 이 창을 닫기 전까지만 남아요(학교 PC를 같이 쓰니까)
   const EAT='이 글 피드백의 내용을 완벽하게 신뢰하진 않고 보조 도구로만 사용하겠습니다.',EK='eack|'+(S.user&&S.user.id),today=new Date(Date.now()+9*36e5).toISOString().slice(0,10);let need=true;try{need=localStorage.getItem(EK)!==today}catch(e){} // 따라 쓰기는 하루(한국 날짜)에 한 번, 성적 창과 같은 방식
@@ -1269,7 +1269,7 @@ const fbQ=(P,i)=>{P=P||{};const q=P['교사점검_질문'+(i+1)],h=P['교사점�
 const fbRes=(x,lab,mine)=>`<div class="fbq">${lab}</div><div class="fbans">${esc(mine||'')}</div>`+(x[0]==='통과'?`<div class="fbr p">✅ 피드백 없음!</div>`:`<div class="fbr f">✏️ <b>피드백 내용 :</b> ${esc(x[1])}</div>`);
 async function fbStu(t,title,P,edit){const w=$('#fbw');if(!w)return;const r=await api('fbMine',{task:t.id});if(!$('#fbw'))return;if(r.error)return w.innerHTML=`<div class="box">${esc(r.error)}</div>`;
   const L=r.list||[],last=L[L.length-1],src=edit||(!last||last.st==='취소')?(last||{}):null,dk='fbd|'+(S.user&&S.user.id)+'|'+t.id;
-  const head=`<p style="margin:0 0 6px"><b>${esc(title||'과제')}</b> · 선생님이 직접 피드백해요${last&&!src?` <small style="color:var(--sub)">(${last.ver}번째 요청 · ${esc(last.at)})</small>`:''}</p>`;
+  const head=`<p style="margin:0 0 6px"><b>${esc(title||'과제')}</b> · 내가 직접 피드백해요${last&&!src?` <small style="color:var(--sub)">(${last.ver}번째 요청 · ${esc(last.at)})</small>`:''}</p>`;
   if(src){let d=null;try{d=JSON.parse(sessionStorage.getItem(dk)||'null')}catch(e){}const v=d||{text:src.text||'',ans:src.ans||['','','','']}; // 다시 보낼 때는 학생이 쓴 답 그대로
     w.innerHTML=`<div class="box">${head}<div class="fbq">📄 내가 쓴 글</div><textarea class="fbt" rows="8" placeholder="내가 쓴 수행평가 글을 붙여 넣거나 여기에 써 보세요.">${esc(v.text)}</textarea><h4 style="margin:14px 0 4px">🔎 스스로 점검하기</h4>`
       +[0,1,2,3].map(i=>{const q=fbQ(P,i);return `<div class="fbq">${i+1}. ${esc(q[0])}${q[1]?`<small>${esc(q[1])}</small>`:''}</div><textarea class="fba" rows="2">${esc(v.ans[i]||'')}</textarea>`}).join('')
@@ -1281,8 +1281,8 @@ async function fbStu(t,title,P,edit){const w=$('#fbw');if(!w)return;const r=awai
       if(s.error){b.disabled=false;b.textContent='📨 선생님께 보내기';$('#fbm').textContent=s.error;return}try{sessionStorage.removeItem(dk)}catch(e){}toast('📨 선생님께 보냈어요');fbStu(t,title,P)};return}
   const mine=`<details class="sbox" style="margin-top:10px"><summary style="cursor:pointer">📄 내가 보낸 글과 답 보기</summary><pre class="fbp">${esc(last.text)}</pre>${last.ans.map((a,i)=>`<div class="fbq">${i+1}. ${esc(fbQ(P,i)[0])}</div><div class="fbans">${esc(a)}</div>`).join('')}</details>`;
   if(last.st==='대기'||last.st==='읽는 중'){const rd=last.st==='읽는 중';
-    w.innerHTML=`<div class="box">${head}<div class="fbs" style="background:${rd?'var(--lav)':'var(--sky)'}">${rd?'👀 선생님이 지금 읽고 있어요. 조금만 기다려 주세요.':'⏳ 선생님께 보냈어요. 아직 읽기 전이에요.'}</div>`
-      +`<div class="row" style="align-items:center"><button class="ghost" id="fbx"${rd?' disabled':''}>보내기 취소</button><span id="fbm" style="color:var(--sub);font-size:14px">${rd?'선생님이 읽는 중이라 취소할 수 없어요.':'취소하면 글을 고쳐서 다시 보낼 수 있어요.'}</span></div>${mine}</div>`;
+    w.innerHTML=`<div class="box">${head}<div class="fbs" style="background:${rd?'var(--lav)':'var(--sky)'}">${rd?'👀 읽는 중이에요! 잠시만 기다려보세요':'⏳ 잘 도착했어요! 내가 읽기 전까지 수정할 수 있습니다.'}</div>`
+      +`<div class="row" style="align-items:center"><button class="ghost" id="fbx"${rd?' disabled':''}>보내기 취소</button><span id="fbm" style="color:var(--sub);font-size:14px">${rd?'읽는 중이니까 취소할 수 없어요!':'취소하면 글을 고쳐서 다시 보낼 수 있어요.'}</span></div>${mine}</div>`;
     if(!rd)$('#fbx').onclick=async()=>{const b=$('#fbx');b.disabled=true;const s=await api('fbCancel',{id:last.id});if(s.error){toast(s.error);return fbStu(t,title,P)}toast('보내기를 취소했어요');fbStu(t,title,P,1)};return}
   const R=last.res||{g:['',''],q:[]}; // v200: 통과 개수는 보이지 않고, 문항마다 내가 쓴 내용 아래에 피드백
   w.innerHTML=`<div class="box">${head}<div class="fbs" style="background:var(--ok)">🎉 피드백 완료! <small style="font-weight:normal">(${esc(last.fat)})</small></div>`
