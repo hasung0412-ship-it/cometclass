@@ -286,7 +286,20 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 .nqb{display:grid;gap:2px;max-width:420px;aspect-ratio:1;margin:0 auto}.nqc{aspect-ratio:1;padding:0;border:none;border-radius:4px;background:var(--surface);color:var(--ink);font-size:22px;line-height:1;cursor:pointer}.nqc.dk{background:var(--raise)}
 .nqc.q{background:var(--ok-bg)}.nqc.bad{background:var(--no-bg);color:var(--no-ink)}
 .rnc{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);cursor:pointer}
-#fbaw{margin-right:min(0px,calc((100% - 100vw) / 2 + 24px))} /* 피드백 요청: 제목은 그대로, 아래 상자들은 오른쪽 빈 곳까지 넓게 */
+.fbpg{width:min(1280px,calc(100vw - 64px));margin-left:min(0px,calc((100% - min(1280px,100vw - 64px)) / 2))} /* v221: 제목 줄과 목록·상세가 같은 틀(최대 1280px) */
+.fbhd{display:flex;align-items:center;gap:14px;margin:0 0 16px}.fbhd h2{margin:0}
+.fbtl{background:none;border:0;color:var(--sub);font:inherit;font-size:15px;padding:6px 4px;cursor:pointer}.fbtl:hover{color:var(--ink)}
+.fbrjl{color:var(--no-ink)}.fbrjl:hover{color:var(--no-ink);text-decoration:underline}
+.fbsh{font-size:15px;color:var(--sub);margin:4px 0 6px}
+.fbtx{white-space:pre-wrap;word-break:keep-all;line-height:1.8;font-size:17px;max-width:760px;padding:2px 0 14px;border-bottom:1px solid var(--line);margin-bottom:6px}
+#fbrv .fbi{max-width:760px;padding:4px 0 10px}#fbrv .fbq{margin:14px 0 4px}
+#fbrv .fbans{background:none;border-left:3px solid var(--line2);border-radius:0;padding:2px 0 2px 12px;margin-bottom:8px}
+.fbseg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:2px 0 6px}
+.fbseg label{position:relative;padding:5px 16px;cursor:pointer;color:var(--sub);user-select:none}.fbseg label+label{border-left:1px solid var(--line)}
+.fbseg input{position:absolute;opacity:0;width:1px!important;height:1px;margin:0;pointer-events:none}
+.fbseg label:has(input[data-p="통과"]:checked){background:var(--ok-bg);color:var(--ink)}.fbseg label:has(input[data-p="피드백"]:checked){background:var(--warn-bg);color:var(--ink)}
+.fbseg label:has(input:focus-visible){outline:2px solid var(--active-line);outline-offset:-2px}
+.fbft{max-width:760px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.fbhint{margin:0 0 10px;color:var(--sub);font-size:14px} /* 피드백 요청: 제목은 그대로, 아래 상자들은 오른쪽 빈 곳까지 넓게 */
 #fbaw.split{display:grid;grid-template-columns:320px minmax(0,1fr);gap:16px;align-items:start} /* 피드백 요청을 열면 왼쪽 목록 · 오른쪽 글 */
 #fbaw.split .fbcol{position:sticky;top:calc(var(--head) + 12px);max-height:calc(100vh - var(--head) - 24px);overflow:auto}#fbaw.split #fbrv>.box{margin-top:0}
 .fbtt{margin:0 0 14px;padding:12px 16px;border-radius:var(--r2);background:var(--info-bg);border:1px solid var(--info-line);font-size:20px} /* 글 피드백: 대주제(과제 제목) 상자 */
@@ -338,7 +351,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v219</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v221</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1406,22 +1419,22 @@ function fbListUpd(r){const a=$('#fbal');if(!a)return false;r.wait.forEach(o=>FB
   a.innerHTML=fbWaitH(r,cur);a.querySelectorAll('.fbli').forEach(b=>b.onclick=()=>fbOpen(b.dataset.id));fbBadge();return true}
 async function fbAdmin(open){here('fbreq',{});if(!open)app.innerHTML='불러오는 중...';const r=await api('fbList');if(r.error)return app.innerHTML=esc(r.error);FB.n=r.wait.length;FB.L=r;r.wait.forEach(o=>FB.seen.add(o.id));const st=$('#fbst');if(st)st.remove();
   const li=(o,dn)=>fbLiH(r,o,dn,open);
-  app.innerHTML=`<div class="row" style="justify-content:flex-end;margin-bottom:14px"><button class="ghost" onclick="fbAdmin()">⟳ 새로고침</button></div><p><button class="ghost" onclick="adminMenu()">← 관리자 메뉴</button></p><h2>피드백 요청 <span class="fbn"></span></h2>`
+  app.innerHTML=`<div class="fbpg"><div class="fbhd"><button class="fbtl" onclick="adminMenu()">← 관리자 메뉴</button><h2>피드백 요청 <span class="fbn"></span></h2><span style="flex:1"></span><button class="fbtl" onclick="fbAdmin()">⟳ 새로고침</button></div>`
     +`<div id="fbaw"><div class="fbcol"><div class="box" id="fbal" style="padding:6px">${fbWaitH(r,open)}</div>`
-    +(r.done.length?`<details class="box"><summary><b>최근 피드백한 요청 (${r.done.length})</b></summary>${r.done.map(o=>li(o,1)).join('')}</details>`:'')+`</div><div id="fbrv"></div></div>`;
+    +(r.done.length?`<details class="box"><summary><b>최근 피드백한 요청 (${r.done.length})</b></summary>${r.done.map(o=>li(o,1)).join('')}</details>`:'')+`</div><div id="fbrv"></div></div></div>`;
   fbBadge();app.querySelectorAll('.fbli').forEach(b=>b.onclick=()=>fbOpen(b.dataset.id));if(open)fbOpen(open)}
 async function fbOpen(id){const v=$('#fbrv');if(!v)return;$('#fbaw').classList.add('split');app.querySelectorAll('.fbli').forEach(b=>b.classList.toggle('on',b.dataset.id===id));v.innerHTML='<div class="box">불러오는 중...</div>';
-  const r=await api('fbOpen',{id});if(!$('#fbrv'))return;if(r.error)return v.innerHTML=`<div class="box">${esc(r.error)}</div>`;const o=r.item;if(o.st==='거부'){v.innerHTML=`<div class="box"><div class="row" style="justify-content:space-between;align-items:center;margin:0 0 8px"><span><b>${esc(o.who)}</b> · ${o.ver}번째 요청 · ${esc(o.at)} · 거부 ${esc(o.fat)}</span><button class="ghost" id="fbx">목록만 보기</button></div><div class="fbs rej">거부한 글이에요.<div class="fbwhy">이유 : ${esc((o.res&&o.res.rej)||'')}</div></div><pre class="fbp">${esc(o.text)}</pre></div>`;$('#fbx').onclick=()=>{v.innerHTML='';$('#fbaw').classList.remove('split');app.querySelectorAll('.fbli').forEach(b=>b.classList.remove('on'))};return}
+  const r=await api('fbOpen',{id});if(!$('#fbrv'))return;if(r.error)return v.innerHTML=`<div class="box">${esc(r.error)}</div>`;const o=r.item;if(o.st==='거부'){v.innerHTML=`<div class="box"><div class="row" style="justify-content:space-between;align-items:center;margin:0 0 8px"><span><b>${esc(o.who)}</b> · ${o.ver}번째 요청 · ${esc(o.at)} · 거부 ${esc(o.fat)}</span><button class="fbtl" id="fbx">목록만 보기 ✕</button></div><div class="fbs rej">거부한 글이에요.<div class="fbwhy">이유 : ${esc((o.res&&o.res.rej)||'')}</div></div><h4 class="fbsh">학생이 쓴 글</h4><div class="fbtx">${esc(o.text)}</div></div>`;$('#fbx').onclick=()=>{v.innerHTML='';$('#fbaw').classList.remove('split');app.querySelectorAll('.fbli').forEach(b=>b.classList.remove('on'))};return}
   const done=!!o.res,R=o.res||{g:['',''],q:o.ans.map(()=>['',''])},I=[R.g].concat(R.q),lab=fbLab(o.ans);
   const item=(k,lb,ah)=>`<div class="fbi" data-k="${k}"><div class="fbq">${lb}</div>${ah}`
-    +(done?((I[k]||[])[0]==='통과'?`<div class="fbr p">✅ 통과!</div>`:`<div class="fbr f">${esc(I[k][1])}</div>`):`<label class="fbc"><input type="checkbox" data-p="통과"> 통과!</label><label class="fbc"><input type="checkbox" data-p="피드백"> 피드백</label><textarea class="fbf" rows="2" placeholder="학생에게 보낼 피드백" style="display:none"></textarea>`)+`</div>`;
-  v.innerHTML=`<div class="box"><div class="row" style="justify-content:space-between;align-items:center;margin:0 0 8px"><span><b>${esc(o.who)}</b> · ${o.ver}번째 요청 · ${esc(o.at)}${done?' · 피드백 '+esc(o.fat):''}</span><button class="ghost" id="fbx">목록만 보기</button></div><details class="sbox" open><summary style="cursor:pointer">학생이 쓴 글</summary><pre class="fbp">${esc(o.text)}</pre></details>`
+    +(done?((I[k]||[])[0]==='통과'?`<div class="fbr p">✅ 통과!</div>`:`<div class="fbr f">${esc(I[k][1])}</div>`):`<div class="fbseg" role="radiogroup"><label><input type="radio" name="fbp${k}" data-p="통과">통과</label><label><input type="radio" name="fbp${k}" data-p="피드백">피드백</label></div><textarea class="fbf" rows="2" placeholder="학생에게 보낼 피드백" style="display:none"></textarea>`)+`</div>`;
+  v.innerHTML=`<div class="box"><div class="row" style="justify-content:space-between;align-items:center;margin:0 0 8px"><span><b>${esc(o.who)}</b> · ${o.ver}번째 요청 · ${esc(o.at)}${done?' · 피드백 '+esc(o.fat):''}</span><button class="fbtl" id="fbx">목록만 보기 ✕</button></div><h4 class="fbsh">학생이 쓴 글</h4><div class="fbtx">${esc(o.text)}</div>`
     +o.ans.map((x,i)=>item(i+1,lab[i],fbAnsH(x))).join('')+item(0,'글 전체','')
-    +(done?'':`<div class="row" style="align-items:center;margin-top:12px"><button class="main" id="fbsend" disabled>피드백 보내기</button><button class="ghost" id="fbrej">피드백 거부</button><span id="fbm" style="color:var(--sub);font-size:14px">${o.ans.length+1}개 모두 고르면 보낼 수 있어요. '피드백'은 문장을 써 주세요.</span></div>`
+    +(done?'':`<div class="fbft"><p id="fbm" class="fbhint">${o.ans.length+1}개 중 0개 골랐어요. 모두 고르면 보낼 수 있어요. '피드백'은 문장을 써 주세요.</p><div class="row" style="align-items:center"><button class="main" id="fbsend" disabled>피드백 보내기</button><button class="fbtl fbrjl" id="fbrej" style="margin-left:8px">피드백 거부</button></div></div>`
       +`<div class="fbrjb" hidden><b>피드백 거부</b> <small>학생에게 이유가 보이고, 학생은 글을 고쳐서 다시 보내야 해요. 다음 글이 정상으로 피드백을 받을 때까지 이 과제의 미니게임이 잠겨요.</small><textarea id="fbwhy" rows="2" placeholder="거부하는 이유 (비우면 '글을 성의 있게 다시 써서 보내 주세요.')"></textarea><div class="row"><button class="main" id="fbrjgo">거부하고 돌려보내기</button><button class="ghost" id="fbrjno">그만두기</button></div></div>`)+`</div>`;
   $('#fbx').onclick=()=>{v.innerHTML='';$('#fbaw').classList.remove('split');app.querySelectorAll('.fbli').forEach(b=>b.classList.remove('on'))};
   const wt=$('#fbaw').getBoundingClientRect().top;if(wt<0)scrollBy(0,wt-70);if(done)return;
-  const it=[...v.querySelectorAll('.fbi')],pick=e=>{const c=e.querySelector('input:checked');return c?c.dataset.p:''},chk=()=>{$('#fbsend').disabled=!it.every(e=>{const p=pick(e);return p==='통과'||(p==='피드백'&&e.querySelector('.fbf').value.trim())})};
+  const it=[...v.querySelectorAll('.fbi')],pick=e=>{const c=e.querySelector('input:checked');return c?c.dataset.p:''},chk=()=>{const ok=e=>{const p=pick(e);return p==='통과'||(p==='피드백'&&e.querySelector('.fbf').value.trim())},n=it.filter(ok).length;$('#fbsend').disabled=n<it.length;const m=$('#fbm');m.style.color='';m.textContent=n<it.length?`${it.length}개 중 ${n}개 골랐어요. 모두 고르면 보낼 수 있어요. '피드백'은 문장을 써 주세요.`:`${it.length}개 모두 골랐어요. 보낼 수 있어요!`};
   it.forEach(e=>{const cs=[...e.querySelectorAll('input')],f=e.querySelector('.fbf');cs.forEach(c=>c.onchange=()=>{if(c.checked)cs.forEach(z=>{if(z!==c)z.checked=false});f.style.display=pick(e)==='피드백'?'block':'none';if(pick(e)==='피드백')f.focus();chk()});f.oninput=chk});
   const rb=v.querySelector('.fbrjb'),nxt=()=>{const L=(FB.L&&FB.L.wait)||[],k=L.findIndex(z=>z.id===id),nx=L[k+1]||L.find(z=>z.id!==id);fbAdmin(nx?nx.id:'')};
   $('#fbrej').onclick=()=>{rb.hidden=false;$('#fbwhy').focus()};$('#fbrjno').onclick=()=>{rb.hidden=true};
