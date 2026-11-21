@@ -336,7 +336,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v216</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v217</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1299,8 +1299,8 @@ function mgWait(last,cancel){if(last){MG.last=last;MG.cancel=cancel}last=MG.last
     +`<div class="mb"><h3 style="margin:0 0 10px">기다리는 동안 미니게임 하기</h3><div class="row">${MG.ord.map((k,i)=>`<button class="ghost" data-mg="${k}">${i+1}번</button>`).join('')}</div></div></div>`;
   mgMine(m);m.querySelectorAll('[data-mg]').forEach(b=>b.onclick=()=>mgOpen(b.dataset.mg));
   const c=m.querySelector('[data-cancel]');if(c)c.onclick=()=>{mgClose();MG.cancel&&MG.cancel()}} // v216: '글 수정하기' = 보내기 취소 후 쓴 내용 그대로 고치는 화면
-function mgOpen(kind){const m=$('#mgw');if(!m)return;mgStop();const T={hanoi:'하노이탑',queen:'N퀸',run:'점프 달리기',dodge:'화살 피하기'}[kind],full=kind==='run'||kind==='dodge';
-  m.innerHTML=`<div class="mb mgb"><div class="row" style="justify-content:space-between;align-items:center;margin:0 0 10px"><h3 style="margin:0">${T}</h3><div class="row">${full?'':'<button class="ghost" data-mine>내 글 다시 보기</button>'}<button class="ghost" data-x>닫기</button></div></div>`
+function mgOpen(kind){const m=$('#mgw');if(!m)return;mgStop();const full=kind==='run'||kind==='dodge';
+  m.innerHTML=`<div class="mb mgb"><div class="row" style="justify-content:flex-end;align-items:center;margin:0 0 10px"><div class="row">${full?'':'<button class="ghost" data-mine>내 글 다시 보기</button>'}<button class="ghost" data-x>닫기</button></div></div>`
     +(full?'':mgMineH(MG.last))+`<div class="mga"></div></div>`;
   mgMine(m);m.querySelector('[data-x]').onclick=()=>mgWait();
   ({hanoi:mgHanoi,queen:mgQueen,run:mgRun,dodge:mgDodge})[kind](m.querySelector('.mga'))}
