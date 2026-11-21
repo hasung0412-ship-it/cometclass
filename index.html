@@ -335,7 +335,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v214</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v215</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1286,16 +1286,16 @@ const FB={n:null,hide:''};
 /* v214 기다림 창: 글을 보낸 뒤(대기·읽는 중) '글이 피드백 될 때까지 기다려주세요.' 창(#mgw)을 띄움. 피드백이 완료되기 전까지 닫을 수 없음.
    창 안에서 게임(하노이탑·N퀸·점프 달리기)을 고르고, 게임의 '닫기'는 게임만 닫고 기다림 창으로 돌아옴.
    창이 열려 있고 탭이 보이는 동안은 타이머가 멈춤(tmAccrue). 피드백이 완료되면 fbNote가 창을 닫고 '피드백이 완료됐어요!'를 띄움. */
-const MG={raf:0,key:null,last:null,cancel:null};
+const MG={raf:0,key:null,last:null,cancel:null,ord:['hanoi','queen','run']};
 function mgStop(){cancelAnimationFrame(MG.raf);MG.raf=0;if(MG.key){removeEventListener('keydown',MG.key);MG.key=null}}
 function mgClose(){mgStop();const m=$('#mgw');if(m)m.remove()}
 const mgMineH=last=>`<div class="mgmine" hidden><pre class="fbp">${esc(last.text)}</pre>${(()=>{const lab=fbLab(last.ans);return last.ans.map((x,i)=>`<div class="fbq">${lab[i]}</div>${fbAnsH(x)}`).join('')})()}</div>`;
 function mgMine(m){const b=m.querySelector('[data-mine]');if(b)b.onclick=()=>{const p=m.querySelector('.mgmine');p.hidden=!p.hidden;b.textContent=p.hidden?'내 글 다시 보기':'내 글 접기'}}
-function mgWait(last,cancel){if(last){MG.last=last;MG.cancel=cancel}last=MG.last;mgStop();let m=$('#mgw');if(!m){m=document.createElement('div');m.id='mgw';m.className='modal';document.body.appendChild(m)}
+function mgWait(last,cancel){if(last){MG.last=last;MG.cancel=cancel}last=MG.last;mgStop();let m=$('#mgw');if(!m){m=document.createElement('div');m.id='mgw';m.className='modal';document.body.appendChild(m);MG.ord=['hanoi','queen','run'].sort(()=>Math.random()-.5)} // v215: 1·2·3번에 게임을 무작위로
   const rd=last.st==='읽는 중';
   m.innerHTML=`<div class="mb mgb"><h3 style="margin:0 0 6px">글이 피드백 될 때까지 기다려주세요.</h3><p class="mgtip" style="margin:0 0 12px">${rd?'선생님이 읽는 중이에요!':'잘 도착했어요! 선생님이 읽기 전까지는 보내기를 취소할 수 있어요.'} 피드백이 완료되면 이 창이 저절로 닫혀요.</p>`
     +`<div class="row" style="margin-bottom:12px"><button class="ghost" data-mine>내 글 다시 보기</button>${rd?'':'<button class="ghost" data-cancel>보내기 취소</button>'}</div>${mgMineH(last)}`
-    +`<div class="mgpick"><b>기다리는 동안 미니게임 하기</b><small>이 창이 열려 있는 동안은 타이머가 멈춰요.</small><div class="row"><button class="ghost" data-mg="hanoi">하노이탑</button><button class="ghost" data-mg="queen">N퀸</button><button class="ghost" data-mg="run">점프 달리기</button></div></div></div>`;
+    +`<div class="mgpick"><b style="display:block;margin-bottom:10px">기다리는 동안 미니게임 하기</b><div class="row">${MG.ord.map((k,i)=>`<button class="ghost" data-mg="${k}">${i+1}번</button>`).join('')}</div></div></div>`;
   mgMine(m);m.querySelectorAll('[data-mg]').forEach(b=>b.onclick=()=>mgOpen(b.dataset.mg));
   const c=m.querySelector('[data-cancel]');if(c)c.onclick=()=>{mgClose();MG.cancel&&MG.cancel()}}
 function mgOpen(kind){const m=$('#mgw');if(!m)return;mgStop();const T={hanoi:'하노이탑',queen:'N퀸',run:'점프 달리기'}[kind];
