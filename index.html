@@ -1348,7 +1348,7 @@ function mgRun(a){a.innerHTML=`<canvas class="rnc" width="640" height="180"></ca
     if(s.over){g.textAlign='center';g.font='bold 18px sans-serif';g.fillText('부딪혔어요! 점프하면 다시 시작',W/2,80)}};
   mgLoop(step,draw)}
 /* 화살 피하기: 사방에서 날아오는 화살을 방향키로 피함 */
-function mgDodge(a){a.innerHTML=`<div class="mgrule"><b>목표</b> 사방에서 날아오는 화살을 피해 최대한 오래 버티기!<br><b>조작</b> 방향키(또는 W·A·S·D)로 움직여요. 오래 버틸수록 화살이 빨라지고 많아져요. 부딪히면 스페이스바나 화면 클릭으로 다시 시작해요.</div><canvas class="rnc" width="640" height="360"></canvas>`;
+function mgDodge(a){a.innerHTML=`<div class="mgrule"><b>목표</b> 사방에서 날아오는 화살을 피해 최대한 오래 버텨보자!<br><b>조작</b> 방향키(또는 W·A·S·D)로 움직일 수 있고, 오래 버틸수록 화살이 빨라지고 많아집니다. 부딪히면 스페이스바나 화면 클릭으로 다시 시작할 수 있어요.</div><canvas class="rnc" width="640" height="360"></canvas>`;
   const cv=a.querySelector('canvas'),g=cv.getContext('2d'),css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888',W=cv.width,H=cv.height,R=8,K={};
   let best=0;try{best=+localStorage.getItem('mgdodge')||0}catch(e){}
   let s;const start=()=>{s={x:W/2,y:H/2,ar:[],t:0,next:30,over:false}};start();
@@ -1366,7 +1366,7 @@ function mgDodge(a){a.innerHTML=`<div class="mgrule"><b>목표</b> 사방에서 
     s.ar.forEach(o=>{const sp=Math.hypot(o.vx,o.vy),ux=o.vx/sp,uy=o.vy/sp;g.beginPath();g.moveTo(o.x-ux*18,o.y-uy*18);g.lineTo(o.x,o.y);g.stroke();g.beginPath();g.moveTo(o.x+ux*4,o.y+uy*4);g.lineTo(o.x-ux*4-uy*4,o.y-uy*4+ux*4);g.lineTo(o.x-ux*4+uy*4,o.y-uy*4-ux*4);g.fill()});
     g.fillStyle=s.over?css('--no-ink'):css('--warn-ink');g.beginPath();g.arc(s.x,s.y,R,0,Math.PI*2);g.fill();
     g.fillStyle=css('--ink');g.font='14px sans-serif';g.textAlign='right';g.fillText(`버틴 시간 ${(Math.floor(s.t/6)/10).toFixed(1)}초   최고 ${best.toFixed(1)}초`,W-10,22);
-    if(s.over){g.textAlign='center';g.font='bold 18px sans-serif';g.fillText('맞았어요! 스페이스바나 클릭으로 다시 시작',W/2,H/2-30)}};
+    if(s.over){g.textAlign='center';g.font='bold 18px sans-serif';g.fillText('스페이스바나 클릭으로 다시 시작',W/2,H/2-30)}};
   mgLoop(step,draw)}
 function fbNote(x){if(x&&FB.hide!==x.id&&$('#mgw')&&S.user&&S.user.role!=='관리자')mgClose(); // v213: 피드백이 오면 게임 강제 종료
   const o=$('#fbnote');if(!x||FB.hide===x.id||!S.user||S.user.role==='관리자'){if(o&&(!x||FB.hide===x.id))o.remove();return}if(o)return;
