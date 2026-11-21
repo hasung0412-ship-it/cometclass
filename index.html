@@ -336,7 +336,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v217</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v218</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1287,7 +1287,8 @@ const FB={n:null,hide:''};
 /* v214 기다림 창: 글을 보낸 뒤(대기·읽는 중) '글이 피드백 될 때까지 기다려주세요.' 창(#mgw)을 띄움. 피드백이 완료되기 전까지 닫을 수 없음.
    창 안에서 게임(하노이탑·N퀸·점프 달리기)을 고르고, 게임의 '닫기'는 게임만 닫고 기다림 창으로 돌아옴.
    창이 열려 있고 탭이 보이는 동안은 타이머가 멈춤(tmAccrue). 피드백이 완료되면 fbNote가 창을 닫고 '피드백이 완료됐어요!'를 띄움. */
-const MG={raf:0,key:null,ku:null,last:null,cancel:null,ord:['hanoi','queen','run','dodge']};
+try{localStorage.removeItem('mgrun');localStorage.removeItem('mgdodge')}catch(e){}
+const MG={best:{},raf:0,key:null,ku:null,last:null,cancel:null,ord:['hanoi','queen','run','dodge']};
 function mgStop(){cancelAnimationFrame(MG.raf);MG.raf=0;if(MG.key){removeEventListener('keydown',MG.key);MG.key=null}if(MG.ku){removeEventListener('keyup',MG.ku);MG.ku=null}}
 function mgClose(){mgStop();const m=$('#mgw');if(m)m.remove()}
 const mgMineH=last=>`<div class="mgmine" hidden><pre class="fbp">${esc(last.text)}</pre>${(()=>{const lab=fbLab(last.ans);return last.ans.map((x,i)=>`<div class="fbq">${lab[i]}</div>${fbAnsH(x)}`).join('')})()}</div>`;
@@ -1322,7 +1323,7 @@ function mgQueen(a,n){n=n||6;const Q=new Set();
 function mgLoop(step,draw){let acc=0,prev=performance.now();const f=now=>{if(!$('#mgw'))return;acc+=Math.min(250,now-prev);prev=now;while(acc>=1000/60){step();acc-=1000/60}draw();MG.raf=requestAnimationFrame(f)};MG.raf=requestAnimationFrame(f)}
 function mgRun(a){a.innerHTML=`<canvas class="rnc" width="640" height="180"></canvas><p class="mgmsg">스페이스바·↑·화면 클릭으로 점프! 바위는 뛰어넘고, 공중에 뜬 새는 밑으로 지나가세요. 오래 달릴수록 빨라져요.</p>`;
   const cv=a.querySelector('canvas'),g=cv.getContext('2d'),css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888',GY=150,W=cv.width,PX=60,PS=26;
-  let best=0;try{best=+localStorage.getItem('mgrun')||0}catch(e){}
+  let best=MG.best.run||0;
   let s;const start=()=>{s={y:0,vy:0,ob:[],t:0,sp:7.5,sc:0,over:false,gap:40}};start();
   const jump=()=>{if(s.over){start();return}if(s.y===0)s.vy=11.5};cv.onclick=jump;
   MG.key=e=>{if(!$('#mgw'))return;if(e.code==='Space'||e.key==='ArrowUp'){e.preventDefault();jump()}};addEventListener('keydown',MG.key);
@@ -1339,7 +1340,7 @@ function mgRun(a){a.innerHTML=`<canvas class="rnc" width="640" height="180"></ca
       const end=Math.max(...P.map(o=>o.x+o.w))-W;s.gap=Math.round((end+200+Math.random()*320)/s.sp)}
     s.ob.forEach(o=>o.x-=s.sp);s.ob=s.ob.filter(o=>o.x+o.w>0);
     const top=GY-s.y-PS,bot=GY-s.y;
-    if(s.ob.some(o=>PX+PS-5>o.x&&PX+5<o.x+o.w&&bot-3>GY-o.b-o.h&&top+3<GY-o.b)){s.over=true;if(s.sc>best){best=s.sc;try{localStorage.setItem('mgrun',best)}catch(e){}}}};
+    if(s.ob.some(o=>PX+PS-5>o.x&&PX+5<o.x+o.w&&bot-3>GY-o.b-o.h&&top+3<GY-o.b)){s.over=true;if(s.sc>best){best=MG.best.run=s.sc;}}};
   const draw=()=>{g.clearRect(0,0,W,cv.height);g.fillStyle=css('--line');g.fillRect(0,GY+1,W,2);
     g.fillStyle=css('--warn-ink');const py=GY-s.y;g.beginPath();for(let i=0;i<10;i++){const r=i%2?6:14,an=-Math.PI/2+i*Math.PI/5;g.lineTo(PX+13+r*Math.cos(an),py-13+r*Math.sin(an))}g.closePath();g.fill(); // 별 모양 캐릭터
     s.ob.forEach(o=>{if(o.bird){g.fillStyle=css('--info-ink');const y=GY-o.b-o.h/2,f=Math.floor(s.t/8)%2?-6:6;g.beginPath();g.moveTo(o.x,y);g.lineTo(o.x+o.w/2,y+f);g.lineTo(o.x+o.w,y);g.lineTo(o.x+o.w/2,y+4);g.fill()}
@@ -1350,7 +1351,7 @@ function mgRun(a){a.innerHTML=`<canvas class="rnc" width="640" height="180"></ca
 /* 화살 피하기: 사방에서 날아오는 화살을 방향키로 피함 */
 function mgDodge(a){a.innerHTML=`<div class="mgrule"><b>목표</b> 사방에서 날아오는 화살을 피해 최대한 오래 버텨보자!<br><b>조작</b> 방향키(또는 W·A·S·D)로 움직일 수 있고, 오래 버틸수록 화살이 빨라지고 많아집니다. 부딪히면 스페이스바나 화면 클릭으로 다시 시작할 수 있어요.</div><canvas class="rnc" width="640" height="360"></canvas>`;
   const cv=a.querySelector('canvas'),g=cv.getContext('2d'),css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888',W=cv.width,H=cv.height,R=8,K={};
-  let best=0;try{best=+localStorage.getItem('mgdodge')||0}catch(e){}
+  let best=MG.best.dodge||0;
   let s;const start=()=>{s={x:W/2,y:H/2,ar:[],t:0,next:30,over:false}};start();
   const again=()=>{if(s.over)start()};cv.onclick=again;
   const map={ArrowUp:'u',KeyW:'u',ArrowDown:'d',KeyS:'d',ArrowLeft:'l',KeyA:'l',ArrowRight:'r',KeyD:'r'};
@@ -1361,14 +1362,15 @@ function mgDodge(a){a.innerHTML=`<div class="mgrule"><b>목표</b> 사방에서 
       const an=Math.atan2(s.y-y,s.x-x)+(Math.random()-.5)*.5,sp=2.6+Math.min(4,s.t/700)+Math.random()*1.2;s.ar.push({x,y,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp});s.next=Math.max(6,32-s.t/120)*(.6+Math.random()*.8)}
     s.ar.forEach(o=>{o.x+=o.vx;o.y+=o.vy});s.ar=s.ar.filter(o=>o.x>-40&&o.x<W+40&&o.y>-40&&o.y<H+40);
     if(s.ar.some(o=>{const sp=Math.hypot(o.vx,o.vy),tx=o.x-o.vx/sp*18,ty=o.y-o.vy/sp*18,dx=o.x-tx,dy=o.y-ty,t=Math.max(0,Math.min(1,((s.x-tx)*dx+(s.y-ty)*dy)/(dx*dx+dy*dy)));return Math.hypot(s.x-(tx+t*dx),s.y-(ty+t*dy))<R+1.5})){
-      s.over=true;const sc=Math.floor(s.t/6)/10;if(sc>best){best=sc;try{localStorage.setItem('mgdodge',best)}catch(e){}}}};
+      s.over=true;const sc=Math.floor(s.t/6)/10;if(sc>best){best=MG.best.dodge=sc;}}};
   const draw=()=>{g.clearRect(0,0,W,H);g.strokeStyle=css('--sub');g.lineWidth=2;g.fillStyle=css('--sub');
     s.ar.forEach(o=>{const sp=Math.hypot(o.vx,o.vy),ux=o.vx/sp,uy=o.vy/sp;g.beginPath();g.moveTo(o.x-ux*18,o.y-uy*18);g.lineTo(o.x,o.y);g.stroke();g.beginPath();g.moveTo(o.x+ux*4,o.y+uy*4);g.lineTo(o.x-ux*4-uy*4,o.y-uy*4+ux*4);g.lineTo(o.x-ux*4+uy*4,o.y-uy*4-ux*4);g.fill()});
     g.fillStyle=s.over?css('--no-ink'):css('--warn-ink');g.beginPath();g.arc(s.x,s.y,R,0,Math.PI*2);g.fill();
     g.fillStyle=css('--ink');g.font='14px sans-serif';g.textAlign='right';g.fillText(`버틴 시간 ${(Math.floor(s.t/6)/10).toFixed(1)}초   최고 ${best.toFixed(1)}초`,W-10,22);
     if(s.over){g.textAlign='center';g.font='bold 18px sans-serif';g.fillText('스페이스바나 클릭으로 다시 시작',W/2,H/2-30)}};
   mgLoop(step,draw)}
-function fbNote(x){if(x&&FB.hide!==x.id&&$('#mgw')&&S.user&&S.user.role!=='관리자')mgClose(); // v213: 피드백이 오면 게임 강제 종료
+function fbNote(x){if(x&&FB.hide!==x.id&&$('#mgw')&&S.user&&S.user.role!=='관리자'){mgClose();MG.best={}} // v218: 최고 기록은 저장 없이 이번 기다림 동안만
+ // v213: 피드백이 오면 게임 강제 종료
   const o=$('#fbnote');if(!x||FB.hide===x.id||!S.user||S.user.role==='관리자'){if(o&&(!x||FB.hide===x.id))o.remove();return}if(o)return;
   const d=document.createElement('div');d.id='fbnote';d.className='modal';d.innerHTML=`<div class="mb" style="text-align:center"><h3 style="margin:6px 0">피드백이 완료됐어요!</h3><p>선생님이 「${esc(String(x.title||x.task).split('|').pop().trim())}」에 피드백을 보냈어요.</p><div class="row" style="justify-content:center"><button class="main" data-go>지금 보기</button><button class="ghost" data-later>나중에</button></div></div>`;
   document.body.appendChild(d);d.querySelector('[data-go]').onclick=()=>{FB.hide=x.id;d.remove();essayView(x.task)};d.querySelector('[data-later]').onclick=()=>{FB.hide=x.id;d.remove()}}
