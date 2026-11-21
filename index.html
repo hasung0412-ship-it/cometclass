@@ -279,7 +279,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 /* ---- 미니게임 (피드백 기다리는 동안) ---- */
 .mgpick{margin-top:14px;padding:14px 16px;border:1px dashed var(--line2);border-radius:var(--r2);background:var(--raise)}.mgpick small{display:block;color:var(--sub);margin:2px 0 10px}
 #mgw .mgb{max-width:720px;width:94%;max-height:92vh;overflow:auto}.mgmine{max-height:240px;overflow:auto;margin-bottom:12px;padding:8px 12px;border:1px solid var(--line);border-radius:var(--r2)}
-.mgcol{display:flex;flex-direction:column;gap:12px;width:94%;max-width:720px;max-height:92vh;overflow:auto}.mgcol>.mb{width:auto;max-width:none;max-height:none;margin:0}.mgcol .mgmine{margin:12px 0 0}
+.mgcol{display:flex;flex-direction:column;gap:12px;width:94%;max-width:720px;max-height:92vh;overflow:auto}.mgcol>.mb{width:auto;max-width:none;max-height:none;margin:0}.mgx{position:absolute;top:14px;right:14px;background:none;border:0;color:var(--sub);font-size:20px;line-height:1;padding:6px 8px;cursor:pointer;border-radius:var(--r1)}.mgx:hover{color:var(--ink);background:var(--raise)}.mgcol .mgmine{margin:12px 0 0}
 .mgtip{color:var(--sub);font-size:14px;margin:10px 0 0;word-break:keep-all}.mgrule{font-size:14px;line-height:1.7;padding:10px 14px;margin-bottom:10px;border-radius:var(--r2);background:var(--info-bg);border:1px solid var(--info-line);word-break:keep-all}.mgmsg{margin:10px 0 0;font-size:14px;color:var(--sub);word-break:keep-all}.mgmsg b{color:var(--ink)}
 .hnb{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;height:230px}.hnp{position:relative;display:flex;flex-direction:column-reverse;align-items:center;gap:3px;padding:8px 4px;border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);cursor:pointer}
 .hnp.on{border-color:var(--info-ink);background:var(--info-bg)}.hns{position:absolute;bottom:8px;top:24px;left:50%;width:6px;margin-left:-3px;border-radius:999px;background:var(--line2)}.hnd{position:relative;height:22px;border-radius:999px;border:1px solid #0004}
@@ -351,7 +351,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v221</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v222</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1281,12 +1281,19 @@ function fbJunk(I,x){const ns=v=>String(v).replace(/\s/g,''),t=ns(x.text),lab=fb
     if(a.length<5)return `${lab[i]}이 너무 짧아요.`;e=bad(a);if(e)return `${lab[i]}: ${e}`;
     const W=words(x.ans[i]);if(W.length&&W.filter(w=>t.includes(w)).length<W.length*.7)return `${lab[i]}에 적은 내용이 내 글에 없어요. 글에서 그대로 찾아 붙여 넣어 주세요.`}
   return ''}
+/* v222: 피드백 화면에 들어왔을 때 새 결과(완료·거부)를 팝업으로 한 번 보여 줌 (기기별 localStorage 'fbpop|요청ID') */
+const fbPopSeen=id=>{try{return localStorage.getItem('fbpop|'+id)}catch(e){return 1}},fbPopMark=id=>{try{localStorage.setItem('fbpop|'+id,1)}catch(e){}};
+function fbPop(last){if(!last||fbPopSeen(last.id)||!S.user||S.user.role==='관리자')return;fbPopMark(last.id);const rj=last.st==='거부',o=$('#fbnote');if(o)o.remove();
+  const d=document.createElement('div');d.id='fbpop';d.className='modal';
+  d.innerHTML=`<div class="mb" style="text-align:center">${rj?`<h3 style="margin:6px 0">글이 돌아왔어요</h3><p>선생님이 글을 돌려보냈어요. 이유를 보고 글을 고쳐서 다시 보내 주세요.</p><div class="fbs rej" style="text-align:left">이유 : <span style="font-weight:normal;color:var(--ink)">${esc((last.res&&last.res.rej)||'')}</span></div>`:`<h3 style="margin:6px 0">피드백이 완료됐어요!</h3><p>선생님 피드백을 아래에서 확인해 보세요.</p>`}<div class="row" style="justify-content:center"><button class="main" data-ok>확인</button></div></div>`;
+  document.body.appendChild(d);d.querySelector('[data-ok]').onclick=()=>d.remove()}
 async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const r=await api('fbMine',{task:t.id});if(!$('#fbw'))return;if(r.error)return w.innerHTML=`<div class="box">${esc(r.error)}</div>`;
   const L=r.list||[],last=L[L.length-1],src=edit||(!last||last.st==='취소'||last.st==='거부')?(last||{}):null,dk='fbd|'+(S.user&&S.user.id)+'|'+t.id;
   const head=`<p class="fbtt"><b>${esc(title||'과제')}</b> · 내가 직접 피드백해요${last&&!src?` <small style="color:var(--sub)">(${last.ver}번째 요청 · ${esc(last.at)})</small>`:''}</p>`;
   if(src){let d=null;try{d=JSON.parse(sessionStorage.getItem(dk)||'null')}catch(e){}const pa=src.ans||[],v=d||{text:src.text||'',ans:I.map((x,i)=>pa[i]&&pa[i].q===x.q?pa[i].a:'')}; // 다시 보낼 때는 학생이 쓴 답 그대로
     const lab=fbLab(I),W=I.map((x,i)=>[x,i]).filter(z=>z[0].k!=='체크'),C=I.map((x,i)=>[x,i]).filter(z=>z[0].k==='체크');
     const rj=last&&last.st==='거부'?`<div class="fbs rej">선생님이 글을 돌려보냈어요. 다시 써서 보내 주세요.<div class="fbwhy">이유 : ${esc((last.res&&last.res.rej)||'')}</div></div>`:'';
+    if(last&&last.st==='거부'&&!edit)fbPop(last);
     if(last&&last.st==='거부'&&FB.hide!==last.id){api('fbSeen',{id:last.id});FB.hide=last.id;$('#fbnote')&&$('#fbnote').remove()}
     w.innerHTML=`<div class="box">${head}${rj}<h4 class="fbh" style="margin-top:4px">내가 쓴 글</h4><textarea class="fbt" rows="8" placeholder="내가 쓴 수행평가 글을 붙여 넣거나 여기에 써 보세요.">${esc(v.text)}</textarea>`
       +(W.length?`<h4 class="fbh">내 글에서 찾아 적을 내용 <small>글에서 <b>그대로</b> 찾아 복사 붙여넣기 하기!</small></h4>`+W.map(([x,i])=>`<div class="fbq">${lab[i]}${x.h?`<small>${esc(x.h)}</small>`:''}</div><textarea class="fba" rows="2" data-i="${i}">${esc(v.ans[i]||'')}</textarea>`).join(''):'')
@@ -1300,16 +1307,17 @@ async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const r=awai
   const mine=`<details class="sbox" style="margin-top:10px"><summary style="cursor:pointer">내가 보낸 글과 답 보기</summary><pre class="fbp">${esc(last.text)}</pre>${(()=>{const lab=fbLab(last.ans);return last.ans.map((x,i)=>`<div class="fbq">${lab[i]}</div>${fbAnsH(x)}`).join('')})()}</details>`;
   if(last.st==='대기'||last.st==='읽는 중'){const rd=last.st==='읽는 중';
     w.innerHTML=`<div class="box">${head}<div class="fbs ${rd?'read':'wait'}">${rd?'읽는 중이에요! 잠시만 기다려보세요':'잘 도착했어요! 내가 읽기 전까지 수정할 수 있습니다.'}</div>`
-      +`<div class="row" style="align-items:center"><button class="ghost" id="fbx"${rd?' disabled':''}>글 수정하기</button><span id="fbm" style="color:var(--sub);font-size:14px">${rd?'읽는 중이니까 고칠 수 없어요!':'누르면 쓴 내용 그대로 고쳐서 다시 보낼 수 있어요.'}</span></div>${mine}`
+      +`<div class="row" style="align-items:center"><button class="ghost" id="fbx"${rd?' disabled':''}>글 수정하기</button><button class="ghost" id="fbmg">미니게임 하기</button><span id="fbm" style="color:var(--sub);font-size:14px">${rd?'읽는 중이니까 고칠 수 없어요!':'누르면 쓴 내용 그대로 고쳐서 다시 보낼 수 있어요.'}</span></div>${mine}`
       +`</div>`;
     const cancel=async()=>{const b=$('#fbx');if(b)b.disabled=true;const s=await api('fbCancel',{id:last.id});if(s.error){toast(s.error);return fbStu(t,title,I)}toast('글을 고친 뒤 다시 보내 주세요');fbStu(t,title,I,1)};
     if(!rd)$('#fbx').onclick=cancel;const dec=L.filter(o=>o.st==='거부'||o.st==='완료'||o.st==='확인');MG.lock=!!dec.length&&dec[dec.length-1].st==='거부'; // v219: 마지막으로 끝난 요청이 '거부'면 게임 잠금, 다음 글이 정상 피드백을 받으면 풀림
-    if(S.user&&S.user.role!=='관리자')mgWait(last,rd?null:cancel);return}
+    $('#fbmg').onclick=()=>{if(S.user&&S.user.role!=='관리자')mgWait(last,rd?null:cancel)};if(S.user&&S.user.role!=='관리자')mgWait(last,rd?null:cancel);return}
   const R=last.res||{g:['',''],q:[]}; // v200: 통과 개수는 보이지 않고, 문항마다 내가 쓴 내용 아래에 피드백
   w.innerHTML=`<div class="box">${head}<div class="fbs done">피드백 완료! <small style="font-weight:normal">(${esc(last.fat)})</small></div>`
     +fbRes(R.g,'글 전체',`<div class="fbans">${esc(last.text)}</div>`)+(()=>{const lab=fbLab(last.ans);return last.ans.map((x,i)=>fbRes(R.q[i]||['통과',''],lab[i],fbAnsH(x))).join('')})()
     +`<div class="row" style="margin-top:12px"><button class="main" id="fbre">고쳐서 다시 보내기</button></div></div>`;
   $('#fbre').onclick=()=>fbStu(t,title,I,1);
+  if(last.st==='완료')fbPop(last);
   if(last.st==='완료'){api('fbSeen',{id:last.id});FB.hide=last.id;$('#fbnote')&&$('#fbnote').remove()}}
 const FB={n:null,hide:''};
 /* v214 기다림 창: 글을 보낸 뒤(대기·읽는 중) '글이 피드백 될 때까지 기다려주세요.' 창(#mgw)을 띄움. 피드백이 완료되기 전까지 닫을 수 없음.
@@ -1323,10 +1331,11 @@ const mgMineH=last=>`<div class="mgmine" hidden><pre class="fbp">${esc(last.text
 function mgMine(m){const b=m.querySelector('[data-mine]');if(b)b.onclick=()=>{const p=m.querySelector('.mgmine');p.hidden=!p.hidden;b.textContent=p.hidden?'내 글 다시 보기':'내 글 접기'}}
 function mgWait(last,cancel){if(last){MG.last=last;MG.cancel=cancel}last=MG.last;mgStop();let m=$('#mgw');if(!m){m=document.createElement('div');m.id='mgw';m.className='modal';document.body.appendChild(m);MG.ord=['hanoi','queen','run','dodge'].sort(()=>Math.random()-.5)} // v215: 1·2·3번에 게임을 무작위로
   const rd=last.st==='읽는 중';
-  m.innerHTML=`<div class="mgcol"><div class="mb"><h3 style="margin:0 0 6px">글이 피드백 될 때까지 기다려주세요.</h3><p class="mgtip" style="margin:0 0 12px">${rd?'선생님이 읽는 중이라 지금은 글을 고칠 수 없어요.':'잘 도착했어요! 선생님이 읽기 전까지는 글을 고쳐서 다시 보낼 수 있어요.'} 피드백이 완료되면 이 창이 저절로 닫혀요.</p>`
+  m.innerHTML=`<div class="mgcol"><div class="mb" style="position:relative"><button class="mgx" data-close title="닫기">✕</button><h3 style="margin:0 34px 6px 0">글이 피드백 될 때까지 기다려주세요.</h3><p class="mgtip" style="margin:0 0 12px">${rd?'선생님이 읽는 중이라 지금은 글을 고칠 수 없어요.':'잘 도착했어요! 선생님이 읽기 전까지는 글을 고쳐서 다시 보낼 수 있어요.'} 피드백이 완료되면 이 창이 저절로 닫혀요.</p>`
     +`<div class="row"><button class="ghost" data-mine>내 글 다시 보기</button>${rd?'':'<button class="ghost" data-cancel>글 수정하기</button>'}</div>${mgMineH(last)}</div>`
     +`<div class="mb"><h3 style="margin:0 0 10px">기다리는 동안 미니게임 하기</h3>${MG.lock?'<p class="mgtip" style="margin:0">지난 글이 거부돼서 게임이 잠겼어요. 이번 글이 선생님께 정상으로 피드백을 받으면 다시 열려요.</p>':`<div class="row">${MG.ord.map((k,i)=>`<button class="ghost" data-mg="${k}">${i+1}번</button>`).join('')}</div>`}</div></div>`;
   mgMine(m);m.querySelectorAll('[data-mg]').forEach(b=>b.onclick=()=>mgOpen(b.dataset.mg));
+  m.querySelector('[data-close]').onclick=()=>mgClose(); // v222: X로 닫기
   const c=m.querySelector('[data-cancel]');if(c)c.onclick=()=>{mgClose();MG.cancel&&MG.cancel()}} // v216: '글 수정하기' = 보내기 취소 후 쓴 내용 그대로 고치는 화면
 function mgOpen(kind){const m=$('#mgw');if(!m)return;mgStop();const full=kind==='run'||kind==='dodge';
   m.innerHTML=`<div class="mb mgb"><div class="row" style="justify-content:flex-end;align-items:center;margin:0 0 10px"><div class="row">${full?'':'<button class="ghost" data-mine>내 글 다시 보기</button>'}<button class="ghost" data-x>닫기</button></div></div>`
@@ -1401,7 +1410,7 @@ function fbNote(x){if(x&&FB.hide!==x.id&&$('#mgw')&&S.user&&S.user.role!=='관�
  // v213: 피드백이 오면 게임 강제 종료
   const o=$('#fbnote');if(!x||FB.hide===x.id||!S.user||S.user.role==='관리자'){if(o&&(!x||FB.hide===x.id))o.remove();return}if(o)return;
   const d=document.createElement('div');d.id='fbnote';d.className='modal';const tt=esc(String(x.title||x.task).split('|').pop().trim());d.innerHTML=`<div class="mb" style="text-align:center">${x.rej?`<h3 style="margin:6px 0">글이 돌아왔어요</h3><p>선생님이 「${tt}」 글을 돌려보냈어요. 이유를 보고 다시 써 주세요.</p>`:`<h3 style="margin:6px 0">피드백이 완료됐어요!</h3><p>선생님이 「${tt}」에 피드백을 보냈어요.</p>`}<div class="row" style="justify-content:center"><button class="main" data-go>지금 보기</button><button class="ghost" data-later>나중에</button></div></div>`;
-  document.body.appendChild(d);d.querySelector('[data-go]').onclick=()=>{FB.hide=x.id;d.remove();essayView(x.task)};d.querySelector('[data-later]').onclick=()=>{FB.hide=x.id;d.remove()}}
+  document.body.appendChild(d);d.querySelector('[data-go]').onclick=()=>{FB.hide=x.id;fbPopMark(x.id);d.remove();essayView(x.task)};d.querySelector('[data-later]').onclick=()=>{FB.hide=x.id;d.remove()}}
 function fbBadge(){document.querySelectorAll('.fbn').forEach(e=>{e.textContent=FB.n>0?FB.n:'';e.classList.toggle('on',FB.n>0)})}
 async function fbPoll(){if(!S.user||S.user.role!=='관리자'){const c=$('#fbst');if(c)c.remove();FB.seen.clear();FB.n=null;return}if(document.hidden)return;const r=await api('fbCount');if(!r||r.error||!S.user||S.user.role!=='관리자')return;
   if((FB.n==null&&r.n>0)||(FB.n!=null&&r.n>FB.n))fbArrive();FB.n=r.n;fbBadge()}
