@@ -279,7 +279,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 /* ---- 미니게임 (피드백 기다리는 동안) ---- */
 .mgpick{margin-top:14px;padding:14px 16px;border:1px dashed var(--line2);border-radius:var(--r2);background:var(--raise)}.mgpick small{display:block;color:var(--sub);margin:2px 0 10px}
 #mgw .mgb{max-width:720px;width:94%;max-height:92vh;overflow:auto}.mgmine{max-height:240px;overflow:auto;margin-bottom:12px;padding:8px 12px;border:1px solid var(--line);border-radius:var(--r2)}
-.mgtip{color:var(--sub);font-size:14px;margin:10px 0 0}.mgmsg{margin:10px 0 0;font-size:14px;color:var(--sub);word-break:keep-all}.mgmsg b{color:var(--ink)}
+.mgtip{color:var(--sub);font-size:14px;margin:10px 0 0;word-break:keep-all}.mgrule{font-size:14px;line-height:1.7;padding:10px 14px;margin-bottom:10px;border-radius:var(--r2);background:var(--info-bg);border:1px solid var(--info-line);word-break:keep-all}.mgmsg{margin:10px 0 0;font-size:14px;color:var(--sub);word-break:keep-all}.mgmsg b{color:var(--ink)}
 .hnb{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;height:230px}.hnp{position:relative;display:flex;flex-direction:column-reverse;align-items:center;gap:3px;padding:8px 4px;border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);cursor:pointer}
 .hnp.on{border-color:var(--info-ink);background:var(--info-bg)}.hns{position:absolute;bottom:8px;top:24px;left:50%;width:6px;margin-left:-3px;border-radius:999px;background:var(--line2)}.hnd{position:relative;height:22px;border-radius:999px;border:1px solid #0004}
 .nqb{display:grid;gap:2px;max-width:420px;aspect-ratio:1;margin:0 auto}.nqc{aspect-ratio:1;padding:0;border:none;border-radius:4px;background:var(--surface);color:var(--ink);font-size:22px;line-height:1;cursor:pointer}.nqc.dk{background:var(--raise)}
@@ -335,7 +335,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v213</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v214</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1273,9 +1273,9 @@ async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const r=awai
   if(last.st==='대기'||last.st==='읽는 중'){const rd=last.st==='읽는 중';
     w.innerHTML=`<div class="box">${head}<div class="fbs ${rd?'read':'wait'}">${rd?'읽는 중이에요! 잠시만 기다려보세요':'잘 도착했어요! 내가 읽기 전까지 수정할 수 있습니다.'}</div>`
       +`<div class="row" style="align-items:center"><button class="ghost" id="fbx"${rd?' disabled':''}>보내기 취소</button><span id="fbm" style="color:var(--sub);font-size:14px">${rd?'읽는 중이니까 취소할 수 없어요!':'취소하면 글을 고쳐서 다시 보낼 수 있어요.'}</span></div>${mine}`
-      +`<div class="mgpick"><b>글이 피드백 될 때까지 기다려주세요.</b><small>기다리는 동안 미니게임을 할 수 있어요. 게임 창이 열려 있는 동안은 타이머가 멈춰요.</small><div class="row"><button class="ghost" data-mg="hanoi">하노이탑</button><button class="ghost" data-mg="queen">N퀸</button><button class="ghost" data-mg="run">점프 달리기</button></div></div></div>`;
-    w.querySelectorAll('[data-mg]').forEach(b=>b.onclick=()=>mgOpen(b.dataset.mg,last));
-    if(!rd)$('#fbx').onclick=async()=>{const b=$('#fbx');b.disabled=true;const s=await api('fbCancel',{id:last.id});if(s.error){toast(s.error);return fbStu(t,title,I)}toast('보내기를 취소했어요');fbStu(t,title,I,1)};return}
+      +`</div>`;
+    const cancel=async()=>{const b=$('#fbx');if(b)b.disabled=true;const s=await api('fbCancel',{id:last.id});if(s.error){toast(s.error);return fbStu(t,title,I)}toast('보내기를 취소했어요');fbStu(t,title,I,1)};
+    if(!rd)$('#fbx').onclick=cancel;if(S.user&&S.user.role!=='관리자')mgWait(last,rd?null:cancel);return}
   const R=last.res||{g:['',''],q:[]}; // v200: 통과 개수는 보이지 않고, 문항마다 내가 쓴 내용 아래에 피드백
   w.innerHTML=`<div class="box">${head}<div class="fbs done">피드백 완료! <small style="font-weight:normal">(${esc(last.fat)})</small></div>`
     +fbRes(R.g,'글 전체',`<div class="fbans">${esc(last.text)}</div>`)+(()=>{const lab=fbLab(last.ans);return last.ans.map((x,i)=>fbRes(R.q[i]||['통과',''],lab[i],fbAnsH(x))).join('')})()
@@ -1283,19 +1283,28 @@ async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const r=awai
   $('#fbre').onclick=()=>fbStu(t,title,I,1);
   if(last.st==='완료'){api('fbSeen',{id:last.id});FB.hide=last.id;$('#fbnote')&&$('#fbnote').remove()}}
 const FB={n:null,hide:''};
-/* v213 미니게임: 글을 선생님께 보낸 뒤(대기·읽는 중)에만. 게임 창(#mgw)이 열려 있고 탭이 보이는 동안은 타이머가 멈춤(tmAccrue).
-   피드백이 완료되면 fbNote가 게임 창을 닫고 '피드백이 완료됐어요!'를 띄움. */
-const MG={raf:0,key:null};
-function mgClose(){cancelAnimationFrame(MG.raf);MG.raf=0;if(MG.key){removeEventListener('keydown',MG.key);MG.key=null}const m=$('#mgw');if(m)m.remove()}
-function mgOpen(kind,last){mgClose();const m=document.createElement('div');m.id='mgw';m.className='modal';
-  const T={hanoi:'하노이탑',queen:'N퀸',run:'점프 달리기'}[kind];
-  m.innerHTML=`<div class="mb mgb"><div class="row" style="justify-content:space-between;align-items:center;margin:0 0 10px"><h3 style="margin:0">${T}</h3><div class="row"><button class="ghost" data-mine>내 글 다시 보기</button><button class="ghost" data-x>닫기</button></div></div>`
-    +`<div class="mgmine" hidden><pre class="fbp">${esc(last.text)}</pre>${(()=>{const lab=fbLab(last.ans);return last.ans.map((x,i)=>`<div class="fbq">${lab[i]}</div>${fbAnsH(x)}`).join('')})()}</div><div class="mga"></div><p class="mgtip">글이 피드백 될 때까지 기다려주세요. 피드백이 오면 게임이 저절로 닫혀요.</p></div>`;
-  document.body.appendChild(m);m.querySelector('[data-x]').onclick=mgClose;
-  m.querySelector('[data-mine]').onclick=e=>{const p=m.querySelector('.mgmine');p.hidden=!p.hidden;e.target.textContent=p.hidden?'내 글 다시 보기':'내 글 접기'};
+/* v214 기다림 창: 글을 보낸 뒤(대기·읽는 중) '글이 피드백 될 때까지 기다려주세요.' 창(#mgw)을 띄움. 피드백이 완료되기 전까지 닫을 수 없음.
+   창 안에서 게임(하노이탑·N퀸·점프 달리기)을 고르고, 게임의 '닫기'는 게임만 닫고 기다림 창으로 돌아옴.
+   창이 열려 있고 탭이 보이는 동안은 타이머가 멈춤(tmAccrue). 피드백이 완료되면 fbNote가 창을 닫고 '피드백이 완료됐어요!'를 띄움. */
+const MG={raf:0,key:null,last:null,cancel:null};
+function mgStop(){cancelAnimationFrame(MG.raf);MG.raf=0;if(MG.key){removeEventListener('keydown',MG.key);MG.key=null}}
+function mgClose(){mgStop();const m=$('#mgw');if(m)m.remove()}
+const mgMineH=last=>`<div class="mgmine" hidden><pre class="fbp">${esc(last.text)}</pre>${(()=>{const lab=fbLab(last.ans);return last.ans.map((x,i)=>`<div class="fbq">${lab[i]}</div>${fbAnsH(x)}`).join('')})()}</div>`;
+function mgMine(m){const b=m.querySelector('[data-mine]');if(b)b.onclick=()=>{const p=m.querySelector('.mgmine');p.hidden=!p.hidden;b.textContent=p.hidden?'내 글 다시 보기':'내 글 접기'}}
+function mgWait(last,cancel){if(last){MG.last=last;MG.cancel=cancel}last=MG.last;mgStop();let m=$('#mgw');if(!m){m=document.createElement('div');m.id='mgw';m.className='modal';document.body.appendChild(m)}
+  const rd=last.st==='읽는 중';
+  m.innerHTML=`<div class="mb mgb"><h3 style="margin:0 0 6px">글이 피드백 될 때까지 기다려주세요.</h3><p class="mgtip" style="margin:0 0 12px">${rd?'선생님이 읽는 중이에요!':'잘 도착했어요! 선생님이 읽기 전까지는 보내기를 취소할 수 있어요.'} 피드백이 완료되면 이 창이 저절로 닫혀요.</p>`
+    +`<div class="row" style="margin-bottom:12px"><button class="ghost" data-mine>내 글 다시 보기</button>${rd?'':'<button class="ghost" data-cancel>보내기 취소</button>'}</div>${mgMineH(last)}`
+    +`<div class="mgpick"><b>기다리는 동안 미니게임 하기</b><small>이 창이 열려 있는 동안은 타이머가 멈춰요.</small><div class="row"><button class="ghost" data-mg="hanoi">하노이탑</button><button class="ghost" data-mg="queen">N퀸</button><button class="ghost" data-mg="run">점프 달리기</button></div></div></div>`;
+  mgMine(m);m.querySelectorAll('[data-mg]').forEach(b=>b.onclick=()=>mgOpen(b.dataset.mg));
+  const c=m.querySelector('[data-cancel]');if(c)c.onclick=()=>{mgClose();MG.cancel&&MG.cancel()}}
+function mgOpen(kind){const m=$('#mgw');if(!m)return;mgStop();const T={hanoi:'하노이탑',queen:'N퀸',run:'점프 달리기'}[kind];
+  m.innerHTML=`<div class="mb mgb"><div class="row" style="justify-content:space-between;align-items:center;margin:0 0 10px"><h3 style="margin:0">${T}</h3><div class="row">${kind==='run'?'':'<button class="ghost" data-mine>내 글 다시 보기</button>'}<button class="ghost" data-x>닫기</button></div></div>`
+    +(kind==='run'?'':mgMineH(MG.last))+`<div class="mga"></div></div>`;
+  mgMine(m);m.querySelector('[data-x]').onclick=()=>mgWait();
   ({hanoi:mgHanoi,queen:mgQueen,run:mgRun})[kind](m.querySelector('.mga'))}
 function mgHanoi(a,n){n=n||4;let P=[[...Array(n)].map((_,i)=>n-i),[],[]],sel=-1,mv=0;const C=['--sky','--mint','--butter','--peach','--lav','--sky','--mint'];
-  const draw=()=>{const won=P[2].length===n;a.innerHTML=`<div class="row" style="align-items:center;margin-bottom:10px">원판 ${[3,4,5,6,7].map(k=>`<button class="chip ${k===n?'on':''}" data-n="${k}">${k}개</button>`).join('')}<span style="flex:1"></span><span>움직인 횟수 <b>${mv}</b> · 최소 ${2**n-1}</span></div>`
+  const draw=()=>{const won=P[2].length===n;a.innerHTML=`<div class="mgrule"><b>목표</b> 왼쪽 기둥의 원판을 모두 <b>오른쪽 기둥</b>으로 옮기기!<br><b>규칙</b> ① 한 번에 원판 하나만 옮겨요. ② 맨 위에 있는 원판만 옮길 수 있어요. ③ 큰 원판을 작은 원판 위에 올릴 수 없어요.</div>`+`<div class="row" style="align-items:center;margin-bottom:10px">원판 ${[3,4,5,6,7].map(k=>`<button class="chip ${k===n?'on':''}" data-n="${k}">${k}개</button>`).join('')}<span style="flex:1"></span><span>움직인 횟수 <b>${mv}</b> · 최소 ${2**n-1}</span></div>`
     +`<div class="hnb">${P.map((p,i)=>`<div class="hnp${sel===i?' on':''}" data-p="${i}"><div class="hns"></div>${p.map(d=>`<div class="hnd" style="width:${20+d*11}%;background:var(${C[d-1]})"></div>`).join('')}</div>`).join('')}</div>`
     +`<p class="mgmsg">${won?(mv===2**n-1?'⭐ 최소 횟수로 성공!':'✅ 성공! 이번엔 최소 횟수에 도전해 보세요.'):'기둥을 눌러 맨 위 원판을 고르고, 옮길 기둥을 누르세요. 큰 원판은 작은 원판 위에 못 올려요.'}</p>`;
     a.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>mgHanoi(a,+b.dataset.n));
@@ -1303,7 +1312,7 @@ function mgHanoi(a,n){n=n||4;let P=[[...Array(n)].map((_,i)=>n-i),[],[]],sel=-1,
       if(sel<0){if(P[i].length)sel=i}else if(sel===i)sel=-1;else{const d=P[sel][P[sel].length-1],t=P[i][P[i].length-1];if(t==null||t>d){P[i].push(P[sel].pop());mv++}else toast('큰 원판은 작은 원판 위에 못 올려요');sel=-1}draw()})};draw()}
 function mgQueen(a,n){n=n||6;const Q=new Set();
   const bad=k=>{const r=Math.floor(k/n),c=k%n;for(const j of Q){if(j===k)continue;const r2=Math.floor(j/n),c2=j%n;if(r===r2||c===c2||Math.abs(r-r2)===Math.abs(c-c2))return true}return false};
-  const draw=()=>{const B=[...Q].filter(bad),won=Q.size===n&&!B.length;a.innerHTML=`<div class="row" style="align-items:center;margin-bottom:10px">판 크기 ${[4,5,6,7,8].map(k=>`<button class="chip ${k===n?'on':''}" data-n="${k}">${k}×${k}</button>`).join('')}<span style="flex:1"></span><span>퀸 <b>${Q.size}</b> / ${n}</span><button class="ghost" data-r>다시</button></div>`
+  const draw=()=>{const B=[...Q].filter(bad),won=Q.size===n&&!B.length;a.innerHTML=`<div class="mgrule"><b>목표</b> ${n}×${n} 판에 퀸 <b>${n}개</b>를 서로 공격하지 못하게 놓기!<br><b>규칙</b> 퀸은 가로·세로·대각선으로 몇 칸이든 움직여 공격해요. 그래서 같은 가로줄, 같은 세로줄, 같은 대각선에 퀸이 두 개 있으면 안 돼요.</div>`+`<div class="row" style="align-items:center;margin-bottom:10px">판 크기 ${[4,5,6,7,8].map(k=>`<button class="chip ${k===n?'on':''}" data-n="${k}">${k}×${k}</button>`).join('')}<span style="flex:1"></span><span>퀸 <b>${Q.size}</b> / ${n}</span><button class="ghost" data-r>다시</button></div>`
     +`<div class="nqb" style="grid-template-columns:repeat(${n},1fr)">${[...Array(n*n)].map((_,k)=>`<button class="nqc${(Math.floor(k/n)+k%n)%2?' dk':''}${Q.has(k)?(bad(k)?' bad':' q'):''}" data-k="${k}">${Q.has(k)?'♛':''}</button>`).join('')}</div>`
     +`<p class="mgmsg">${won?'⭐ 성공! 서로 공격하지 않게 퀸 '+n+'개를 다 놓았어요.':'칸을 눌러 퀸을 놓거나 빼요. 같은 줄·같은 칸·대각선에 두 퀸이 있으면 빨갛게 보여요.'}</p>`;
     a.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>mgQueen(a,+b.dataset.n));a.querySelector('[data-r]').onclick=()=>{Q.clear();draw()};
