@@ -351,7 +351,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v222</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v223</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1287,9 +1287,19 @@ function fbPop(last){if(!last||fbPopSeen(last.id)||!S.user||S.user.role==='관�
   const d=document.createElement('div');d.id='fbpop';d.className='modal';
   d.innerHTML=`<div class="mb" style="text-align:center">${rj?`<h3 style="margin:6px 0">글이 돌아왔어요</h3><p>선생님이 글을 돌려보냈어요. 이유를 보고 글을 고쳐서 다시 보내 주세요.</p><div class="fbs rej" style="text-align:left">이유 : <span style="font-weight:normal;color:var(--ink)">${esc((last.res&&last.res.rej)||'')}</span></div>`:`<h3 style="margin:6px 0">피드백이 완료됐어요!</h3><p>선생님 피드백을 아래에서 확인해 보세요.</p>`}<div class="row" style="justify-content:center"><button class="main" data-ok>확인</button></div></div>`;
   document.body.appendChild(d);d.querySelector('[data-ok]').onclick=()=>d.remove()}
+/* v223: 수업이 끝나고 선생님이 '결과 공개'로 다시 연 주제 = 받은 피드백만 보기 (보내기·고치기 없음) */
+function fbView(w,head,L){const x=[...L].reverse().find(o=>o.res)||L[L.length-1],note=`<div class="fbs wait">이미 끝난 과제입니다. 수정은 불가해요!</div>`;
+  if(!x){w.innerHTML=`<div class="box">${head}${note}<p style="margin:0">이 주제에 보낸 글이 없어요.</p></div>`;return}
+  const lab=fbLab(x.ans);
+  if(x.st==='거부'){w.innerHTML=`<div class="box">${head}${note}<div class="fbs rej">선생님이 돌려보낸 글이에요.<div class="fbwhy">이유 : ${esc((x.res&&x.res.rej)||'')}</div></div><h4 class="fbh">내가 쓴 글</h4><div class="fbans">${esc(x.text)}</div></div>`;return}
+  if(x.res){const R=x.res;w.innerHTML=`<div class="box">${head}${note}<div class="fbs done">피드백 완료! <small style="font-weight:normal">(${esc(x.fat)})</small></div>`
+    +fbRes(R.g,'글 전체',`<div class="fbans">${esc(x.text)}</div>`)+x.ans.map((a,i)=>fbRes(R.q[i]||['통과',''],lab[i],fbAnsH(a))).join('')+`</div>`;
+    if(x.st==='완료'){fbPop(x);api('fbSeen',{id:x.id});FB.hide=x.id;$('#fbnote')&&$('#fbnote').remove()}return}
+  w.innerHTML=`<div class="box">${head}${note}<p>선생님 피드백을 받지 못한 글이에요.</p><h4 class="fbh">내가 쓴 글</h4><div class="fbans">${esc(x.text)}</div></div>`}
 async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const r=await api('fbMine',{task:t.id});if(!$('#fbw'))return;if(r.error)return w.innerHTML=`<div class="box">${esc(r.error)}</div>`;
   const L=r.list||[],last=L[L.length-1],src=edit||(!last||last.st==='취소'||last.st==='거부')?(last||{}):null,dk='fbd|'+(S.user&&S.user.id)+'|'+t.id;
   const head=`<p class="fbtt"><b>${esc(title||'과제')}</b> · 내가 직접 피드백해요${last&&!src?` <small style="color:var(--sub)">(${last.ver}번째 요청 · ${esc(last.at)})</small>`:''}</p>`;
+  if(t.view)return fbView(w,`<p class="fbtt"><b>${esc(title||'과제')}</b> · 받은 피드백 보기</p>`,L);
   if(src){let d=null;try{d=JSON.parse(sessionStorage.getItem(dk)||'null')}catch(e){}const pa=src.ans||[],v=d||{text:src.text||'',ans:I.map((x,i)=>pa[i]&&pa[i].q===x.q?pa[i].a:'')}; // 다시 보낼 때는 학생이 쓴 답 그대로
     const lab=fbLab(I),W=I.map((x,i)=>[x,i]).filter(z=>z[0].k!=='체크'),C=I.map((x,i)=>[x,i]).filter(z=>z[0].k==='체크');
     const rj=last&&last.st==='거부'?`<div class="fbs rej">선생님이 글을 돌려보냈어요. 다시 써서 보내 주세요.<div class="fbwhy">이유 : ${esc((last.res&&last.res.rej)||'')}</div></div>`:'';
@@ -1303,7 +1313,7 @@ async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const r=awai
     [T,...w.querySelectorAll('[data-i]')].forEach(e=>e.oninput=e.onchange=()=>{chk();try{sessionStorage.setItem(dk,JSON.stringify(val()))}catch(er){}});chk();
     if(edit)$('#fbbk').onclick=()=>{try{sessionStorage.removeItem(dk)}catch(e){}fbStu(t,title,I)};
     $('#fbgo').onclick=async()=>{const b=$('#fbgo'),jk=fbJunk(I,val());if(jk){const m=$('#fbm');m.textContent=jk;m.style.color='var(--no-ink)';return}b.disabled=true;b.textContent='보내는 중...';const s=await api('fbSend',{task:t.id,...val()});
-      if(s.error){b.disabled=false;b.textContent='선생님께 보내기';$('#fbm').textContent=s.error;return}try{sessionStorage.removeItem(dk)}catch(e){}toast('선생님께 보냈어요');fbStu(t,title,I)};return}
+      if(s.error){b.disabled=false;b.textContent='선생님께 보내기';$('#fbm').textContent=s.error;if(s.closed){const d=document.createElement('div');d.className='modal';d.innerHTML=`<div class="mb" style="text-align:center"><h3 style="margin:6px 0">이제 보낼 수 없어요.</h3><p>직접 봐줄테니까 손 들고 기다려보세요.</p><div class="row" style="justify-content:center"><button class="main" data-ok>확인</button></div></div>`;document.body.appendChild(d);d.querySelector('[data-ok]').onclick=()=>d.remove()}return}try{sessionStorage.removeItem(dk)}catch(e){}toast('선생님께 보냈어요');fbStu(t,title,I)};return}
   const mine=`<details class="sbox" style="margin-top:10px"><summary style="cursor:pointer">내가 보낸 글과 답 보기</summary><pre class="fbp">${esc(last.text)}</pre>${(()=>{const lab=fbLab(last.ans);return last.ans.map((x,i)=>`<div class="fbq">${lab[i]}</div>${fbAnsH(x)}`).join('')})()}</details>`;
   if(last.st==='대기'||last.st==='읽는 중'){const rd=last.st==='읽는 중';
     w.innerHTML=`<div class="box">${head}<div class="fbs ${rd?'read':'wait'}">${rd?'읽는 중이에요! 잠시만 기다려보세요':'잘 도착했어요! 내가 읽기 전까지 수정할 수 있습니다.'}</div>`
