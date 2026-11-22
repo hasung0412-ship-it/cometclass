@@ -351,7 +351,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v223</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v224</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1278,7 +1278,7 @@ function fbJunk(I,x){const ns=v=>String(v).replace(/\s/g,''),t=ns(x.text),lab=fb
   let e=bad(t);if(e)return '내가 쓴 글: '+e;
   const words=v=>String(v).split(/\s+/).map(w=>w.replace(/[^\w가-힣]/g,'')).filter(w=>w.length>1);
   for(let i=0;i<I.length;i++){if(I[i].k==='체크')continue;const a=ns(x.ans[i]);
-    if(a.length<5)return `${lab[i]}이 너무 짧아요.`;e=bad(a);if(e)return `${lab[i]}: ${e}`;
+    if(!a.length)return `${lab[i]}을 써 주세요.`;e=bad(a);if(e)return `${lab[i]}: ${e}`;
     const W=words(x.ans[i]);if(W.length&&W.filter(w=>t.includes(w)).length<W.length*.7)return `${lab[i]}에 적은 내용이 내 글에 없어요. 글에서 그대로 찾아 붙여 넣어 주세요.`}
   return ''}
 /* v222: 피드백 화면에 들어왔을 때 새 결과(완료·거부)를 팝업으로 한 번 보여 줌 (기기별 localStorage 'fbpop|요청ID') */
