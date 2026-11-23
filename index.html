@@ -292,7 +292,8 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 .fbrjl{color:var(--no-ink)}.fbrjl:hover{color:var(--no-ink);text-decoration:underline}
 .fbsh{font-size:15px;color:var(--sub);margin:4px 0 6px}
 .fbtx{white-space:pre-wrap;word-break:keep-all;line-height:1.8;font-size:17px;max-width:760px;padding:2px 0 14px;border-bottom:1px solid var(--line);margin-bottom:6px}
-#fbrv .fbi{max-width:760px;padding:4px 0 10px}#fbrv .fbq{margin:14px 0 4px}
+#fbrv .fbi{max-width:760px;padding:4px 0 10px}
+#fbrv .fbi.pin{position:sticky;top:calc(var(--head) + 8px);bottom:8px;z-index:3;background:var(--surface);border:1px solid var(--line2);border-radius:var(--r1);box-shadow:0 4px 18px rgba(0,0,0,.14);padding:4px 12px 10px;max-height:45vh;overflow:auto} /* v226: 쓰고 있는 피드백 칸이 화면에 따라다님 (위로 올려 학생 글을 봐도 아래에 붙어 있음) */#fbrv .fbq{margin:14px 0 4px}
 #fbrv .fbans{background:none;border-left:3px solid var(--line2);border-radius:0;padding:2px 0 2px 12px;margin-bottom:8px}
 .fbseg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:2px 0 6px}
 .fbseg label{position:relative;padding:5px 16px;cursor:pointer;color:var(--sub);user-select:none}.fbseg label+label{border-left:1px solid var(--line)}
@@ -351,7 +352,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v225</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v226</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1455,7 +1456,7 @@ async function fbOpen(id){const v=$('#fbrv');if(!v)return;$('#fbaw').classList.a
   $('#fbx').onclick=()=>{v.innerHTML='';$('#fbaw').classList.remove('split');app.querySelectorAll('.fbli').forEach(b=>b.classList.remove('on'))};
   const wt=$('#fbaw').getBoundingClientRect().top;if(wt<0)scrollBy(0,wt-70);if(done)return;
   const it=[...v.querySelectorAll('.fbi')],pick=e=>{const c=e.querySelector('input:checked');return c?c.dataset.p:''},chk=()=>{const ok=e=>{const p=pick(e);return p==='통과'||(p==='피드백'&&e.querySelector('.fbf').value.trim())},n=it.filter(ok).length;$('#fbsend').disabled=n<it.length;const m=$('#fbm');m.style.color='';m.textContent=n<it.length?`${it.length}개 중 ${n}개 골랐어요. 모두 고르면 보낼 수 있어요. '피드백'은 문장을 써 주세요.`:`${it.length}개 모두 골랐어요. 보낼 수 있어요!`};
-  it.forEach(e=>{const cs=[...e.querySelectorAll('input')],f=e.querySelector('.fbf');cs.forEach(c=>c.onchange=()=>{if(c.checked)cs.forEach(z=>{if(z!==c)z.checked=false});f.style.display=pick(e)==='피드백'?'block':'none';if(pick(e)==='피드백')f.focus();chk()});f.oninput=chk});
+  it.forEach(e=>{const cs=[...e.querySelectorAll('input')],f=e.querySelector('.fbf');cs.forEach(c=>c.onchange=()=>{if(c.checked)cs.forEach(z=>{if(z!==c)z.checked=false});f.style.display=pick(e)==='피드백'?'block':'none';if(pick(e)==='피드백')f.focus();else e.classList.remove('pin');chk()});f.oninput=chk;f.onfocus=()=>{it.forEach(z=>z.classList.toggle('pin',z===e))}});
   const rb=v.querySelector('.fbrjb'),nxt=()=>{const L=(FB.L&&FB.L.wait)||[],k=L.findIndex(z=>z.id===id),nx=L[k+1]||L.find(z=>z.id!==id);fbAdmin(nx?nx.id:'')};
   $('#fbrej').onclick=()=>{rb.hidden=false;$('#fbwhy').focus()};$('#fbrjno').onclick=()=>{rb.hidden=true};
   $('#fbrjgo').onclick=async()=>{const b=$('#fbrjgo');b.disabled=true;b.textContent='보내는 중...';const s=await api('fbReject',{id,why:$('#fbwhy').value});
