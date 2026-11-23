@@ -352,7 +352,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v226</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v227</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1438,7 +1438,7 @@ const fbLiH=(r,o,dn,open)=>`<button class="fbli${open===o.id?' on':''}" data-id=
 const fbByCls=L=>{const m={};L.forEach(o=>(m[o.cls||'']=m[o.cls||'']||[]).push(o));return Object.keys(m).sort((a,b)=>(a===''?1e9:Number(a)||1e8)-(b===''?1e9:Number(b)||1e8)||a.localeCompare(b)).map(k=>[k,m[k]])}; // v225: 최근 피드백을 반별로 (반 안에서는 최근 순 그대로)
 function fbListUpd(r){const a=$('#fbal');if(!a)return false;r.wait.forEach(o=>FB.seen.add(o.id));FB.L=r;FB.n=r.wait.length;const on=app.querySelector('.fbli.on'),cur=on?on.dataset.id:'';
   a.innerHTML=fbWaitH(r,cur);a.querySelectorAll('.fbli').forEach(b=>b.onclick=()=>fbOpen(b.dataset.id));fbBadge();return true}
-async function fbAdmin(open){here('fbreq',{});if(!open)app.innerHTML='불러오는 중...';const r=await api('fbList');if(r.error)return app.innerHTML=esc(r.error);FB.n=r.wait.length;FB.L=r;r.wait.forEach(o=>FB.seen.add(o.id));const st=$('#fbst');if(st)st.remove();
+async function fbAdmin(open,cached){here('fbreq',{});if(!open)app.innerHTML='불러오는 중...';const r=cached&&FB.L?FB.L:await api('fbList');if(r.error)return app.innerHTML=esc(r.error);FB.n=r.wait.length;FB.L=r;r.wait.forEach(o=>FB.seen.add(o.id));const st=$('#fbst');if(st)st.remove();
   const li=(o,dn)=>fbLiH(r,o,dn,open);
   app.innerHTML=`<div class="fbpg"><div class="fbhd"><button class="fbtl" onclick="adminMenu()">← 관리자 메뉴</button><h2>피드백 요청 <span class="fbn"></span></h2><span style="flex:1"></span><button class="fbtl" onclick="fbAdmin()">⟳ 새로고침</button></div>`
     +`<div id="fbaw"><div class="fbcol"><div class="box" id="fbal" style="padding:6px">${fbWaitH(r,open)}</div>`
@@ -1462,8 +1462,10 @@ async function fbOpen(id){const v=$('#fbrv');if(!v)return;$('#fbaw').classList.a
   $('#fbrjgo').onclick=async()=>{const b=$('#fbrjgo');b.disabled=true;b.textContent='보내는 중...';const s=await api('fbReject',{id,why:$('#fbwhy').value});
     if(s.error){b.disabled=false;b.textContent='거부하고 돌려보내기';toast(s.error);return}toast('글을 돌려보냈어요');nxt()};
   $('#fbsend').onclick=async()=>{const b=$('#fbsend');b.disabled=true;b.textContent='보내는 중...';const x=it.slice().sort((a,b)=>a.dataset.k-b.dataset.k).map(e=>[pick(e),pick(e)==='피드백'?e.querySelector('.fbf').value.trim():'']);
-    const s=await api('fbReply',{id,res:{g:x[0],q:x.slice(1)}});if(s.error){b.disabled=false;b.textContent='피드백 보내기';$('#fbm').textContent=s.error;return}
-    toast('피드백을 보냈어요');const L=(FB.L&&FB.L.wait)||[],k=L.findIndex(z=>z.id===id),nx=L[k+1]||L.find(z=>z.id!==id);fbAdmin(nx?nx.id:'')}}
+    /* v227: 저장은 뒤에서 하고, 받아 둔 목록으로 바로 다음 학생을 엶 (목록 다시 받기 생략). 저장이 실패하면 알리고 목록을 새로 받음 */
+    const L=(FB.L&&FB.L.wait)||[],k=L.findIndex(z=>z.id===id),nx=L[k+1]||L.find(z=>z.id!==id),who=(L[k]||{}).who||'';
+    api('fbReply',{id,res:{g:x[0],q:x.slice(1)}}).then(s=>{if(s.error){toast(`${who} 학생 피드백이 저장되지 않았어요: ${s.error}`);if($('#fbal'))api('fbList').then(r=>{if(!r.error)fbListUpd(r)})}else toast('피드백을 보냈어요')});
+    if(FB.L)FB.L.wait=L.filter(z=>z.id!==id);fbAdmin(nx?nx.id:'',1)}}
 
 /* 시작 */
 (async()=>{if(S.token){const u=await api('me');if(!u.error){S.user=u;return resume()}}loginView()})();
