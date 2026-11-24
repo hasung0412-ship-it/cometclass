@@ -161,8 +161,8 @@ select{background:var(--raise);border:1px solid var(--line)}
 /* ---- 본문 글 문법 ---- */
 pre{background:var(--code);color:var(--ink);border-radius:var(--r2);padding:12px 14px;overflow:auto;font:14px/1.6 Consolas,monospace;margin:8px 0;white-space:pre-wrap}
 code.ic{background:var(--raise);border-radius:6px;padding:0 5px;font:.92em Consolas,monospace}
-b.hb{background:linear-gradient(transparent 58%,#9a8418 58%);padding:0 2px} /* **굵게** 노란 밑줄 */
-.nt b.hb{background:none;padding:0} /* 공지에선 굵게만 */
+b.hb{color:var(--warn-ink)} /* **굵게** = 노란 굵은 글씨 (v239, 밑줄 없음) */
+.nt b.hb,span[style*='color'] b.hb{color:inherit} /* 공지에선 굵게만, [색:] 안에선 그 색 그대로 */
 .sh{color:#7aa7f5} /* 한 줄에 혼자 있는 **굵게** = 소제목 */
 .esq{display:block;font-weight:bold;color:#7aa7f5;margin:2px 0}
 a.lk{color:var(--info-ink);text-decoration:underline;word-break:break-all}
@@ -356,7 +356,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v238</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v239</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
