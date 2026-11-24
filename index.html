@@ -354,7 +354,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v233</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v234</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1307,6 +1307,7 @@ async function essayView(tid){here('essay',{tid});document.querySelectorAll('.mo
    선생님: 관리자 메뉴 '피드백 요청' → 글 전체 + 4문항마다 통과/피드백(문장). 질문 문구는 시트 피드백문구 탭 '교사점검_질문1~4'·'교사점검_안내1~4' */
 const fbLab=A=>{let n=0;return A.map(x=>x.k==='체크'?esc(x.q):`${++n}. ${esc(x.q)}`)}; // 문항 이름: 글은 번호, 체크는 번호 없이
 const fbAnsH=x=>`<div class="fbans">${x.k==='체크'?(x.a?'그렇다고 체크했어요':'체크하지 않았어요'):esc(x.a)}</div>`;
+const fbAll=x=>!!(x&&x.res&&!x.res.rej&&x.res.g&&x.res.g[0]==='통과'&&x.ans.every((a,i)=>!x.res.q[i]||x.res.q[i][0]==='통과')); // v234: 글 전체·문항 모두 통과
 const fbRes=(x,lab,mine)=>`<div class="fbq">${lab}</div>${mine}`+(x[0]==='통과'?`<div class="fbr p">✅ 피드백 없음!</div>`:`<div class="fbr f"><b>피드백 내용 :</b> ${esc(x[1])}</div>`);
 /* v219 장난 글 거르기: 보내기 전에 화면에서 검사 (짧은 글, 같은 글자 반복, 자음·모음만, 한글이 아닌 글, 글에 없는 내용을 적은 칸) */
 function fbJunk(I,x){const ns=v=>String(v).replace(/\s/g,''),t=ns(x.text),lab=fbLab(I).map(l=>l.replace(/^(\d+)\..*$/,'$1번 칸'));
@@ -1362,8 +1363,9 @@ async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const r=awai
   const R=last.res||{g:['',''],q:[]}; // v200: 통과 개수는 보이지 않고, 문항마다 내가 쓴 내용 아래에 피드백
   w.innerHTML=`<div class="box">${head}<div class="fbs done">피드백 완료! <small style="font-weight:normal">(${esc(last.fat)})</small></div>`
     +fbRes(R.g,'글 전체',`<div class="fbans">${esc(last.text)}</div>`)+(()=>{const lab=fbLab(last.ans);return last.ans.map((x,i)=>fbRes(R.q[i]||['통과',''],lab[i],fbAnsH(x))).join('')})()
-    +`<div class="row" style="margin-top:12px"><button class="main" id="fbre">고쳐서 다시 보내기</button></div></div>`;
+    +`<div class="row" style="margin-top:12px"><button class="main" id="fbre">고쳐서 다시 보내기</button>${fbAll(last)?'<button class="ghost" id="fbmg">미니게임 하기</button>':''}</div></div>`;
   $('#fbre').onclick=()=>fbStu(t,title,I,1);
+  if(fbAll(last)&&S.user&&S.user.role!=='관리자')$('#fbmg').onclick=()=>{MG.lock=false;mgWait(last,null,1)}; // v234: 모두 통과한 학생도 미니게임
   if(last.st==='완료')fbPop(last);
   if(last.st==='완료'){api('fbSeen',{id:last.id});FB.hide=last.id;$('#fbnote')&&$('#fbnote').remove()}}
 const FB={n:null,hide:''};
@@ -1371,24 +1373,24 @@ const FB={n:null,hide:''};
    창 안에서 게임(하노이탑·N퀸·점프 달리기)을 고르고, 게임의 '닫기'는 게임만 닫고 기다림 창으로 돌아옴.
    창이 열려 있고 탭이 보이는 동안은 타이머가 멈춤(tmAccrue). 피드백이 완료되면 fbNote가 창을 닫고 '피드백이 완료됐어요!'를 띄움. */
 try{localStorage.removeItem('mgrun');localStorage.removeItem('mgdodge')}catch(e){}
-const MG={lock:false,best:{},raf:0,key:null,ku:null,last:null,cancel:null,ord:['hanoi','queen','run','dodge']};
-function mgStop(){cancelAnimationFrame(MG.raf);MG.raf=0;if(MG.key){removeEventListener('keydown',MG.key);MG.key=null}if(MG.ku){removeEventListener('keyup',MG.ku);MG.ku=null}}
+const MG={lock:false,best:{},raf:0,key:null,ku:null,last:null,cancel:null,ord:['hanoi','queen','run','dodge','react'],to:0};
+function mgStop(){cancelAnimationFrame(MG.raf);MG.raf=0;clearTimeout(MG.to);if(MG.key){removeEventListener('keydown',MG.key);MG.key=null}if(MG.ku){removeEventListener('keyup',MG.ku);MG.ku=null}}
 function mgClose(){mgStop();const m=$('#mgw');if(m)m.remove()}
 const mgMineH=last=>`<div class="mgmine" hidden><pre class="fbp">${esc(last.text)}</pre>${(()=>{const lab=fbLab(last.ans);return last.ans.map((x,i)=>`<div class="fbq">${lab[i]}</div>${fbAnsH(x)}`).join('')})()}</div>`;
 function mgMine(m){const b=m.querySelector('[data-mine]');if(b)b.onclick=()=>{const p=m.querySelector('.mgmine');p.hidden=!p.hidden;b.textContent=p.hidden?'내 글 다시 보기':'내 글 접기'}}
-function mgWait(last,cancel){if(last){MG.last=last;MG.cancel=cancel}last=MG.last;mgStop();let m=$('#mgw');if(!m){m=document.createElement('div');m.id='mgw';m.className='modal';document.body.appendChild(m);MG.ord=['hanoi','queen','run','dodge'].sort(()=>Math.random()-.5)} // v215: 1·2·3번에 게임을 무작위로
+function mgWait(last,cancel,done){if(last){MG.last=last;MG.cancel=cancel;MG.done=!!done}last=MG.last;mgStop();let m=$('#mgw');if(!m){m=document.createElement('div');m.id='mgw';m.className='modal';document.body.appendChild(m);MG.ord=['hanoi','queen','run','dodge','react'].sort(()=>Math.random()-.5)} // v215: 1·2·3번에 게임을 무작위로
   const rd=last.st==='읽는 중';
-  m.innerHTML=`<div class="mgcol"><div class="mb" style="position:relative"><button class="mgx" data-close title="닫기">✕</button><h3 style="margin:0 34px 6px 0">글이 피드백 될 때까지 기다려주세요.</h3><p class="mgtip" style="margin:0 0 12px">${rd?'선생님이 읽는 중이라 지금은 글을 고칠 수 없어요.':'잘 도착했어요! 선생님이 읽기 전까지는 글을 고쳐서 다시 보낼 수 있어요.'} 피드백이 완료되면 이 창이 저절로 닫혀요.</p>`
-    +`<div class="row"><button class="ghost" data-mine>내 글 다시 보기</button>${rd?'':'<button class="ghost" data-cancel>글 수정하기</button>'}</div>${mgMineH(last)}</div>`
-    +`<div class="mb"><h3 style="margin:0 0 10px">기다리는 동안 미니게임 하기</h3>${MG.lock?'<p class="mgtip" style="margin:0">지난 글이 거부돼서 게임이 잠겼어요. 이번 글이 선생님께 정상으로 피드백을 받으면 다시 열려요.</p>':`<div class="row">${MG.ord.map((k,i)=>`<button class="ghost" data-mg="${k}">${i+1}번</button>`).join('')}</div>`}</div></div>`;
+  m.innerHTML=`<div class="mgcol"><div class="mb" style="position:relative"><button class="mgx" data-close title="닫기">✕</button>${MG.done?'<h3 style="margin:0 34px 6px 0">모두 통과했어요!</h3><p class="mgtip" style="margin:0 0 12px">수고했어요. 미니게임을 즐겨 보세요.</p><div class="row"><button class="ghost" data-mine>내 글 다시 보기</button></div>':`<h3 style="margin:0 34px 6px 0">글이 피드백 될 때까지 기다려주세요.</h3><p class="mgtip" style="margin:0 0 12px">${rd?'선생님이 읽는 중이라 지금은 글을 고칠 수 없어요.':'잘 도착했어요! 선생님이 읽기 전까지는 글을 고쳐서 다시 보낼 수 있어요.'} 피드백이 완료되면 이 창이 저절로 닫혀요.</p>`
+    +`<div class="row"><button class="ghost" data-mine>내 글 다시 보기</button>${rd?'':'<button class="ghost" data-cancel>글 수정하기</button>'}</div>`}${mgMineH(last)}</div>`
+    +`<div class="mb"><h3 style="margin:0 0 10px">${MG.done?'':'기다리는 동안 '}미니게임 하기</h3>${MG.lock?'<p class="mgtip" style="margin:0">지난 글이 거부돼서 게임이 잠겼어요. 이번 글이 선생님께 정상으로 피드백을 받으면 다시 열려요.</p>':`<div class="row">${MG.ord.map((k,i)=>`<button class="ghost" data-mg="${k}">${i+1}번</button>`).join('')}</div>`}</div></div>`;
   mgMine(m);m.querySelectorAll('[data-mg]').forEach(b=>b.onclick=()=>mgOpen(b.dataset.mg));
   m.querySelector('[data-close]').onclick=()=>mgClose(); // v222: X로 닫기
   const c=m.querySelector('[data-cancel]');if(c)c.onclick=()=>{mgClose();MG.cancel&&MG.cancel()}} // v216: '글 수정하기' = 보내기 취소 후 쓴 내용 그대로 고치는 화면
-function mgOpen(kind){const m=$('#mgw');if(!m)return;mgStop();const full=kind==='run'||kind==='dodge';
+function mgOpen(kind){const m=$('#mgw');if(!m)return;mgStop();const full=kind==='run'||kind==='dodge'||kind==='react';
   m.innerHTML=`<div class="mb mgb"><div class="row" style="justify-content:flex-end;align-items:center;margin:0 0 10px"><div class="row">${full?'':'<button class="ghost" data-mine>내 글 다시 보기</button>'}<button class="ghost" data-x>닫기</button></div></div>`
     +(full?'':mgMineH(MG.last))+`<div class="mga"></div></div>`;
   mgMine(m);m.querySelector('[data-x]').onclick=()=>mgWait();
-  ({hanoi:mgHanoi,queen:mgQueen,run:mgRun,dodge:mgDodge})[kind](m.querySelector('.mga'))}
+  ({hanoi:mgHanoi,queen:mgQueen,run:mgRun,dodge:mgDodge,react:mgReact})[kind](m.querySelector('.mga'))}
 function mgHanoi(a,n){n=n||4;let P=[[...Array(n)].map((_,i)=>n-i),[],[]],sel=-1,mv=0;const C=['--sky','--mint','--butter','--peach','--lav','--sky','--mint'];
   const draw=()=>{const won=P[2].length===n;a.innerHTML=`<div class="mgrule"><b>목표</b> 왼쪽 기둥의 원판을 모두 <b>오른쪽 기둥</b>으로 옮기기!<br><b>규칙</b> ① 한 번에 원판 하나만 옮겨요. ② 맨 위에 있는 원판만 옮길 수 있어요. ③ 큰 원판을 작은 원판 위에 올릴 수 없어요.</div>`+`<div class="row" style="align-items:center;margin-bottom:10px">원판 ${[3,4,5,6,7].map(k=>`<button class="chip ${k===n?'on':''}" data-n="${k}">${k}개</button>`).join('')}<span style="flex:1"></span><span>움직인 횟수 <b>${mv}</b> · 최소 ${2**n-1}</span></div>`
     +`<div class="hnb">${P.map((p,i)=>`<div class="hnp${sel===i?' on':''}" data-p="${i}"><div class="hns"></div>${p.map(d=>`<div class="hnd" style="width:${20+d*11}%;background:var(${C[d-1]})"></div>`).join('')}</div>`).join('')}</div>`
@@ -1453,6 +1455,17 @@ function mgDodge(a){a.innerHTML=`<div class="mgrule"><b>목표</b> 사방에서 
     g.fillStyle=css('--ink');g.font='14px sans-serif';g.textAlign='right';g.fillText(`버틴 시간 ${(Math.floor(s.t/6)/10).toFixed(1)}초   최고 ${best.toFixed(1)}초`,W-10,22);
     if(s.over){g.textAlign='center';g.font='bold 18px sans-serif';g.fillText('스페이스바나 클릭으로 다시 시작',W/2,H/2-30)}};
   mgLoop(step,draw)}
+/* v234 반응속도 테스트: 빨간 상자가 초록으로 바뀌는 순간 클릭(또는 스페이스바). 너무 빨리 누르면 실패, 최고 기록은 MG.best.react(ms, 낮을수록 좋음) */
+function mgReact(a){a.innerHTML=`<div class="mgrule"><b>목표</b> 상자가 <b>초록색</b>으로 바뀌는 순간 최대한 빨리 클릭하자!<br><b>조작</b> 상자를 클릭하거나 스페이스바를 누르세요. 빨간색일 때 누르면 실패예요.</div><div class="rnc rxb" style="height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;user-select:none"></div><p class="mgmsg"></p>`;
+  const b=a.querySelector('.rxb'),msg=a.querySelector('.mgmsg'),T=[];let st='idle',t0=0;
+  const show=(bg,line,big,sm)=>{b.style.background=`var(${bg})`;b.style.borderColor=`var(${line})`;b.innerHTML=`<b style="font-size:28px">${big}</b><span style="color:var(--sub)">${sm||''}</span>`};
+  const info=()=>{const best=MG.best.react;msg.innerHTML=`${T.length?`최근 5번 평균 <b>${Math.round(T.slice(-5).reduce((x,y)=>x+y,0)/Math.min(5,T.length))}ms</b> · `:''}최고 기록 <b>${best?best+'ms':'-'}</b>`};
+  const ready=()=>{st='wait';show('--no-bg','--no-line','기다리세요...','초록색이 되면 클릭!');MG.to=setTimeout(()=>{st='go';t0=performance.now();show('--ok-bg','--ok-ink','지금!')},1500+Math.random()*2500)};
+  const hit=()=>{if(!$('#mgw'))return;if(st==='wait'){clearTimeout(MG.to);st='idle';show('--warn-bg','--warn-line','너무 빨랐어요!','클릭해서 다시 하기')}
+    else if(st==='go'){const ms=Math.round(performance.now()-t0);T.push(ms);if(!MG.best.react||ms<MG.best.react)MG.best.react=ms;st='idle';show('--info-bg','--info-line',ms+'ms','클릭해서 다시 하기');info()}
+    else ready()};
+  b.onclick=hit;MG.key=e=>{if(!$('#mgw'))return;if(e.code==='Space'){e.preventDefault();if(!e.repeat)hit()}};addEventListener('keydown',MG.key);
+  show('--info-bg','--info-line','시작하기','클릭하거나 스페이스바를 누르세요');info()}
 function fbNote(x){if(x&&FB.hide!==x.id&&$('#mgw')&&S.user&&S.user.role!=='관리자'){mgClose();MG.best={}} // v218: 최고 기록은 저장 없이 이번 기다림 동안만
  // v213: 피드백이 오면 게임 강제 종료
   const o=$('#fbnote');if(!x||FB.hide===x.id||!S.user||S.user.role==='관리자'){if(o&&(!x||FB.hide===x.id))o.remove();return}if(o)return;
