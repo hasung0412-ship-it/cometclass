@@ -212,6 +212,7 @@ td.done{background:var(--ok-bg)}tfoot td{background:var(--warn-bg);font-weight:b
 .ln.cur{background:#4a2326;color:#ffb3ad;font-weight:bold}.ln.cur::after{content:'▶';position:absolute;left:22px;font-size:10px}
 .hot{font-size:16px;border-bottom:2px dotted #6f9be6;background:#22355a;border-radius:4px;padding:0 3px;cursor:pointer}.hot.ok{background:var(--mint);border-bottom-color:#4fae86}
 .hotd[data-d]::after{content:attr(data-d);font-family:'GangwonEduSaeeum','KoPubWorld Dotum',sans-serif;font-size:1.3em;color:#b7bed0;margin-left:16px;white-space:normal}
+.exb{margin:26px 2px;padding:2px 0 2px 18px;border-left:4px solid var(--info-line);font-size:16px;line-height:1.8}.exb h4{margin:0 0 6px;color:var(--info-ink);font-size:17px}
 .hotc{border-bottom:2px dotted var(--warn-ink);border-radius:3px;cursor:pointer}.hotc:hover{background:var(--warn-bg)}
 .hot2{font-size:16px;display:inline-block;vertical-align:top;white-space:pre-wrap;border:1px dashed #6c7894;background:var(--raise);border-radius:6px;padding:0 5px;cursor:pointer}.hot2.ok{border-style:solid;border-color:#4fae86;background:var(--mint)}
 .cut{color:var(--no-ink);text-decoration:line-through;text-decoration-thickness:2px;opacity:.75}.now{background:#4a2326;color:#ffb3ad;border-radius:4px;padding:0 3px}
@@ -356,7 +357,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v239</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v240</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -770,7 +771,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
     const sb=S.sub;if(!S.preview&&!(r.saved[0]&&r.saved[0].ok))api('submit',{no,act,q:0,answer:'열람',sub:sb}).then(x=>{if(!x.error&&S.sub===sb)rec(no,act,0,'열람',true)})}
   if(act==='해석'){const isF=i=>i.type==='설명쓰기'||i.type==='서술'||i.type==='기타';
   const cd=(i,v)=>{if(i.type==='기타')return fmt(i.code||'');if(i.type!=='설명쓰기')return i.code?(/^\s*```\s*(trace|run)/.test(i.code)||/\[\s*분할/.test(i.code)?fmt(i.code):`<pre>${hotCode(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
-  box.innerHTML=r.items.map((i,n)=>{const s=sv(i.q),f=isF(i),v=s&&i.type==='설명쓰기'?String(s.answer).split('\n').map(l=>l.replace(/^\d+:\s?/,'')):[];
+  const pn=exNum(r.items);box.innerHTML=r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);n=pn[n];const s=sv(i.q),f=isF(i),v=s&&i.type==='설명쓰기'?String(s.answer).split('\n').map(l=>l.replace(/^\d+:\s?/,'')):[];
     const inp=(i.type==='설명쓰기'||i.type==='기타')?'':i.choices?i.choices.map(c=>`<label class="choice"><input type="radio" name="q${i.q}" value="${esc(c)}" ${s&&String(s.answer)===c?'checked':''}>${esc(c)}</label>`).join(''):i.type==='서술'?`<textarea class="free" style="min-height:90px;font-family:inherit" placeholder="생각을 자유롭게 써 보세요">${esc(s?s.answer:'')}</textarea>`:`<input class="ans" placeholder="답을 입력하세요" value="${esc(s?s.answer:'')}">`;
     let bd=(i.type==='기타'?`<h3>${fmt(i.text)}</h3>`:`<h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}</h3>${fmt(i.text)}`)+cd(i,v);const AK=/\[\s*답칸\s*\]/;bd=AK.test(bd)?bd.replace(AK,()=>inp).replace(/\[\s*답칸\s*\]/g,''):bd+inp;
     return `<div class="box" data-q="${i.q}"${i.type==='기타'?' data-etc="1"':''}>${bd}<div class="row"><button class="main chk">${f?'제출하기':'정답 확인'}</button></div><div class="msg ${s&&s.submitted&&(f||s.ok)?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.submitted?(f?'이전에 제출했어요 (고쳐서 다시 제출해도 돼요)':(s.ok?'✅ 이전에 맞혔어요':'')):(s?'이어서 쓰던 내용이 있어요 (아직 제출 전)':'')}</div></div>`}).join('');
@@ -784,10 +785,10 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
     if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,q,a,x.correct);
     if(x.free){m.className='msg ok';m.innerHTML='제출했어요! 고쳐서 다시 제출해도 돼요. '+fmt(x.explain||'');return}
     m.className='msg '+(x.correct?'ok':'no');m.innerHTML=(x.correct?'✅ 정답! ':'❌ 조금만 다시 생각해보자! ')+fmt(x.explain||'')})}
-  if(act==='작성'){box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니니까, 가만히 있지 말고 뭐라도 해봐요!</p>`+r.items.map((i,n)=>{if(ASMQ.test(i.text))return asmBox(i);const s=sv(i.q),sk=STPQ.test(i.text)?r.items.filter(x=>STPQ.test(x.text)).indexOf(i)+1:0;return `<div class="box" data-q="${i.q}"${sk?` data-stp="${sk}"`:''}><h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${sk?` <span class="stpb">${sk}단계</span>`:''}</h3>${sk>1?`<p class="stpn">⬇ ${sk-1}단계 코드가 이어져 내려와요. ${sk-1}단계를 고치면 여기서 내가 안 건드린 줄만 같이 바뀌어요.</p>`:''}${fmt(sk?String(i.text).replace(STPQ,''):i.text)}
+  if(act==='작성'){const PN=exNum(r.items);box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니니까, 가만히 있지 말고 뭐라도 해봐요!</p>`+r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);if(ASMQ.test(i.text))return asmBox(i);n=PN[n];const s=sv(i.q),g=stpG(i.text),sk=g!=null?r.items.filter(x=>stpG(x.text)===g).indexOf(i)+1:0;return `<div class="box" data-q="${i.q}"${sk?` data-stp="${sk}" data-stg="${esc(g)}"`:''}><h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${sk?` <span class="stpb">${sk}단계</span>`:''}</h3>${sk>1?`<p class="stpn">⬇ ${sk-1}단계 코드가 이어져 내려와요. ${sk-1}단계를 고치면 여기서 내가 안 건드린 줄만 같이 바뀌어요.</p>`:''}${fmt(sk?String(i.text).replace(STPQ,''):i.text)}
   <div class="tr2${i.hasSample?'':' one'}"><div class="tp"><h4>내가 짠 코드</h4><textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">저장</button>${String(i.hint||'').trim()?'<button class="ghost hb"></button>':''}</div><div class="hl"></div>${!i.hasSample&&S.user&&S.user.role==='관리자'?'<p style="color:var(--sub);font-size:12px;margin:6px 0">※ 관리자에게만 보이는 안내: 이 문제는 예시 코드가 비어 있어서 오른쪽 칸이 없어요. 응용해보기 시트의 <b>예시코드</b> 열 제목과 칸을 확인하세요.</p>':''}<pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.ok?'저장해 둔 코드예요':(s&&!s.submitted?'이어서 쓰던 코드가 있어요 (아직 저장 전)':'')}</div></div>
   ${i.hasSample?`<div class="tp"><h4>선생님 예시 코드</h4><div class="sm"><p style="margin:0 0 8px;color:var(--sub)">선생님이 알려 주는 비밀번호를 입력하면 열려요.</p><div class="row"><input type="password" class="sp2" placeholder="비밀번호" autocomplete="off" style="max-width:200px"><button class="main sk">열기</button></div><div class="err se"></div></div></div>`:''}</div></div>`}).join('');
-    box.querySelectorAll('.box').forEach((bx,n)=>{const it=r.items[n];if(bx.dataset.asm)return asmInit(bx,it,r.items,no,act);const ta=bx.querySelector('textarea'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
+    box.querySelectorAll('.box').forEach(bx=>{const it=r.items.find(x=>String(x.q)===bx.dataset.q);if(bx.dataset.asm)return asmInit(bx,it,r.items,no,act);const ta=bx.querySelector('textarea'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
       const hb=bx.querySelector('button.hb');if(hb){const hs=String(it.hint).split(/\r?\n---\r?\n/).map(x=>x.trim()).filter(Boolean),hl=bx.querySelector('.hl');let hn=0;
         const hbt=()=>{hb.textContent=hn<hs.length?`${hn?'다음 ':''}힌트 보기 (${hn}/${hs.length})`:`힌트를 모두 봤어요 (${hs.length}/${hs.length})`;hb.disabled=hn>=hs.length};hbt();
         hb.onclick=()=>{if(hn>=hs.length)return;const d=document.createElement('div');d.className='sbox warnbg';d.innerHTML=`<b>힌트 ${hn+1}</b><div>${fmt(hs[hn])}</div>`;hl.appendChild(d);hn++;hbt()}}
@@ -802,11 +803,15 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
       bx.querySelector('.sub').onclick=async()=>{const b=bx.querySelector('.sub');if(!ta.value.trim()){m.className='msg no';m.textContent='코드를 먼저 써 주세요';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';
         const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='저장했어요! 고쳐서 다시 저장해도 돼요.'}});stpInit(box,no,q=>!!sv(q))}}
 
+/* 문항 사이 설명: 해석해보기·응용해보기 문제 칸에 [설명]을 쓰면 문제가 아니라 설명 글로 보여요(번호·답칸 없음, 진도 계산에서도 빠짐 — Code.gs v147). 제목 칸이 있으면 위에 제목 */
+const EXQ=/\[\s*설명\s*\]/;
+const exBox=i=>`<div class="exb">${i.title?`<h4>${esc(i.title)}</h4>`:''}${fmt(String(i.text).replace(EXQ,'').replace(/^\s*\n/,''))}</div>`;
+const exNum=items=>{let k=0;return items.map(x=>EXQ.test(x.text)?-1:k++)}; // 설명을 뺀 문제 번호(0부터)
 /* 코드 단계별 업그레이드: 응용해보기 문제 칸에 [단계]가 있는 문항끼리 차례로 1단계, 2단계, … (같은 차시 안, 시트 순서).
    앞 단계 코드가 다음 단계로 이어져 내려옴. 앞 단계를 고치면 줄 단위로 비교해서 다음 단계에서 학생이 안 건드린 줄만 바뀌고,
    학생이 새로 쓰거나 고친 줄은 그대로 남음(같은 줄을 둘 다 고치면 다음 단계 쪽을 남김). 뒤 단계는 앞 단계에 영향 없음.
    마지막으로 받아 온 앞 단계 코드(비교 기준)는 이 기기에만 기억: localStorage 'stp|아이디|과목|차시|문항' */
-const STPQ=/\[\s*단계\s*\]/;
+const STPQ=/\[\s*단계\s*(?:[:：]\s*([^\]]*?))?\s*\]/,stpG=t=>{const m=STPQ.exec(String(t||''));return m?(m[1]||'').trim():null}; // [단계:이름] = 이름이 같은 문항끼리 한 줄기 (이름 없으면 한 줄기)
 function lcsMap(a,b){const n=a.length,m=b.length,d=Array.from({length:n+1},()=>new Uint16Array(m+1));
   for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)d[i][j]=a[i]===b[j]?d[i+1][j+1]+1:Math.max(d[i+1][j],d[i][j+1]);
   const r=new Array(n).fill(-1);let i=0,j=0;while(i<n&&j<m){if(a[i]===b[j]){r[i]=j;i++;j++}else if(d[i+1][j]>=d[i][j+1])i++;else j++}return r}
@@ -817,7 +822,8 @@ function merge3(base,mine,theirs){const B=base.split('\n'),M=mine.split('\n'),T=
       ops.push({f:bm[h.s],t:bm[h.e-1]+1,l:h.l})}
     else{const p=h.s>0&&bm[h.s-1]>=0?bm[h.s-1]+1:h.s<B.length&&bm[h.s]>=0?bm[h.s]:h.s===0?0:h.s===B.length?M.length:-1;if(p>=0)ops.push({f:p,t:p,l:h.l})}});
   ops.sort((x,y)=>y.f-x.f||y.t-x.t).forEach(o=>M.splice(o.f,o.t-o.f,...o.l));return M.join('\n')}
-function stpInit(box,no,has){const L=[...box.querySelectorAll('.box[data-stp]')].sort((a,b)=>a.dataset.stp-b.dataset.stp);if(L.length<2)return;
+function stpInit(box,no,has){const G={};box.querySelectorAll('.box[data-stp]').forEach(b=>(G[b.dataset.stg]=G[b.dataset.stg]||[]).push(b));Object.values(G).forEach(L=>stpOne(L.sort((a,b)=>a.dataset.stp-b.dataset.stp),no,has))}
+function stpOne(L,no,has){if(L.length<2)return;
   const ta=bx=>bx.querySelector('textarea'),key=bx=>`stp|${S.user.id}|${S.sub}|${no}|${bx.dataset.q}`;
   const get=bx=>{try{return localStorage.getItem(key(bx))}catch(e){return null}},put=(bx,v)=>{try{localStorage.setItem(key(bx),v)}catch(e){}};
   const pull=(k,first)=>{const nx=L[k],t=ta(nx),pv=ta(L[k-1]).value,base=get(nx);
@@ -837,7 +843,8 @@ function asmBox(i){return `<div class="box asm" data-q="${i.q}" data-asm="1"><h3
   <div><h4>조립대</h4><div class="astk"></div><div class="row"><button class="main arun">▶ 프로젝트 실행</button><button class="ghost aall">합친 코드 보기</button><button class="ghost asv">저장</button></div><pre class="out" style="display:none"></pre><pre class="acd" style="display:none"></pre><div class="msg"></div></div></div></div>`}
 function asmInit(bx,it,items,no,act){
   const parts=String(it.start||'').replace(/^\s*```[^\n]*\n/,'').replace(/\n?\s*```\s*$/,'').split(/^[ \t]*#[ \t]*블록[ \t]*$/m),head=(parts[0]||'').replace(/\s+$/,''),tail=(parts.slice(1).join('\n')||'').replace(/^\s*\n/,'').replace(/\s+$/,'');
-  const bl=[];items.forEach((x,k)=>{if(x!==it&&!ASMQ.test(x.text))bl.push({k,q:x.q,name:asmName(x,k)})});
+  const PN=exNum(items),last={};items.forEach(x=>{const g=stpG(x.text);if(g!=null)last[g]=x}); // 단계 줄기는 마지막 단계(완성본)만 블록이 됨
+  const bl=[];items.forEach((x,k)=>{const g=stpG(x.text);if(x!==it&&!ASMQ.test(x.text)&&!EXQ.test(x.text)&&(g==null||last[g]===x))bl.push({k,q:x.q,name:asmName(x,PN[k])+(g!=null?' (완성)':'')})});
   const code=b=>{const t=document.querySelector(`#items .box[data-q="${b.q}"]:not(.asm) textarea`);return t?t.value.replace(/\s+$/,''):''};
   const key=`asm|${S.user.id}|${S.sub}|${no}|${it.q}`;let ord=[];try{ord=JSON.parse(localStorage.getItem(key)||'[]').filter(q=>bl.some(b=>b.q===q))}catch(e){}
   const keep=()=>{try{localStorage.setItem(key,JSON.stringify(ord))}catch(e){}};
