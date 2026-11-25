@@ -358,7 +358,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v241</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v242</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1493,7 +1493,7 @@ function fbNote(x){if(x&&FB.hide!==x.id&&$('#mgw')&&fbStuV()){mgClose();MG.best=
   document.body.appendChild(d);d.querySelector('[data-go]').onclick=()=>{FB.hide=x.id;fbPopMark(x.id);d.remove();essayView(x.task)};d.querySelector('[data-later]').onclick=()=>{FB.hide=x.id;d.remove()}}
 function fbBadge(){document.querySelectorAll('.fbn').forEach(e=>{e.textContent=FB.n>0?FB.n:'';e.classList.toggle('on',FB.n>0)})}
 async function fbPoll(){if(!S.user||S.user.role!=='관리자'){const c=$('#fbst');if(c)c.remove();FB.seen.clear();FB.n=null;return} // v241: 탭이 숨겨져 있어도 확인 (알림 띄우려고)const r=await api('fbCount');if(!r||r.error||!S.user||S.user.role!=='관리자')return;
-  if((FB.n==null&&r.n>0)||(FB.n!=null&&r.n>FB.n))fbArrive();FB.n=r.n;fbBadge()}
+  if($('#fbal')||(FB.n==null&&r.n>0)||(FB.n!=null&&r.n!==FB.n))fbArrive();FB.n=r.n;fbBadge()} // v242: 피드백 요청 화면에서는 개수와 상관없이 목록을 매번 새로 받음 (내가 보내는 만큼 새 요청이 와서 개수가 그대로면 안 뜨던 문제)
 /* v199 관리자: 새 피드백 요청이 오면 오른쪽 아래에 알림 (최대 5개, 새 알림이 아래에 붙고 위로 밀려 올라감, 누르면 그 요청 열기) */
 FB.seen=new Set();
 /* v241: 선생님 탭이 안 보이거나 다른 창을 보고 있을 때 새 요청이 오면 탭 제목 깜빡임 + 바탕화면 알림(허락했을 때) */
