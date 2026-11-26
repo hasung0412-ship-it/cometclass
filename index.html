@@ -354,7 +354,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v249</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v250</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -380,7 +380,7 @@ function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||e.target.closest('.tra
 async function flushDrafts(){clearTimeout(dretry);const keys=Object.keys(DR);if(!keys.length)return;setSv('저장 중...','');let bad=false;
   for(const k of keys){const d=DR[k];if(!d)continue;const r=await api('draft',{sub:d.sub,no:d.no,act:d.act,q:d.q,text:d.text});if(r.error){if(/저장할 수 없/.test(r.error)){delete DR[k];continue}bad=r.busy&&bad!==true?'busy':true;continue}if(DR[k]&&DR[k].t===d.t)delete DR[k]}
   if(bad==='busy'){setSv('잠시 뒤 다시 저장할게요 (내용은 이 기기에 보관 중)','');dretry=setTimeout(flushDrafts,6000+Math.random()*6000)}
-  else if(bad){setSv('⚠ 저장이 안 됐어요. 연결되면 자동으로 다시 저장해요 (내용은 이 기기에 보관 중)','bad');dretry=setTimeout(flushDrafts,8000)}else setSv('저장됐어요','ok')}
+  else if(bad){setSv('⚠ 저장 실패! 연결되면 다시 시도합니다.','bad');dretry=setTimeout(flushDrafts,8000)}else setSv('저장됐어요','ok')}
 function beaconDrafts(){Object.values(DR).forEach(d=>{try{navigator.sendBeacon(API,new Blob([JSON.stringify({action:'draft',token:S.token,...d})],{type:'text/plain'}))}catch(e){}})}
 addEventListener('pagehide',beaconDrafts);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')beaconDrafts()});
 app.addEventListener('input',onEdit);app.addEventListener('change',onEdit);
@@ -443,7 +443,7 @@ function mbDraw(){const e=$('#mbx');if(!e||!MB.d)return;const D=MB.d,m=D.mine,op
     else h=nx?`<div class="mbz">지금 쓰려하지 말고 수업에 집중하세요 !! ${tm}</div>`:no;
     h=`<div class="mbi">${h}</div>`}
   e.innerHTML='<h4>오늘의 한마디</h4><div class="mbz" style="margin:-4px 0 8px">'+(isAft()?'코딩해보고 싶은 주제를 입력해보세요!':'정해진 시간에 댓글을 달면, 승인을 받아 여러분의 말이 올라옵니다.')+'</div><div class="mbt"></div>'+h;mbBoard();const q=e.querySelector('.mbq');if(q){const c=()=>e.querySelector('.mbl').textContent=` ${q.value.length}/${D.max}`;q.oninput=c;c()}}
-async function mbSave(){const e=$('#mbx'),q=e.querySelector('.mbq'),er=e.querySelector('.mbr'),b=e.querySelector('.mbk');if(b.disabled)return;if(!q.value.trim()){er.textContent='한마디를 입력해 주세요.';return}
+async function mbSave(){const e=$('#mbx'),q=e.querySelector('.mbq'),er=e.querySelector('.mbr'),b=e.querySelector('.mbk');if(b.disabled)return;if(!q.value.trim()){er.textContent='한마디를 입력해보세요 !!';return}
   b.disabled=true;er.textContent='저장 중...';const r=await api('msgSave',{text:q.value});b.disabled=false;if(r.done){MB.d.done=true;MB.d.mine=null;MB.ed=false;mbDraw();return}if(r.error){er.textContent=r.error;return}MB.d.mine=r.mine;MB.ed=false;mbDraw();toast('한마디를 보냈어요. 확인하고 되면 올라갑니다 !!')}
 $('#side').addEventListener('click',e=>{const t=e.target;if(t.closest('.mbe')){MB.ed=true;mbDraw();const q=$('#mbx .mbq');if(q)q.focus()}else if(t.closest('.mbc')){MB.ed=false;mbDraw()}else if(t.closest('.mbk'))mbSave()});
 $('#side').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('mbq')&&!e.isComposing)mbSave()});
@@ -476,7 +476,7 @@ function tmAccrue(){if(!TM.on)return;const now=Date.now();let dt=TM.last?(now-TM
   const aw=TM.hid||(TM.bl&&now-TM.bl>=BLUR_MAX)||idle; // 탭이 안 보이거나, 다른 창이 10초 넘게 선택돼 있거나, 3분 넘게 아무 동작이 없으면 '다른 곳'
   if(document.querySelector('.modal.info:not(.ad-out)')&&!aw){ // 안내 창을 보는 동안은 1분까지만 멈춤 (다른 탭으로 가면 바로 '다른 곳')
     if(!TM.mo)TM.mo=now;if(now-TM.mo<INFO_MAX)return;
-    if(!TM.mw){TM.mw=1;toast('안내 창을 1분 넘게 열어 두어서, 지금부터는 딴짓 시간으로 세요')}
+    if(!TM.mw){TM.mw=1;toast('안내 창 그만 보고 집중합시다 !!')}
     TM.a+=dt;if(dt>0)TM.dirty=true;return}
   if(!document.querySelector('.modal.info:not(.ad-out)'))TM.mo=TM.mw=0;
   if(aw)TM.a+=dt;else TM.f+=dt;if(dt>0)TM.dirty=true}
@@ -501,16 +501,16 @@ async function openInfo(kind,nl){if(kind==='grade')return openGrades();if(kind==
   const T={notice:'공지',term:'용어 사전',err:'오류 모음',cheat:'치트시트',assess:'평가 기준표'}[kind],m=document.createElement('div');m.className='modal info';
   const tag=x=>x.sub?` <small style="color:var(--sub)">${esc(x.sub)}</small>`:'';
   let h='';
-  if(kind==='notice')h=((nl||r.notices).length?(nl||r.notices).map(x=>`<div class="sbox nt"><b>${esc(x.title)}</b> <small style="color:var(--sub)">${esc(x.date)}</small><div>${fmt(x.body)}</div></div>`).join(''):'<p>등록된 공지가 없어요.</p>');
-  if(kind==='term')h=r.terms.length?r.terms.map(x=>`<div class="sbox" data-k="${esc((x.name+' '+x.body).toLowerCase())}"><b>${esc(x.name)}</b>${tag(x)}<div>${fmt(x.body)}</div>${x.ex?`<div style="color:var(--sub)">예) ${fmt(x.ex)}</div>`:''}</div>`).join(''):'<p>등록된 용어가 없어요.</p>';
-  if(kind==='err')h=r.errors.length?r.errors.map(x=>`<div class="sbox" data-k="${esc((x.name+' '+x.body+' '+x.fix).toLowerCase())}"><b>${esc(x.name)}</b>${tag(x)}<div>${fmt(x.body)}</div><div>고치는 법: ${fmt(x.fix)}</div></div>`).join(''):'<p>등록된 오류가 없어요.</p>';
-  if(kind==='cheat'){const g={};r.cheats.forEach(x=>(g[x.cat]=g[x.cat]||[]).push(x));h=Object.keys(g).length?Object.keys(g).map(c=>`<h4 style="margin:14px 0 6px">${esc(c)}</h4>`+g[c].map(x=>`<div class="sbox"><b>${esc(x.title)}</b><div>${fmt(x.body)}</div></div>`).join('')).join(''):'<p>등록된 치트시트가 없어요.</p>'}
+  if(kind==='notice')h=((nl||r.notices).length?(nl||r.notices).map(x=>`<div class="sbox nt"><b>${esc(x.title)}</b> <small style="color:var(--sub)">${esc(x.date)}</small><div>${fmt(x.body)}</div></div>`).join(''):'<p>아직 등록한 공지가 없어요 !!</p>');
+  if(kind==='term')h=r.terms.length?r.terms.map(x=>`<div class="sbox" data-k="${esc((x.name+' '+x.body).toLowerCase())}"><b>${esc(x.name)}</b>${tag(x)}<div>${fmt(x.body)}</div>${x.ex?`<div style="color:var(--sub)">예) ${fmt(x.ex)}</div>`:''}</div>`).join(''):'<p>아직 등록한 용어가 없어요 !!</p>';
+  if(kind==='err')h=r.errors.length?r.errors.map(x=>`<div class="sbox" data-k="${esc((x.name+' '+x.body+' '+x.fix).toLowerCase())}"><b>${esc(x.name)}</b>${tag(x)}<div>${fmt(x.body)}</div><div>고치는 법: ${fmt(x.fix)}</div></div>`).join(''):'<p>아직 등록한 오류가 없어요 !!</p>';
+  if(kind==='cheat'){const g={};r.cheats.forEach(x=>(g[x.cat]=g[x.cat]||[]).push(x));h=Object.keys(g).length?Object.keys(g).map(c=>`<h4 style="margin:14px 0 6px">${esc(c)}</h4>`+g[c].map(x=>`<div class="sbox"><b>${esc(x.title)}</b><div>${fmt(x.body)}</div></div>`).join('')).join(''):'<p>아직 등록한 치트시트가 없어요 !!</p>'}
   if(kind==='assess'){const g={};(r.assess||[]).forEach(x=>(g[x.cat]=g[x.cat]||[]).push(x));h=Object.keys(g).map(c=>`<h4 style="margin:14px 0 6px">${esc(c)}</h4>`+g[c].map(x=>`<div class="sbox"><b>${esc(x.title)}</b><div>${fmt(x.body)}</div></div>`).join('')).join('');
     const C=r.criteria||[];if(C.length){const MM=x=>{const n=(x.lv||[]).map(l=>l.s).filter(s=>s!==''&&s!=null&&!isNaN(Number(s))).map(Number);return n.length?{f:Math.max(...n),b:Math.min(...n)}:{f:0,b:0}},SM=a=>a.reduce((t,x)=>{const m=MM(x);return{f:t.f+m.f,b:t.b+m.b}},{f:0,b:0}),PT=t=>`만점 <b>${t.f}</b>점 · 기본 <b>${t.b}</b>점`;const L=x=>{const v=x.lv&&x.lv.length?x.lv:[{s:'',d:''}],n=v.length;return v.map((l,i)=>`<tr>${i?'':`<td rowspan="${n}" style="text-align:left;white-space:normal"><b>${esc(x.elem)}</b>${x.item?`<br><small>└ ${esc(x.item)}</small>`:''}</td>`}<td><b>${l.s===''?'<small>미정</small>':esc(l.s)}</b></td><td style="text-align:left;white-space:normal">${esc(l.d)}</td></tr>`).join('')};
       const sems=[...new Set(C.map(x=>x.sem||1))].sort();
       h=sems.map(sm=>{const ga={};C.filter(x=>(x.sem||1)===sm).forEach(x=>(ga[x.area]=ga[x.area]||[]).push(x));
         return `<details class="sbox cd" ${sm===(r.csem||1)?'open':''}><summary style="cursor:pointer;font-size:16px"><b>평가 기준표 (${esc(r.cyear||'')}년 ${sm}학기)</b></summary><div style="margin-top:8px">`+Object.keys(ga).map((a,n)=>`<details class="sbox cd"><summary style="cursor:pointer"><b>수행평가명 : ${esc(a)}</b> <small style="color:var(--sub)">(${SM(ga[a]).b}점 ~ ${SM(ga[a]).f}점)</small></summary><div class="wrap" style="margin-top:8px"><table><thead><tr><th>평가항목</th><th>점수</th><th>단계별 기준</th></tr></thead><tbody>${ga[a].map(L).join('')}</tbody></table></div></details>`).join('')+`</div></details>`}).join('')}
-    if(!C.length)h='<p>등록된 평가 기준이 없어요.</p>'}
+    if(!C.length)h='<p>아직 등록한 평가 기준이 없어요 !!</p>'}
   m.innerHTML=`<div class="mb" style="max-width:720px;width:94%;max-height:85vh;overflow:auto"><div class="row" style="justify-content:space-between;margin:0 0 10px"><h3 style="margin:0">${T}</h3><button class="ghost hcl">닫기</button></div>${kind==='term'||kind==='err'?'<input class="sq" placeholder="검색" style="margin-bottom:10px">':''}<div class="il">${h}</div></div>`;
   document.body.appendChild(m);m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.hcl').onclick=()=>m.remove();
   const q=m.querySelector('.sq');if(q)q.oninput=()=>{const v=q.value.trim().toLowerCase();m.querySelectorAll('[data-k]').forEach(c=>c.style.display=c.dataset.k.includes(v)?'':'none')}}
@@ -521,15 +521,15 @@ function gradeHTML(r,I){
     const cf=(t,a,x)=>CR.find(c=>(c.sem||1)===t.sem&&c.area===a.area&&c.elem===x.elem&&c.item===x.item&&c.lv&&c.lv.length); // 이 항목의 평가 기준(단계)
     const RT=(t,a)=>`<table style="width:100%;table-layout:fixed"><colgroup><col style="width:38%"><col style="width:16%"><col style="width:46%"></colgroup><thead><tr><th>평가항목</th><th>점수</th><th>단계별 기준</th></tr></thead><tbody>${a.rows.map(x=>{const v=cf(t,a,x).lv,hit=x.score!=null&&v.some(l=>l.s!==''&&Number(l.s)===x.score);return v.map((l,i)=>{const me=x.score!=null&&l.s!==''&&Number(l.s)===x.score,bg=me?' class="warnbg"':'';return `<tr${bg}>${i?'':`<td rowspan="${v.length}" style="text-align:left;white-space:normal;background:var(--surface)"><b>${esc(x.elem)}</b>${x.item?`<br><small>└ ${esc(x.item)}</small>`:''}<br><small style="color:var(--sub)">내 점수 <b style="color:var(--ink)">${fx(x.score)}</b> / ${x.full}</small>${x.score!=null&&!hit?'<br><small style="color:var(--sub)">(단계 점수와 딱 맞지 않아요)</small>':''}</td>`}<td><b>${me?'⭐ ':''}${l.s===''?'<small>미정</small>':esc(l.s)}</b></td><td style="text-align:left;white-space:normal">${esc(l.d)}</td></tr>`}).join('')}).join('')}</tbody></table>`;
     const CM=a=>a.comment?`<div style="margin-top:10px;padding:10px 12px;background:var(--info-bg);border:1px solid var(--info-line);border-radius:var(--r1);text-align:left"><b>수행평가 피드백</b><div style="margin-top:4px;white-space:pre-wrap;word-break:keep-all">${esc(a.comment)}</div></div>`:''; // 영역별 코멘트: 있을 때만
-    const NG=a=>a.rows.some(x=>x.score==null)?' <span class="ng">아직 평가가 완료되지 않았어요!</span>':''; // 빈 칸(점수 없음)이 하나라도 있으면 미완료
+    const NG=a=>a.rows.some(x=>x.score==null)?' <span class="ng">채점 중이에요!</span>':''; // 빈 칸(점수 없음)이 하나라도 있으면 미완료
     const SM=t=>`<div class="wrap"><table class="gs"><thead><tr><th></th>${t.areas.map(a=>`<th>${esc(a.area)}${a.rows.some(x=>x.score==null)?'<br><span class="ng">평가 중</span>':''}</th>`).join('')}</tr></thead><tbody><tr><th>${esc(r.name)}</th>${t.areas.map(a=>`<td><b>${a.sum}</b><small> / ${a.max}</small></td>`).join('')}</tr></tbody></table></div><p style="margin:14px 0 0;font-size:14px;color:var(--sub)">▼ 세부 점수</p>`; // 맨 위 요약 표: 영역별 점수 한 줄
-    return `<div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin:0 0 8px"><span style="white-space:nowrap"><b>${esc(r.name)}</b> · ${esc(r.year)}년</span><span style="flex:1 1 240px;color:var(--no-ink);font-size:14px;word-break:keep-all">지금 확인하는 성적은 학기말에 변동될 가능성이 있으며, 최종 성적은 수행 일람표를 확인할 것</span></div>`+(SS.length?SS.map(t=>`<details class="sbox cd" open><summary style="cursor:pointer;font-size:16px"><b>${t.sem}학기</b> · ${t.total} / ${t.max}점${t.grade?` · 등급 ${esc(t.grade)}`:''}</summary><div style="margin-top:8px">`+SM(t)+(PH?t.areas.map(a=>`<div class="sbox cd" style="margin-top:10px"><div style="font-size:20px"><b>${esc(a.area)}</b> <span style="white-space:nowrap">총 <b>${a.sum}</b> / ${a.max}점</span>${NG(a)}</div><ul style="margin:6px 0 0;padding-left:20px">${a.rows.map(x=>`<li>${esc(x.elem)}${x.item?` <small>(${esc(x.item)})</small>`:''} <span style="white-space:nowrap"><b>${fx(x.score)}</b> / ${x.full}점</span></li>`).join('')}</ul>${CM(a)}</div>`).join(''):t.areas.map(a=>`<details class="sbox cd" style="margin-top:10px"><summary style="cursor:pointer;font-size:20px"><b>${esc(a.area)}</b> <small style="color:var(--sub);font-size:16px">${a.sum} / ${a.max}</small>${a.comment?' <small style="font-size:14px;color:var(--info-ink);white-space:nowrap">피드백 있음</small>':''}${NG(a)}</summary><div class="wrap" style="margin-top:8px">${a.rows.every(x=>cf(t,a,x))?RT(t,a):`<table class="gt"><colgroup><col style="width:60%"><col style="width:20%"><col style="width:20%"></colgroup><thead><tr><th>평가항목</th><th>점수</th><th>만점</th></tr></thead><tbody>${a.rows.map(x=>`<tr><td style="text-align:left;white-space:normal">${esc(x.elem)}${x.item?`<br><small>└ ${esc(x.item)}</small>`:''}</td><td><b>${fx(x.score)}</b></td><td>${x.full}</td></tr>`).join('')}</tbody></table>`}</div>${CM(a)}</details>`).join(''))+(t.note?`<p>${esc(t.note)}</p>`:'')+`</div></details>`).join(''):'<p>아직 등록된 성적이 없어요.</p>')+'<p style="font-size:12px;color:var(--sub)">화면을 닫으면 성적은 지워져요.</p>'}
+    return `<div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin:0 0 8px"><span style="white-space:nowrap"><b>${esc(r.name)}</b> · ${esc(r.year)}년</span><span style="flex:1 1 240px;color:var(--no-ink);font-size:14px;word-break:keep-all">지금 확인하는 성적은 학기말에 변동될 가능성이 있으며, 최종 성적은 수행 일람표를 확인할 것</span></div>`+(SS.length?SS.map(t=>`<details class="sbox cd" open><summary style="cursor:pointer;font-size:16px"><b>${t.sem}학기</b> · ${t.total} / ${t.max}점${t.grade?` · 등급 ${esc(t.grade)}`:''}</summary><div style="margin-top:8px">`+SM(t)+(PH?t.areas.map(a=>`<div class="sbox cd" style="margin-top:10px"><div style="font-size:20px"><b>${esc(a.area)}</b> <span style="white-space:nowrap">총 <b>${a.sum}</b> / ${a.max}점</span>${NG(a)}</div><ul style="margin:6px 0 0;padding-left:20px">${a.rows.map(x=>`<li>${esc(x.elem)}${x.item?` <small>(${esc(x.item)})</small>`:''} <span style="white-space:nowrap"><b>${fx(x.score)}</b> / ${x.full}점</span></li>`).join('')}</ul>${CM(a)}</div>`).join(''):t.areas.map(a=>`<details class="sbox cd" style="margin-top:10px"><summary style="cursor:pointer;font-size:20px"><b>${esc(a.area)}</b> <small style="color:var(--sub);font-size:16px">${a.sum} / ${a.max}</small>${a.comment?' <small style="font-size:14px;color:var(--info-ink);white-space:nowrap">피드백 있음</small>':''}${NG(a)}</summary><div class="wrap" style="margin-top:8px">${a.rows.every(x=>cf(t,a,x))?RT(t,a):`<table class="gt"><colgroup><col style="width:60%"><col style="width:20%"><col style="width:20%"></colgroup><thead><tr><th>평가항목</th><th>점수</th><th>만점</th></tr></thead><tbody>${a.rows.map(x=>`<tr><td style="text-align:left;white-space:normal">${esc(x.elem)}${x.item?`<br><small>└ ${esc(x.item)}</small>`:''}</td><td><b>${fx(x.score)}</b></td><td>${x.full}</td></tr>`).join('')}</tbody></table>`}</div>${CM(a)}</details>`).join(''))+(t.note?`<p>${esc(t.note)}</p>`:'')+`</div></details>`).join(''):'<p>아직 등록하지 않았어요 !!</p>')+'<p style="font-size:12px;color:var(--sub)">화면을 닫으면 성적은 지워져요.</p>'}
 const grOpen=()=>{const t=mbT();return t>='16:10'||t<'09:05'||mbOpen()}; // 내 성적 보기: 한마디 시간(서버 MSG_TIMES, 수업 끝나기 5분 전~쉬는 시간 끝) + 16:10~다음날 09:05
 function openGrades(){if(S.preview||!S.user||S.user.role==='관리자'){toast('학생 계정으로 로그인했을 때만 볼 수 있어요');return}
   if(document.querySelector('.modal.info:not(.ad-out)'))return;
-  if(MB.d&&!grOpen()){toast('지금은 성적을 볼 수 없는 시간이에요. 수업 끝나기 5분 전부터 쉬는 시간까지, 또는 16:10 이후에 볼 수 있어요.');return} // 서버도 같은 시간 검사(Code.gs gradeOpen)
+  if(MB.d&&!grOpen()){toast('수업에 집중하세요! 성적은 쉬는 시간에 볼 수 있어요 ~');return} // 서버도 같은 시간 검사(Code.gs gradeOpen)
   const GK='gack|'+(S.user&&S.user.id),today=new Date(Date.now()+9*36e5).toISOString().slice(0,10);let need=true;try{need=localStorage.getItem(GK)!==today}catch(e){} // 따라 쓰기는 하루(한국 날짜)에 한 번
-  const m=document.createElement('div');m.className='modal info';m.innerHTML=`<div class="mb" style="max-width:980px;width:96%;max-height:90vh;overflow:auto"><div class="row" style="justify-content:space-between;margin:0 0 10px"><h3 style="margin:0">내 성적 보기</h3><button class="ghost hcl">닫기</button></div><div class="gb"><p style="margin:0 0 8px">성적은 본인만 볼 수 있어요. 내가 정한 <b>비밀번호</b>를 한 번 더 입력해 주세요.</p><input type="password" class="gp" placeholder="비밀번호" autocomplete="current-password">${need?`<p style="margin:12px 0 6px">이 성적은 최종 확정된 성적이 아니며, 여러 번 검토하며 변동될 가능성이 있습니다. 점수가 정말 궁금하다면 봐도 괜찮지만, 혹시 점수가 떨어지면 기분이 좋지 않을테니 나중에 최종 확정된 성적으로 확인해보는 걸 권합니다. 그래도 보고 싶다면, <b>아래 문구를 따라 입력하세요.</b></p><div class="gh"><div class="gt" aria-hidden="true">이 성적은 최종 확정된 성적이 아니라는 것을 이해했습니다.</div><input class="gf" autocomplete="off" spellcheck="false"></div>`:''}<div class="err ge"></div><button class="main gk"${need?' disabled':''}>확인</button></div></div>`;
+  const m=document.createElement('div');m.className='modal info';m.innerHTML=`<div class="mb" style="max-width:980px;width:96%;max-height:90vh;overflow:auto"><div class="row" style="justify-content:space-between;margin:0 0 10px"><h3 style="margin:0">내 성적 보기</h3><button class="ghost hcl">닫기</button></div><div class="gb"><p style="margin:0 0 8px">성적은 본인만 볼 수 있어요. 내가 정한 <b>비밀번호</b>를 한 번 더 입력해보세요 !!</p><input type="password" class="gp" placeholder="비밀번호" autocomplete="current-password">${need?`<p style="margin:12px 0 6px">이 성적은 최종 확정된 성적이 아니며, 여러 번 검토하며 변동될 가능성이 있습니다. 점수가 정말 궁금하다면 봐도 괜찮지만, 혹시 점수가 떨어지면 기분이 좋지 않을테니 나중에 최종 확정된 성적으로 확인해보는 걸 권합니다. 그래도 보고 싶다면, <b>아래 문구를 따라 입력하세요.</b></p><div class="gh"><div class="gt" aria-hidden="true">이 성적은 최종 확정된 성적이 아니라는 것을 이해했습니다.</div><input class="gf" autocomplete="off" spellcheck="false"></div>`:''}<div class="err ge"></div><button class="main gk"${need?' disabled':''}>확인</button></div></div>`;
   document.body.appendChild(m);const pw=m.querySelector('.gp'),er=m.querySelector('.ge'),gb=m.querySelector('.gb'),gf=m.querySelector('.gf'),gk=m.querySelector('.gk'),norm=x=>String(x).replace(/\s+/g,'').replace(/[.。]+$/,'');
   if(gf){['paste','drop'].forEach(ev=>gf.addEventListener(ev,e=>e.preventDefault()));gf.oninput=gf.onscroll=()=>{gk.disabled=norm(gf.value)!==norm('이 성적은 최종 확정된 성적이 아니라는 것을 이해했습니다.');gf.previousSibling.scrollLeft=gf.scrollLeft}}pw.focus();m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.hcl').onclick=()=>m.remove();
   const go=async()=>{if(!pw.value||gk.disabled)return;er.textContent='확인 중...';const [r,I]=await Promise.all([api('myGrades',{pw:pw.value}),get('info',()=>api('info'))]);pw.value='';if(r.error){er.textContent=r.error;return}try{localStorage.setItem(GK,today)}catch(e){}
@@ -609,12 +609,12 @@ document.addEventListener('pointerdown',e=>{const z=e.target.closest&&e.target.c
 document.addEventListener('pointermove',e=>{if(!fqD)return;const el=document.elementFromPoint(e.clientX,e.clientY),c=el&&el.closest('td[data-r]');if(c&&c.closest('table')===fqD.T)fqSel(fqD.q,fqD.a,c)});
 ['pointerup','pointercancel'].forEach(k=>document.addEventListener(k,()=>fqD=null));
 function fqCheck(q){const m=q.querySelector('.fqm'),say=(ok,t)=>{m.className='fqm '+(ok?'g':'r');m.textContent=t},v=q.querySelector('.fqv').value.trim(),f=q.dataset.f;if(!q._t)return;
-  if(!q._g)return say(0,'표에서 범위를 먼저 드래그해서 골라 주세요.');if(!v)return say(0,'결과 값을 써 주세요.');
+  if(!q._g)return say(0,'표에서 범위를 먼저 드래그해서 골라보세요 !!');if(!v)return say(0,'결과 값을 써보세요 !!');
   const A=q.dataset.m?fqA(q.dataset.r):q._A;if(!A)return say(0,'⚠ 정답 범위를 찾지 못했어요. (선생님 확인 필요)');const R=fqCalc(q._t,A,f,q.dataset.c);if(R.v==null)return say(0,'⚠ 정답 범위에 숫자가 없어요. (선생님 확인 필요)');
   const g=q._g,okR=['r1','r2','c1','c2'].every(k=>g[k]===A[k]),n=fqN(v),okV=n!=null&&(Math.abs(n-R.v)<1e-9||(f==='AVERAGE'&&[0,1,2].some(d=>Math.abs(n-+R.v.toFixed(d))<1e-9)));
-  if(okR&&okV){q._done=R;fqPaint(q);return say(1,`✅ 맞아요! ${q.dataset.m?'=':''}${f}(${fqS(q,A)}${f==='COUNTIF'?`, "${q.dataset.c}"`:''}) 의 결과는 ${+R.v.toFixed(2)} 이에요.`)}
+  if(okR&&okV){q._done=R;fqPaint(q);return say(1,`✅ 정답 ! ${q.dataset.m?'=':''}${f}(${fqS(q,A)}${f==='COUNTIF'?`, "${q.dataset.c}"`:''}) 의 결과는 ${+R.v.toFixed(2)} 이에요.`)}
   const hd=g.r1===1&&q._t.querySelector('th[data-r="1"]');
-  say(0,okV?'❌ 값은 맞았어요! 그런데 범위가 달라요.'+(hd?' 머리글(제목) 칸은 빼고 골라요.':''):okR?'❌ 범위는 맞았어요! 값을 다시 살펴봐요.':'❌ 범위와 값을 다시 살펴봐요.'+(hd?' (머리글 칸은 빼고 골라요)':''))}
+  say(0,okV?'❌ 값은 맞았는데 범위가 틀렸어요. 다시 생각해봅시다.'+(hd?' 머리글(제목) 칸은 빼고 고르세요.':''):okR?'❌ 범위는 맞았는데 값이 틀렸어요. 다시 생각해봅시다.':'❌ 범위도 값도 틀렸어요. 다시 생각해봅시다.'+(hd?' (머리글 칸은 빼고 고르세요)':''))}
 document.addEventListener('click',e=>{const b=e.target.closest('.fqk,.fqz');if(!b)return;const q=b.closest('.fnq');if(!q||!q._t)return;
   if(b.classList.contains('fqk'))return fqCheck(q);q._g=null;q._done=null;q.querySelector('.fqv').value='';const s=q.querySelector('.fqs');s.textContent='표에서 드래그';s.classList.remove('on');q.querySelector('.fqm').textContent='';fqPaint(q)});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('fqv')){const q=e.target.closest('.fnq');if(q)fqCheck(q)}});
@@ -671,14 +671,14 @@ const wp=u=>/^https?:/i.test(u)?u:u.replace(/\.(png|jpe?g)$/i,'.webp'); // [그�
 function pic(s){return s.replace(/\[그림:([^\]\s|]+)(?:\|([^\]]*))?\]/g,(m,u,cap)=>/^(https?:\/\/[^\s"']+|[\w\-.\/%]+)$/i.test(u)?`<figure class="fig"><img class="pic" loading="lazy" decoding="async" src="${wp(u)}"${wp(u)!==u?` onerror="this.onerror=null;this.src='${u}'"`:''} alt="${cap?cap.replace(/<[^>]*>/g,'').trim():'그림'}">${cap?`<figcaption>${cap.trim()}</figcaption>`:''}</figure>`:m)}
 function qz(s){return s.replace(/\[\s*(주관식|드롭다운|객관식|예아니오)\s*[:：]([^\]]*)\]/g,(m,k,b)=>{const p=b.split('|').map(x=>x.trim());let q=p[0],ans,opts,h;
   const sp2=x=>(x||'').replace(/<[^>]*>/g,'');if(k==='주관식'){ans=sp2(p[1]);h=sp2(p[2])}else if(k==='예아니오'){opts=['예','아니오'];ans=sp2(p[1]);h=sp2(p[2])}else{opts=(p[1]||'').split('/').map(x=>sp2(x).trim());ans=sp2(p[2]);h=sp2(p[3])}
-  const body=k==='주관식'?'<input class="qin" placeholder="답을 써 보세요" autocomplete="off">':k==='드롭다운'?`<select class="qin"><option value="">선택하세요</option>${opts.map(o=>`<option>${o}</option>`).join('')}</select>`:opts.map(o=>`<button class="ghost qo" data-v="${o}">${o}</button>`).join('');
+  const body=k==='주관식'?'<input class="qin" placeholder="답을 써보세요 !!" autocomplete="off">':k==='드롭다운'?`<select class="qin"><option value="">선택하세요</option>${opts.map(o=>`<option>${o}</option>`).join('')}</select>`:opts.map(o=>`<button class="ghost qo" data-v="${o}">${o}</button>`).join('');
   return `<div class="qz" data-a="${ans||''}" data-h="${h||''}"><div class="qq">${q}</div><div class="row">${body}${k==='주관식'||k==='드롭다운'?'<button class="main qc2">확인</button>':''}<span class="qr2"></span></div></div>`})}
 document.addEventListener('click',e=>{const b=e.target.closest('.qc2,.qo');if(!b)return;const z=b.closest('.qz');if(!z)return;const r=z.querySelector('.qr2');
   const v=b.classList.contains('qo')?b.dataset.v:z.querySelector('.qin').value;
-  if(!String(v).trim()){r.className='qr2 r';r.textContent='답을 골라 주세요';return}
+  if(!String(v).trim()){r.className='qr2 r';r.textContent='답을 골라보세요 !!';return}
   z.querySelectorAll('.qo').forEach(x=>x.classList.toggle('sel',x===b));
   const ok=String(z.dataset.a||'').split('/').some(a=>norm(a)===norm(v));
-  r.className='qr2 '+(ok?'g':'r');r.textContent=ok?'✅ 맞아요! '+(z.dataset.h||''):'❌ 다시 생각해 봐요'});
+  r.className='qr2 '+(ok?'g':'r');r.textContent=ok?'✅ 정답 ! '+(z.dataset.h||''):'❌ 다시 생각해봅시다.'});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches&&e.target.matches('.qz .qin')){const b=e.target.closest('.qz').querySelector('.qc2');if(b)b.click()}});
 const DEF={'데이터분석':{해석:'데이터 해석하기'}};
 function nm(sub,k){const L=[...(mem.toc?mem.toc.subjects:[]),...(mem.subjects?mem.subjects.subjects:[])],s=L.find(x=>x.name===sub),o=s&&s.names&&s.names[k];return o||(DEF[String(sub).replace(/\s/g,'')]||{})[k]||AN[k][1]}
@@ -703,13 +703,16 @@ async function fillYears(){const e=$('#yr'),c=$('#cnx'),b=$('#go');if(!e)return;
   if(fresh){c.style.display='none';return}
   c.className='cnx ok';c.innerHTML='<span>서버에 연결됐어요! 이제 로그인할 수 있어요.</span>';cnxT=setTimeout(()=>{c.classList.add('gone');cnxT=setTimeout(()=>c.style.display='none',600)},4000)}
 let lgT=null;function lgClock(){clearInterval(lgT);const f=()=>{const e=$('#lgc');if(!e)return clearInterval(lgT);const d=new Date(),p=n=>String(n).padStart(2,'0');e.textContent=p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());$('#lgd').textContent=(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+'일월화수목금토'[d.getDay()]+')'};f();lgT=setInterval(f,1000)}
+/* 로그인 실패 횟수에 따라 문구가 바뀜 (이 탭에서 센 횟수, 로그인 성공하면 0) */
+const LG_MSG=['학번 또는 비밀번호가 틀렸어요','잘못 입력하고 있는 거 맞죠?','설마 정보책 가져오지도 않고 비밀번호 까먹었겠어?','손을 머리 높이 올리고 자기 머리를 콩 찍읍시다.'];
+function lgFail(add){let n=0;try{n=add?Number(sessionStorage.getItem('lgf')||0)+1:0;sessionStorage.setItem('lgf',n)}catch(e){n=add?1:0}return n}
 function loginView(msg=''){showToc(false);app.innerHTML=`<div class="box narrow lgbox"><h2>로그인</h2>
 <div class="cnx" id="cnx"></div><div class="row" style="justify-content:center;margin:0 0 6px"><select id="yr" class="yr" aria-label="학년도"></select></div><input id="id" placeholder="학번" autocomplete="username"><input id="pw" type="password" placeholder="비밀번호" autocomplete="current-password">
 <div class="err" id="e">${esc(msg)}</div><button class="main" id="go">들어가기</button>
 <p style="color:var(--sub);font-size:14px">처음 로그인할 때 비밀번호는 학번이에요.</p><p><a href="#" id="fg" style="color:var(--sub);font-size:14px">비밀번호를 잊어버렸어요!</a></p>
 <div class="lgi"><div class="lgt" id="lgv" style="display:none"><small>오늘의 접속자</small><b></b></div><div class="lgt"><small>현재 시각</small><b id="lgc"></b><small id="lgd"></small></div></div></div>`;lgClock();
   const go=async()=>{$('#e').textContent='확인 중...';await new Promise(z=>setTimeout(z,Math.random()*800));const r=await api('login',{id:$('#id').value,pw:$('#pw').value,year:$('#yr').value});
-    if(r.error)return $('#e').textContent=r.error;S.token=r.token;sessionStorage.setItem('t',r.token);S.user=r;start()};
+    if(r.error){let m=r.error;if(/학번 또는 비밀번호가 틀렸/.test(m)){const n=lgFail(1);m=LG_MSG[Math.min(n,LG_MSG.length)-1]}return $('#e').textContent=m}lgFail(0);S.token=r.token;sessionStorage.setItem('t',r.token);S.user=r;start()};
   $('#fg').onclick=e=>{e.preventDefault();forgotView()};fillYears();$('#go').onclick=go;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('#go').disabled)go()})}
 function resume(){let p=null;try{p=JSON.parse(sessionStorage.getItem('pos')||'null')}catch(e){}const u=S.user;if(!p||p.u!==u.id||u.must||(u.role!=='관리자'&&isPhone()))return start();
   S.asub=p.asub||'';S.ayear=p.ayear||'';S.preview=u.role==='관리자'&&!!p.p;setWho();
@@ -725,7 +728,7 @@ function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 �
     if(!on){$('#n1').type=$('#n2').type='password';$('#ey').textContent='👁';return}
     const m=POP(`<h3 style="margin-top:0">잠깐!</h3><p style="font-size:16px"><b>비밀번호 안 까먹게<br>정보책에 적어두세요!</b></p><button class="main" id="pk">알겠어요</button>`);
     m.querySelector('#pk').onclick=()=>{m.remove();$('#n1').type=$('#n2').type='text';$('#ey').textContent='🙈'}};
-  $('#go').onclick=()=>{const p=$('#n1').value;if(p!==$('#n2').value)return $('#e').textContent='두 비밀번호가 달라요.';if(p.length<4)return $('#e').textContent='비밀번호는 4자 이상이어야 해요.';$('#e').textContent='';
+  $('#go').onclick=()=>{const p=$('#n1').value;if(p!==$('#n2').value)return $('#e').textContent='두 비밀번호를 똑같이 입력하세요';if(p.length<4)return $('#e').textContent='비밀번호는 4자 이상이어야 해요.';$('#e').textContent='';
     const PH='나는 정보책에 비밀번호를 잘 적어놨습니다.',norm=x=>String(x).replace(/\s+/g,'').replace(/[.。]+$/,'');
     const m=POP(`<h3 style="margin-top:0">정보책에 적었나요?</h3><p style="margin:6px 0">내가 정한 비밀번호</p><div style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--raise);border-radius:var(--r1);padding:6px 10px"><span id="pv" style="font-size:16px;letter-spacing:2px;word-break:break-all;min-height:1.6em;line-height:1.6em"></span><button type="button" class="eye" id="pe" title="비밀번호 보기" style="background:none;border:0;font-size:18px;cursor:pointer;padding:2px 6px">👁</button></div>
 <p style="font-size:14px;color:var(--sub);margin:12px 0 6px">비밀번호를 정보책에 적은 다음, 아래 <b>연한 글씨를 그대로 따라 써</b> 주세요.</p>
@@ -740,19 +743,19 @@ function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 �
 /* 학생: 언어 → 차시 → 활동 → 내용 */
 async function langView(gn){S.at=null;here('lang',{g:gn});const nv=NAV;renderToc();if(!mem.toc)app.innerHTML='불러오는 중...';const r=await get('toc',()=>api('toc'));if(nv!==NAV)return;if(r.error)return app.innerHTML=r.error;
   const G=groupSubs(r.subjects),cg=gn&&G.find(x=>x.g===gn),card=s=>`<button class="card" data-i="${r.subjects.indexOf(s)}">${ico(s.icon)} <b>${esc(s.name)}</b>${s.ready?'':'<small>준비 중</small>'}</button>`;
-  app.innerHTML=(cg?`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><h2>${esc(cg.g)} · 과목을 골라요</h2>`:`<h2>배울 과목을 골라요</h2>`)+(r.subjects.length?`<div class="grid">${(cg?cg.subs.map(card):G.map(x=>x.s?card(x.s):`<button class="card" data-g="${esc(x.g)}">${ico(x.icon)} <b>${esc(x.g)}</b><small>${x.subs.map(s=>esc(s.name)).join(' · ')}</small></button>`)).join('')}</div><div class="msg wait" id="soon" style="display:none;margin-top:14px"></div>`:'<p>아직 등록된 과목이 없어요.</p>');
+  app.innerHTML=(cg?`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><h2>${esc(cg.g)} · 과목을 골라요</h2>`:`<h2>배울 과목을 골라요</h2>`)+(r.subjects.length?`<div class="grid">${(cg?cg.subs.map(card):G.map(x=>x.s?card(x.s):`<button class="card" data-g="${esc(x.g)}">${ico(x.icon)} <b>${esc(x.g)}</b><small>${x.subs.map(s=>esc(s.name)).join(' · ')}</small></button>`)).join('')}</div><div class="msg wait" id="soon" style="display:none;margin-top:14px"></div>`:'<p>아직 등록한 과목이 없어요 !!</p>');
   app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>langView(b.dataset.g));
   app.querySelectorAll('[data-i]').forEach(b=>b.onclick=async()=>{const s=r.subjects[+b.dataset.i];if(!s.ready){const nv=NAV,r2=await get('toc',()=>api('toc'),true),s2=(r2.subjects||[]).find(x=>x.name===s.name);if(nv!==NAV)return;if(s2&&s2.ready){S.sub=s.name;return lessonView()}const m=$('#soon'),w=(s2||s).why;m.style.display='block';m.innerHTML='아직 준비중입니다!'+(w?`<br><small>(관리자에게만 보여요) ${esc(w)}</small>`:'');return}S.sub=s.name;lessonView()})}
 function forgotView(){app.innerHTML=`<div class="box narrow"><h2>비밀번호 초기화</h2><p style="font-size:14px"><b style="color:var(--no-ink)">니가 만든 니 비밀번호</b>인데, 게다가 분명 <b style="color:var(--no-ink)">정보책에 적어놨다</b>고 하기까지했는데 왜 로그인이 안될까요?\n 정신 안차려요?</p>
 <div class="cnx" id="cnx"></div><div class="row" style="justify-content:center;margin:0 0 6px"><select id="yr" class="yr" aria-label="학년도"></select></div><input id="fi" placeholder="학번"><input id="fk" placeholder="고유키" autocomplete="off"><div class="err" id="e"></div><button class="main" id="go">초기화하기</button> <button class="ghost" id="bk">← 로그인</button><p><a href="#" id="nk" style="color:var(--sub);font-size:14px">고유키도 잊어버렸어요!</a></p></div>`;
   $('#bk').onclick=()=>loginView();fillYears();
-  $('#nk').onclick=e=>{e.preventDefault();alert('니가 만든\n니 계정의\n니 비밀번호도 잊고\n니 고유키도 잊으면\n대체 뭘 하겠다는건가요?\n선생님께 문의 받으세요')};
+  $('#nk').onclick=e=>{e.preventDefault();alert('니가 만든\n니 계정의\n니 비밀번호도 잊고\n니 고유키도 잊으면\n대체 뭘 하겠다는건가요?\n나한테 문의하세요')};
   $('#go').onclick=async()=>{$('#e').textContent='확인 중...';const r=await api('forgot',{id:$('#fi').value,key:$('#fk').value,year:$('#yr').value});if(r.error)return $('#e').textContent=r.error;loginView('초기화했어요! 학번을 비밀번호로 입력해 로그인하세요.')}}
 async function lessonView(){const nv=++NAV;if(!mem.toc)app.innerHTML='불러오는 중...';const T=await get('toc',()=>api('toc'));if(nv!==NAV)return;if(T.error)return app.innerHTML=T.error;const sj=T.subjects.find(x=>x.name===S.sub);
   if(!sj||!sj.ready){app.innerHTML=`<p><button class="ghost" onclick="langView(grpOf(S.sub))">← 과목 선택</button></p><p>아직 준비중입니다!</p>`;return}const r={lessons:sj.lessons};S.menu=r;S.at={sub:S.sub,no:null,act:null};here('lesson',{sub:S.sub});renderToc();
   app.innerHTML=`<p><button class="ghost" onclick="langView(grpOf(S.sub))">← 과목 선택</button></p><h2>${esc(S.sub)} · 차시를 골라요</h2>`+(r.lessons.length?`<div class="grid">${r.lessons.map(l=>{
   const t=l.t.해석+l.t.작성,d=Math.min(l.t.해석,l.d.해석)+Math.min(l.t.작성,l.d.작성);
-  return `<button class="card" data-no="${l.no}"><small>${l.no}차시</small><b>${esc(l.title)}</b>${t?`<small>문제 ${t}개 · ${d}개 완료</small>${bar(d,t)}`:''}</button>`}).join('')}</div>`:'<p>아직 올라온 차시가 없어요.</p>');
+  return `<button class="card" data-no="${l.no}"><small>${l.no}차시</small><b>${esc(l.title)}</b>${t?`<small>문제 ${t}개 · ${d}개 완료</small>${bar(d,t)}`:''}</button>`}).join('')}</div>`:'<p>아직 올린 차시가 없어요 !!</p>');
   app.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>actView(+b.dataset.no))}
 function actView(no){S.at={sub:S.sub,no,act:null};here('act',{sub:S.sub,no});const sj=mem.toc.subjects.find(x=>x.name===S.sub),l=sj.lessons.find(x=>x.no===no);renderToc();
   app.innerHTML=`<p><button class="ghost" onclick="lessonView()">← 차시 선택</button></p><h2>[${no}차시] ${esc(l.title)}</h2><div class="grid">${Object.keys(AN).filter(k=>l.t[k]>0).map(k=>
@@ -772,20 +775,20 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
   const pn=exNum(r.items);box.innerHTML=r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);n=pn[n];const s=sv(i.q),f=isF(i),v=s&&i.type==='설명쓰기'?String(s.answer).split('\n').map(l=>l.replace(/^\d+:\s?/,'')):[];
     const inp=(i.type==='설명쓰기'||i.type==='기타')?'':i.choices?i.choices.map(c=>`<label class="choice"><input type="radio" name="q${i.q}" value="${esc(c)}" ${s&&String(s.answer)===c?'checked':''}>${esc(c)}</label>`).join(''):i.type==='서술'?`<textarea class="free" style="min-height:90px;font-family:inherit" placeholder="생각을 자유롭게 써 보세요">${esc(s?s.answer:'')}</textarea>`:`<input class="ans" placeholder="답을 입력하세요" value="${esc(s?s.answer:'')}">`;
     let bd=(i.type==='기타'?`<h3>${fmt(i.text)}</h3>`:`<h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}</h3>${fmt(i.text)}`)+cd(i,v);const AK=/\[\s*답칸\s*\]/;bd=AK.test(bd)?bd.replace(AK,()=>inp).replace(/\[\s*답칸\s*\]/g,''):bd+inp;
-    return `<div class="box" data-q="${i.q}"${i.type==='기타'?' data-etc="1"':''}>${bd}<div class="row"><button class="main chk">${f?'제출하기':'정답 확인'}</button></div><div class="msg ${s&&s.submitted&&(f||s.ok)?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.submitted?(f?'이전에 제출했어요 (고쳐서 다시 제출해도 돼요)':(s.ok?'✅ 이전에 맞혔어요':'')):(s?'이어서 쓰던 내용이 있어요 (아직 제출 전)':'')}</div></div>`}).join('');
+    return `<div class="box" data-q="${i.q}"${i.type==='기타'?' data-etc="1"':''}>${bd}<div class="row"><button class="main chk">${f?'제출하기':'정답 확인'}</button></div><div class="msg ${s&&s.submitted&&(f||s.ok)?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.submitted?(f?'이미 제출이 끝났어요! 수정해서 다시 보내셔도 됩니다 ~':(s.ok?'✅ 이전에 맞혔어요':'')):(s?'이어서 쓰던 내용이 있어요 (아직 제출 전)':'')}</div></div>`}).join('');
   box.querySelectorAll('.box[data-etc]').forEach(bx=>{const s=sv(+bx.dataset.q),mp={};if(s)String(s.answer).split('\n').forEach(l=>{const m=/^(\d+):\s?(.*)$/.exec(l);if(m)mp[m[1]]=m[2]});
     bx.querySelectorAll('.ib').forEach((el,k)=>{const v=mp[k+1];if(v!=null){if(el.type==='checkbox')el.checked=v==='1';else el.value=v;ibCheck(el)}})});
   box.querySelectorAll('.chk').forEach(b=>b.onclick=async()=>{const bx=b.closest('.box'),q=+bx.dataset.q,m=bx.querySelector('.msg'),bl=[...bx.querySelectorAll('.blank')];let a;
-    if(bx.dataset.etc){a=bx.querySelector('.ib')?collect(bx):'열람'}else if(bl.length){if(bl.some(x=>!x.value.trim())){m.className='msg no';m.textContent='빈칸을 모두 채워 주세요.';return}a=bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n')}
+    if(bx.dataset.etc){a=bx.querySelector('.ib')?collect(bx):'열람'}else if(bl.length){if(bl.some(x=>!x.value.trim())){m.className='msg no';m.textContent='빈칸을 모두 채워보세요 !!';return}a=bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n')}
     else a=bx.querySelector('input[type=radio]:checked')?.value??bx.querySelector('.ans')?.value??bx.querySelector('.free')?.value??'';
     if(!String(a).trim())return;
     b.disabled=true;m.className='msg wait';m.textContent='저장 중...';const x=await api('submit',{no,act,q,answer:a});b.disabled=false;
     if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,q,a,x.correct);
-    if(x.free){m.className='msg ok';m.innerHTML='제출했어요! 고쳐서 다시 제출해도 돼요. '+fmt(x.explain||'');return}
-    m.className='msg '+(x.correct?'ok':'no');m.innerHTML=(x.correct?'✅ 정답! ':'❌ 조금만 다시 생각해보자! ')+fmt(x.explain||'')})}
+    if(x.free){m.className='msg ok';m.innerHTML='제출 완료! 수정해서 다시 보내셔도 됩니다 ~ '+fmt(x.explain||'');return}
+    m.className='msg '+(x.correct?'ok':'no');m.innerHTML=(x.correct?'✅ 정답! ':'❌ 다시 생각해봅시다. ')+fmt(x.explain||'')})}
   if(act==='작성'){const PN=exNum(r.items);box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니니까, 가만히 있지 말고 뭐라도 해봐요!</p>`+r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);if(ASMQ.test(i.text))return asmBox(i);n=PN[n];const s=sv(i.q),g=stpG(i.text),sk=g!=null?r.items.filter(x=>stpG(x.text)===g).indexOf(i)+1:0;return `<div class="box" data-q="${i.q}"${sk?` data-stp="${sk}" data-stg="${esc(g)}"`:''}><h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${sk?` <span class="stpb">${sk}단계</span>`:''}</h3>${sk>1?`<p class="stpn">⬇ ${sk-1}단계 코드가 이어져 내려와요. ${sk-1}단계를 고치면 여기서 내가 안 건드린 줄만 같이 바뀌어요.</p>`:''}${fmt(sk?String(i.text).replace(STPQ,''):i.text)}
   <div class="tr2${i.hasSample?'':' one'}"><div class="tp"><h4>내가 짠 코드</h4><textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">저장</button>${String(i.hint||'').trim()?'<button class="ghost hb"></button>':''}</div><div class="hl"></div>${!i.hasSample&&S.user&&S.user.role==='관리자'?'<p style="color:var(--sub);font-size:12px;margin:6px 0">※ 관리자에게만 보이는 안내: 이 문제는 예시 코드가 비어 있어서 오른쪽 칸이 없어요. 응용해보기 시트의 <b>예시코드</b> 열 제목과 칸을 확인하세요.</p>':''}<pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.ok?'저장해 둔 코드예요':(s&&!s.submitted?'이어서 쓰던 코드가 있어요 (아직 저장 전)':'')}</div></div>
-  ${i.hasSample?`<div class="tp"><h4>선생님 예시 코드</h4><div class="sm"><p style="margin:0 0 8px;color:var(--sub)">선생님이 알려 주는 비밀번호를 입력하면 열려요.</p><div class="row"><input type="password" class="sp2" placeholder="비밀번호" autocomplete="off" style="max-width:200px"><button class="main sk">열기</button></div><div class="err se"></div></div></div>`:''}</div></div>`}).join('');
+  ${i.hasSample?`<div class="tp"><h4>내 예시 코드</h4><div class="sm"><p style="margin:0 0 8px;color:var(--sub)">내가 알려 주는 비밀번호를 입력하면 열려요.</p><div class="row"><input type="password" class="sp2" placeholder="비밀번호" autocomplete="off" style="max-width:200px"><button class="main sk">열기</button></div><div class="err se"></div></div></div>`:''}</div></div>`}).join('');
     box.querySelectorAll('.box').forEach(bx=>{const it=r.items.find(x=>String(x.q)===bx.dataset.q);if(bx.dataset.asm)return asmInit(bx,it,r.items,no,act);const ta=bx.querySelector('textarea'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
       const hb=bx.querySelector('button.hb');if(hb){const hs=String(it.hint).split(/\r?\n---\r?\n/).map(x=>x.trim()).filter(Boolean),hl=bx.querySelector('.hl');let hn=0;
         const hbt=()=>{hb.textContent=hn<hs.length?`${hn?'다음 ':''}힌트 보기 (${hn}/${hs.length})`:`힌트를 모두 봤어요 (${hs.length}/${hs.length})`;hb.disabled=hn>=hs.length};hbt();
@@ -798,8 +801,8 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
         let sv0=null,lk0=null;try{sv0=sessionStorage.getItem(sk);lk0=sessionStorage.getItem(sk+'|L')}catch(e){}if(lk0&&!(S.user&&S.user.role==='관리자'))lockMsg();else if(sv0!=null||(S.user&&S.user.role==='관리자'))open(sv0||'',true)}
       ta.onkeydown=e=>{if(e.key==='Tab'){e.preventDefault();document.execCommand('insertText',false,'    ')}};
       bx.querySelector('.run').onclick=async()=>{out.style.display='block';out.textContent='실행 중...';try{putOut(out,await runPy(defWrap(ta),it.ins[0])||'(출력 없음)')}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
-      bx.querySelector('.sub').onclick=async()=>{const b=bx.querySelector('.sub');if(!ta.value.trim()){m.className='msg no';m.textContent='코드를 먼저 써 주세요';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';
-        const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='저장했어요! 고쳐서 다시 저장해도 돼요.'}});stpInit(box,no,q=>!!sv(q))}}
+      bx.querySelector('.sub').onclick=async()=>{const b=bx.querySelector('.sub');if(!ta.value.trim()){m.className='msg no';m.textContent='코드를 먼저 써보세요 !!';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';
+        const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='저장 완료! 수정해서 다시 저장하셔도 됩니다 ~'}});stpInit(box,no,q=>!!sv(q))}}
 
 /* 문항 사이 설명: 해석해보기·응용해보기 문제 칸에 [설명]을 쓰면 문제가 아니라 설명 글로 보여요(번호·답칸 없음, 진도 계산에서도 빠짐 — Code.gs v147). 제목 칸이 있으면 위에 제목 */
 const EXQ=/\[\s*설명\s*\]/;
@@ -851,7 +854,7 @@ function asmInit(bx,it,items,no,act){
   const pc=(t,c,bg,ctl)=>`<div class="apc"><div class="aph" style="background:${bg}">${t}${ctl||''}</div><pre>${esc(c)||'<span style="color:var(--sub)">(아직 비어 있어요)</span>'}</pre></div>`;
   const all=()=>[head,...ord.map(q=>code(B(q))),tail].filter(x=>x.trim()).join('\n\n');
   const draw=()=>{ch.innerHTML=bl.length?bl.map(b=>{const on=ord.includes(b.q);return `<button class="achip${on?' on':''}" data-q="${b.q}" style="background:${col(b)}">${esc(b.name)}<span>${on?'붙임 ✔':'＋'}</span></button>`}).join(''):'<p style="color:var(--sub)">이 차시에 블록(다른 응용해보기 문제)이 없어요.</p>';
-    stk.innerHTML=(head.trim()?pc('시작 코드',head,'var(--raise)'):'')+(ord.length?ord.map((q,j)=>pc(esc(B(q).name),code(B(q)),col(B(q)),`<span class="actl"><button data-m="${j}" data-d="-1">▲</button><button data-m="${j}" data-d="1">▼</button><button data-x="${j}">✕ 빼기</button></span>`)).join(''):'<div class="aslot">왼쪽 블록을 클릭해서 여기에 붙여요</div>')+(tail.trim()?pc('실행 코드 (선생님)',tail,'var(--raise)'):'');
+    stk.innerHTML=(head.trim()?pc('시작 코드',head,'var(--raise)'):'')+(ord.length?ord.map((q,j)=>pc(esc(B(q).name),code(B(q)),col(B(q)),`<span class="actl"><button data-m="${j}" data-d="-1">▲</button><button data-m="${j}" data-d="1">▼</button><button data-x="${j}">✕ 빼기</button></span>`)).join(''):'<div class="aslot">왼쪽 블록을 클릭해서 여기에 붙여요</div>')+(tail.trim()?pc('실행 코드',tail,'var(--raise)'):'');
     ch.querySelectorAll('.achip').forEach(b=>b.onclick=()=>{const q=+b.dataset.q,j=ord.indexOf(q);if(j<0)ord.push(q);else ord.splice(j,1);keep();draw()});
     stk.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const j=+b.dataset.m,t=j+(+b.dataset.d);if(t<0||t>=ord.length)return;[ord[j],ord[t]]=[ord[t],ord[j]];keep();draw()});
     stk.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{ord.splice(+b.dataset.x,1);keep();draw()});
@@ -859,7 +862,7 @@ function asmInit(bx,it,items,no,act){
   draw();bx.addEventListener('pointerenter',draw); // 위에서 블록 코드를 고치고 오면 바로 반영
   bx.querySelector('.arun').onclick=async()=>{draw();out.style.display='block';out.textContent='실행 중... (처음에는 10~30초 걸려요)';try{putOut(out,'출력:\n'+(await runPy(all(),bx.querySelector('.ain').value)||'(출력 없음)'))}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
   bx.querySelector('.aall').onclick=()=>{const on=cd.style.display==='none';cd.style.display=on?'block':'none';if(on)cd.textContent=all()};
-  bx.querySelector('.asv').onclick=async e=>{const b=e.currentTarget;if(!ord.length){m.className='msg no';m.textContent='블록을 먼저 붙여 주세요';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';const a=all(),x=await api('submit',{no,act,q:it.q,answer:a,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,a,true);m.className='msg ok';m.textContent='조립한 코드를 저장했어요!'}}
+  bx.querySelector('.asv').onclick=async e=>{const b=e.currentTarget;if(!ord.length){m.className='msg no';m.textContent='블록을 먼저 붙여보세요 !!';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';const a=all(),x=await api('submit',{no,act,q:it.q,answer:a,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,a,true);m.className='msg ok';m.textContent='조립한 코드 저장 완료!'}}
 /* 파이썬 실행 (브라우저 안, Pyodide) */
 /* 실행 과정 보기: 시트 칸에 ```trace ... ``` 로 쓰면 이 화면으로 바뀝니다 */
 const br=s=>s.replace(/\s*\/\/\s*/g,'<br>'),TRQ=/\{\{([^{}\n]*?)\}\}/g,norm=s=>String(s).replace(/\s/g,'').toLowerCase(),spl=s=>s.replace(/^( +)/,m=>m.replace(/ /g,'<span class="sp"> </span>'));
@@ -907,7 +910,7 @@ function hotCode0(src){src=String(src??'');if(src.indexOf('{{')<0)return esc(src
   src.split('\n').forEach(l=>{const m=/^\s*(\w+)\s*=\s*\[(.*)\]\s*(#.*)?$/.exec(l);if(m)TRLEN[m[1]]=m[2].trim()===''?0:splitTop(m[2],',').length});
   return src.split('\n').map(line=>{let o='',ds='',last=0,m;TRQ.lastIndex=0;while((m=TRQ.exec(line))){let pre=line.slice(last,m.index),rw=m[1];{const f0=cmkS(rw).split('|')[0].trim();if(/range\s*$/.test(pre)&&/^\(.*\)$/.test(f0)){pre=pre.replace(/range\s*$/,'');rw='range'+f0+(rw.indexOf('|')>=0?rw.slice(rw.indexOf('|')):'')}}
     HOTS.push(mkHot(rw));o+=esc(pre)+`<span class="${HOTS[HOTS.length-1].cn?'hotc':'hot'}" data-hk="${HOTS.length-1}" onclick="hotPlain(this)">${esc(HOTS[HOTS.length-1].em)}</span>`;if((rw.split('|')[1]||'').trim()&&!HOTS[HOTS.length-1].cn)ds+=`<span class="hotd" data-hd="${HOTS.length-1}"></span>`;last=m.index+m[0].length}return o+esc(line.slice(last))+ds}).join('\n')}
-function hotPlain(sp){const h=HOTS[+sp.dataset.hk];if(!h)return;if(h.cn)return conceptPop(h);if(sp.classList.contains('ok'))return hotPop({e:h.e,st:h.st.map(s=>({msg:hotFill(s),ans:null}))},'',()=>{});hotPop(h,'✅ 모두 맞았어요!',()=>{sp.classList.add('ok');const d=sp.parentNode.querySelector(`.hotd[data-hd="${sp.dataset.hk}"]`);if(d)d.dataset.d=hotDesc(h)})}
+function hotPlain(sp){const h=HOTS[+sp.dataset.hk];if(!h)return;if(h.cn)return conceptPop(h);if(sp.classList.contains('ok'))return hotPop({e:h.e,st:h.st.map(s=>({msg:hotFill(s),ans:null}))},'',()=>{});hotPop(h,'✅ 다 맞혔음 !',()=>{sp.classList.add('ok');const d=sp.parentNode.querySelector(`.hotd[data-hd="${sp.dataset.hk}"]`);if(d)d.dataset.d=hotDesc(h)})}
 /* 개념 칸: 용어 사전에 같은 이름이 있으면 그 설명을, 없으면 적은 글을 그대로 보여 줘요 */
 async function conceptPop(h){if(document.querySelector('.modal.hot:not(.ad-out)'))return;let t=null;try{const r=await get('info',()=>api('info'));t=(r.terms||[]).find(x=>norm(x.name)===norm(h.cn))}catch(e){}
   const m=document.createElement('div');m.className='modal hot';m.innerHTML=`<div class="mb"><p class="hotk"><span>${esc(h.e)}</span></p>${t?`<h3 style="margin:0 0 6px">📘 ${esc(t.name)}</h3><div>${fmt(t.body)}</div>${t.ex?`<div style="color:var(--sub);margin-top:6px">예) ${fmt(t.ex)}</div>`:''}`:`<div>📘 ${fmt(h.cn)}</div>`}<div class="row"><button class="ghost hcl">닫기</button></div></div>`;
@@ -923,8 +926,8 @@ function hotPop(h,okMsg,onOk){if(document.querySelector('.modal.hot:not(.ad-out)
     show();m.onclick=e=>{if(e.target===m)m.remove()};m.querySelector('.hcl').onclick=()=>m.remove();
     ck.onclick=()=>{if(!hasQ){onOk();m.remove();return}
       const st=h.st[si],ins=[...cp.querySelectorAll('.bk')];
-      if(ins.every((x,i)=>(st.ans[i]||'').split('/').some(a=>norm(a)===norm(x.value)))){ins.forEach((x,i)=>{const b=document.createElement('b');b.textContent=st.ans[i].split('/')[0];x.replaceWith(b)});si++;out.className='msg ok';out.textContent='✅ 맞아요!';show()}
-      else{out.className='msg no';out.textContent='❌ 다시 생각해 봐요.'}};
+      if(ins.every((x,i)=>(st.ans[i]||'').split('/').some(a=>norm(a)===norm(x.value)))){ins.forEach((x,i)=>{const b=document.createElement('b');b.textContent=st.ans[i].split('/')[0];x.replaceWith(b)});si++;out.className='msg ok';out.textContent='✅ 정답 !';show()}
+      else{out.className='msg no';out.textContent='❌ 다시 생각해봅시다.'}};
     m.addEventListener('keydown',e=>{if(e.key==='Enter'&&ck.isConnected)ck.click()})}
 async function runTrace(code,xj){const p=await loadPy();p.globals.set('UC',code);p.globals.set('XJ',xj);return p.runPython(`import sys,io,json,re
 _X=json.loads(XJ)
@@ -1082,26 +1085,26 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
   el.classList.add('showsp'); // 들여쓰기 점은 처음부터 보이게 (버튼으로 끌 수 있음)
   const note=t=>{const n=el.querySelector('.qn');n.textContent=t;setTimeout(()=>n.textContent='',2500)};
   const qpanel=()=>{const box=el.querySelector('.qp');if(!allSolved()){box.innerHTML='';pk='';return}const q=qs(cur),key=cur+'|'+(done[cur]?1:0);if(pk===key)return;pk=key;
-    if(!q||done[cur]){box.innerHTML=q?'<p style="margin:8px 0 0;color:var(--ok-ink)">✅ 질문을 모두 풀었어요!</p>':'';return}
+    if(!q||done[cur]){box.innerHTML=q?'<p style="margin:8px 0 0;color:var(--ok-ink)">✅ 질문 다 맞혔음 !</p>':'';return}
     const pv0=(S[cur-1]||[0,{}])[1],vals=Object.keys(pv0).map(k=>`<b>${esc(k)}</b> = ${esc(pv0[k])}`).join(' · ')||'아직 변수가 없어요';
-    box.innerHTML=`<div class="box warnbg" style="margin:10px 0 0"><b>이 줄을 실행하고 나면? 생각해 봐요</b><div style="margin:6px 0;color:var(--sub);font-size:14px">이 줄을 실행하기 <u>전</u> 값: ${vals}</div>${q.map((x,i)=>{const m=/\(([^()/]+(?:\/[^()/]+)+)\)\s*$/.exec(x.q),op=m?m[1].split('/'):(x.e==='@진입'?['예','아니오']:(x.e==='@안밖'?['안','밖']:null));return `<div class="qi" style="margin-top:8px"><span>${i+1}. ${esc(x.q)}</span><div class="row"><input class="qa" autocomplete="off" placeholder="답을 써 보세요" style="max-width:240px">${op?op.map(o=>`<button class="ghost opt">${esc(o.trim())}</button>`).join(''):''}<span class="qr"></span></div></div>`}).join('')}<div class="row"><button class="main qc">확인</button><button class="ghost qk" disabled>건너뛰기</button></div></div>`;
+    box.innerHTML=`<div class="box warnbg" style="margin:10px 0 0"><b>이 줄을 실행하고 나면? 생각해봅시다.</b><div style="margin:6px 0;color:var(--sub);font-size:14px">이 줄을 실행하기 <u>전</u> 값: ${vals}</div>${q.map((x,i)=>{const m=/\(([^()/]+(?:\/[^()/]+)+)\)\s*$/.exec(x.q),op=m?m[1].split('/'):(x.e==='@진입'?['예','아니오']:(x.e==='@안밖'?['안','밖']:null));return `<div class="qi" style="margin-top:8px"><span>${i+1}. ${esc(x.q)}</span><div class="row"><input class="qa" autocomplete="off" placeholder="답을 써보세요 !!" style="max-width:240px">${op?op.map(o=>`<button class="ghost opt">${esc(o.trim())}</button>`).join(''):''}<span class="qr"></span></div></div>`}).join('')}<div class="row"><button class="main qc">확인</button><button class="ghost qk" disabled>건너뛰기</button></div></div>`;
     const refreshQk=()=>{const b=box.querySelector('.qk'),n=tries[cur]||0;b.disabled=n<3;b.textContent=n<3?`건너뛰기 (${n}/3번 시도 후 가능)`:'건너뛰기'};refreshQk();
     box.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const i=b.closest('.qi').querySelector('.qa');i.value=b.textContent;i.focus()});
     box.querySelectorAll('.qa').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')box.querySelector('.qc').click()}));
     box.querySelector('.qk').onclick=()=>{done[cur]=true;upd()};
     box.querySelector('.qc').onclick=()=>{const qi=box.querySelectorAll('.qi'),ins=[...box.querySelectorAll('.qa')].filter(x=>!x.disabled);
-      if(ins.some(x=>!x.value.trim())){note('모든 칸에 답을 써 주세요');return}
+      if(ins.some(x=>!x.value.trim())){note('모든 칸에 답을 써보세요 !!');return}
       let all=true;q.forEach((x,i)=>{const inp=qi[i].querySelector('.qa'),r=qi[i].querySelector('.qr');if(inp.disabled)return;
-        const a=x.e[0]==='@'?atAns(cur,x.e):S[cur][3][i];if(okAns(a,inp.value)){inp.disabled=true;r.textContent='✅'}else{all=false;r.textContent='❌ 다시 생각해 봐요'}});
+        const a=x.e[0]==='@'?atAns(cur,x.e):S[cur][3][i];if(okAns(a,inp.value)){inp.disabled=true;r.textContent='✅'}else{all=false;r.textContent='❌ 다시 생각해봅시다.'}});
       if(all){done[cur]=true;upd();return}
-      const sig=ins.map(x=>norm(x.value)).join('|');if(sig===(last[cur]||'')){note('같은 답이에요. 다른 답을 생각해 봐요');return}
+      const sig=ins.map(x=>norm(x.value)).join('|');if(sig===(last[cur]||'')){note('같은 답이에요. 다른 답을 생각해봅시다.');return}
       last[cur]=sig;tries[cur]=(tries[cur]||0)+1;refreshQk();const b=box.querySelector('.qc');b.disabled=true;setTimeout(()=>{if(b.isConnected)b.disabled=false},1500)};};
   const curLoop=c=>{const ln=S[c][0];return LPS.filter(l=>l.fl<=ln&&ln<=l.end).sort((a,b)=>b.fl-a.fl)[0]||null};
   const lpTarget=(c,L)=>{for(let k=c+1;k<S.length;k++){const ln=S[k][0];if(!(ln>=L.fl&&ln<=L.end))return k}return S.length-1};
   const lpBtn=()=>{const b=el.querySelector('.lp');if(!b)return;const L=!allSolved()?null:curLoop(cur);if(!L||lpTarget(cur,L)<=cur){b.style.display='none';return}
     const n=S.slice(0,cur+1).filter(x=>x[0]===L.fl).length;b.style.display='';
     if(n<LPN)b.disabled=true,b.textContent=`반복 건너뛰기 (${n}/${LPN}번 본 뒤 가능)`;
-    else if(pend(cur))b.disabled=true,b.textContent='반복 건너뛰기 (질문을 먼저 풀어 주세요)';
+    else if(pend(cur))b.disabled=true,b.textContent='반복 건너뛰기 (질문부터 채워보세요)';
     else b.disabled=false,b.textContent='반복 건너뛰기';};
   const clean=raw.map(l=>l.replace(TRQ,(m,x)=>x.split('|')[0].trim()));
   const isSt=v=>{const t=String(v).trim();return(t[0]==='['&&t.endsWith(']'))||(t[0]==='{'&&t.endsWith('}'))};
@@ -1150,11 +1153,11 @@ function initTraces(){document.querySelectorAll('.trace:not([data-ok])').forEach
     el.querySelector('.out').textContent=os?'출력:\n'+os:'(아직 출력이 없어요)';{const kn=el.querySelector('.skn');if(s[4]>0&&!lk){kn.style.display='';kn.textContent=`이 줄 바로 앞에서 반복이 ${Number(s[4]).toLocaleString()}번 더 돌았어요. (처음 3번과 마지막 2번만 보여 주고, 가운데는 컴퓨터가 계산해서 건너뛰었어요. 아래 변수 값은 실제 계산 결과예요)`}else kn.style.display='none'}lpBtn();el.querySelector('.sl').value=cur;el.querySelector('.cn').textContent=s[0]?`${cur+1} / ${S.length}단계`:'✅ 끝!';qpanel()};
   const panes=()=>{el.querySelector('.pl').innerHTML=pane(0);upd()};panes();
   const stop=()=>{clearInterval(tm);tm=null;el.querySelector('.ap').textContent='▶ 자동 재생'};
-  el.querySelector('.sl').oninput=e=>{if(!allSolved()){cur=0;upd();note('위 코드의 🔍 칸을 먼저 풀어 주세요');return}const v=+e.target.value,lk=lock();if(v>lk){cur=lk;note('먼저 질문에 답해 보세요')}else cur=v;upd()};
+  el.querySelector('.sl').oninput=e=>{if(!allSolved()){cur=0;upd();note('냅다 하려하지 말고 위 코드의 🔍 칸부터 채워보세요.');return}const v=+e.target.value,lk=lock();if(v>lk){cur=lk;note('냅다 하려하지 말고 질문부터 채워보세요.')}else cur=v;upd()};
   el.querySelector('.lp').onclick=()=>{stop();if(!allSolved())return;const L=curLoop(cur);if(!L||pend(cur))return;const n=S.slice(0,cur+1).filter(x=>x[0]===L.fl).length;if(n<LPN)return;const t=lpTarget(cur,L);for(let k=cur;k<t;k++)if(qs(k))done[k]=true;cur=t;note(`반복문 ${L.fl}~${L.end}줄을 건너뛰었어요`);upd()};
   el.querySelector('.pv').onclick=()=>{stop();cur=Math.max(0,cur-1);upd()};
-  el.querySelector('.nx').onclick=()=>{stop();if(!allSolved()){note('위 코드의 🔍 칸을 먼저 풀어 주세요');return}if(cur>=lock()){note('먼저 질문에 답해 보세요');return}cur=Math.min(S.length-1,cur+1);upd()};
-  el.querySelector('.ap').onclick=()=>{if(tm)return stop();if(!allSolved()){note('위 코드의 🔍 칸을 먼저 풀어 주세요');return}if(cur>=S.length-1)cur=0;el.querySelector('.ap').textContent='⏸ 멈춤';tm=setInterval(()=>{if(!el.isConnected||cur>=S.length-1){stop();return}if(cur>=lock()){stop();note('먼저 질문에 답해 보세요');return}cur++;upd()},800)};
+  el.querySelector('.nx').onclick=()=>{stop();if(!allSolved()){note('냅다 하려하지 말고 위 코드의 🔍 칸부터 채워보세요.');return}if(cur>=lock()){note('냅다 하려하지 말고 질문부터 채워보세요.');return}cur=Math.min(S.length-1,cur+1);upd()};
+  el.querySelector('.ap').onclick=()=>{if(tm)return stop();if(!allSolved()){note('냅다 하려하지 말고 위 코드의 🔍 칸부터 채워보세요.');return}if(cur>=S.length-1)cur=0;el.querySelector('.ap').textContent='⏸ 멈춤';tm=setInterval(()=>{if(!el.isConnected||cur>=S.length-1){stop();return}if(cur>=lock()){stop();note('냅다 하려하지 말고 질문부터 채워보세요.');return}cur++;upd()},800)};
   // 관리자 전용: 코드를 팝업으로 크게 띄우고 옆(아래)에 변수값 추적표를 함께 보여 줘요
   const openBig=()=>{if(document.querySelector('.modal.bigm:not(.ad-out)'))return;
     const m=document.createElement('div');m.className='modal bigm';
@@ -1264,7 +1267,7 @@ async function noticeView(go){here('notice',{});const nv=NAV;app.innerHTML='불�
   <textarea id="nb" rows="5" placeholder="내용 (화면 입력 문법 그대로 쓸 수 있어요. 예: **굵게**)" style="width:100%;box-sizing:border-box;margin-top:8px"></textarea>
   <input id="ng" placeholder="대상 학번 (비우면 모두에게. 여러 명은 쉼표로 구분)" style="width:100%;box-sizing:border-box;margin-top:8px"><div id="ngw" style="font-size:14px;color:var(--sub);margin-top:4px"></div>
   <div class="row" style="margin-top:8px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="nh" style="width:auto;margin:0"> 숨긴 채로 저장 (학생 화면에 안 보임)</label><span style="flex:1"></span><button class="ghost" id="nc" style="display:none">수정 취소</button><button class="main" id="ns">저장</button></div></div>
-  <h3 class="msh" id="nls">공지 목록 <small>${L.length}개 · 보임 ${L.filter(x=>!x.hide).length}개</small></h3><p style="color:var(--sub);margin:0 0 8px;font-size:14px">'보임' 공지만 학생 화면에 떠요. 보임 공지 중 날짜가 가장 최근인 것이 머리글 가운데에 나와요.</p>${L.map(row).join('')||'<p>등록된 공지가 없어요.</p>'}`;
+  <h3 class="msh" id="nls">공지 목록 <small>${L.length}개 · 보임 ${L.filter(x=>!x.hide).length}개</small></h3><p style="color:var(--sub);margin:0 0 8px;font-size:14px">'보임' 공지만 학생 화면에 떠요. 보임 공지 중 날짜가 가장 최근인 것이 머리글 가운데에 나와요.</p>${L.map(row).join('')||'<p>아직 등록한 공지가 없어요 !!</p>'}`;
   const $$=q=>app.querySelector(q),reset=()=>{ed=null;$$('#nfh').textContent='새 공지 쓰기';$$('#nd').value=r.date;['#nt','#nb','#ng'].forEach(q=>$$(q).value='');$$('#nh').checked=false;$$('#nc').style.display='none';$$('#ns').textContent='저장'},done=t=>{delete mem.info;get('info',()=>api('info'),true).then(x=>{if(x&&!x.error){hdrNotice();renderSide()}});toast(t);if(S.v==='notice')noticeView()};
   const nw=()=>{const t=$$('#ng').value.trim();$$('#ngw').textContent=t?'대상: '+who(t,$$('#nd').value):''};$$('#ng').oninput=nw;$$('#nd').oninput=nw;
   $$('#nc').onclick=()=>{reset();nw()};if(go==='new')$$('#nt').focus();else if(go==='edit')$$('#nls').scrollIntoView({block:'start'});
@@ -1318,29 +1321,29 @@ const fbResAll=(R,text,ans)=>{const lab=fbLab(ans);return `<h4 class="fbh">내�
 const fbRes=(x,lab,mine)=>`<div class="fbq">${lab}</div>${mine}`+(x[0]==='통과'?`<div class="fbr p">✅ 피드백 없음!</div>`:`<div class="fbr f"><b>피드백 내용 :</b> ${esc(x[1])}</div>`);
 /* v219 장난 글 거르기: 보내기 전에 화면에서 검사 (짧은 글, 같은 글자 반복, 자음·모음만, 한글이 아닌 글, 글에 없는 내용을 적은 칸) */
 function fbJunk(I,x){const ns=v=>String(v).replace(/\s/g,''),t=ns(x.text),lab=fbLab(I).map(l=>l.replace(/^(\d+)\..*$/,'$1번 칸'));
-  const bad=v=>/(.)\1{4,}/.test(v)?'같은 글자를 5번 넘게 이어 쓴 곳이 있어요.':/[ㄱ-ㅎㅏ-ㅣ]{2,}/.test(v)?'ㅋㅋ·ㅁㄴㅇㄹ처럼 자음이나 모음만 쓴 곳이 있어요.':(v.match(/[가-힣]/g)||[]).length<v.length*.5?'한글 문장으로 써 주세요.':'';
-  if(t.length<80)return `내가 쓴 글이 너무 짧아요. 띄어쓰기를 빼고 80자 이상 써 주세요. (지금 ${t.length}자)`;
+  const bad=v=>/(.)\1{4,}/.test(v)?'똑같은 글자를 5번 이상 쓰지 마세요 !':/[ㄱ-ㅎㅏ-ㅣ]{2,}/.test(v)?'자음이나 모음만 쓴 부분을 찾아 고치세요.':(v.match(/[가-힣]/g)||[]).length<v.length*.5?'한글 문장으로 써보세요 !!':'';
+  if(t.length<80)return `내가 쓴 글이 너무 짧아요. 띄어쓰기를 빼고 80자 이상 써보세요 !! (지금 ${t.length}자)`;
   let e=bad(t);if(e)return '내가 쓴 글: '+e;
   const words=v=>String(v).split(/\s+/).map(w=>w.replace(/[^\w가-힣]/g,'')).filter(w=>w.length>1);
   for(let i=0;i<I.length;i++){if(I[i].k==='체크')continue;const a=ns(x.ans[i]);
-    if(!a.length)return `${lab[i]}을 써 주세요.`;e=bad(a);if(e)return `${lab[i]}: ${e}`;
-    const W=words(x.ans[i]);if(W.length&&W.filter(w=>t.includes(w)).length<W.length*.7)return `${lab[i]}에 적은 내용이 내 글에 없어요. 글에서 그대로 찾아 붙여 넣어 주세요.`}
+    if(!a.length)return `${lab[i]}을 써보세요 !!`;e=bad(a);if(e)return `${lab[i]}: ${e}`;
+    const W=words(x.ans[i]);if(W.length&&W.filter(w=>t.includes(w)).length<W.length*.7)return `${lab[i]}에 적은 내용이 내 글에 없어요. 글에서 그대로 찾아 붙여 넣으세요 !!`}
   return ''}
 /* v222: 피드백 화면에 들어왔을 때 새 결과(완료·거부)를 팝업으로 한 번 보여 줌 (기기별 localStorage 'fbpop|요청ID') */
 const fbPopSeen=id=>{try{return localStorage.getItem('fbpop|'+id)}catch(e){return 1}},fbPopMark=id=>{try{localStorage.setItem('fbpop|'+id,1)}catch(e){}};
 function fbPop(last){if(!last||fbPopSeen(last.id)||!fbStuV())return;fbPopMark(last.id);const rj=last.st==='거부',o=$('#fbnote');if(o)o.remove();
   const d=document.createElement('div');d.id='fbpop';d.className='modal';
-  d.innerHTML=`<div class="mb" style="text-align:center">${rj?`<h3 style="margin:6px 0">글이 돌아왔어요</h3><p>선생님이 글을 돌려보냈어요. 이유를 보고 글을 고쳐서 다시 보내 주세요.</p><div class="fbs rej" style="text-align:left">이유 : <span style="font-weight:normal;color:var(--ink)">${esc((last.res&&last.res.rej)||'')}</span></div>`:`<h3 style="margin:6px 0">피드백이 완료됐어요!</h3><p>선생님 피드백을 아래에서 확인해 보세요.</p>`}<div class="row" style="justify-content:center"><button class="main" data-ok>확인</button></div></div>`;
+  d.innerHTML=`<div class="mb" style="text-align:center">${rj?`<h3 style="margin:6px 0">글이 돌아왔어요</h3><p>피드백이 끝났습니다. 읽어보고 글을 고쳐서 다시 보내세요 ~</p><div class="fbs rej" style="text-align:left">이유 : <span style="font-weight:normal;color:var(--ink)">${esc((last.res&&last.res.rej)||'')}</span></div>`:`<h3 style="margin:6px 0">피드백 준비 완료!</h3><p>피드백 읽고 고쳐보세요 ~</p>`}<div class="row" style="justify-content:center"><button class="main" data-ok>확인</button></div></div>`;
   document.body.appendChild(d);d.querySelector('[data-ok]').onclick=()=>d.remove()}
 /* v223: 수업이 끝나고 선생님이 '결과 공개'로 다시 연 주제 = 받은 피드백만 보기 (보내기·고치기 없음) */
 function fbView(w,head,L){const x=[...L].reverse().find(o=>o.res)||L[L.length-1],note=`<div class="fbs wait">이미 끝난 과제입니다. 수정은 불가해요!</div>`;
   if(!x){w.innerHTML=`<div class="box">${head}${note}<p style="margin:0">이 주제에 보낸 글이 없어요.</p></div>`;return}
   const lab=fbLab(x.ans);
-  if(x.st==='거부'){w.innerHTML=`<div class="box">${head}${note}<div class="fbs rej">선생님이 돌려보낸 글이에요.<div class="fbwhy">이유 : ${esc((x.res&&x.res.rej)||'')}</div></div><h4 class="fbh">내가 쓴 글</h4><div class="fbans">${esc(x.text)}</div></div>`;return}
+  if(x.st==='거부'){w.innerHTML=`<div class="box">${head}${note}<div class="fbs rej">쌤이 글을 돌려보냈어요!<div class="fbwhy">이유 : ${esc((x.res&&x.res.rej)||'')}</div></div><h4 class="fbh">내가 쓴 글</h4><div class="fbans">${esc(x.text)}</div></div>`;return}
   if(x.res){const R=x.res;w.innerHTML=`<div class="box">${head}${note}<div class="fbs done">피드백 완료! <small style="font-weight:normal">(${esc(x.fat)})</small></div>`
     +fbResAll(R,x.text,x.ans)+`</div>`;
     if(x.st==='완료'){fbPop(x);api('fbSeen',{id:x.id});FB.hide=x.id;$('#fbnote')&&$('#fbnote').remove()}return}
-  w.innerHTML=`<div class="box">${head}${note}<p>선생님 피드백을 받지 못한 글이에요.</p><h4 class="fbh">내가 쓴 글</h4><div class="fbans">${esc(x.text)}</div></div>`}
+  w.innerHTML=`<div class="box">${head}${note}<p>내 피드백을 받지 못한 글이에요.</p><h4 class="fbh">내가 쓴 글</h4><div class="fbans">${esc(x.text)}</div></div>`}
 const fbStuV=()=>S.user&&(S.user.role!=='관리자'||S.preview); // v237: 학생, 또는 학생 화면 미리보기 중인 선생님
 async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const nv=NAV,r=await api('fbMine',{task:t.id});if(!w.isConnected||nv!==NAV)return; // v237: 기다리는 사이 화면이 다시 그려졌으면(예전 #fbw) 그리지 않음 → 예전 빈 글 칸이 보내기 버튼을 가로채 '0자'가 뜨던 문제if(r.error)return w.innerHTML=`<div class="box">${esc(r.error)}</div>`;
   const L=r.list||[],last=L[L.length-1],src=edit||(!last||last.st==='취소'||last.st==='거부')?(last||{}):null,dk='fbd|'+(S.user&&S.user.id)+'|'+t.id;
@@ -1348,18 +1351,18 @@ async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const nv=NAV
   if(t.view)return fbView(w,`<p class="fbtt"><b>${esc(title||'과제')}</b> · 받은 피드백 보기</p>`,L);
   if(src){let d=null;try{d=JSON.parse(sessionStorage.getItem(dk)||'null')}catch(e){}const pa=src.ans||[],v=d||{text:src.text||'',ans:I.map((x,i)=>pa[i]&&pa[i].q===x.q?pa[i].a:'')}; // 다시 보낼 때는 학생이 쓴 답 그대로
     const lab=fbLab(I),W=I.map((x,i)=>[x,i]).filter(z=>z[0].k!=='체크'),C=I.map((x,i)=>[x,i]).filter(z=>z[0].k==='체크');
-    const rj=last&&last.st==='거부'?`<div class="fbs rej">선생님이 글을 돌려보냈어요. 다시 써서 보내 주세요.<div class="fbwhy">이유 : ${esc((last.res&&last.res.rej)||'')}</div></div>`:'';
+    const rj=last&&last.st==='거부'?`<div class="fbs rej">피드백이 끝났습니다. 읽어보고 글을 고쳐서 다시 보내세요 ~<div class="fbwhy">이유 : ${esc((last.res&&last.res.rej)||'')}</div></div>`:'';
     if(last&&last.st==='거부'&&!edit)fbPop(last);
     if(last&&last.st==='거부'&&FB.hide!==last.id){api('fbSeen',{id:last.id});FB.hide=last.id;$('#fbnote')&&$('#fbnote').remove()}
     w.innerHTML=`<div class="box">${head}${rj}<h4 class="fbh" style="margin-top:4px">내가 쓴 글</h4><textarea class="fbt" rows="8" placeholder="내가 쓴 수행평가 글을 붙여 넣거나 여기에 써 보세요.">${esc(v.text)}</textarea>`
       +(W.length?`<h4 class="fbh">내 글에서 찾아 적을 내용 <small>글에서 <b>그대로</b> 찾아 복사 붙여넣기 하기!</small></h4>`+W.map(([x,i])=>`<div class="fbq">${lab[i]}${x.h?`<small>${esc(x.h)}</small>`:''}</div><textarea class="fba" rows="2" data-i="${i}">${esc(v.ans[i]||'')}</textarea>`).join(''):'')
       +(C.length?`<h4 class="fbh">내 글을 읽고 생각할 내용</h4>`+C.map(([x,i])=>`<label class="fbck"><input type="checkbox" data-i="${i}"${v.ans[i]===true?' checked':''}> ${esc(x.q)}</label>${x.h?`<div class="fbex">${esc(x.h)}</div>`:''}`).join(''):'')
-      +`<div class="row" style="align-items:center;margin-top:12px"><button class="main" id="fbgo">선생님께 보내기</button>${edit?`<button class="ghost" id="fbbk">되돌아가기</button>`:''}<span id="fbm" style="color:var(--sub);font-size:14px">글과 적는 칸을 모두 쓰고, 체크 항목을 모두 체크해야 보낼 수 있어요</span></div></div>`;
+      +`<div class="row" style="align-items:center;margin-top:12px"><button class="main" id="fbgo">선생님께 보내기</button>${edit?`<button class="ghost" id="fbbk">되돌아가기</button>`:''}<span id="fbm" style="color:var(--sub);font-size:14px">글과 적는 칸을 다 쓰고, 체크 항목도 다 체크해야 보낼 수 있습니다 !!</span></div></div>`;
     const T=w.querySelector('.fbt'),E=i=>w.querySelector(`[data-i="${i}"]`),val=()=>({text:T.value,ans:I.map((x,i)=>x.k==='체크'?E(i).checked:E(i).value)}),chk=()=>{const x=val();$('#fbgo').disabled=S.user.role!=='관리자'&&(!x.text.trim()||I.some((q,i)=>q.k==='체크'?x.ans[i]!==true:!String(x.ans[i]).trim()))}; // v238: 선생님 계정은 빈칸이어도 보냄 / v205: 체크 항목도 모두 체크해야 보냄
     [T,...w.querySelectorAll('[data-i]')].forEach(e=>e.oninput=e.onchange=()=>{chk();try{sessionStorage.setItem(dk,JSON.stringify(val()))}catch(er){}});chk();
     if(edit)$('#fbbk').onclick=()=>{try{sessionStorage.removeItem(dk)}catch(e){}fbStu(t,title,I)};
     $('#fbgo').onclick=async()=>{const b=$('#fbgo'),jk=S.user.role==='관리자'?'':fbJunk(I,val());if(jk){const m=$('#fbm');m.textContent=jk;m.style.color='var(--no-ink)';return}
-      const ok=b.dataset.ok;delete b.dataset.ok;if(!ok){const d=document.createElement('div');d.className='modal';d.innerHTML=`<div class="mb" style="text-align:center"><h3 style="margin:6px 0 10px">잠깐! 꼭 읽어 주세요</h3><p style="line-height:1.8">이건 피드백 받을 때만 쓰는 거고, 실제 채점은 클래스룸 파일로 할겁니다.<br>즉, <b style="color:#e53935">클래스룸 파일에 안적고 여기에만 적으면 미제출</b>이 될 수 있으니,<br>꼭 클래스룸 파일에도 옮겨 적으세요.</p><div class="row" style="justify-content:center"><button class="main" data-ok>확인하고 보내기</button><button class="ghost" data-no>취소</button></div></div>`;document.body.appendChild(d);d.querySelector('[data-ok]').onclick=()=>{d.remove();b.dataset.ok=1;b.click()};d.querySelector('[data-no]').onclick=()=>d.remove();return} // v246: 보내기 전에 클래스룸 안내 팝업
+      const ok=b.dataset.ok;delete b.dataset.ok;if(!ok){const d=document.createElement('div');d.className='modal';d.innerHTML=`<div class="mb" style="text-align:center"><h3 style="margin:6px 0 10px">잠깐! 꼭 읽어보세요 !!</h3><p style="line-height:1.8">이건 피드백 받을 때만 쓰는 거고, 실제 채점은 클래스룸 파일로 할겁니다.<br>즉, <b style="color:#e53935">클래스룸 파일에 안적고 여기에만 적으면 미제출</b>이 될 수 있으니,<br>꼭 클래스룸 파일에도 옮겨 적으세요.</p><div class="row" style="justify-content:center"><button class="main" data-ok>확인하고 보내기</button><button class="ghost" data-no>취소</button></div></div>`;document.body.appendChild(d);d.querySelector('[data-ok]').onclick=()=>{d.remove();b.dataset.ok=1;b.click()};d.querySelector('[data-no]').onclick=()=>d.remove();return} // v246: 보내기 전에 클래스룸 안내 팝업
       if(Date.now()-(FB.sendT||0)<3000)return;FB.sendT=Date.now();b.disabled=true;b.textContent='보내는 중...';const s=await api('fbSend',{task:t.id,...val()});
       if(s.error){b.disabled=false;b.textContent='선생님께 보내기';$('#fbm').textContent=s.error;if(s.closed){const d=document.createElement('div');d.className='modal';d.innerHTML=`<div class="mb" style="text-align:center"><h3 style="margin:6px 0">이제 보낼 수 없어요.</h3><p>직접 봐줄테니까 손 들고 기다려보세요.</p><div class="row" style="justify-content:center"><button class="main" data-ok>확인</button></div></div>`;document.body.appendChild(d);d.querySelector('[data-ok]').onclick=()=>d.remove()}return}try{sessionStorage.removeItem(dk)}catch(e){}toast('선생님께 보냈어요');fbStu(t,title,I)};return}
   const mine=`<details class="sbox" style="margin-top:10px"><summary style="cursor:pointer">내가 보낸 글과 답 보기</summary><pre class="fbp">${esc(last.text)}</pre>${(()=>{const lab=fbLab(last.ans);return last.ans.map((x,i)=>`<div class="fbq">${lab[i]}</div>${fbAnsH(x)}`).join('')})()}</details>`;
@@ -1367,7 +1370,7 @@ async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const nv=NAV
     w.innerHTML=`<div class="box">${head}<div class="fbs ${rd?'read':'wait'}">${rd?'읽는 중이에요! 잠시만 기다려보세요':'잘 도착했어요! 내가 읽기 전까지 수정할 수 있습니다.'}</div>`
       +`<div class="row" style="align-items:center"><button class="ghost" id="fbx"${rd?' disabled':''}>글 수정하기</button><button class="ghost" id="fbmg">미니게임 하기</button><span id="fbm" style="color:var(--sub);font-size:14px">${rd?'읽는 중이니까 고칠 수 없어요!':'누르면 쓴 내용 그대로 고쳐서 다시 보낼 수 있어요.'}</span></div>${mine}`
       +`</div>`;
-    const cancel=async()=>{const b=$('#fbx');if(b)b.disabled=true;const s=await api('fbCancel',{id:last.id});if(s.error){toast(s.error);return fbStu(t,title,I)}toast('글을 고친 뒤 다시 보내 주세요');fbStu(t,title,I,1)};
+    const cancel=async()=>{const b=$('#fbx');if(b)b.disabled=true;const s=await api('fbCancel',{id:last.id});if(s.error){toast(s.error);return fbStu(t,title,I)}toast('글을 고친 뒤 다시 보내세요 ~');fbStu(t,title,I,1)};
     if(!rd)$('#fbx').onclick=cancel;const dec=L.filter(o=>o.st==='거부'||o.st==='완료'||o.st==='확인');MG.lock=!!dec.length&&dec[dec.length-1].st==='거부'; // v219: 마지막으로 끝난 요청이 '거부'면 게임 잠금, 다음 글이 정상 피드백을 받으면 풀림
     $('#fbmg').onclick=()=>{if(fbStuV())mgWait(last,rd?null:cancel)};if(fbStuV())mgWait(last,rd?null:cancel);return}
   const R=last.res||{g:['',''],q:[]}; // v200: 통과 개수는 보이지 않고, 문항마다 내가 쓴 내용 아래에 피드백
@@ -1394,9 +1397,9 @@ const mgMineH=last=>`<div class="mgmine" hidden><pre class="fbp">${esc(last.text
 function mgMine(m){const b=m.querySelector('[data-mine]');if(b)b.onclick=()=>{const p=m.querySelector('.mgmine');p.hidden=!p.hidden;b.textContent=p.hidden?'내 글 다시 보기':'내 글 접기'}}
 function mgWait(last,cancel,done){if(last){MG.last=last;MG.cancel=cancel;MG.done=!!done}last=MG.last;mgStop();let m=$('#mgw');if(!m){m=document.createElement('div');m.id='mgw';m.className='modal';document.body.appendChild(m);MG.ord=['hanoi','queen','run','dodge','react'].sort(()=>Math.random()-.5)} // v215: 1·2·3번에 게임을 무작위로
   const rd=last.st==='읽는 중';
-  m.innerHTML=`<div class="mgcol"><div class="mb" style="position:relative"><button class="mgx" data-close title="닫기">✕</button>${MG.done?'<h3 style="margin:0 34px 6px 0">모두 통과했어요!</h3><p class="mgtip" style="margin:0 0 12px">수고했어요. 미니게임을 즐겨 보세요.</p><div class="row"><button class="ghost" data-mine>내 글 다시 보기</button></div>':`<h3 style="margin:0 34px 6px 0">글이 피드백 될 때까지 기다려주세요.</h3><p class="mgtip" style="margin:0 0 12px">${rd?'선생님이 읽는 중이라 지금은 글을 고칠 수 없어요.':'잘 도착했어요! 선생님이 읽기 전까지는 글을 고쳐서 다시 보낼 수 있어요.'} 피드백이 완료되면 이 창이 저절로 닫혀요.</p>`
+  m.innerHTML=`<div class="mgcol"><div class="mb" style="position:relative"><button class="mgx" data-close title="닫기">✕</button>${MG.done?'<h3 style="margin:0 34px 6px 0">피드백 내용 없음!</h3><p class="mgtip" style="margin:0 0 12px">고생했으니 조용히 할 거 하든가, 이거 하세요</p><div class="row"><button class="ghost" data-mine>내 글 다시 보기</button></div>':`<h3 style="margin:0 34px 6px 0">내가 글을 다시 읽고 보내줄 때까지 기다려보세요.</h3><p class="mgtip" style="margin:0 0 12px">${rd?'내가 읽는 중이라 지금은 글을 고칠 수 없어요.':'피드백 전송 완료! 내가 읽기 전엔 고쳐서 다시 보낼 수 있습니다.'} 피드백이 완료되면 이 창이 저절로 닫혀요.</p>`
     +`<div class="row"><button class="ghost" data-mine>내 글 다시 보기</button>${rd?'':'<button class="ghost" data-cancel>글 수정하기</button>'}</div>`}${mgMineH(last)}</div>`
-    +`<div class="mb"><h3 style="margin:0 0 10px">${MG.done?'':'기다리는 동안 '}미니게임 하기</h3>${MG.lock?'<p class="mgtip" style="margin:0">지난 글이 거부돼서 게임이 잠겼어요. 이번 글이 선생님께 정상으로 피드백을 받으면 다시 열려요.</p>':`<div class="row">${MG.ord.map((k,i)=>`<button class="ghost" data-mg="${k}">${i+1}번</button>`).join('')}</div>`}</div></div>`;
+    +`<div class="mb"><h3 style="margin:0 0 10px">${MG.done?'':'기다리는 동안 '}미니게임 하기</h3>${MG.lock?'<p class="mgtip" style="margin:0">대충하고 게임 할 생각하지 마시고, \'똑바로\' 써서 피드백 받으세요.</p>':`<div class="row">${MG.ord.map((k,i)=>`<button class="ghost" data-mg="${k}">${i+1}번</button>`).join('')}</div>`}</div></div>`;
   mgMine(m);m.querySelectorAll('[data-mg]').forEach(b=>b.onclick=()=>mgOpen(b.dataset.mg));
   m.querySelector('[data-close]').onclick=()=>mgClose(); // v222: X로 닫기
   const c=m.querySelector('[data-cancel]');if(c)c.onclick=()=>{mgClose();MG.cancel&&MG.cancel()}} // v216: '글 수정하기' = 보내기 취소 후 쓴 내용 그대로 고치는 화면
@@ -1483,7 +1486,7 @@ function mgReact(a){a.innerHTML=`<div class="mgrule"><b>목표</b> 상자가 <b>
 function fbNote(x){if(x&&FB.hide!==x.id&&$('#mgw')&&fbStuV()){mgClose();MG.best={}} // v218: 최고 기록은 저장 없이 이번 기다림 동안만
  // v213: 피드백이 오면 게임 강제 종료
   const o=$('#fbnote');if(!x||FB.hide===x.id||!fbStuV()){if(o&&(!x||FB.hide===x.id))o.remove();return}if(o)return;
-  const d=document.createElement('div');d.id='fbnote';d.className='modal';const tt=esc(String(x.title||x.task).split('|').pop().trim());d.innerHTML=`<div class="mb" style="text-align:center">${x.rej?`<h3 style="margin:6px 0">글이 돌아왔어요</h3><p>선생님이 「${tt}」 글을 돌려보냈어요. 이유를 보고 다시 써 주세요.</p>`:`<h3 style="margin:6px 0">피드백이 완료됐어요!</h3><p>선생님이 「${tt}」에 피드백을 보냈어요.</p>`}<div class="row" style="justify-content:center"><button class="main" data-go>지금 보기</button><button class="ghost" data-later>나중에</button></div></div>`;
+  const d=document.createElement('div');d.id='fbnote';d.className='modal';const tt=esc(String(x.title||x.task).split('|').pop().trim());d.innerHTML=`<div class="mb" style="text-align:center">${x.rej?`<h3 style="margin:6px 0">글이 돌아왔어요</h3><p>「${tt}」 피드백이 끝났습니다. 읽어보고 글을 고쳐서 다시 보내세요 ~</p>`:`<h3 style="margin:6px 0">피드백 준비 완료!</h3><p>「${tt}」 피드백 읽고 고쳐보세요 ~</p>`}<div class="row" style="justify-content:center"><button class="main" data-go>지금 보기</button><button class="ghost" data-later>나중에</button></div></div>`;
   document.body.appendChild(d);d.querySelector('[data-go]').onclick=()=>{FB.hide=x.id;fbPopMark(x.id);d.remove();essayView(x.task)};d.querySelector('[data-later]').onclick=()=>{FB.hide=x.id;d.remove()}}
 function fbBadge(){document.querySelectorAll('.fbn').forEach(e=>{e.textContent=FB.n>0?FB.n:'';e.classList.toggle('on',FB.n>0)})}
 async function fbPoll(){if(!S.user||S.user.role!=='관리자'){const c=$('#fbst');if(c)c.remove();FB.seen.clear();FB.n=null;return} // v241: 탭이 숨겨져 있어도 확인 (알림 띄우려고)const r=await api('fbCount');if(!r||r.error||!S.user||S.user.role!=='관리자')return;
@@ -1507,7 +1510,7 @@ const fbLiH=(r,o,dn,open)=>`<button class="fbli${open===o.id?' on':''}" data-id=
   fbWaitH=(r,open)=>r.wait.length?r.wait.map(o=>`<div class="fbliw">${fbLiH(r,o,0,open)}<button class="fbqr" data-rej="${esc(o.id)}" title="열지 않고 바로 거부">거부</button></div>`).join(''):'<p style="margin:8px">기다리는 요청이 없어요. 10초마다 새로 확인해요.</p>';
 const fbByCls=L=>{const m={};L.forEach(o=>(m[o.cls||'']=m[o.cls||'']||[]).push(o));return Object.keys(m).sort((a,b)=>(a===''?1e9:Number(a)||1e8)-(b===''?1e9:Number(b)||1e8)||a.localeCompare(b)).map(k=>[k,m[k]])}; // v225: 최근 피드백을 반별로 (반 안에서는 최근 순 그대로)
 /* v234: 대기 목록에서 열지 않고 바로 거부 (한 번 더 눌러 확인) */
-const FB_QR_WHY='선생님이 피드백하지 못하고 돌려보냈어요. 다음 시간에 다시 보내 주세요.';
+const FB_QR_WHY='지난 시간에 피드백을 받지 않고 퇴실해서 돌려보냈습니다 !';
 function fbQrBind(root){root.querySelectorAll('.fbqr').forEach(b=>b.onclick=async()=>{const id=b.dataset.rej;
   if(!b.classList.contains('ask')){b.classList.add('ask');b.textContent='정말 거부?';setTimeout(()=>{if(b.isConnected&&!b.disabled){b.classList.remove('ask');b.textContent='거부'}},3000);return}
   b.disabled=true;b.textContent='...';const s=await api('fbReject',{id,why:FB_QR_WHY});if(s.error){b.disabled=false;b.classList.remove('ask');b.textContent='거부';toast(s.error);return}
