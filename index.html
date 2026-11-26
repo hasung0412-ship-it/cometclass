@@ -358,7 +358,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v243</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v244</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1232,7 +1232,10 @@ function adminMenu(){here('amenu',{});app.innerHTML=`<h2 style="margin:0 0 14px"
   <button class="card amw" data-grd><b>성적 조회 및 계정 관리</b><small>학생을 골라 성적 보기 · 비밀번호 초기화</small></button>
   <button class="card amw" data-fbq><b>피드백 요청<span class="fbn"></span></b><small>학생이 보낸 글에 직접 피드백</small></button>
   <div class="amr" data-msgs role="button" tabindex="0"><b>한마디 모음</b><div class="amx" id="amm"><small>불러오는 중...</small></div></div>
-  <div class="amr"><b>공지 관리</b><div class="amx"><button class="aml" data-nnew>- 공지 등록</button><button class="aml" data-nedt>- 공지 수정</button></div></div></div>`;fbBadge();
+  <div class="amr"><b>공지 관리</b><div class="amx"><button class="aml" data-nnew>- 공지 등록</button><button class="aml" data-nedt>- 공지 수정</button></div></div>
+  <div class="amr"><b>미니게임 횟수</b><div class="amx" id="amg"><small>불러오는 중...</small></div></div></div>`;fbBadge();
+  api('mgStats').then(r=>{const e=$('#amg');if(!e)return;if(!r||r.error)return e.innerHTML='<small>불러오지 못했어요</small>'; // v244: 학생들이 게임을 연 횟수만 (점수는 저장 안 함)
+    const N={hanoi:'하노이탑',queen:'N퀸',run:'점프 달리기',dodge:'화살 피하기',react:'반응속도'},c=r.cnt||{};e.innerHTML=`<small>${Object.keys(N).sort((a,b)=>(c[b]||0)-(c[a]||0)).map(k=>`${N[k]} ${c[k]||0}회`).join(" · ")}</small>`});
   app.querySelector('[data-msgs]').onclick=()=>msgsView();app.querySelector('[data-grd]').onclick=()=>gradesView();app.querySelector('[data-nnew]').onclick=()=>noticeView('new');app.querySelector('[data-nedt]').onclick=()=>noticeView('edit');app.querySelector('[data-fbq]').onclick=()=>fbAdmin();
   api('msgList').then(r=>{const e=$('#amm');if(!e)return;if(!r||r.error)return e.innerHTML='<small>한마디를 불러오지 못했어요</small>'; // 오늘 올라온 한마디 중 최근 2개만 미리 보기
     const T=r.list.filter(x=>!x.date||x.date===r.date).slice(-2).reverse();e.innerHTML=T.length?T.map(x=>`<div class="amt"><span class="mbg ${x.status}">${esc(x.status)}</span> ${esc(x.text)}</div>`).join(''):'<small>오늘 올라온 한마디가 없어요</small>'})}
@@ -1406,7 +1409,8 @@ function mgWait(last,cancel,done){if(last){MG.last=last;MG.cancel=cancel;MG.done
   mgMine(m);m.querySelectorAll('[data-mg]').forEach(b=>b.onclick=()=>mgOpen(b.dataset.mg));
   m.querySelector('[data-close]').onclick=()=>mgClose(); // v222: X로 닫기
   const c=m.querySelector('[data-cancel]');if(c)c.onclick=()=>{mgClose();MG.cancel&&MG.cancel()}} // v216: '글 수정하기' = 보내기 취소 후 쓴 내용 그대로 고치는 화면
-function mgOpen(kind){const m=$('#mgw');if(!m)return;mgStop();const full=kind==='run'||kind==='dodge'||kind==='react';
+function mgOpen(kind){const m=$('#mgw');if(!m)return;mgStop();api('mgPlay',{g:kind}); // v244: 게임을 연 횟수만 서버에 셈
+  const full=kind==='run'||kind==='dodge'||kind==='react';
   m.innerHTML=`<div class="mb mgb"><div class="row" style="justify-content:flex-end;align-items:center;margin:0 0 10px"><div class="row">${full?'':'<button class="ghost" data-mine>내 글 다시 보기</button>'}<button class="ghost" data-x>닫기</button></div></div>`
     +(full?'':mgMineH(MG.last))+`<div class="mga"></div></div>`;
   mgMine(m);m.querySelector('[data-x]').onclick=()=>mgWait();
