@@ -358,7 +358,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v242</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v243</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -739,7 +739,7 @@ function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 �
     cf.oninput=()=>{cy.disabled=norm(cf.value)!==norm(PH)};cf.focus();
     m.querySelector('#cn').onclick=()=>m.remove();
     cy.onclick=async()=>{if(cy.disabled)return;cy.disabled=true;m.querySelector('#ce').textContent='저장 중...';
-      const r=await api('changePw',{newPw:p});if(r.error){m.querySelector('#ce').textContent=r.error;cy.disabled=false;return}m.remove();S.user.must=false;start()}}}
+      const r=await api('changePw',{newPw:p});if(r.error){m.querySelector('#ce').textContent=r.error;cy.disabled=false;return}m.remove();if(r.token){S.token=r.token;sessionStorage.setItem('t',r.token)}S.user.must=false;start()}}}
 
 /* 학생: 언어 → 차시 → 활동 → 내용 */
 async function langView(gn){S.at=null;here('lang',{g:gn});const nv=NAV;renderToc();if(!mem.toc)app.innerHTML='불러오는 중...';const r=await get('toc',()=>api('toc'));if(nv!==NAV)return;if(r.error)return app.innerHTML=r.error;
