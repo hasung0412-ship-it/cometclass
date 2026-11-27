@@ -365,7 +365,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 .narrow.fgw #go{width:auto;margin-top:6px}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v253</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v254</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -444,7 +444,7 @@ function fbCd(){const a=$('#ta'),b=$('#tba');if(!a||!b)return;const h=b.querySel
   const k=new Date(Date.now()+(MB.off||0)+9*36e5),hm=k.toISOString().slice(11,16),p=FB_PERIODS.find(x=>hm<x[1]);a.dataset.cd=1;h.textContent='제출 가능한 시간';
   if(!p){a.textContent='--:--';a.style.color='';return}const [H,M]=p[1].split(':').map(Number),left=Math.max(0,Math.floor((H*3600+M*60-(k.getUTCHours()*3600+k.getUTCMinutes()*60+k.getUTCSeconds()))));
   a.textContent=fmtT(left);a.style.color=left<300?'var(--no-ink)':''} // 오른쪽 타이머 위 현재 시각 (서버 시계 기준 한국 시간 = 성적·한마디 시간 판단과 같은 시계)
-async function mbLoad(){const u=S.user&&S.user.id;if(MB.ld)return;MB.ld=1;const r=await api('msgGet').finally(()=>MB.ld=0);if(!r||r.error||!S.user||S.user.id!==u)return;if(MB.u!==u)MB.ed=false;Object.assign(MB,{d:r,u,t:Date.now(),off:r.now-Date.now()});mbDraw();fbNote(r.fb)}
+async function mbLoad(){const u=S.user&&S.user.id;if(MB.ld)return;MB.ld=1;const r=await api('msgGet').finally(()=>MB.ld=0);if(!r||r.error||!S.user||S.user.id!==u)return;if(MB.u!==u)MB.ed=false;Object.assign(MB,{d:r,u,t:Date.now(),off:r.now-Date.now()});mbDraw();fbNote(r.fb);fbqUpd(r.fbq)}
 const mbT=()=>new Date(Date.now()+MB.off+9*36e5).toISOString().slice(11,16),mbOpen=()=>!MB.d.lock&&MB.d.times.some(w=>mbT()>=w[0]&&mbT()<w[1]); // lock = 관리자가 막은 학생: 쓰기 시간이 아닐 때와 똑같이 보임
 function mbBoard(){const e=$('#mbx .mbt');if(!e)return;const B=MB.d.board||[],n=B.length,k=Math.floor((Date.now()+MB.off)/300000);let x=null;
   if('cur' in MB.d)x=MB.d.cur; // v126 서버: 5분마다 서버가 고른 글 (모든 학생 같음)
@@ -466,7 +466,7 @@ $('#side').addEventListener('click',e=>{const t=e.target;if(t.closest('.mbe')){M
 $('#side').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('mbq')&&!e.isComposing)mbSave()});
 MB.j=3000+Math.floor(Math.random()*30000); // 5분이 바뀌면 학생마다 3~33초 사이에 흩어서 새 글을 받음 (서버에 한꺼번에 몰리지 않게)
 MB.c=Date.now(); // 1분마다 전광판 글만 가볍게 다시 확인 (관리자가 '지금 띄우기'로 고른 글이 바로 보이게; 옛 서버면 조용히 무시)
-async function mbCur(){MB.c=Date.now();const u=S.user&&S.user.id,r=await api('msgCur');if(!r||r.error||!('cur' in r)||!MB.d||MB.u!==u)return;MB.d.cur=r.cur;MB.d.slotEnd=r.slotEnd;mbBoard();fbNote(r.fb)}
+async function mbCur(){MB.c=Date.now();const u=S.user&&S.user.id,r=await api('msgCur');if(!r||r.error||!('cur' in r)||!MB.d||MB.u!==u)return;MB.d.cur=r.cur;MB.d.slotEnd=r.slotEnd;mbBoard();fbNote(r.fb);fbqUpd(r.fbq)}
 setInterval(()=>{if(!MB.d||!$('#mbx'))return;if(MB.d.slotEnd&&Date.now()+MB.off>MB.d.slotEnd+MB.j)mbLoad();else if(!MB.ld&&!document.hidden&&Date.now()-MB.c>60000+MB.j)mbCur();mbBoard();if(mbOpen()!==MB.open&&!(MB.ed&&document.activeElement&&document.activeElement.classList.contains('mbq')))mbDraw()},15000);
 function hdrNotice(){const h=$('#hn'),I=S.user&&mem.info,x=I&&(I.notices||[])[0];if(!x){h.innerHTML='';return} // 머리글 가운데: 가장 최근 공지 한 줄
   const t=document.createElement('div');t.innerHTML=fmt(x.body);h.innerHTML=`<div class="ht"><b>${esc(x.title)}</b><span class="hd">${esc(x.date)}</span></div><div class="hx"><span class="hb">${esc(t.textContent.replace(/\s+/g,' ').trim())}</span><span class="hm">(더보기)</span></div>`;hnMore()}
@@ -1368,7 +1368,7 @@ function fbView(w,head,L){const x=[...L].reverse().find(o=>o.res)||L[L.length-1]
     if(x.st==='완료'){fbPop(x);api('fbSeen',{id:x.id});FB.hide=x.id;$('#fbnote')&&$('#fbnote').remove()}return}
   w.innerHTML=`<div class="box">${head}${note}<p>내 피드백을 받지 못한 글이에요.</p><h4 class="fbh">내가 쓴 글</h4><div class="fbans">${esc(x.text)}</div></div>`}
 const fbStuV=()=>S.user&&(S.user.role!=='관리자'||S.preview); // v237: 학생, 또는 학생 화면 미리보기 중인 선생님
-async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const nv=NAV,r=await api('fbMine',{task:t.id});if(!w.isConnected||nv!==NAV)return; // v237: 기다리는 사이 화면이 다시 그려졌으면(예전 #fbw) 그리지 않음 → 예전 빈 글 칸이 보내기 버튼을 가로채 '0자'가 뜨던 문제if(r.error)return w.innerHTML=`<div class="box">${esc(r.error)}</div>`;
+async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const nv=NAV,r=await api('fbMine',{task:t.id});FB.q=r&&r.ahead!=null?r.ahead:null;if(!w.isConnected||nv!==NAV)return; // v237: 기다리는 사이 화면이 다시 그려졌으면(예전 #fbw) 그리지 않음 → 예전 빈 글 칸이 보내기 버튼을 가로채 '0자'가 뜨던 문제if(r.error)return w.innerHTML=`<div class="box">${esc(r.error)}</div>`;
   const L=r.list||[],last=L[L.length-1],src=edit||(!last||last.st==='취소'||last.st==='거부')?(last||{}):null,dk='fbd|'+(S.user&&S.user.id)+'|'+t.id;
   const head=`<p class="fbtt"><b>${esc(title||'과제')}</b> · 내가 직접 피드백해요${last&&!src?` <small style="color:var(--sub)">(${last.ver}번째 요청 · ${esc(last.at)})</small>`:''}</p>`;
   if(t.view)return fbView(w,`<p class="fbtt"><b>${esc(title||'과제')}</b> · 받은 피드백 보기</p>`,L);
@@ -1387,10 +1387,10 @@ async function fbStu(t,title,I,edit){const w=$('#fbw');if(!w)return;const nv=NAV
     $('#fbgo').onclick=async()=>{const b=$('#fbgo'),jk=S.user.role==='관리자'?'':fbJunk(I,val());if(jk){const m=$('#fbm');m.textContent=jk;m.style.color='var(--no-ink)';return}
       const ok=b.dataset.ok;delete b.dataset.ok;if(!ok){const d=document.createElement('div');d.className='modal';d.innerHTML=`<div class="mb" style="text-align:center"><h3 style="margin:6px 0 10px">잠깐! 꼭 읽어보세요 !!</h3><p style="line-height:1.8">이건 피드백 받을 때만 쓰는 거고, 실제 채점은 클래스룸 파일로 할겁니다.<br>즉, <b style="color:#e53935">클래스룸 파일에 안적고 여기에만 적으면 미제출</b>이 될 수 있으니,<br>꼭 클래스룸 파일에도 옮겨 적으세요.</p><div class="row" style="justify-content:center"><button class="main" data-ok>확인하고 보내기</button><button class="ghost" data-no>취소</button></div></div>`;document.body.appendChild(d);d.querySelector('[data-ok]').onclick=()=>{d.remove();b.dataset.ok=1;b.click()};d.querySelector('[data-no]').onclick=()=>d.remove();return} // v246: 보내기 전에 클래스룸 안내 팝업
       if(Date.now()-(FB.sendT||0)<3000)return;FB.sendT=Date.now();b.disabled=true;b.textContent='보내는 중...';const s=await api('fbSend',{task:t.id,...val()});
-      if(s.error){b.disabled=false;b.textContent='선생님께 보내기';$('#fbm').textContent=s.error;if(s.closed){const d=document.createElement('div');d.className='modal';d.innerHTML=`<div class="mb" style="text-align:center"><h3 style="margin:6px 0">이제 보낼 수 없어요.</h3><p>직접 봐줄테니까 손 들고 기다려보세요.</p><div class="row" style="justify-content:center"><button class="main" data-ok>확인</button></div></div>`;document.body.appendChild(d);d.querySelector('[data-ok]').onclick=()=>d.remove()}return}try{sessionStorage.removeItem(dk)}catch(e){}toast('선생님께 보냈어요');fbStu(t,title,I)};return}
+      if(s.error){b.disabled=false;b.textContent='선생님께 보내기';$('#fbm').textContent=s.error;if(s.closed){const d=document.createElement('div');d.className='modal';d.innerHTML=`<div class="mb" style="text-align:center"><h3 style="margin:6px 0">이제 보낼 수 없어요.</h3><p>직접 봐줄테니까 손 들고 기다려보세요.</p><div class="row" style="justify-content:center"><button class="main" data-ok>확인</button></div></div>`;document.body.appendChild(d);d.querySelector('[data-ok]').onclick=()=>d.remove()}return}try{sessionStorage.removeItem(dk)}catch(e){}toast(s.ahead!=null?'피드백 전송 완료! '+fbqT(s.ahead):'선생님께 보냈어요');fbStu(t,title,I)};return}
   const mine=`<details class="sbox" style="margin-top:10px"><summary style="cursor:pointer">내가 보낸 글과 답 보기</summary><pre class="fbp">${esc(last.text)}</pre>${(()=>{const lab=fbLab(last.ans);return last.ans.map((x,i)=>`<div class="fbq">${lab[i]}</div>${fbAnsH(x)}`).join('')})()}</details>`;
   if(last.st==='대기'||last.st==='읽는 중'){const rd=last.st==='읽는 중';
-    w.innerHTML=`<div class="box">${head}<div class="fbs ${rd?'read':'wait'}">${rd?'읽는 중이에요! 잠시만 기다려보세요':'잘 도착했어요! 내가 읽기 전까지 수정할 수 있습니다.'}</div>`
+    w.innerHTML=`<div class="box">${head}<div class="fbs ${rd?'read':'wait'}">${rd?'읽는 중이에요! 잠시만 기다려보세요':'잘 도착했어요! 내가 읽기 전까지 수정할 수 있습니다.'+fbqH()}</div>`
       +`<div class="row" style="align-items:center"><button class="ghost" id="fbx"${rd?' disabled':''}>글 수정하기</button><button class="ghost" id="fbmg">미니게임 하기</button><span id="fbm" style="color:var(--sub);font-size:14px">${rd?'읽는 중이니까 고칠 수 없어요!':'누르면 쓴 내용 그대로 고쳐서 다시 보낼 수 있어요.'}</span></div>${mine}`
       +`</div>`;
     const cancel=async()=>{const b=$('#fbx');if(b)b.disabled=true;const s=await api('fbCancel',{id:last.id});if(s.error){toast(s.error);return fbStu(t,title,I)}toast('글을 고친 뒤 다시 보내세요 ~');fbStu(t,title,I,1)};
@@ -1420,7 +1420,7 @@ const mgMineH=last=>`<div class="mgmine" hidden><pre class="fbp">${esc(last.text
 function mgMine(m){const b=m.querySelector('[data-mine]');if(b)b.onclick=()=>{const p=m.querySelector('.mgmine');p.hidden=!p.hidden;b.textContent=p.hidden?'내 글 다시 보기':'내 글 접기'}}
 function mgWait(last,cancel,done){if(last){MG.last=last;MG.cancel=cancel;MG.done=!!done}last=MG.last;mgStop();let m=$('#mgw');if(!m){m=document.createElement('div');m.id='mgw';m.className='modal';document.body.appendChild(m);MG.ord=['hanoi','queen','run','dodge','react'].sort(()=>Math.random()-.5)} // v215: 1·2·3번에 게임을 무작위로
   const rd=last.st==='읽는 중';
-  m.innerHTML=`<div class="mgcol"><div class="mb" style="position:relative"><button class="mgx" data-close title="닫기">✕</button>${MG.done?'<h3 style="margin:0 34px 6px 0">피드백 내용 없음!</h3><p class="mgtip" style="margin:0 0 12px">고생했으니 조용히 할 거 하든가, 이거 하세요</p><div class="row"><button class="ghost" data-mine>내 글 다시 보기</button></div>':`<h3 style="margin:0 34px 6px 0">내가 글을 다시 읽고 보내줄 때까지 기다려보세요.</h3><p class="mgtip" style="margin:0 0 12px">${rd?'내가 읽는 중이라 지금은 글을 고칠 수 없어요.':'피드백 전송 완료! 내가 읽기 전엔 고쳐서 다시 보낼 수 있습니다.'} 피드백이 완료되면 이 창이 저절로 닫혀요.</p>`
+  m.innerHTML=`<div class="mgcol"><div class="mb" style="position:relative"><button class="mgx" data-close title="닫기">✕</button>${MG.done?'<h3 style="margin:0 34px 6px 0">피드백 내용 없음!</h3><p class="mgtip" style="margin:0 0 12px">고생했으니 조용히 할 거 하든가, 이거 하세요</p><div class="row"><button class="ghost" data-mine>내 글 다시 보기</button></div>':`<h3 style="margin:0 34px 6px 0">내가 글을 다시 읽고 보내줄 때까지 기다려보세요.</h3><p class="mgtip" style="margin:0 0 12px">${rd?'내가 읽는 중이라 지금은 글을 고칠 수 없어요.':'피드백 전송 완료! 내가 읽기 전엔 고쳐서 다시 보낼 수 있습니다.'} 피드백이 완료되면 이 창이 저절로 닫혀요.${rd?'':fbqH()}</p>`
     +`<div class="row"><button class="ghost" data-mine>내 글 다시 보기</button>${rd?'':'<button class="ghost" data-cancel>글 수정하기</button>'}</div>`}${mgMineH(last)}</div>`
     +`<div class="mb"><h3 style="margin:0 0 10px">${MG.done?'':'기다리는 동안 '}미니게임 하기</h3>${MG.lock?'<p class="mgtip" style="margin:0">대충하고 게임 할 생각하지 마시고, \'똑바로\' 써서 피드백 받으세요.</p>':`<div class="row">${MG.ord.map((k,i)=>`<button class="ghost" data-mg="${k}">${i+1}번</button>`).join('')}</div>`}</div></div>`;
   mgMine(m);m.querySelectorAll('[data-mg]').forEach(b=>b.onclick=()=>mgOpen(b.dataset.mg));
@@ -1506,6 +1506,9 @@ function mgReact(a){a.innerHTML=`<div class="mgrule"><b>목표</b> 상자가 <b>
     else ready()};
   b.onclick=hit;MG.key=e=>{if(!$('#mgw'))return;if(e.code==='Space'){e.preventDefault();if(!e.repeat)hit()}};addEventListener('keydown',MG.key);
   show('--info-bg','--info-line','시작하기','클릭하거나 스페이스바를 누르세요');info()}
+/* v254: 내 앞에 기다리는 글 수 (서버가 1분마다 오는 전광판 확인에 실어 보냄, 숫자만) */
+const fbqT=n=>n?`지금 내 앞에 ${n}개의 글이 기다리고 있어요.`:'지금 내 앞에 기다리는 글이 없어요. 곧 읽을게요!',fbqH=()=>FB.q==null?'':`<b class="fbqn" style="display:block;margin-top:6px">${fbqT(FB.q)}</b>`;
+function fbqUpd(n){FB.q=n==null?null:n;document.querySelectorAll('.fbqn').forEach(e=>{if(FB.q==null)e.remove();else e.textContent=fbqT(FB.q)})}
 function fbNote(x){if(x&&FB.hide!==x.id&&$('#mgw')&&fbStuV()){mgClose();MG.best={}} // v218: 최고 기록은 저장 없이 이번 기다림 동안만
  // v213: 피드백이 오면 게임 강제 종료
   const o=$('#fbnote');if(!x||FB.hide===x.id||!fbStuV()){if(o&&(!x||FB.hide===x.id))o.remove();return}if(o)return;
