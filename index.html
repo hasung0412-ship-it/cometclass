@@ -364,33 +364,34 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 .fgbtn button{flex:1;min-height:44px;margin:6px 0 0}
 .narrow.fgw #go{width:auto;margin-top:6px}
 /* ---- v255 컴퓨터 단축키 익히기 (keysView) ---- */
-.kbw{display:flex;flex-direction:column;gap:18px}
-.kbd{display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:var(--r3);background:var(--code);border:1px solid var(--line);user-select:none}
-.kbr{display:flex;gap:6px}
-.kk{flex:1 1 0;min-width:0;height:46px;display:flex;flex-direction:column;justify-content:center;align-items:center;border-radius:var(--r1);background:var(--raise);border:1px solid var(--line2);box-shadow:0 3px 0 var(--line);font-size:14px;line-height:1.1;color:var(--ink);transition:transform .06s,background-color .06s,box-shadow .06s}
-.kk small{font-size:12px;color:var(--faint)}
+.kbw{display:flex;flex-direction:column;gap:10px}.box.kbw{padding:14px 18px}
+.kbd{display:flex;flex-direction:column;gap:4px;padding:10px;border-radius:var(--r3);background:var(--code);border:1px solid var(--line);user-select:none}
+.kbr{display:flex;gap:4px}
+.kk{flex:1 1 0;min-width:0;height:34px;display:flex;flex-direction:column;justify-content:center;align-items:center;border-radius:var(--r1);background:var(--raise);border:1px solid var(--line2);box-shadow:0 2px 0 var(--line);font-size:14px;line-height:1;color:var(--ink);transition:transform .06s,background-color .06s,box-shadow .06s}
+.kk small{font-size:12px;line-height:1;color:var(--faint)}
 .kk.md{color:var(--sub)}
-.kk.on{background:var(--warn-bg);border-color:var(--warn-ink);color:var(--warn-ink);box-shadow:0 0 0 var(--line);transform:translateY(3px)}
+.kk.on{background:var(--warn-bg);border-color:var(--warn-ink);color:var(--warn-ink);box-shadow:0 0 0 var(--line);transform:translateY(2px)}
 .kk.on small{color:var(--warn-ink)}
 .kk.sc{border-color:var(--info-line)}
-.kbn{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}.kbp h4{margin:0 0 6px;font-size:14px;color:var(--sub);font-weight:700}
-.kbc{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;min-height:96px;padding:12px;border-radius:var(--r3);background:var(--raise);border:1px solid var(--line);text-align:center}
-.kbc .cb{font:26px/1.3 'Jua',sans-serif;letter-spacing:.02em}
+.kbn{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}.kbp h4{margin:0 0 4px;font-size:14px;color:var(--sub);font-weight:700}
+.kbc{display:flex;justify-content:center;align-items:center;gap:16px;min-height:52px;padding:6px 14px;border-radius:var(--r3);background:var(--raise);border:1px solid var(--line);text-align:center}
+.kbc .cb{font:20px/1.3 'Jua',sans-serif;white-space:nowrap;letter-spacing:.02em}
 .kbc .cb kbd,.kbl kbd{display:inline-block;padding:1px 9px;border-radius:var(--r1);background:var(--surface);border:1px solid var(--line2);box-shadow:0 2px 0 var(--line);font:inherit}
 .kbc .cs{font-size:14px;color:var(--sub);word-break:keep-all}
 .kbc.hit{background:var(--info-bg);border-color:var(--info-line)}.kbc.hit .cs{color:var(--info-ink)}
-.kbp{display:flex;flex-direction:column;min-width:0}.kbp textarea{flex:1;min-height:130px;resize:vertical;font:16px/1.6 'KoPubWorld Dotum','Malgun Gothic',sans-serif}
-.kbclip{margin-top:6px;font-size:14px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kbclip b{color:var(--ink)}
-.kbl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.kbl>div{padding:12px 14px;border-radius:var(--r2);background:var(--surface);border:1px solid var(--line);transition:background-color .2s,border-color .2s}
+.kbp{display:flex;flex-direction:column;min-width:0}.kbp textarea{flex:1;min-height:92px;padding:8px 12px;resize:vertical;font:14px/1.6 'KoPubWorld Dotum','Malgun Gothic',sans-serif}
+.kbclip{margin-top:4px;font-size:14px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kbclip b{color:var(--ink)}
+.kbtop{display:flex;flex-direction:column;gap:10px}
+.kbl{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.kbl>div{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;border-radius:var(--r2);background:var(--surface);border:1px solid var(--line);transition:background-color .2s,border-color .2s}
 .kbl>div.on{background:var(--warn-bg);border-color:var(--warn-ink);animation:kbpop .35s var(--ad-spring)}.kbl>div.on b{color:var(--warn-ink)}@keyframes kbpop{0%{transform:scale(1)}40%{transform:scale(1.05)}100%{transform:scale(1)}}
-.kbl .kc{font-size:14px;margin-bottom:4px}.kbl kbd{font-size:14px;padding:0 7px}
-.kbl b{display:block;font-size:16px}.kbl p{margin:2px 0 0;font-size:14px;color:var(--sub);word-break:keep-all}
-.kbx{font-size:14px;color:var(--sub);word-break:keep-all}.kbx b{color:var(--no-ink)}
-@media(max-width:700px){.kbn,.kbl{grid-template-columns:1fr 1fr}.kk{height:36px;font-size:12px}.kk small{display:none}.kbd{padding:10px;gap:4px}.kbr{gap:4px}}
+.kbl .kc{font-size:12px;white-space:nowrap}.kbl kbd{font-size:12px;padding:0 6px}
+.kbl b{display:block;font-size:14px;white-space:nowrap}
+.kbx{font-size:12px;color:var(--sub);word-break:keep-all}.kbx b{color:var(--no-ink)}
+@media(max-width:700px){.kbn{grid-template-columns:1fr 1fr}.kk{font-size:12px}.kk small{display:none}.kbc{flex-direction:column;gap:2px}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v255</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v256</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -1651,26 +1652,25 @@ const KB_ROWS=[ // [e.code, 위 글자, 아래 작은 글자(한글), 너비]
   [['ControlLeft','Ctrl','',1.5],['MetaLeft','⊞ Win','',1.3],['AltLeft','Alt','',1.3],['Space','','',6.4],['AltRight','한/영','',1.3],['ControlRight','한자','',1.3],['ContextMenu','☰','',1.3],['ControlRight2','Ctrl','',1.5]]];
 const KB_ALIAS={Lang1:'AltRight',HangulMode:'AltRight',Lang2:'ControlRight',HanjaMode:'ControlRight',MetaRight:'MetaLeft',OSLeft:'MetaLeft'};
 const KB_LIST=[ // 키, 이름, 설명, 눌렀을 때 짧은 안내 (드래그는 키가 아니라 마우스라 맨 앞에 따로)
-  ['drag','드래그','마우스 왼쪽 버튼을 누른 채로 끌어서 글자를 골라요.',''],
-  ['KeyC','복사','고른 글자를 컴퓨터가 잠깐 기억해요.','복사했어요! 이제 오른쪽 칸에 Ctrl + V로 붙여 넣어 보세요.'],
-  ['KeyX','잘라내기','고른 글자를 지우면서 기억해요.','잘라냈어요! 오른쪽 칸에 Ctrl + V로 넣어 보세요.'],
-  ['KeyV','붙여넣기','기억해 둔 글자를 커서 자리에 넣어요.','붙여 넣었어요!'],
-  ['KeyA','전체 선택','글상자 안 글자를 모두 골라요.','모두 골랐어요!'],
+  ['drag','드래그','누른 채로 끌어서 글자를 골라요.',''],
+  ['KeyC','복사','고른 글자를 기억해 둬요.','복사했어요! 이제 오른쪽 칸에 Ctrl + V로 붙여 넣어 보세요.'],
+  ['KeyX','잘라내기','지우면서 기억해 둬요.','잘라냈어요! 오른쪽 칸에 Ctrl + V로 넣어 보세요.'],
+  ['KeyV','붙여넣기','기억한 글자를 넣어요.','붙여 넣었어요!'],
+  ['KeyA','전체 선택','글자를 모두 골라요.','모두 골랐어요!'],
   ['KeyZ','되돌리기','방금 한 일을 취소해요.','되돌렸어요! 더 누르면 더 앞으로 돌아가요.'],
-  ['KeyS','저장','지금 하던 것을 파일로 저장해요.','저장됐어요! (연습이라 진짜로 저장하지는 않아요)']];
+  ['KeyS','저장','하던 것을 파일로 저장해요.','저장됐어요! (연습이라 진짜로 저장하지는 않아요)']];
 const KB={on:new Set(),clip:'',ft:0};
 const kbName=c=>({ControlLeft:'Ctrl',ControlRight2:'Ctrl',ShiftLeft:'Shift',ShiftRight:'Shift',AltLeft:'Alt',MetaLeft:'Win',Space:'Space',AltRight:'한/영',ControlRight:'한자'}[c]||(KB_ROWS.flat().find(k=>k[0]===c)||[])[1]||c);
 function keysView(){here('keys');document.querySelectorAll('.modal.info').forEach(x=>x.remove());KB.on.clear();
   const key=k=>`<div class="kk${/Control|Shift|Alt|Meta|Tab|Caps|Enter|Backspace|Context/.test(k[0])?' md':''}${KB_LIST.some(x=>x[0]===k[0])?' sc':''}" data-c="${k[0]}" style="flex-grow:${k[3]||1}">${esc(k[1])}${k[2]?`<small>${k[2]}</small>`:''}</div>`;
   app.innerHTML=`<h2>컴퓨터 단축키 익히기</h2><div class="box kbw" id="kbw">
-    <div class="kbd">${KB_ROWS.map(r=>`<div class="kbr">${r.map(key).join('')}</div>`).join('')}</div>
+    <div class="kbtop"><div class="kbd">${KB_ROWS.map(r=>`<div class="kbr">${r.map(key).join('')}</div>`).join('')}</div><div class="kbl">${KB_LIST.map(x=>`<div data-c="${x[0]}" title="${x[2]}"><div class="kc">${x[0]==='drag'?'<kbd>🖱 마우스</kbd> 끌기':`<kbd>Ctrl</kbd> + <kbd>${x[0].slice(3)}</kbd>`}</div><b>${x[1]}</b></div>`).join('')}</div></div>
     <div class="kbc" id="kbc"><div class="cb">키를 눌러 보세요</div><div class="cs">Ctrl을 누른 채로 C, V 같은 키를 눌러 보세요.</div></div>
     <div><div class="kbn"><div class="kbp"><h4>① 글을 드래그해서 골라 보세요</h4><textarea id="kbt">오늘은 컴퓨터 단축키를 배워요.
 마우스로 이 글을 드래그해서 고른 다음,
 Ctrl + C로 복사하고 오른쪽 칸에 Ctrl + V로 붙여 넣어 보세요!</textarea></div>
       <div class="kbp"><h4>② 여기에 붙여 넣어 보세요</h4><textarea id="kbt2" placeholder="여기를 누르고 Ctrl + V"></textarea></div></div>
       <div class="kbclip" id="kbclip">📋 컴퓨터가 기억한 글자: <b>아직 없어요</b></div></div>
-    <div class="kbl">${KB_LIST.map(x=>`<div data-c="${x[0]}"><div class="kc">${x[0]==='drag'?'<kbd>🖱 마우스</kbd> 누른 채로 끌기':`<kbd>Ctrl</kbd> + <kbd>${x[0].slice(3)}</kbd>`}</div><b>${x[1]}</b><p>${x[2]}</p></div>`).join('')}</div>
     <div class="kbx">여기서는 연습할 수 없는 단축키도 있어요: Alt + Tab (창 바꾸기), ⊞ Win + D (바탕 화면 보기). <b>Ctrl + W는 누르면 이 창이 진짜로 닫히니 누르지 마세요!</b></div></div>`;
   const clip=s=>{KB.clip=s;$('#kbclip').innerHTML=`📋 컴퓨터가 기억한 글자: <b>${s?esc(s.replace(/\s+/g,' ')):'아직 없어요'}</b>`},sel=t=>t.value.slice(t.selectionStart,t.selectionEnd);
   app.querySelectorAll('.kbp textarea').forEach(t=>{t.addEventListener('copy',()=>clip(sel(t)));t.addEventListener('cut',()=>clip(sel(t)));
