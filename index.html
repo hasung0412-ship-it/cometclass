@@ -354,11 +354,17 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(prefers-contrast:more){button,.box,.sbox,input,textarea,.card{border-color:#7b8499}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v251</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v252</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
-const S={token:sessionStorage.getItem('t')||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:'',at:null,tocOpen:{},ayear:''};let mem={};
+/* 창을 닫았다 열어도 로그인 유지: 학생(2로 시작하는 5자리 학번) 45분, 관리자 90분, 첫 로그인 시각부터 고정(연장 없음).
+   비밀번호는 저장하지 않고 서버가 준 token과 끝나는 시각만 이 기기 localStorage 'keep'에 둠. test·spare·방과후 계정은 예전처럼 창을 닫으면 풀림 */
+function keepMin(u){const id=String(u&&(u.sid||u.id)||'').split('_').pop();if(/^2\d{4}$/.test(id))return 45;if(u&&u.role==='관리자')return 90;return 0}
+function keepGet(){try{const o=JSON.parse(localStorage.getItem('keep')||'null');if(o&&o.t&&Date.now()<o.e)return o;localStorage.removeItem('keep')}catch(e){}return null}
+function keepSet(tok,u){try{const m=keepMin(u);if(m)localStorage.setItem('keep',JSON.stringify({t:tok,e:Date.now()+m*60000}));else localStorage.removeItem('keep')}catch(e){}}
+function keepTok(tok){try{const o=keepGet();if(o){o.t=tok;localStorage.setItem('keep',JSON.stringify(o))}}catch(e){}} // 비밀번호를 바꿔 새 token을 받아도 끝나는 시각은 그대로
+const S={token:sessionStorage.getItem('t')||(keepGet()||{}).t||'',user:null,menu:null,preview:false,sel:{},sub:'',asub:'',at:null,tocOpen:{},ayear:''};let mem={};
 // 받아 둔 내용이 있으면 1분이 지났어도 바로 보여 주고, 새 내용은 뒤에서 조용히 받아 둠 (화면 넘길 때마다 서버를 3~4초씩 기다리지 않게). force면 지금 새로 받아 옴
 const memT={},memR={},memP={};async function get(k,fn,force){if(!force&&mem[k]){if(Date.now()-(memT[k]||0)>=60000&&!memR[k]){const tk=S.token;memR[k]=Promise.resolve().then(fn).then(r=>{if(r&&!r.error&&S.token===tk){mem[k]=r;memT[k]=Date.now();if(k==='toc')renderToc();if(k==='info')hdrNotice()}}).catch(()=>{}).finally(()=>{delete memR[k]})}return mem[k]}
   const r=await(force?fn():(memP[k]=memP[k]||Promise.resolve().then(fn).finally(()=>{delete memP[k]})));if(!r.error){mem[k]=r;memT[k]=Date.now()}return r} // 같은 내용을 받는 중이면 한 번만 물어봄
@@ -690,7 +696,7 @@ function goHome(){const u=S.user;if(!u||u.must)return;if(u.role!=='관리자'&&i
   if(u.role==='관리자'&&!S.preview){showToc(false);adminView();return}showToc(true);loadToc();langView()}
 $('#hm').onclick=goHome;$('#hm').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();goHome()}});
 function togglePrev(){S.preview=!S.preview;setWho();S.preview?(showToc(true),loadToc(),langView()):(showToc(false),adminView())}
-function logout(){mgClose();tmStop();mem={};S.preview=false;S.sel={};S.sub='';S.asub='';S.ayear='';sessionStorage.removeItem('t');sessionStorage.removeItem('pos');S.token='';S.user=null;setWho();hdrNotice();loginView()}
+function logout(){mgClose();tmStop();mem={};S.preview=false;S.sel={};S.sub='';S.asub='';S.ayear='';sessionStorage.removeItem('t');sessionStorage.removeItem('pos');try{localStorage.removeItem('keep')}catch(e){}S.token='';S.user=null;setWho();hdrNotice();loginView()}
 
 /* 로그인 */
 let cnxT=null;
@@ -712,7 +718,7 @@ function loginView(msg=''){showToc(false);app.innerHTML=`<div class="box narrow 
 <p style="color:var(--sub);font-size:14px">처음 로그인할 때 비밀번호는 학번이에요.</p><p><a href="#" id="fg" style="color:var(--sub);font-size:14px">비밀번호를 잊어버렸어요!</a></p>
 <div class="lgi"><div class="lgt" id="lgv" style="display:none"><small>오늘의 접속자</small><b></b></div><div class="lgt"><small>현재 시각</small><b id="lgc"></b><small id="lgd"></small></div></div></div>`;lgClock();
   const go=async()=>{$('#e').textContent='확인 중...';await new Promise(z=>setTimeout(z,Math.random()*800));const r=await api('login',{id:$('#id').value,pw:$('#pw').value,year:$('#yr').value});
-    if(r.error){let m=r.error;if(/학번 또는 비밀번호가 틀렸/.test(m)){const n=lgFail(1);m=LG_MSG[Math.min(n,LG_MSG.length)-1]}return $('#e').textContent=m}lgFail(0);S.token=r.token;sessionStorage.setItem('t',r.token);S.user=r;start()};
+    if(r.error){let m=r.error;if(/학번 또는 비밀번호가 틀렸/.test(m)){const n=lgFail(1);m=LG_MSG[Math.min(n,LG_MSG.length)-1]}return $('#e').textContent=m}lgFail(0);S.token=r.token;sessionStorage.setItem('t',r.token);keepSet(r.token,r);S.user=r;start()};
   $('#fg').onclick=e=>{e.preventDefault();forgotView()};fillYears();$('#go').onclick=go;$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('#go').disabled)go()})}
 function resume(){let p=null;try{p=JSON.parse(sessionStorage.getItem('pos')||'null')}catch(e){}const u=S.user;if(!p||p.u!==u.id||u.must||(u.role!=='관리자'&&isPhone()))return start();
   S.asub=p.asub||'';S.ayear=p.ayear||'';S.preview=u.role==='관리자'&&!!p.p;setWho();
@@ -738,7 +744,7 @@ function pwView(){app.innerHTML=`<div class="box narrow"><h2>새 비밀번호 �
     cf.oninput=()=>{cy.disabled=norm(cf.value)!==norm(PH)};cf.focus();
     m.querySelector('#cn').onclick=()=>m.remove();
     cy.onclick=async()=>{if(cy.disabled)return;cy.disabled=true;m.querySelector('#ce').textContent='저장 중...';
-      const r=await api('changePw',{newPw:p});if(r.error){m.querySelector('#ce').textContent=r.error;cy.disabled=false;return}m.remove();if(r.token){S.token=r.token;sessionStorage.setItem('t',r.token)}S.user.must=false;start()}}}
+      const r=await api('changePw',{newPw:p});if(r.error){m.querySelector('#ce').textContent=r.error;cy.disabled=false;return}m.remove();if(r.token){S.token=r.token;sessionStorage.setItem('t',r.token);keepTok(r.token)}S.user.must=false;start()}}}
 
 /* 학생: 언어 → 차시 → 활동 → 내용 */
 async function langView(gn){S.at=null;here('lang',{g:gn});const nv=NAV;renderToc();if(!mem.toc)app.innerHTML='불러오는 중...';const r=await get('toc',()=>api('toc'));if(nv!==NAV)return;if(r.error)return app.innerHTML=r.error;
