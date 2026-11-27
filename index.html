@@ -4,7 +4,9 @@
 <title>혜성특급</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌠%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-<style>@font-face{font-family:'GangwonEduSaeeum';font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEduSaeeum_OTFMediumA.woff') format('woff'),url('https://cdn.jsdelivr.net/gh/fonts-archive/GangwonEduSaeeum/GangwonEduSaeeum.woff2') format('woff2')}@font-face{font-family:'KyoboHand';font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff')}@font-face{font-family:'KoPubWorld Dotum';font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff') format('woff')}@font-face{font-family:'KoPubWorld Dotum';font-weight:700;font-display:swap;src:url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff') format('woff')}</style>
+<style>@font-face{font-family:'GangwonEduSaeeum';font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEduSaeeum_OTFMediumA.woff') format('woff'),url('https://cdn.jsdelivr.net/gh/fonts-archive/GangwonEduSaeeum/GangwonEduSaeeum.woff2') format('woff2')}@font-face{font-family:'KyoboHand';font-display:swap;src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff')}@font-face{font-family:'KoPubWorld Dotum';font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff') format('woff')}@font-face{font-family:'KoPubWorld Dotum';font-weight:700;font-display:swap;src:url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff') format('woff')}.reqb{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:#fde2e2;color:#d23c3c;font-size:13px;font-weight:700;vertical-align:middle}
+.box[data-etc] .ch{margin-bottom:10px}
+</style>
 <!-- ===== 스타일 (v206 정리본) =====
      예전에는 원본 + apple-layer + quiet-layer + dark-layer + tidy-layer + asm-style 6개가 서로 덮어썼어요. 지금은 이 한 곳에만 있어요.
      규칙: 색은 아래 :root 토큰만 써요.
@@ -393,7 +395,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(max-width:700px){.kbn{grid-template-columns:1fr 1fr}.kk{font-size:12px}.kk small{display:none}.kbc{flex-direction:column;gap:2px}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v259</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v260</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -827,12 +829,12 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
   const cd=(i,v)=>{if(i.type==='기타')return fmt(i.code||'');if(i.type!=='설명쓰기')return i.code?(/^\s*```\s*(trace|run)/.test(i.code)||/\[\s*분할/.test(i.code)?fmt(i.code):`<pre>${hotCode(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
   const pn=exNum(r.items);box.innerHTML=r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);n=pn[n];const s=sv(i.q),f=isF(i),v=s&&i.type==='설명쓰기'?String(s.answer).split('\n').map(l=>l.replace(/^\d+:\s?/,'')):[];
     const inp=(i.type==='설명쓰기'||i.type==='기타')?'':i.choices?i.choices.map(c=>`<label class="choice"><input type="radio" name="q${i.q}" value="${esc(c)}" ${s&&String(s.answer)===c?'checked':''}>${esc(c)}</label>`).join(''):i.type==='서술'?`<textarea class="free" style="min-height:90px;font-family:inherit" placeholder="생각을 자유롭게 써 보세요">${esc(s?s.answer:'')}</textarea>`:`<input class="ans" placeholder="답을 입력하세요" value="${esc(s?s.answer:'')}">`;
-    let bd=(i.type==='기타'?`<h3>${fmt(i.text)}</h3>`:`<h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}</h3>${fmt(i.text)}`)+cd(i,v);const AK=/\[\s*답칸\s*\]/;bd=AK.test(bd)?bd.replace(AK,()=>inp).replace(/\[\s*답칸\s*\]/g,''):bd+inp;
-    return `<div class="box" data-q="${i.q}"${i.type==='기타'?' data-etc="1"':''}>${bd}<div class="row"><button class="main chk">${f?'제출하기':'정답 확인'}</button></div><div class="msg ${s&&s.submitted&&(f||s.ok)?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.submitted?(f?'이미 제출이 끝났어요! 수정해서 다시 보내셔도 됩니다 ~':(s.ok?'✅ 이전에 맞혔어요':'')):(s?'이어서 쓰던 내용이 있어요 (아직 제출 전)':'')}</div></div>`}).join('');
+    const rq=i.req?' <span class="reqb">필수</span>':'';let bd=`<h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${rq}</h3>${fmt(i.text)}`+cd(i,v);const AK=/\[\s*답칸\s*\]/;bd=AK.test(bd)?bd.replace(AK,()=>inp).replace(/\[\s*답칸\s*\]/g,''):bd+inp;
+    return `<div class="box" data-q="${i.q}"${i.type==='기타'?' data-etc="1"':''}${i.req?' data-req="1"':''}>${bd}<div class="row"><button class="main chk">${f?'제출하기':'정답 확인'}</button></div><div class="msg ${s&&s.submitted&&(f||s.ok)?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.submitted?(f?'이미 제출이 끝났어요! 수정해서 다시 보내셔도 됩니다 ~':(s.ok?'✅ 이전에 맞혔어요':'')):(s?'이어서 쓰던 내용이 있어요 (아직 제출 전)':'')}</div></div>`}).join('');
   box.querySelectorAll('.box[data-etc]').forEach(bx=>{const s=sv(+bx.dataset.q),mp={};if(s)String(s.answer).split('\n').forEach(l=>{const m=/^(\d+):\s?(.*)$/.exec(l);if(m)mp[m[1]]=m[2]});
-    bx.querySelectorAll('.ib').forEach((el,k)=>{const v=mp[k+1];if(v!=null){if(el.type==='checkbox')el.checked=v==='1';else el.value=v;ibCheck(el)}})});
+    bx.querySelectorAll('.ib').forEach((el,k)=>{const v=mp[k+1];if(v!=null){if(el.type==='checkbox')el.checked=v==='1';else el.value=v;ibCheck(el)}});etcSync(bx);bx.addEventListener('change',()=>etcSync(bx))});
   box.querySelectorAll('.chk').forEach(b=>b.onclick=async()=>{const bx=b.closest('.box'),q=+bx.dataset.q,m=bx.querySelector('.msg'),bl=[...bx.querySelectorAll('.blank')];let a;
-    if(bx.dataset.etc){a=bx.querySelector('.ib')?collect(bx):'열람'}else if(bl.length){if(bl.some(x=>!x.value.trim())){m.className='msg no';m.textContent='빈칸을 모두 채워보세요 !!';return}a=bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n')}
+    if(bx.dataset.etc){const ms=etcMiss(bx);if(ms){m.className='msg no';m.textContent=ms;return}a=bx.querySelector('.ib')?collect(bx):'열람'}else if(bl.length){if(bl.some(x=>!x.value.trim())){m.className='msg no';m.textContent='빈칸을 모두 채워보세요 !!';return}a=bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n')}
     else a=bx.querySelector('input[type=radio]:checked')?.value??bx.querySelector('.ans')?.value??bx.querySelector('.free')?.value??'';
     if(!String(a).trim())return;
     b.disabled=true;m.className='msg wait';m.textContent='저장 중...';const x=await api('submit',{no,act,q,answer:a});b.disabled=false;
@@ -860,6 +862,11 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
 /* 문항 사이 설명: 해석해보기·응용해보기 문제 칸에 [설명]을 쓰면 문제가 아니라 설명 글로 보여요(번호·답칸 없음, 진도 계산에서도 빠짐 — Code.gs v147). 제목 칸이 있으면 위에 제목 */
 const EXQ=/\[\s*설명\s*\]/;
 const exBox=i=>`<div class="exb">${i.title?`<h4>${esc(i.title)}</h4>`:''}${fmt(String(i.text).replace(EXQ,'').replace(/^\s*\n/,''))}</div>`;
+/* v260: 해석해보기 유형 '기타' 칸에서 [선택:…/기타]를 고를 때 → '기타'를 골랐을 때만 그 뒤 입력 칸을 쓸 수 있음.
+   '필수' 문항이면 선택은 꼭 고르고, '기타'를 골랐으면 입력 칸도 채워야 제출됨 */
+const etcSel=bx=>[...bx.querySelectorAll('select.ib')].find(x=>[...x.options].some(o=>o.value==='기타'));
+function etcSync(bx){const sl=etcSel(bx);if(!sl)return;const on=sl.value==='기타';bx.querySelectorAll('.ib').forEach(x=>{if(x===sl||x.tagName==='SELECT'||x.type==='checkbox'||!(sl.compareDocumentPosition(x)&4))return;if(x.dataset.ph==null)x.dataset.ph=x.placeholder;x.disabled=!on;x.placeholder=on?x.dataset.ph:'기타를 고르면 쓸 수 있어요'})}
+function etcMiss(bx){if(!bx.dataset.req)return '';const sls=[...bx.querySelectorAll('select.ib')];if(sls.some(x=>!x.value))return '하나를 골라 주세요!';const sl=etcSel(bx);if(sl&&sl.value==='기타'&&[...bx.querySelectorAll('input.ib:not([type=checkbox]),textarea.ib')].some(x=>!x.disabled&&!x.value.trim()))return '기타 내용을 적어 주세요!';return ''}
 const exNum=items=>{let k=0;return items.map(x=>EXQ.test(x.text)?-1:k++)}; // 설명을 뺀 문제 번호(0부터)
 /* 코드 단계별 업그레이드: 응용해보기 문제 칸에 [단계]가 있는 문항끼리 차례로 1단계, 2단계, … (같은 차시 안, 시트 순서).
    앞 단계 코드가 다음 단계로 이어져 내려옴. 앞 단계를 고치면 줄 단위로 비교해서 다음 단계에서 학생이 안 건드린 줄만 바뀌고,
