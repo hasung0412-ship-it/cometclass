@@ -360,6 +360,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 .fgpic img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:var(--r2)}
 .fgmsg{margin:14px 0 16px;font-size:22px;line-height:1.5;word-break:keep-all}
 .fgmsg b{color:var(--no-ink)}
+.fgcr{white-space:nowrap;line-height:1.2;font-weight:700}
 .fgrow,.fgbtn{display:flex;gap:8px}
 .fgrow input{flex:1;min-width:0;margin:6px 0}
 .fgbtn button{flex:1;min-height:44px;margin:6px 0 0}
@@ -392,7 +393,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 @media(max-width:700px){.kbn{grid-template-columns:1fr 1fr}.kk{font-size:12px}.kk small{display:none}.kbc{flex-direction:column;gap:2px}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v258</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v259</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -796,7 +797,9 @@ async function langView(gn){S.at=null;here('lang',{g:gn});const nv=NAV;renderToc
   app.innerHTML=(cg?`<p><button class="ghost" onclick="langView()">← 과목 선택</button></p><h2>${esc(cg.g)} · 과목을 골라요</h2>`:`<h2>배울 과목을 골라요</h2>`)+(r.subjects.length?`<div class="grid">${(cg?cg.subs.map(card):G.map(x=>x.s?card(x.s):`<button class="card" data-g="${esc(x.g)}">${ico(x.icon)} <b>${esc(x.g)}</b><small>${x.subs.map(s=>esc(s.name)).join(' · ')}</small></button>`)).join('')}</div><div class="msg wait" id="soon" style="display:none;margin-top:14px"></div>`:'<p>아직 등록한 과목이 없어요 !!</p>');
   app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>langView(b.dataset.g));
   app.querySelectorAll('[data-i]').forEach(b=>b.onclick=async()=>{const s=r.subjects[+b.dataset.i];if(!s.ready){const nv=NAV,r2=await get('toc',()=>api('toc'),true),s2=(r2.subjects||[]).find(x=>x.name===s.name);if(nv!==NAV)return;if(s2&&s2.ready){S.sub=s.name;return lessonView()}const m=$('#soon'),w=(s2||s).why;m.style.display='block';m.innerHTML='아직 준비중입니다!'+(w?`<br><small>(관리자에게만 보여요) ${esc(w)}</small>`:'');return}S.sub=s.name;lessonView()})}
-function forgotView(){app.innerHTML=`<div class="box narrow fgw"><h2>비밀번호 초기화</h2><div class="fgpic"><img src="images/password.jpeg" alt="" onerror="this.parentNode.remove()"></div><div class="fgmsg"><b>니가 만든 니 비밀번호</b>인데, 게다가 분명 <b>정보책에 적어놨다</b>고 하기까지했는데 왜 로그인이 안될까요?\n 정신 안차려요?</div>
+// 비번 초기화 창 꾸중 문구: 글자마다 조금씩 커지다가 '고'에서 가장 크고, 뒤 !!!도 같은 크기
+const fgCresc=()=>{let i=0;return ['비밀번호 까먹지','좀 말라고!!!'].map(l=>'<div class="fgcr">'+[...l].map(c=>`<span style="font-size:${36+Math.round(Math.min(i++,12)*20/12)}px">${c===' '?'&nbsp;':c}</span>`).join('')+'</div>').join('')};
+function forgotView(){app.innerHTML=`<div class="box narrow fgw"><h2>비밀번호 초기화</h2><div class="fgpic"><img src="images/password.jpeg" alt="" onerror="this.parentNode.remove()"></div><div class="fgmsg">${fgCresc()}</div>
 <div class="cnx" id="cnx"></div><div class="row" style="justify-content:center;margin:0 0 6px"><select id="yr" class="yr" aria-label="학년도"></select></div><div class="fgrow"><input id="fi" placeholder="학번"><input id="fk" placeholder="고유키" autocomplete="off"></div><div class="err" id="e"></div><div class="fgbtn"><button class="main" id="go">초기화하기</button><button class="ghost" id="bk">← 로그인</button></div><p><a href="#" id="nk" style="color:var(--sub);font-size:14px">고유키도 잊어버렸어요!</a></p></div>`;
   $('#bk').onclick=()=>loginView();fillYears();
   $('#nk').onclick=e=>{e.preventDefault();alert('니가 만든\n니 계정의\n니 비밀번호도 잊고\n니 고유키도 잊으면\n대체 뭘 하겠다는건가요?\n나한테 문의하세요')};
