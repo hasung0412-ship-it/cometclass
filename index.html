@@ -363,9 +363,34 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 .fgrow input{flex:1;min-width:0;margin:6px 0}
 .fgbtn button{flex:1;min-height:44px;margin:6px 0 0}
 .narrow.fgw #go{width:auto;margin-top:6px}
+/* ---- v255 컴퓨터 단축키 익히기 (keysView) ---- */
+.kbw{display:flex;flex-direction:column;gap:18px}
+.kbd{display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:var(--r3);background:var(--code);border:1px solid var(--line);user-select:none}
+.kbr{display:flex;gap:6px}
+.kk{flex:1 1 0;min-width:0;height:46px;display:flex;flex-direction:column;justify-content:center;align-items:center;border-radius:var(--r1);background:var(--raise);border:1px solid var(--line2);box-shadow:0 3px 0 var(--line);font-size:14px;line-height:1.1;color:var(--ink);transition:transform .06s,background-color .06s,box-shadow .06s}
+.kk small{font-size:12px;color:var(--faint)}
+.kk.md{color:var(--sub)}
+.kk.on{background:var(--warn-bg);border-color:var(--warn-ink);color:var(--warn-ink);box-shadow:0 0 0 var(--line);transform:translateY(3px)}
+.kk.on small{color:var(--warn-ink)}
+.kk.sc{border-color:var(--info-line)}
+.kbn{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:14px}
+.kbc{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;min-height:118px;padding:14px;border-radius:var(--r3);background:var(--raise);border:1px solid var(--line);text-align:center}
+.kbc .cb{font:26px/1.3 'Jua',sans-serif;letter-spacing:.02em}
+.kbc .cb kbd,.kbl kbd{display:inline-block;padding:1px 9px;border-radius:var(--r1);background:var(--surface);border:1px solid var(--line2);box-shadow:0 2px 0 var(--line);font:inherit}
+.kbc .cs{font-size:14px;color:var(--sub);word-break:keep-all}
+.kbc.hit{background:var(--info-bg);border-color:var(--info-line)}.kbc.hit .cs{color:var(--info-ink)}
+.kbp{display:flex;flex-direction:column;min-width:0}.kbp textarea{flex:1;min-height:118px;resize:vertical;font:16px/1.6 'KoPubWorld Dotum','Malgun Gothic',sans-serif}
+.kbclip{margin-top:6px;font-size:14px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kbclip b{color:var(--ink)}
+.kbl{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.kbl>div{padding:12px 14px;border-radius:var(--r2);background:var(--surface);border:1px solid var(--line);transition:background-color .2s,border-color .2s}
+.kbl>div.on{background:var(--info-bg);border-color:var(--info-line)}
+.kbl .kc{font-size:14px;margin-bottom:4px}.kbl kbd{font-size:14px;padding:0 7px}
+.kbl b{display:block;font-size:16px}.kbl p{margin:2px 0 0;font-size:14px;color:var(--sub);word-break:keep-all}
+.kbx{font-size:14px;color:var(--sub);word-break:keep-all}.kbx b{color:var(--no-ink)}
+@media(max-width:700px){.kbn{grid-template-columns:1fr}.kk{height:36px;font-size:12px}.kk small{display:none}.kbd{padding:10px;gap:4px}.kbr{gap:4px}}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v254</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v255</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -428,7 +453,7 @@ function renderToc0(){const T=mem.toc;if(!T||!$('#wrap').classList.contains('has
     return `<div class="ts"><button class="tt" data-t="${esc(gk2)}" data-o="${go?1:0}">${go?'▾':'▸'} ${ico(x.icon)} <b>${esc(x.g)}</b></button>`+(go?`<div class="tl">${x.subs.map(one).join('')}</div>`:'')+'</div>'}).join('')+helperBtns('th')}
 $('#toc').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.info){openInfo(b.dataset.info);return}if(b.dataset.t){S.tocOpen[b.dataset.t]=!(+b.dataset.o);renderToc();return}if(b.dataset.go){const[s,n,a]=b.dataset.go.split('|');go(s,+n,a);return}if(b.dataset.soon)toast('아직 준비중입니다!')};
 /* ---- 오른쪽 칸: 집중 시간 스톱워치 + 학습 도우미 ---- */
-const helperBtns=c=>`<div class="sbox ${c||''}" style="margin-top:12px"><h4>학습 도우미</h4><button class="tt" data-info="notice">지난 공지 모두 보기</button><button class="tt" data-info="term">용어 사전</button><button class="tt" data-info="essay">글 피드백 받기</button></div>${c==='th'?'':'<div class="sbox" style="margin-top:12px"><h4>성적</h4><button class="tt" data-info="assess">평가 기준표</button><button class="tt" data-info="grade">내 성적 보기</button></div>'}`;
+const helperBtns=c=>`<div class="sbox ${c||''}" style="margin-top:12px"><h4>학습 도우미</h4><button class="tt" data-info="notice">지난 공지 모두 보기</button><button class="tt" data-info="term">용어 사전</button><button class="tt" data-info="essay">글 피드백 받기</button><button class="tt" data-info="keys">컴퓨터 단축키 익히기</button></div>${c==='th'?'':'<div class="sbox" style="margin-top:12px"><h4>성적</h4><button class="tt" data-info="assess">평가 기준표</button><button class="tt" data-info="grade">내 성적 보기</button></div>'}`;
 function renderSide(){const e=$('#side');if(!e||!$('#wrap').classList.contains('hasToc'))return;const stu=S.user&&S.user.role!=='관리자';
   hdrNotice();
   e.innerHTML=(stu?`<div class="sbox nowc">지금 시각 <b id="nowc"></b></div><div class="sbox tm2"><div class="tmb" id="tbf"><h4>집중한 시간</h4><div class="clk" id="tf">00:00:00</div></div><div class="tmb" id="tba"><h4>다른 곳</h4><div class="clk" id="ta">00:00:00</div></div></div><p class="tmnote">제발 딴 짓 하지 말고 수업에 집중 좀 하세요 !!!!</p>`:'<div class="sbox"><small>미리보기에서는 시간이 기록되지 않아요</small></div>')+helperBtns()+'<div class="sbox" id="mbx"></div>';tmUpd();
@@ -514,7 +539,7 @@ addEventListener('focus',()=>{if(!TM.on||!TM.bl)return;tmAccrue();const d=TM.a-(
 addEventListener('pagehide',()=>{if(TM.on){tmAccrue();tmFlush(true)}});
 /* ---- 학습 도우미: 공지 / 용어 사전 / 오류 모음 / 치트시트 ---- */
 let infoBusy=false;
-async function openInfo(kind,nl){if(kind==='grade')return openGrades();if(kind==='essay')return essayView();if(infoBusy||document.querySelector('.modal.info:not(.ad-out)'))return;infoBusy=true;if(!mem.info)toast('불러오는 중...');let r;try{r=await get('info',()=>api('info'))}finally{infoBusy=false}if(document.querySelector('.modal.info:not(.ad-out)'))return;if(r.error){toast(r.error);return}
+async function openInfo(kind,nl){if(kind==='grade')return openGrades();if(kind==='essay')return essayView();if(kind==='keys')return keysView();if(infoBusy||document.querySelector('.modal.info:not(.ad-out)'))return;infoBusy=true;if(!mem.info)toast('불러오는 중...');let r;try{r=await get('info',()=>api('info'))}finally{infoBusy=false}if(document.querySelector('.modal.info:not(.ad-out)'))return;if(r.error){toast(r.error);return}
   const T={notice:'공지',term:'용어 사전',err:'오류 모음',cheat:'치트시트',assess:'평가 기준표'}[kind],m=document.createElement('div');m.className='modal info';
   const tag=x=>x.sub?` <small style="color:var(--sub)">${esc(x.sub)}</small>`:'';
   let h='';
@@ -734,7 +759,7 @@ function loginView(msg=''){showToc(false);app.innerHTML=`<div class="box narrow 
 function resume(){let p=null;try{p=JSON.parse(sessionStorage.getItem('pos')||'null')}catch(e){}const u=S.user;if(!p||p.u!==u.id||u.must||(u.role!=='관리자'&&isPhone()))return start();
   S.asub=p.asub||'';S.ayear=p.ayear||'';S.preview=u.role==='관리자'&&!!p.p;setWho();
   if(u.role==='관리자'&&!S.preview){showToc(false);tmStop();S.atab=['amenu','msgs','notice','grades','fbreq'].includes(p.v)?'menu':'class';return p.v==='fbreq'?fbAdmin():p.v==='amenu'?adminMenu():p.v==='msgs'?msgsView():p.v==='notice'?noticeView():p.v==='grades'?gradesView(p.cls):adminView()}
-  showToc(true);loadToc();if(u.role!=='관리자')tmStart();p.v==='essay'||p.v==='ehome'||p.v==='lerr'?essayView(p.tid):p.v==='lesson'?(S.sub=p.sub,lessonView()):p.v==='act'||p.v==='content'?go(p.sub,p.no,p.act).then(()=>{if(!S.at)langView()}):langView(p.g)}
+  showToc(true);loadToc();if(u.role!=='관리자')tmStart();p.v==='essay'||p.v==='ehome'||p.v==='lerr'?essayView(p.tid):p.v==='keys'?keysView():p.v==='lesson'?(S.sub=p.sub,lessonView()):p.v==='act'||p.v==='content'?go(p.sub,p.no,p.act).then(()=>{if(!S.at)langView()}):langView(p.g)}
 const isPhone=()=>matchMedia('(pointer:coarse)').matches||/Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(navigator.userAgent)||(/Mac/.test(navigator.platform)&&navigator.maxTouchPoints>1) /* v207: PC가 아닌 기기(휴대폰·태블릿)는 모두 성적 조회만 */; // 휴대폰(태블릿 제외)
 function phoneView(){showToc(false);tmStop();app.innerHTML=`<div class="box narrow" style="text-align:center"><h2>성적 조회만 가능해요!</h2><p style="color:var(--sub)">수업 내용은 컴퓨터에서 열어 주세요.</p><button class="main" onclick="openGrades()">내 성적 보기</button></div>`}
 function start(){if(S.user.role==='관리자')S.preview=true;setWho();if(S.user.must)return pwView();if(S.user.role!=='관리자'&&isPhone())return phoneView();S.user.role==='관리자'?(showToc(true),loadToc(),tmStop(),langView(),adminData()):(showToc(true),loadToc(),tmStart(),langView())} // 관리자도 처음엔 '학생 화면 보기'로 시작
@@ -1615,6 +1640,61 @@ const end=e=>{if(!g||e.pointerId!==g.id)return;const G=g;g=null;if(!G.on)return;
 toc.addEventListener('pointerup',end);toc.addEventListener('pointercancel',end);
 toc.addEventListener('click',e=>{if(eat){e.stopPropagation();e.preventDefault()}},true);   // 끌다 놓은 자리의 버튼이 눌리지 않게
 })();
+</script>
+<script>
+/* v255 컴퓨터 단축키 익히기: 키보드 그림에 지금 누르고 있는 키가 켜지고, 아래 연습 글상자에서 단축키가 진짜로 돼요. 기록은 남기지 않아요. */
+const KB_ROWS=[ // [e.code, 위 글자, 아래 작은 글자(한글), 너비]
+  [['Backquote','`'],['Digit1','1'],['Digit2','2'],['Digit3','3'],['Digit4','4'],['Digit5','5'],['Digit6','6'],['Digit7','7'],['Digit8','8'],['Digit9','9'],['Digit0','0'],['Minus','-'],['Equal','='],['Backspace','Backspace','',2]],
+  [['Tab','Tab','',1.5],['KeyQ','Q','ㅂ'],['KeyW','W','ㅈ'],['KeyE','E','ㄷ'],['KeyR','R','ㄱ'],['KeyT','T','ㅅ'],['KeyY','Y','ㅛ'],['KeyU','U','ㅕ'],['KeyI','I','ㅑ'],['KeyO','O','ㅐ'],['KeyP','P','ㅔ'],['BracketLeft','['],['BracketRight',']'],['Backslash','\\','',1.5]],
+  [['CapsLock','Caps Lock','',1.8],['KeyA','A','ㅁ'],['KeyS','S','ㄴ'],['KeyD','D','ㅇ'],['KeyF','F','ㄹ'],['KeyG','G','ㅎ'],['KeyH','H','ㅗ'],['KeyJ','J','ㅓ'],['KeyK','K','ㅏ'],['KeyL','L','ㅣ'],['Semicolon',';'],['Quote',"'"],['Enter','Enter','',2.2]],
+  [['ShiftLeft','Shift','',2.4],['KeyZ','Z','ㅋ'],['KeyX','X','ㅌ'],['KeyC','C','ㅊ'],['KeyV','V','ㅍ'],['KeyB','B','ㅠ'],['KeyN','N','ㅜ'],['KeyM','M','ㅡ'],['Comma',','],['Period','.'],['Slash','/'],['ShiftRight','Shift','',2.6]],
+  [['ControlLeft','Ctrl','',1.5],['MetaLeft','⊞ Win','',1.3],['AltLeft','Alt','',1.3],['Space','','',6.4],['AltRight','한/영','',1.3],['ControlRight','한자','',1.3],['ContextMenu','☰','',1.3],['ControlRight2','Ctrl','',1.5]]];
+const KB_ALIAS={Lang1:'AltRight',HangulMode:'AltRight',Lang2:'ControlRight',HanjaMode:'ControlRight',MetaRight:'MetaLeft',OSLeft:'MetaLeft'};
+const KB_LIST=[ // 키, 이름, 설명, 눌렀을 때 짧은 안내
+  ['KeyC','복사','고른 글자를 컴퓨터가 잠깐 기억해요.','복사했어요! 이제 Ctrl + V로 붙여 넣어 보세요.'],
+  ['KeyV','붙여넣기','기억해 둔 글자를 커서 자리에 넣어요.','붙여 넣었어요!'],
+  ['KeyX','잘라내기','고른 글자를 지우면서 기억해요.','잘라냈어요! Ctrl + V로 다른 곳에 넣어 보세요.'],
+  ['KeyA','전체 선택','글상자 안 글자를 모두 골라요.','모두 골랐어요!'],
+  ['KeyZ','되돌리기','방금 한 일을 취소해요.','되돌렸어요! 더 누르면 더 앞으로 돌아가요.'],
+  ['KeyY','다시 하기','되돌린 것을 다시 해요.','다시 했어요!'],
+  ['KeyS','저장','지금 하던 것을 파일로 저장해요.','저장됐어요! (연습이라 진짜로 저장하지는 않아요)'],
+  ['KeyF','찾기','글 안에서 낱말을 찾아요.','찾기 창이 열려요! (연습이라 열지 않아요)'],
+  ['KeyP','인쇄','지금 화면을 종이로 뽑아요.','인쇄 창이 열려요! (연습이라 열지 않아요)']];
+const KB_FAKE=['KeyS','KeyF','KeyP'],KB_TA=['KeyV','KeyX','KeyA','KeyZ','KeyY'];
+const KB={on:new Set(),clip:''};
+const kbName=c=>({ControlLeft:'Ctrl',ControlRight2:'Ctrl',ShiftLeft:'Shift',ShiftRight:'Shift',AltLeft:'Alt',MetaLeft:'Win',Space:'Space',AltRight:'한/영',ControlRight:'한자'}[c]||(KB_ROWS.flat().find(k=>k[0]===c)||[])[1]||c);
+function keysView(){here('keys');document.querySelectorAll('.modal.info').forEach(x=>x.remove());KB.on.clear();
+  const key=k=>`<div class="kk${/Control|Shift|Alt|Meta|Tab|Caps|Enter|Backspace|Context/.test(k[0])?' md':''}${KB_LIST.some(x=>x[0]===k[0])?' sc':''}" data-c="${k[0]}" style="flex-grow:${k[3]||1}">${esc(k[1])}${k[2]?`<small>${k[2]}</small>`:''}</div>`;
+  app.innerHTML=`<h2>컴퓨터 단축키 익히기</h2><div class="box kbw" id="kbw">
+    <div class="kbd">${KB_ROWS.map(r=>`<div class="kbr">${r.map(key).join('')}</div>`).join('')}</div>
+    <div class="kbn"><div class="kbc" id="kbc"><div class="cb">키를 눌러 보세요</div><div class="cs">Ctrl을 누른 채로 C, V 같은 키를 눌러 보세요.</div></div>
+      <div class="kbp"><textarea id="kbt" placeholder="여기에 글을 써 보세요">오늘은 컴퓨터 단축키를 배워요.
+이 글을 골라서 복사하고, 아래에 붙여 넣어 보세요!
+</textarea><div class="kbclip" id="kbclip">📋 컴퓨터가 기억한 글자: <b>아직 없어요</b></div></div></div>
+    <div class="kbl">${KB_LIST.map(x=>`<div data-c="${x[0]}"><div class="kc"><kbd>Ctrl</kbd> + <kbd>${x[0].slice(3)}</kbd></div><b>${x[1]}</b><p>${x[2]}</p></div>`).join('')}</div>
+    <div class="kbx">여기서는 연습할 수 없는 단축키도 있어요: Alt + Tab (창 바꾸기), ⊞ Win + D (바탕 화면 보기). <b>Ctrl + W는 누르면 이 창이 진짜로 닫히니 누르지 마세요!</b></div></div>`;
+  const t=$('#kbt'),clip=s=>{KB.clip=s;$('#kbclip').innerHTML=`📋 컴퓨터가 기억한 글자: <b>${s?esc(s.replace(/\s+/g,' ')):'아직 없어요'}</b>`};
+  t.addEventListener('copy',()=>clip(t.value.slice(t.selectionStart,t.selectionEnd)));
+  t.addEventListener('cut',()=>clip(t.value.slice(t.selectionStart,t.selectionEnd)));
+  t.focus()}
+function kbDraw(e,moved){const w=$('#kbw');if(!w)return;
+  w.querySelectorAll('.kk').forEach(k=>k.classList.toggle('on',KB.on.has(k.dataset.c)));
+  if(!e)return;const c=KB_ALIAS[e.code]||e.code,mod=/Control|Shift|Alt|Meta/.test(c),bx=$('#kbc'),ks=[];
+  if(e.ctrlKey)ks.push('Ctrl');if(e.shiftKey)ks.push('Shift');if(e.altKey)ks.push('Alt');if(e.metaKey)ks.push('Win');
+  if(!mod)ks.push(kbName(c));
+  const sc=e.ctrlKey&&!e.altKey&&!e.shiftKey&&!e.metaKey&&KB_LIST.find(x=>x[0]===c);
+  bx.querySelector('.cb').innerHTML=ks.map(k=>`<kbd>${esc(k)}</kbd>`).join(' + ')+(mod?' + …':'');
+  bx.classList.toggle('hit',!!sc);w.querySelectorAll('.kbl>div').forEach(d=>d.classList.toggle('on',!!sc&&d.dataset.c===c));
+  bx.querySelector('.cs').textContent=sc&&moved?`${sc[1]}: 연습 글상자로 커서를 옮겼어요. 한 번 더 눌러 보세요.`:sc?`${sc[1]}: ${sc[3]}`:mod?'이제 다른 키를 같이 눌러 보세요.':e.ctrlKey?'목록에 없는 단축키예요.':'글자 키예요. 단축키는 Ctrl을 같이 눌러요.'}
+addEventListener('keydown',e=>{if(!$('#kbw'))return;let c=KB_ALIAS[e.code]||e.code;if(c==='ControlRight'&&e.key==='Control')c='ControlRight2';KB.on.add(c);
+  const k=KB_ALIAS[e.code]||e.code,t=$('#kbt');let mv=false;
+  if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&!e.metaKey){
+    if(KB_FAKE.includes(k))e.preventDefault(); // 저장·찾기·인쇄는 브라우저 창이 뜨지 않게 막고 안내만
+    else if(KB_TA.includes(k)&&document.activeElement!==t){e.preventDefault();t.focus();mv=true} // 글상자 밖이면 글상자로 커서를 옮겨 줌
+  }
+  if(e.repeat)return;kbDraw(e,mv)});
+addEventListener('keyup',e=>{if(!$('#kbw'))return;let c=KB_ALIAS[e.code]||e.code;if(c==='ControlRight'&&e.key==='Control')c='ControlRight2';KB.on.delete(c);if(!e.ctrlKey){KB.on.delete('ControlLeft');KB.on.delete('ControlRight2')}if(!e.shiftKey){KB.on.delete('ShiftLeft');KB.on.delete('ShiftRight')}kbDraw()});
+addEventListener('blur',()=>{KB.on.clear();kbDraw()});
 </script>
 <script>
 /* v163 개발자 도구 막기 (학생만, 관리자는 그대로 쓸 수 있음)
