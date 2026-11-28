@@ -393,9 +393,14 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 .kbl b{display:block;font-size:14px;white-space:nowrap}
 .kbx{font-size:12px;color:var(--sub);word-break:keep-all}.kbx b{color:var(--no-ink)}
 @media(max-width:700px){.kbn{grid-template-columns:1fr 1fr}.kk{font-size:12px}.kk small{display:none}.kbc{flex-direction:column;gap:2px}}
+.cnw{margin:4px 0 12px}.cnb{padding:3px 10px;font-size:13px}
+.cnh{font-size:13px;font-weight:bold;color:var(--warn-ink);margin:0 0 4px}.cnh small{font-weight:normal;color:var(--sub);margin-left:6px}
+.cnote{width:100%;box-sizing:border-box;min-height:0;font-family:inherit;font-size:15px;background:var(--warn-bg);border:1px solid var(--line);resize:vertical}
+html.nomk .cmk{border:0!important;background:none!important;padding:0!important;border-radius:0!important}
+html.nomk .showsp .sp{background:none}html.nomk .showsp .sp::before{content:none}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v260</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v261</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -417,8 +422,8 @@ const hkey=(s,n,a,q)=>`hs|${S.user?S.user.id:''}|${s}|${n}|${a}|${q}`;
 function clearDraft(no,act,q){const k=dkey(S.sub,no,act,q);delete DR[k];if(isAft())return;try{localStorage.removeItem(k)}catch(e){}} // 방과후 계정은 이 기기에도 입력을 남김(서버 저장이 우선)
 function loadLocal(q){try{const a=S.at;return a&&a.act?JSON.parse(localStorage.getItem(dkey(a.sub,a.no,a.act,q))||'null'):null}catch(e){return null}}
 function setSv(t,c){const e=$('#sv');e.textContent=t;e.className=c||'';e.style.display='block';clearTimeout(setSv.h);if(c==='ok')setSv.h=setTimeout(()=>e.style.display='none',2500)}
-function collect(bx){if(bx.dataset.etc)return [...bx.querySelectorAll('.ib')].map((x,k)=>`${k+1}: ${x.type==='checkbox'?(x.checked?'1':'0'):x.value}`).join('\n');const bl=[...bx.querySelectorAll('.blank')];if(bl.length)return bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n');const rd=bx.querySelector('input[type=radio]:checked');if(rd)return rd.value;const el=bx.querySelector('.ans,.free,textarea');return el?el.value:''}
-function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||e.target.closest('.trace,.runb,.qz,.sp2,.asm'))return;let q,text;
+function collect(bx){if(bx.dataset.etc)return [...bx.querySelectorAll('.ib')].map((x,k)=>`${k+1}: ${x.type==='checkbox'?(x.checked?'1':'0'):x.value}`).join('\n');const bl=[...bx.querySelectorAll('.blank')];if(bl.length)return bl.map((x,k)=>`${k+1}: ${x.value.trim()}`).join('\n');const rd=bx.querySelector('input[type=radio]:checked');if(rd)return rd.value;const el=bx.querySelector('.ans,.free,textarea:not(.cnote)');return el?el.value:''}
+function onEdit(e){const a=S.at;if(S.preview||!a||!a.act||e.target.closest('.trace,.runb,.qz,.sp2,.asm,.cnw'))return;let q,text;
   if(a.act==='개념'){const el=e.target.closest('.ib');if(!el)return;q=+el.dataset.i;text=el.type==='checkbox'?(el.checked?'1':'0'):el.value}
   else{const bx=e.target.closest('.box[data-q]');if(!bx||(e.target.closest('.ib')&&!bx.dataset.etc))return;q=+bx.dataset.q;text=collect(bx)}
   const k=dkey(a.sub,a.no,a.act,q);DR[k]={sub:a.sub,no:a.no,act:a.act,q,text,t:Date.now()};
@@ -671,7 +676,7 @@ function fqCheck(q){const m=q.querySelector('.fqm'),say=(ok,t)=>{m.className='fq
 document.addEventListener('click',e=>{const b=e.target.closest('.fqk,.fqz');if(!b)return;const q=b.closest('.fnq');if(!q||!q._t)return;
   if(b.classList.contains('fqk'))return fqCheck(q);q._g=null;q._done=null;q.querySelector('.fqv').value='';const s=q.querySelector('.fqs');s.textContent='표에서 드래그';s.classList.remove('on');q.querySelector('.fqm').textContent='';fqPaint(q)});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('fqv')){const q=e.target.closest('.fnq');if(q)fqCheck(q)}});
-function fmt0(t){const PP=String(t??'').split('```');return PP.map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):/^\s*run[ \t]*\n/.test(x)?runDiv(x):/^\s*코딩[ \t]*(\n|$)/.test(x)?cdDiv(x):`<pre>${hotCode(x.trim())}</pre>`):fmtTx(x.replace(i>0?/^[ \t]*\n/:/^$/,'').replace(i<PP.length-1?/\n[ \t]*$/:/^$/,''))).join('')}
+function fmt0(t){const PP=String(t??'').split('```');return PP.map((x,i)=>i%2?(/^\s*trace[ \t]*\n/.test(x)?traceDiv(x):/^\s*run[ \t]*\n/.test(x)?runDiv(x):/^\s*코딩[ \t]*(\n|$)/.test(x)?cdDiv(x):`<pre class="tcb">${hotCode(x.trim())}</pre>`):fmtTx(x.replace(i>0?/^[ \t]*\n/:/^$/,'').replace(i<PP.length-1?/\n[ \t]*$/:/^$/,''))).join('')}
 const BOXR=/\[\s*상자\s*(?:[:：]([^\]]*))?\]([\s\S]*?)\[\s*\/\s*상자\s*\]/;
 function fmt0c(t){const P=String(t??'').split(BOXR);let o='';for(let i=0;i<P.length;i+=3){let a=P[i]||'';if(i+2<P.length)a=a.replace(/\n$/,'');if(i>0)a=a.replace(/^\n/,'');o+=fmt0c0(a);
   if(i+2<P.length){
@@ -737,7 +742,7 @@ const DEF={'데이터분석':{해석:'데이터 해석하기'}};
 function nm(sub,k){const L=[...(mem.toc?mem.toc.subjects:[]),...(mem.subjects?mem.subjects.subjects:[])],s=L.find(x=>x.name===sub),o=s&&s.names&&s.names[k];return o||(DEF[String(sub).replace(/\s/g,'')]||{})[k]||AN[k][1]}
 function bar(d,t){return `<div class="bar"><i style="width:${t?Math.min(100,d/t*100):0}%"></i></div>`}
 function setWho(){const u=S.user,ac=$('#acc');ac.innerHTML=u?`${esc(u.cls!==''&&u.cls!=null&&String(u.cls).trim()!==''?String(u.cls).trim()+'반 ':'')}<b>${esc(u.name)}</b>${S.preview?' <small>미리보기 중 (기록 안 됨)</small>':''}`:'';ac.style.display=u?'':'none'; // v212: 계정 정보는 혜성특급 옆
-  $('#who').innerHTML=u?(u.role==='관리자'?`<button class="ghost" onclick="togglePrev()">${S.preview?'관리자 화면':'학생 화면 보기'}</button>`:'')+`<button class="ghost" onclick="logout()">로그아웃</button>`:''}
+  $('#who').innerHTML=u?(u.role==='관리자'?`<button class="ghost" onclick="togglePrev()">${S.preview?'관리자 화면':'학생 화면 보기'}</button>`:'')+((u.role!=='관리자'||S.preview)&&!isPhone()?`<button class="ghost" onclick="mkTog()" title="선생님이 코드에 해 둔 색칠·들여쓰기 점">🖍 코드 표시 ${document.documentElement.classList.contains('nomk')?'켜기':'끄기'}</button>`:'')+`<button class="ghost" onclick="logout()">로그아웃</button>`:''}
 let NAV=0;function here(v,o){NAV++;S.v=v;try{sessionStorage.setItem('pos',JSON.stringify({v,...o,u:S.user&&S.user.id,p:S.preview,asub:S.asub,ayear:S.ayear}))}catch(e){}} // 새로고침해도 보던 화면으로 돌아오게 위치를 기억해요. NAV = 화면을 바꿀 때마다 1씩 늘어, 늦게 온 예전 화면 응답이 지금 화면을 덮지 않게 함
 function goHome(){const u=S.user;if(!u||u.must)return;if(u.role!=='관리자'&&isPhone())return phoneView();document.querySelectorAll('.modal.info,.modal.hot').forEach(x=>x.remove());
   if(u.role==='관리자'&&!S.preview){showToc(false);adminView();return}showToc(true);loadToc();langView()}
@@ -826,7 +831,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
     box.querySelectorAll('.ib').forEach((el,i)=>{el.dataset.i=i+1;const d=r.drafts&&r.drafts[i+1],lc=loadLocal(i+1);let v=null,t0=-1;[d&&{x:d.text,t:d.t},lc&&{x:lc.text,t:lc.t}].forEach(c=>{if(c&&c.t>t0){t0=c.t;v=c.x}});if(v!=null){if(el.type==='checkbox')el.checked=v==='1';else el.value=v;ibCheck(el)}});
     const sb=S.sub;if(!S.preview&&!(r.saved[0]&&r.saved[0].ok))api('submit',{no,act,q:0,answer:'열람',sub:sb}).then(x=>{if(!x.error&&S.sub===sb)rec(no,act,0,'열람',true)})}
   if(act==='해석'){const isF=i=>i.type==='설명쓰기'||i.type==='서술'||i.type==='기타';
-  const cd=(i,v)=>{if(i.type==='기타')return fmt(i.code||'');if(i.type!=='설명쓰기')return i.code?(/^\s*```\s*(trace|run)/.test(i.code)||/\[\s*분할/.test(i.code)?fmt(i.code):`<pre>${hotCode(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
+  const cd=(i,v)=>{if(i.type==='기타')return fmt(i.code||'');if(i.type!=='설명쓰기')return i.code?(/^\s*```\s*(trace|run)/.test(i.code)||/\[\s*분할/.test(i.code)?fmt(i.code):`<pre class="tcb">${hotCode(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
   const pn=exNum(r.items);box.innerHTML=r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);n=pn[n];const s=sv(i.q),f=isF(i),v=s&&i.type==='설명쓰기'?String(s.answer).split('\n').map(l=>l.replace(/^\d+:\s?/,'')):[];
     const inp=(i.type==='설명쓰기'||i.type==='기타')?'':i.choices?i.choices.map(c=>`<label class="choice"><input type="radio" name="q${i.q}" value="${esc(c)}" ${s&&String(s.answer)===c?'checked':''}>${esc(c)}</label>`).join(''):i.type==='서술'?`<textarea class="free" style="min-height:90px;font-family:inherit" placeholder="생각을 자유롭게 써 보세요">${esc(s?s.answer:'')}</textarea>`:`<input class="ans" placeholder="답을 입력하세요" value="${esc(s?s.answer:'')}">`;
     const rq=i.req?' <span class="reqb">필수</span>':'';let bd=`<h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${rq}</h3>${fmt(i.text)}`+cd(i,v);const AK=/\[\s*답칸\s*\]/;bd=AK.test(bd)?bd.replace(AK,()=>inp).replace(/\[\s*답칸\s*\]/g,''):bd+inp;
@@ -844,7 +849,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
   if(act==='작성'){const PN=exNum(r.items);box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니니까, 가만히 있지 말고 뭐라도 해봐요!</p>`+r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);if(ASMQ.test(i.text))return asmBox(i);n=PN[n];const s=sv(i.q),g=stpG(i.text),sk=g!=null?r.items.filter(x=>stpG(x.text)===g).indexOf(i)+1:0;return `<div class="box" data-q="${i.q}"${sk?` data-stp="${sk}" data-stg="${esc(g)}"`:''}><h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${sk?` <span class="stpb">${sk}단계</span>`:''}</h3>${sk>1?`<p class="stpn">⬇ ${sk-1}단계 코드가 이어져 내려와요. ${sk-1}단계를 고치면 여기서 내가 안 건드린 줄만 같이 바뀌어요.</p>`:''}${fmt(sk?String(i.text).replace(STPQ,''):i.text)}
   <div class="tr2${i.hasSample?'':' one'}"><div class="tp"><h4>내가 짠 코드</h4><textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">저장</button>${String(i.hint||'').trim()?'<button class="ghost hb"></button>':''}</div><div class="hl"></div>${!i.hasSample&&S.user&&S.user.role==='관리자'?'<p style="color:var(--sub);font-size:12px;margin:6px 0">※ 관리자에게만 보이는 안내: 이 문제는 예시 코드가 비어 있어서 오른쪽 칸이 없어요. 응용해보기 시트의 <b>예시코드</b> 열 제목과 칸을 확인하세요.</p>':''}<pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.ok?'저장해 둔 코드예요':(s&&!s.submitted?'이어서 쓰던 코드가 있어요 (아직 저장 전)':'')}</div></div>
   ${i.hasSample?`<div class="tp"><h4>내 예시 코드</h4><div class="sm"><p style="margin:0 0 8px;color:var(--sub)">내가 알려 주는 비밀번호를 입력하면 열려요.</p><div class="row"><input type="password" class="sp2" placeholder="비밀번호" autocomplete="off" style="max-width:200px"><button class="main sk">열기</button></div><div class="err se"></div></div></div>`:''}</div></div>`}).join('');
-    box.querySelectorAll('.box').forEach(bx=>{const it=r.items.find(x=>String(x.q)===bx.dataset.q);if(bx.dataset.asm)return asmInit(bx,it,r.items,no,act);const ta=bx.querySelector('textarea'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
+    box.querySelectorAll('.box').forEach(bx=>{const it=r.items.find(x=>String(x.q)===bx.dataset.q);if(bx.dataset.asm)return asmInit(bx,it,r.items,no,act);const ta=bx.querySelector('textarea:not(.cnote)'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
       const hb=bx.querySelector('button.hb');if(hb){const hs=String(it.hint).split(/\r?\n---\r?\n/).map(x=>x.trim()).filter(Boolean),hl=bx.querySelector('.hl');let hn=0;
         const hbt=()=>{hb.textContent=hn<hs.length?`${hn?'다음 ':''}힌트 보기 (${hn}/${hs.length})`:`힌트를 모두 봤어요 (${hs.length}/${hs.length})`;hb.disabled=hn>=hs.length};hbt();
         hb.onclick=()=>{if(hn>=hs.length)return;const d=document.createElement('div');d.className='sbox warnbg';d.innerHTML=`<b>힌트 ${hn+1}</b><div>${fmt(hs[hn])}</div>`;hl.appendChild(d);hn++;hbt()}}
@@ -857,8 +862,22 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
       ta.onkeydown=e=>{if(e.key==='Tab'){e.preventDefault();document.execCommand('insertText',false,'    ')}};
       bx.querySelector('.run').onclick=async()=>{out.style.display='block';out.textContent='실행 중...';try{putOut(out,await runPy(defWrap(ta),it.ins[0])||'(출력 없음)')}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
       bx.querySelector('.sub').onclick=async()=>{const b=bx.querySelector('.sub');if(!ta.value.trim()){m.className='msg no';m.textContent='코드를 먼저 써보세요 !!';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';
-        const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='저장 완료! 수정해서 다시 저장하셔도 됩니다 ~'}});stpInit(box,no,q=>!!sv(q))}}
+        const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='저장 완료! 수정해서 다시 저장하셔도 됩니다 ~'}});stpInit(box,no,q=>!!sv(q))}noteBind(box,act,r,no)}
 
+/* v261: 내 주석 — 선생님 코드(```, ```run, ```코딩, ```trace, 해석 코드 칸) 아래에 학생이 자기가 이해한 대로 적어 두는 메모.
+   서버 임시저장 탭에 활동 '주석', 문항 '활동|문항|그 문항의 몇 번째 코드'로 저장 (Code.gs v163). 나만 보이고, 다시 들어오면 그대로 보여요 */
+function noteBind(box,act,r,no){const N=r.notes=r.notes||{},cnt={};
+  box.querySelectorAll('.tcb').forEach(el=>{if(el.parentElement.closest('.tcb'))return;const it=el.closest('[data-q],[data-s]'),ik=it?(it.dataset.q!=null?it.dataset.q:'s'+it.dataset.s):'x',k=`${act}|${ik}|${cnt[ik]=(cnt[ik]||0)+1}`;
+    const w=document.createElement('div');w.className='cnw';el.after(w);
+    const draw=open=>{const v=N[k]||'';if(!v.trim()&&!open){w.innerHTML='<button type="button" class="ghost cnb">📝 내 주석 달기</button>';w.querySelector('.cnb').onclick=()=>draw(1);return}
+      w.innerHTML=`<div class="cnh">📝 내 주석 <small>나만 볼 수 있어요</small></div><textarea class="cnote" rows="2" placeholder="이 코드를 내가 이해한 대로 적어 보세요">${esc(v)}</textarea>`;const t=w.querySelector('textarea');
+      const fit=()=>{t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px'};fit();if(open)t.focus();
+      t.oninput=()=>{fit();N[k]=t.value;if(S.preview)return;DR['cn|'+S.sub+'|'+no+'|'+k]={sub:S.sub,no,act:'주석',q:k,text:t.value,t:Date.now()};setSv('입력 중...','');clearTimeout(dtm);dtm=setTimeout(flushDrafts,3000)};
+      t.onblur=()=>{if(!t.value.trim())draw(0)}};
+    draw(0)})}
+/* v261: 코드 표시 끄기 — 선생님이 코드에 넣은 [[글자|색]] 색칠과 들여쓰기 점을 한 번에 끄고 켬. 기본은 켜짐, 이 기기에 기억 */
+try{if(localStorage.getItem('mkoff')==='1')document.documentElement.classList.add('nomk')}catch(e){}
+function mkTog(){const off=document.documentElement.classList.toggle('nomk');try{off?localStorage.setItem('mkoff','1'):localStorage.removeItem('mkoff')}catch(e){}setWho()}
 /* 문항 사이 설명: 해석해보기·응용해보기 문제 칸에 [설명]을 쓰면 문제가 아니라 설명 글로 보여요(번호·답칸 없음, 진도 계산에서도 빠짐 — Code.gs v147). 제목 칸이 있으면 위에 제목 */
 const EXQ=/\[\s*설명\s*\]/;
 const exBox=i=>`<div class="exb">${i.title?`<h4>${esc(i.title)}</h4>`:''}${fmt(String(i.text).replace(EXQ,'').replace(/^\s*\n/,''))}</div>`;
@@ -885,7 +904,7 @@ function merge3(base,mine,theirs){const B=base.split('\n'),M=mine.split('\n'),T=
   ops.sort((x,y)=>y.f-x.f||y.t-x.t).forEach(o=>M.splice(o.f,o.t-o.f,...o.l));return M.join('\n')}
 function stpInit(box,no,has){const G={};box.querySelectorAll('.box[data-stp]').forEach(b=>(G[b.dataset.stg]=G[b.dataset.stg]||[]).push(b));Object.values(G).forEach(L=>stpOne(L.sort((a,b)=>a.dataset.stp-b.dataset.stp),no,has))}
 function stpOne(L,no,has){if(L.length<2)return;
-  const ta=bx=>bx.querySelector('textarea'),key=bx=>`stp|${S.user.id}|${S.sub}|${no}|${bx.dataset.q}`;
+  const ta=bx=>bx.querySelector('textarea:not(.cnote)'),key=bx=>`stp|${S.user.id}|${S.sub}|${no}|${bx.dataset.q}`;
   const get=bx=>{try{return localStorage.getItem(key(bx))}catch(e){return null}},put=(bx,v)=>{try{localStorage.setItem(key(bx),v)}catch(e){}};
   const pull=(k,first)=>{const nx=L[k],t=ta(nx),pv=ta(L[k-1]).value,base=get(nx);
     if(base===pv)return;
@@ -906,7 +925,7 @@ function asmInit(bx,it,items,no,act){
   const parts=String(it.start||'').replace(/^\s*```[^\n]*\n/,'').replace(/\n?\s*```\s*$/,'').split(/^[ \t]*#[ \t]*블록[ \t]*$/m),head=(parts[0]||'').replace(/\s+$/,''),tail=(parts.slice(1).join('\n')||'').replace(/^\s*\n/,'').replace(/\s+$/,'');
   const PN=exNum(items),last={};items.forEach(x=>{const g=stpG(x.text);if(g!=null)last[g]=x}); // 단계 줄기는 마지막 단계(완성본)만 블록이 됨
   const bl=[];items.forEach((x,k)=>{const g=stpG(x.text);if(x!==it&&!ASMQ.test(x.text)&&!EXQ.test(x.text)&&(g==null||last[g]===x))bl.push({k,q:x.q,name:asmName(x,PN[k])+(g!=null?' (완성)':'')})});
-  const code=b=>{const t=document.querySelector(`#items .box[data-q="${b.q}"]:not(.asm) textarea`);return t?t.value.replace(/\s+$/,''):''};
+  const code=b=>{const t=document.querySelector(`#items .box[data-q="${b.q}"]:not(.asm) textarea:not(.cnote)`);return t?t.value.replace(/\s+$/,''):''};
   const key=`asm|${S.user.id}|${S.sub}|${no}|${it.q}`;let ord=[];try{ord=JSON.parse(localStorage.getItem(key)||'[]').filter(q=>bl.some(b=>b.q===q))}catch(e){}
   const keep=()=>{try{localStorage.setItem(key,JSON.stringify(ord))}catch(e){}};
   const ch=bx.querySelector('.achips'),stk=bx.querySelector('.astk'),out=bx.querySelector('.out'),cd=bx.querySelector('.acd'),m=bx.querySelector('.msg');
@@ -1102,11 +1121,11 @@ _S=[[e['ln'],e['aft'],e['out'],e['ans'],e['note']] for e in _E]
 if _E:_S.append([0,_end[0],_end[1],[],0])
 json.dumps({'s':_S,'e':_err})`)}
 const S_ADMIN=()=>!!(S.user&&S.user.role==='관리자');
-function traceDiv(x){setTimeout(initTraces,0);return `<div class="trace" data-src="${esc(x.replace(/^\s*trace[ \t]*\n/,'').replace(/\s+$/,''))}"></div>`}
+function traceDiv(x){setTimeout(initTraces,0);return `<div class="trace tcb" data-src="${esc(x.replace(/^\s*trace[ \t]*\n/,'').replace(/\s+$/,''))}"></div>`}
 /* 실행 결과만 보기: 시트 칸에 ```run ... ``` 로 쓰면 코드 아래에 '실행 결과 보기' 버튼이 생겨요 */
-function runDiv(x){return `<div class="runb"><pre>${hotCode(x.replace(/^\s*run[ \t]*\n/,'').replace(/\s+$/,''))}</pre><button class="ghost" onclick="runBlk(this)">▶ 실행 결과 보기</button><pre class="rout warnbg" style="display:none"></pre></div>`}
+function runDiv(x){return `<div class="runb tcb"><pre>${hotCode(x.replace(/^\s*run[ \t]*\n/,'').replace(/\s+$/,''))}</pre><button class="ghost" onclick="runBlk(this)">▶ 실행 결과 보기</button><pre class="rout warnbg" style="display:none"></pre></div>`}
 /* 학생이 직접 고쳐 실행: 시트 칸에 ```코딩 ... ``` 로 쓰면 처음 코드가 든 입력 칸 + ▶ 실행 / ↺ 처음 코드로 버튼이 생겨요 (연습용, 저장 안 함) */
-function cdDiv(x){const c=cmkS(x).replace(/^\s*코딩[ \t]*\n?/,'').replace(/\s+$/,'');return `<div class="runb cdb"><textarea spellcheck="false" rows="${Math.max(5,c.split('\n').length+1)}" style="min-height:0" placeholder="여기에 코드를 써 보세요" data-o="${esc(c)}" onkeydown="if(event.key==='Tab'){event.preventDefault();document.execCommand('insertText',false,'    ')}">${esc(c)}</textarea><div class="row" style="margin-top:6px"><button class="ghost" onclick="cdRun(this)">▶ 실행</button><button class="ghost" onclick="cdRst(this)">↺ 처음 코드로</button></div><pre class="rout warnbg" style="display:none"></pre></div>`}
+function cdDiv(x){const c=cmkS(x).replace(/^\s*코딩[ \t]*\n?/,'').replace(/\s+$/,'');return `<div class="runb cdb tcb"><textarea spellcheck="false" rows="${Math.max(5,c.split('\n').length+1)}" style="min-height:0" placeholder="여기에 코드를 써 보세요" data-o="${esc(c)}" onkeydown="if(event.key==='Tab'){event.preventDefault();document.execCommand('insertText',false,'    ')}">${esc(c)}</textarea><div class="row" style="margin-top:6px"><button class="ghost" onclick="cdRun(this)">▶ 실행</button><button class="ghost" onclick="cdRst(this)">↺ 처음 코드로</button></div><pre class="rout warnbg" style="display:none"></pre></div>`}
 /* def 한 줄 묶기: 'def …:' 바로 아래가 들여쓰기 안 돼 있으면 빈 줄(또는 다음 def) 전까지 4칸 들여 써서 칸에도 보여 줌 */
 function defWrap(ta){const L=ta.value.split('\n');let ch=0;for(let i=0;i<L.length;i++){const m=L[i].match(/^([ \t]*)def\b.*:[ \t]*$/);if(!m)continue;const d=m[1].length;let j=i+1;if(j>=L.length||!L[j].trim()||L[j].match(/^[ \t]*/)[0].length>d)continue;for(;j<L.length&&L[j].trim()&&!(j>i+1&&/^[ \t]*def\b/.test(L[j])&&L[j].match(/^[ \t]*/)[0].length<=d);j++)L[j]='    '+L[j];ch=1;i=j-1}if(ch){ta.value=L.join('\n');ta.dispatchEvent(new Event('input',{bubbles:true}))}return ta.value}
 async function cdRun(b){const w=b.closest('.cdb'),o=w.querySelector('.rout');o.style.display='block';o.textContent='실행 중... (처음에는 10~30초 걸려요)';b.disabled=true;try{putOut(o,'출력:\n'+(await runPy(defWrap(w.querySelector('textarea')))||'(출력 없음)'))}catch(e){o.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}b.disabled=false}
