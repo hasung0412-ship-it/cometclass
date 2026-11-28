@@ -332,7 +332,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 .achip{display:flex;width:100%;align-items:center;gap:8px;text-align:left;border-radius:var(--r2);padding:9px 12px;margin-bottom:8px;border:2px solid transparent}.achip span{margin-left:auto;font-size:12px;color:var(--sub);white-space:nowrap}.achip.on{opacity:.5}
 .apc{border:1px solid var(--line);border-radius:var(--r2);overflow:hidden;margin-bottom:6px}.aph{display:flex;align-items:center;gap:8px;padding:4px 12px;font-size:14px}.apc pre{margin:0;border-radius:0;font-size:12px}
 .actl{margin-left:auto;display:flex;gap:4px}.actl button{padding:0 8px;font-size:12px;border-radius:6px;background:var(--surface);border:1px solid var(--line)}
-.actl{flex-shrink:0}.asm .aph{flex-wrap:wrap;row-gap:4px}.actl button{white-space:nowrap}.anest{margin:6px 6px 6px 12px;padding-left:8px;border-left:3px dashed var(--line)}.afc{background:var(--raise);border:2px dashed var(--line)}
+.actl{flex-shrink:0}.aadd{margin:2px 0 6px;padding:3px 12px;font-size:13px;border:2px dashed var(--line);background:transparent;color:var(--sub)}.apick{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 6px}.apick button{padding:3px 10px;font-size:13px}.asm .aph{flex-wrap:wrap;row-gap:4px}.actl button{white-space:nowrap}.anest{margin:6px 6px 6px 12px;padding-left:8px;border-left:3px dashed var(--line)}.afc{background:var(--raise);border:2px dashed var(--line)}
 .aslot{border:2px dashed var(--line);border-radius:var(--r2);padding:12px;text-align:center;color:var(--sub);margin-bottom:6px;font-size:14px}
 
 /* ---- 휴대폰 폭 ---- */
@@ -401,7 +401,7 @@ html.nomk .cmk{border:0!important;background:none!important;padding:0!important;
 html.nomk .showsp .sp{background:none}html.nomk .showsp .sp::before{content:none}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v263</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v264</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -934,37 +934,46 @@ function asmBox(i){return `<div class="box asm" data-q="${i.q}" data-asm="1"><h3
   <div class="asw"><div><h4>내 블록 <small>(클릭하면 붙어요)</small></h4><div class="achips"></div><h4>입력값</h4><textarea class="ain" spellcheck="false" style="min-height:90px" placeholder="input()에 차례로 들어갈 값 (한 줄에 하나)">${esc(i.ins&&i.ins[0]||'')}</textarea></div>
   <div><h4>조립대</h4><div class="astk"></div><div class="row"><button class="main arun">▶ 프로젝트 실행</button><button class="ghost aall">합친 코드 보기</button><button class="ghost asv">저장</button></div><pre class="out" style="display:none"></pre><pre class="acd" style="display:none"></pre><div class="msg"></div></div></div></div>`}
 function asmInit(bx,it,items,no,act){
-  /* v262: 틀 블록 — 시작코드 칸 아래쪽에 '# 틀: 이름' 줄로 시작하는 덩어리 = 선생님이 정한 틀(while·for·if 등). 틀 안 '# 블록' 줄이 빈 자리(없으면 첫 줄 들여쓰기+4칸 끝자리).
-     학생은 틀을 조립대에 붙이고, 바로 아래 블록을 '→ 안에 넣기'로 넣어요. 합칠 때 빈 자리 들여쓰기에 맞춰 넣고, 비어 있으면 pass */
-  const src=String(it.start||'').replace(/^\s*```[^\n]*\n/,'').replace(/\n?\s*```\s*$/,''),fi=src.search(/^[ \t]*#[ \t]*틀[ \t]*[:：]/m),SL=/^[ \t]*#[ \t]*블록[ \t]*$/,iw=l=>(l||'').match(/^[ \t]*/)[0].length;
-  const FR=fi<0?[]:src.slice(fi).split(/^(?=[ \t]*#[ \t]*틀[ \t]*[:：])/m).map(t=>{const L=t.replace(/\s+$/,'').split('\n'),name=L.shift().replace(/^[ \t]*#[ \t]*틀[ \t]*[:：][ \t]*/,'').trim(),si=L.findIndex(l=>SL.test(l));
-    return si<0?{name,pre:L.join('\n'),post:'',ind:iw(L[0])+4}:{name,pre:L.slice(0,si).join('\n'),post:L.slice(si+1).join('\n'),ind:iw(L[si])}}).filter(f=>f.pre.trim());
+  /* v262~264: 틀 블록 — 시작코드 칸 아래쪽에 '# 틀: 이름' 줄로 시작하는 덩어리 = 선생님이 정한 틀(while·if·elif… 통째로).
+     틀 안 '# 블록' 줄(또는 '# 블록: 이름')이 빈 자리이고 여러 개 둘 수 있어요. 없으면 첫 줄 아래 4칸이 빈 자리 하나.
+     학생은 빈 자리마다 '＋ 여기에 넣기'로 블록·틀을 골라 넣어요. 합칠 때 그 줄 들여쓰기에 맞춰 넣고, 비어 있으면 pass */
+  const src=String(it.start||'').replace(/^\s*```[^\n]*\n/,'').replace(/\n?\s*```\s*$/,''),fi=src.search(/^[ \t]*#[ \t]*틀[ \t]*[:：]/m),SL=/^[ \t]*#[ \t]*블록[ \t]*(?:[:：][ \t]*(.*?))?[ \t]*$/,iw=l=>(l||'').match(/^[ \t]*/)[0].length;
+  const FR=fi<0?[]:src.slice(fi).split(/^(?=[ \t]*#[ \t]*틀[ \t]*[:：])/m).map(t=>{const L=t.replace(/\s+$/,'').split('\n'),name=L.shift().replace(/^[ \t]*#[ \t]*틀[ \t]*[:：][ \t]*/,'').trim(),seg=[[]],sl=[];
+    L.forEach(l=>{const m=SL.exec(l);if(m){sl.push({ind:iw(l),name:(m[1]||'').trim()});seg.push([])}else seg[seg.length-1].push(l)});
+    if(!sl.length){sl.push({ind:iw(L[0])+4,name:'',imp:L.filter(x=>x.trim()).length>1});seg.push([])} // 빈 자리 표시가 없으면 첫 줄 아래(고정 줄이 더 있으면 비어도 pass 안 붙임)
+    return {name,seg:seg.map(x=>x.join('\n')),sl}}).filter(f=>f.seg.join('').trim());
   const parts=(fi<0?src:src.slice(0,fi)).split(/^[ \t]*#[ \t]*블록[ \t]*$/m),head=(parts[0]||'').replace(/\s+$/,''),tail=(parts.slice(1).join('\n')||'').replace(/^\s*\n/,'').replace(/\s+$/,'');
   const PN=exNum(items),last={};items.forEach(x=>{const g=stpG(x.text);if(g!=null)last[g]=x}); // 단계 줄기는 마지막 단계(완성본)만 블록이 됨
   const bl=[];items.forEach((x,k)=>{const g=stpG(x.text);if(x!==it&&!ASMQ.test(x.text)&&!EXQ.test(x.text)&&(g==null||last[g]===x))bl.push({k,q:x.q,name:asmName(x,PN[k])+(g!=null?' (완성)':'')})});
   const code=b=>{const t=document.querySelector(`#items .box[data-q="${b.q}"]:not(.asm) textarea:not(.cnote)`);return t?t.value.replace(/\s+$/,''):''};
-  const key=`asm|${S.user.id}|${S.sub}|${no}|${it.q}`,nz=a=>Array.isArray(a)?a.map(x=>typeof x==='number'?{q:x}:x&&x.f!=null&&FR[x.f]?{f:x.f,k:nz(x.k)}:x&&x.q!=null?{q:x.q}:null).filter(x=>x&&(x.f!=null||bl.some(b=>b.q===x.q))):[]; // 예전 저장(번호 목록)도 그대로 읽음
-  let ord=[];try{ord=nz(JSON.parse(localStorage.getItem(key)||'[]'))}catch(e){}
-  const walk=(a,f)=>a.forEach(n=>{f(n);if(n.k)walk(n.k,f)}),has=q=>{let h=0;walk(ord,n=>{if(n.q===q)h=1});return h},rmQ=(a,q)=>a.some((n,i)=>n.q===q?(a.splice(i,1),1):n.k&&rmQ(n.k,q));
-  const at=p=>{let a=ord;for(let j=0;j<p.length-1;j++)a=a[p[j]].k;return{a,i:p[p.length-1]}},indt=(c,n)=>c.split('\n').map(l=>l.trim()?' '.repeat(n)+l:l).join('\n');
+  // 붙인 모양(트리): 블록 {q}, 틀 {f, k:[빈 자리마다 목록]}. 예전 저장(번호 목록, 빈 자리 하나짜리 틀)도 그대로 읽음
+  const key=`asm|${S.user.id}|${S.sub}|${no}|${it.q}`,nz=a=>Array.isArray(a)?a.map(x=>{if(typeof x==='number')x={q:x};if(x&&x.f!=null&&FR[x.f]){const K=Array.isArray(x.k)?(x.k.length&&!Array.isArray(x.k[0])?[x.k]:x.k):[];return{f:x.f,k:FR[x.f].sl.map((_,j)=>nz(K[j]))}}return x&&x.q!=null?{q:x.q}:null}).filter(x=>x&&(x.f!=null||bl.some(b=>b.q===x.q))):[];
+  let ord=[],pick=null;try{ord=nz(JSON.parse(localStorage.getItem(key)||'[]'))}catch(e){}
+  const walk=(a,f)=>a.forEach(n=>{f(n);if(n.k)n.k.forEach(s=>walk(s,f))}),has=q=>{let h=0;walk(ord,n=>{if(n.q===q)h=1});return h},rmQ=(a,q)=>a.some((n,i)=>n.q===q?(a.splice(i,1),1):n.k&&n.k.some(s=>rmQ(s,q)));
+  const at=p=>{let a=ord;for(let j=0;j<p.length-1;j+=2)a=a[p[j]].k[p[j+1]];return{a,i:p[p.length-1]}},indt=(c,n)=>c.split('\n').map(l=>l.trim()?' '.repeat(n)+l:l).join('\n'); // 경로 = [순서, 빈 자리, 순서, 빈 자리, …, 순서]
   const keep=()=>{try{localStorage.setItem(key,JSON.stringify(ord))}catch(e){}};
   const ch=bx.querySelector('.achips'),stk=bx.querySelector('.astk'),out=bx.querySelector('.out'),cd=bx.querySelector('.acd'),m=bx.querySelector('.msg');
   const col=b=>ASMC[bl.indexOf(b)%ASMC.length],B=q=>bl.find(b=>b.q===q);
   const pc=(t,c,bg,ctl)=>`<div class="apc"><div class="aph" style="background:${bg}">${t}${ctl||''}</div><pre>${esc(c)||'<span style="color:var(--sub)">(아직 비어 있어요)</span>'}</pre></div>`;
-  const gen=n=>{if(n.f==null)return code(B(n.q));const f=FR[n.f],inn=n.k.map(gen).filter(x=>x.trim()).join('\n');return [f.pre,inn.trim()?indt(inn,f.ind):f.pre.trim().split('\n').length>1||f.post.trim()?'':' '.repeat(f.ind)+'pass',f.post].filter(x=>x.trim()).join('\n')};
+  const gen=n=>{if(n.f==null)return code(B(n.q));const f=FR[n.f],o=[f.seg[0]];f.sl.forEach((s,j)=>{const inn=n.k[j].map(gen).filter(x=>x.trim()).join('\n');o.push(inn.trim()?indt(inn,s.ind):s.imp?'':' '.repeat(s.ind)+'pass',f.seg[j+1])});return o.filter(x=>x.trim()).join('\n')};
   const all=()=>[head,...ord.map(gen),tail].filter(x=>x.trim()).join('\n\n');
-  const ctl=(p,a,i)=>{const d=p.join('.');return `<span class="actl"><button data-a="up" data-p="${d}">▲</button><button data-a="dn" data-p="${d}">▼</button>${i>0&&a[i-1].f!=null?`<button data-a="in" data-p="${d}">→ 안에 넣기</button>`:''}${p.length>1?`<button data-a="out" data-p="${d}">← 꺼내기</button>`:''}<button data-a="x" data-p="${d}">✕ 빼기</button></span>`};
-  const list=(a,p)=>a.map((n,i)=>{const pp=[...p,i],c=ctl(pp,a,i);if(n.f==null){const b=B(n.q);return pc(esc(b.name),code(b),col(b),c)}const f=FR[n.f];
-    return `<div class="apc afr"><div class="aph" style="background:var(--raise)">🧱 ${esc(f.name)}${c}</div><pre>${esc(f.pre)}</pre><div class="anest">${n.k.length?list(n.k,pp):'<div class="aslot">이 틀 바로 아래 블록의 → 안에 넣기를 누르면 여기로 들어와요</div>'}</div>${f.post.trim()?`<pre>${esc(f.post)}</pre>`:''}</div>`}).join('');
+  const ctl=p=>{const d=p.join('.');return `<span class="actl"><button data-a="up" data-p="${d}">▲</button><button data-a="dn" data-p="${d}">▼</button>${p.length>1?`<button data-a="out" data-p="${d}">← 꺼내기</button>`:''}<button data-a="x" data-p="${d}">✕ 빼기</button></span>`};
+  const slotH=(n,pp,j)=>{const d=pp.join('.'),s=FR[n.f].sl[j],on=pick&&pick.p===d&&pick.s===j,kid=n.k[j];
+    const pk=on?`<div class="apick">${bl.filter(b=>!has(b.q)).map(b=>`<button data-a="put" data-p="${d}" data-s="${j}" data-q="${b.q}" style="background:${col(b)}">${esc(b.name)}</button>`).join('')}${FR.map((f,i)=>`<button data-a="put" data-p="${d}" data-s="${j}" data-f="${i}" class="afc">🧱 ${esc(f.name)}</button>`).join('')}<button data-a="cancel" data-p="${d}">닫기</button></div>`:`<button class="aadd" data-a="add" data-p="${d}" data-s="${j}">＋ ${s.name?esc(s.name)+' 자리에 ':'여기에 '}넣기</button>`;
+    return `<div class="anest">${kid.length?list(kid,[...pp,j]):''}${pk}</div>`};
+  const list=(a,p)=>a.map((n,i)=>{const pp=[...p,i],c=ctl(pp);if(n.f==null){const b=B(n.q);return pc(esc(b.name),code(b),col(b),c)}const f=FR[n.f];
+    return `<div class="apc afr"><div class="aph" style="background:var(--raise)">🧱 ${esc(f.name)}${c}</div>${f.seg.map((sg,j)=>(sg.trim()?`<pre>${esc(sg)}</pre>`:'')+(j<f.sl.length?slotH(n,pp,j):'')).join('')}</div>`}).join('');
   const draw=()=>{ch.innerHTML=(bl.length?bl.map(b=>{const on=has(b.q);return `<button class="achip${on?' on':''}" data-q="${b.q}" style="background:${col(b)}">${esc(b.name)}<span>${on?'붙임 ✔':'＋'}</span></button>`}).join(''):'<p style="color:var(--sub)">이 차시에 블록(다른 응용해보기 문제)이 없어요.</p>')
       +FR.map((f,j)=>`<button class="achip afc" data-f="${j}">🧱 ${esc(f.name)}<span>틀 ＋</span></button>`).join('');
     stk.innerHTML=(head.trim()?pc('시작 코드',head,'var(--raise)'):'')+(ord.length?list(ord,[]):'<div class="aslot">왼쪽 블록을 클릭해서 여기에 붙여요</div>')+(tail.trim()?pc('실행 코드',tail,'var(--raise)'):'');
-    ch.querySelectorAll('.achip').forEach(b=>b.onclick=()=>{if(b.dataset.f!=null)ord.push({f:+b.dataset.f,k:[]});else{const q=+b.dataset.q;if(!rmQ(ord,q))ord.push({q})}keep();draw()});
-    stk.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{const p=b.dataset.p.split('.').map(Number),{a,i}=at(p),k=b.dataset.a;
+    ch.querySelectorAll('.achip').forEach(b=>b.onclick=()=>{if(b.dataset.f!=null)ord.push(nz([{f:+b.dataset.f}])[0]);else{const q=+b.dataset.q;if(!rmQ(ord,q))ord.push({q})}keep();draw()});
+    stk.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{const p=b.dataset.p.split('.').map(Number),k=b.dataset.a;
+      if(k==='add'){pick={p:b.dataset.p,s:+b.dataset.s};return draw()}if(k==='cancel'){pick=null;return draw()}
+      if(k==='put'){const q=b.dataset.q!=null?+b.dataset.q:null,{a,i}=at(p),dst=a[i].k[+b.dataset.s];if(q!=null){rmQ(ord,q);dst.push({q})}else dst.push(nz([{f:+b.dataset.f}])[0]);pick=null;keep();return draw()}
+      const {a,i}=at(p);pick=null;
       if(k==='up'||k==='dn'){const t=i+(k==='up'?-1:1);if(t<0||t>=a.length)return;[a[i],a[t]]=[a[t],a[i]]}
-      else if(k==='in'){if(!(i>0&&a[i-1].f!=null))return;a[i-1].k.push(a.splice(i,1)[0])}
-      else if(k==='out'){const P=at(p.slice(0,-1));P.a.splice(P.i+1,0,a.splice(i,1)[0])}
-      else{const n=a.splice(i,1)[0];if(n.k)a.splice(i,0,...n.k)} // 틀을 빼면 안에 있던 블록은 그 자리에 남음
+      else if(k==='out'){const P=at(p.slice(0,-2));P.a.splice(P.i+1,0,a.splice(i,1)[0])}
+      else{const n=a.splice(i,1)[0];if(n.k)a.splice(i,0,...n.k.flat())} // 틀을 빼면 안에 있던 블록은 그 자리에 남음
       keep();draw()});
     if(cd.style.display!=='none')cd.textContent=all()};
   draw();bx.addEventListener('pointerenter',draw); // 위에서 블록 코드를 고치고 오면 바로 반영
