@@ -402,7 +402,7 @@ html.nomk .cmk{border:0!important;background:none!important;padding:0!important;
 html.nomk .showsp .sp{background:none}html.nomk .showsp .sp::before{content:none}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v267</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v268</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -896,7 +896,9 @@ const EXQ=/\[\s*설명\s*\]/;
 /* v267: 문제 칸에 [대주제:이름]을 쓴 문항 위에 대주제 제목 줄이 생기고, 다음 [대주제:]가 나올 때까지 같은 대주제예요. 조립 문항은 같은 대주제의 블록만 가져와요 */
 const TPQ=/\[\s*대주제\s*[:：]\s*([^\]]*)\]\s*\n?/,tpList=items=>{let c;return items.map(x=>{const m=TPQ.exec(String(x.text));if(m)c=m[1].trim();return c})};
 function tpApply(box,items){const TL=tpList(items);if(TL.every(x=>x==null))return;let cur=null,inn=null; // 개념익히기 섹터(details.sec)와 같은 모양: 제목을 누르면 열고 닫음, 처음엔 닫혀 있음
-  items.forEach((x,k)=>{const el=box.querySelector(`[data-q="${x.q}"]`);if(!el)return;const tp=TL[k],mk=TPQ.test(String(x.text));if(tp==null){cur=null;inn=null;return}
+  const E=[...box.children].filter(e=>e.classList.contains('box')||e.classList.contains('exb')); // 문항 순서대로 상자를 찾음(문항 번호가 겹치거나 비어 있어도 안전)
+  if(E.length!==items.length)return;
+  items.forEach((x,k)=>{const el=E[k],tp=TL[k],mk=TPQ.test(String(x.text));if(tp==null){cur=null;inn=null;return}
     if(mk||cur==null){const d=document.createElement('details');d.className='box sec tps';d.innerHTML=`<summary><h3>${esc(tp)}</h3></summary><div></div>`;el.before(d);inn=d.querySelector('div');cur=tp}inn.appendChild(el)});
   secChk()}
 const exBox=i=>`<div class="exb" data-q="${i.q}">${i.title?`<h4>${esc(i.title)}</h4>`:''}${fmt(String(i.text).replace(TPQ,'').replace(EXQ,'').replace(/^\s*\n/,''))}</div>`;
