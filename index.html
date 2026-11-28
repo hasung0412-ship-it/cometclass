@@ -332,7 +332,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 .achip{display:flex;width:100%;align-items:center;gap:8px;text-align:left;border-radius:var(--r2);padding:9px 12px;margin-bottom:8px;border:2px solid transparent}.achip span{margin-left:auto;font-size:12px;color:var(--sub);white-space:nowrap}.achip.on{opacity:.5}
 .apc{border:1px solid var(--line);border-radius:var(--r2);overflow:hidden;margin-bottom:6px}.aph{display:flex;align-items:center;gap:8px;padding:4px 12px;font-size:14px}.apc pre{margin:0;border-radius:0;font-size:12px}
 .actl{margin-left:auto;display:flex;gap:4px}.actl button{padding:0 8px;font-size:12px;border-radius:6px;background:var(--surface);border:1px solid var(--line)}
-.actl{flex-shrink:0}.aadd{margin:2px 0 6px;padding:3px 12px;font-size:13px;border:2px dashed var(--line);background:transparent;color:var(--sub)}.apick{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 6px}.apick button{padding:3px 10px;font-size:13px}.asm .aph{flex-wrap:wrap;row-gap:4px}.actl button{white-space:nowrap}.anest{margin:6px 6px 6px 12px;padding-left:8px;border-left:3px dashed var(--line)}.afc{background:var(--raise);border:2px dashed var(--line)}
+.actl{flex-shrink:0}.asb{display:inline-block;width:auto;padding:0 6px;margin:0 2px;font:inherit;background:var(--raise);border:1px dashed var(--focus);border-radius:4px}.asb.ok{border:1px solid #4fae86}.asb.no{border:1px solid var(--no-ink)}.aadd{margin:2px 0 6px;padding:3px 12px;font-size:13px;border:2px dashed var(--line);background:transparent;color:var(--sub)}.apick{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 6px}.apick button{padding:3px 10px;font-size:13px}.asm .aph{flex-wrap:wrap;row-gap:4px}.actl button{white-space:nowrap}.anest{margin:6px 6px 6px 12px;padding-left:8px;border-left:3px dashed var(--line)}.afc{background:var(--raise);border:2px dashed var(--line)}
 .aslot{border:2px dashed var(--line);border-radius:var(--r2);padding:12px;text-align:center;color:var(--sub);margin-bottom:6px;font-size:14px}
 
 /* ---- 휴대폰 폭 ---- */
@@ -402,7 +402,7 @@ html.nomk .cmk{border:0!important;background:none!important;padding:0!important;
 html.nomk .showsp .sp{background:none}html.nomk .showsp .sp::before{content:none}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v268</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v269</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -947,39 +947,56 @@ function asmInit(bx,it,items,no,act){
      틀 안 '# 블록' 줄(또는 '# 블록: 이름')이 빈 자리이고 여러 개 둘 수 있어요. 없으면 첫 줄 아래 4칸이 빈 자리 하나.
      학생은 빈 자리마다 '＋ 여기에 넣기'로 블록·틀을 골라 넣어요. 합칠 때 그 줄 들여쓰기에 맞춰 넣고, 비어 있으면 pass */
   const src=String(it.start||'').replace(/^\s*```[^\n]*\n/,'').replace(/\n?\s*```\s*$/,''),fi=src.search(/^[ \t]*#[ \t]*틀[ \t]*[:：]/m),SL=/^[ \t]*#[ \t]*블록[ \t]*(?:[:：][ \t]*(.*?))?[ \t]*$/,iw=l=>(l||'').match(/^[ \t]*/)[0].length;
-  const slp=L=>{const seg=[[]],sl=[];L.forEach(l=>{const m=SL.exec(l);if(m){sl.push({ind:iw(l),name:(m[1]||'').trim()});seg.push([])}else seg[seg.length-1].push(l)});return{seg:seg.map(x=>x.join('\n')),sl}};
+  const UNIT=(()=>{const l=src.split('\n').find(x=>x.trim()&&iw(x)>0&&!SL.test(x));return l?iw(l):4})(); // 이 코드가 쓰는 들여쓰기 칸 수(2칸·4칸)
+  const slp=L=>{const seg=[[]],sl=[];let pv=null;L.forEach(l=>{const m=SL.exec(l);if(m){let ind=iw(l);if(pv!=null&&/:\s*(#.*)?$/.test(pv)&&ind<=iw(pv))ind=iw(pv)+UNIT; // 바로 윗줄이 ':'로 끝나는데 '# 블록'이 같은 줄 높이면 한 단계 안으로 넣음
+      sl.push({ind,name:(m[1]||'').trim()});seg.push([])}else{seg[seg.length-1].push(l);if(l.trim())pv=l}});return{seg:seg.map(x=>x.join('\n')),sl}};
   const FR=fi<0?[]:src.slice(fi).split(/^(?=[ \t]*#[ \t]*틀[ \t]*[:：])/m).map(t=>{const L=t.replace(/\s+$/,'').split('\n'),name=L.shift().replace(/^[ \t]*#[ \t]*틀[ \t]*[:：][ \t]*/,'').trim(),o=slp(L);
     if(!o.sl.length){o.sl.push({ind:iw(L[0])+4,name:'',imp:L.filter(x=>x.trim()).length>1});o.seg.push('')} // 빈 자리 표시가 없으면 첫 줄 아래(고정 줄이 더 있으면 비어도 pass 안 붙임)
     return {name,...o}}).filter(f=>f.seg.join('').trim());
-  const parts=(fi<0?src:src.slice(0,fi)).split(/^[ \t]*#[ \t]*블록[ \t]*$/m),head=(parts[0]||'').replace(/\s+$/,''),tail=(parts.slice(1).join('\n')||'').replace(/^\s*\n/,'').replace(/\s+$/,'');
+  /* v269: 시작코드 칸(첫 '# 틀:' 위)에 '# 블록'이 2개 이상(또는 '# 블록: 이름')이면 시작 코드 전체가 뼈대 하나가 돼요. 학생이 못 지우고, 자리마다 '＋ 넣기'. '# 블록'이 하나면 예전처럼 위=시작 코드·아래=실행 코드 */
+  const hl=(fi<0?src:src.slice(0,fi)).replace(/\s+$/,'').split('\n'),sks=hl.filter(l=>SL.test(l)),SK=sks.length>=2||sks.some(l=>SL.exec(l)[1])?{name:'시작 코드',fixed:1,...slp(hl)}:null;
+  if(SK)SK.seg[SK.seg.length-1]=SK.seg[SK.seg.length-1].replace(/\s+$/,'');
+  const SKI=SK?FR.push(SK)-1:-1;
+  const parts=(fi<0?src:src.slice(0,fi)).split(/^[ \t]*#[ \t]*블록[ \t]*$/m),head=SK?'':(parts[0]||'').replace(/\s+$/,''),tail=SK?'':(parts.slice(1).join('\n')||'').replace(/^\s*\n/,'').replace(/\s+$/,'');
   const PN=exNum(items),last={};items.forEach(x=>{const g=stpG(x.text);if(g!=null)last[g]=x}); // 단계 줄기는 마지막 단계(완성본)만 블록이 됨
   const TL=tpList(items),mine=TL[items.indexOf(it)],bl=[];items.forEach((x,k)=>{const g=stpG(x.text);if(TL[k]===mine&&x!==it&&!ASMQ.test(x.text)&&!ASMS.test(x.text)&&!EXQ.test(x.text)&&(g==null||last[g]===x))bl.push({k,q:x.q,name:asmName(x,PN[k])+(g!=null?' (완성)':'')})});
   const code=b=>{const t=document.querySelector(`#items .box[data-q="${b.q}"]:not(.asm) textarea:not(.cnote)`);return t?t.value.replace(/\s+$/,''):''};
   // 붙인 모양(트리): 블록 {q}, 틀 {f, k:[빈 자리마다 목록]}. 예전 저장(번호 목록, 빈 자리 하나짜리 틀)도 그대로 읽음
   const key=`asm|${S.user.id}|${S.sub}|${no}|${it.q}`,nz=a=>Array.isArray(a)?a.map(x=>{if(typeof x==='number')x={q:x};if(x&&x.f!=null&&FR[x.f]){const K=Array.isArray(x.k)?(x.k.length&&!Array.isArray(x.k[0])?[x.k]:x.k):[];return{f:x.f,k:FR[x.f].sl.map((_,j)=>nz(K[j]))}}return x&&x.q!=null?(Array.isArray(x.k)?{q:x.q,k:x.k.map(nz)}:{q:x.q}):null}).filter(x=>x&&(x.f!=null||bl.some(b=>b.q===x.q))):[];
   let ord=[],pick=null;try{ord=nz(JSON.parse(localStorage.getItem(key)||'[]'))}catch(e){}
+  if(SKI>=0){const f0=ord.find(n=>n.f===SKI);ord=ord.filter(n=>n.f!==SKI);ord.unshift(f0||nz([{f:SKI}])[0])} // 뼈대는 늘 있어요(지울 수 없음). 블록은 뼈대 위·아래 어디에나 붙일 수 있어요
+  /* v269: 시작 코드·틀 안의 [빈칸:힌트|정답] = 학생이 직접 써 넣는 칸(정답은 생략 가능). 쓴 값이 합친 코드에 들어가요. 이 기기에 기억 */
+  const bk=key+'|bv',BQ=/\[\s*빈칸\s*(?:[:：]([^\]|]*))?(?:\|([^\]]*))?\]/g;let BV={};try{BV=JSON.parse(localStorage.getItem(bk)||'{}')||{}}catch(e){}
+  const bok=(a,v)=>a.split('/').some(x=>norm(x)===norm(v)),bcls=(a,v)=>a&&v.trim()?(bok(a,v)?' ok':' no'):'';
+  const bh=(text,sk)=>{let n=0,o='',last=0,m;const re=new RegExp(BQ.source,'g');while((m=re.exec(text))){o+=esc(text.slice(last,m.index));n++;const id=sk+'#'+n,h=(m[1]||'').trim(),a=(m[2]||'').trim(),v=BV[id]||'';
+    o+=`<input class="asb${bcls(a,v)}" data-b="${id}" data-a="${esc(a)}" placeholder="${esc(h)}" size="${Math.max(4,Math.round(h.length*1.7)+2)}" value="${esc(v)}" spellcheck="false" autocomplete="off">`;last=m.index+m[0].length}return o+esc(text.slice(last))};
+  const bsub=(text,sk)=>{let n=0;return text.replace(new RegExp(BQ.source,'g'),()=>{n++;return (BV[sk+'#'+n]||'').trim()||'___'})};
+  const bmiss=()=>{let k=0;const cnt=(s,sk)=>{let n=0;s.replace(new RegExp(BQ.source,'g'),()=>{n++;if(!(BV[sk+'#'+n]||'').trim())k++})};cnt(head,'h');cnt(tail,'t');walk(ord,n=>{if(n.f!=null)FR[n.f].seg.forEach((s,j)=>cnt(s,'f'+n.f+'.'+j))});return k};
   const walk=(a,f)=>a.forEach(n=>{f(n);if(n.k)n.k.forEach(s=>walk(s,f))}),has=q=>{let h=0;walk(ord,n=>{if(n.q===q)h=1});return h},rmQ=(a,q)=>a.some((n,i)=>n.q===q?(a.splice(i,1),1):n.k&&n.k.some(s=>rmQ(s,q)));
   const at=p=>{let a=ord;for(let j=0;j<p.length-1;j+=2)a=a[p[j]].k[p[j+1]];return{a,i:p[p.length-1]}},indt=(c,n)=>c.split('\n').map(l=>l.trim()?' '.repeat(n)+l:l).join('\n'); // 경로 = [순서, 빈 자리, 순서, 빈 자리, …, 순서]
   const keep=()=>{try{localStorage.setItem(key,JSON.stringify(ord))}catch(e){}};
   const ch=bx.querySelector('.achips'),stk=bx.querySelector('.astk'),out=bx.querySelector('.out'),cd=bx.querySelector('.acd'),m=bx.querySelector('.msg');
   const col=b=>ASMC[bl.indexOf(b)%ASMC.length],B=q=>bl.find(b=>b.q===q);
-  const pc=(t,c,bg,ctl)=>`<div class="apc"><div class="aph" style="background:${bg}">${t}${ctl||''}</div><pre>${esc(c)||'<span style="color:var(--sub)">(아직 비어 있어요)</span>'}</pre></div>`;
+  const pc=(t,c,bg,ctl,sk)=>`<div class="apc"><div class="aph" style="background:${bg}">${t}${ctl||''}</div><pre>${(sk?bh(c,sk):esc(c))||'<span style="color:var(--sub)">(아직 비어 있어요)</span>'}</pre></div>`;
   const spec=n=>{if(n.f!=null)return FR[n.f];const o=slp(code(B(n.q)).split('\n'));if(!o.sl.length){if(n.k){const K=n.k.flat();delete n.k;return K.length?{spill:K}:null}return null} // 학생 블록에 '# 블록' 줄이 있으면 그 블록도 틀처럼 빈 자리를 가짐
     n.k=n.k||[];while(n.k.length<o.sl.length)n.k.push([]);if(n.k.length>o.sl.length)n.k[o.sl.length-1].push(...n.k.splice(o.sl.length).flat());return o};
-  const gen=n=>{const f=spec(n);if(!f||f.spill)return code(B(n.q));const o=[f.seg[0]];f.sl.forEach((s,j)=>{const inn=n.k[j].map(gen).filter(x=>x.trim()).join('\n');o.push(inn.trim()?indt(inn,s.ind):s.imp?'':' '.repeat(s.ind)+'pass',f.seg[j+1])});return o.filter(x=>x.trim()).join('\n')};
-  const all=()=>[head,...ord.map(gen),tail].filter(x=>x.trim()).join('\n\n');
+  const gen=n=>{const f=spec(n);if(!f||f.spill)return code(B(n.q));const sb=(x,j)=>n.f!=null?bsub(x,'f'+n.f+'.'+j):x,o=[sb(f.seg[0],0)];f.sl.forEach((s,j)=>{const inn=n.k[j].map(gen).filter(x=>x.trim()).join('\n');o.push(inn.trim()?indt(inn,s.ind):s.imp?'':' '.repeat(s.ind)+'pass',sb(f.seg[j+1],j+1))});return o.filter(x=>x.trim()).join('\n')};
+  const all=()=>[bsub(head,'h'),...ord.map(gen),bsub(tail,'t')].filter(x=>x.trim()).join('\n\n');
   const ctl=p=>{const d=p.join('.');return `<span class="actl"><button data-a="up" data-p="${d}">▲</button><button data-a="dn" data-p="${d}">▼</button>${p.length>1?`<button data-a="out" data-p="${d}">← 꺼내기</button>`:''}<button data-a="x" data-p="${d}">✕ 빼기</button></span>`};
   const slotH=(n,pp,j,f)=>{const d=pp.join('.'),s=f.sl[j],on=pick&&pick.p===d&&pick.s===j,kid=n.k[j];
-    const pk=on?`<div class="apick">${bl.filter(b=>!has(b.q)).map(b=>`<button data-a="put" data-p="${d}" data-s="${j}" data-q="${b.q}" style="background:${col(b)}">${esc(b.name)}</button>`).join('')}${FR.map((f,i)=>`<button data-a="put" data-p="${d}" data-s="${j}" data-f="${i}" class="afc">🧱 ${esc(f.name)}</button>`).join('')}<button data-a="cancel" data-p="${d}">닫기</button></div>`:`<button class="aadd" data-a="add" data-p="${d}" data-s="${j}">＋ ${s.name?esc(s.name)+' 자리에 ':'여기에 '}넣기</button>`;
+    const pk=on?`<div class="apick">${bl.filter(b=>!has(b.q)).map(b=>`<button data-a="put" data-p="${d}" data-s="${j}" data-q="${b.q}" style="background:${col(b)}">${esc(b.name)}</button>`).join('')}${FR.map((f,i)=>f.fixed?'':`<button data-a="put" data-p="${d}" data-s="${j}" data-f="${i}" class="afc">🧱 ${esc(f.name)}</button>`).join('')}<button data-a="cancel" data-p="${d}">닫기</button></div>`:`<button class="aadd" data-a="add" data-p="${d}" data-s="${j}">＋ ${s.name?esc(s.name)+' 자리에 ':'여기에 '}넣기</button>`;
     return `<div class="anest">${kid.length?list(kid,[...pp,j]):''}${pk}</div>`};
   const list=(a,p)=>{a.forEach((n,i)=>{const f=n.f==null&&spec(n);if(f&&f.spill){a.splice(i+1,0,...f.spill);keep()}}); // 블록에서 '# 블록' 줄을 지우면 안에 있던 블록은 바로 뒤로 나옴
-    return a.map((n,i)=>{const pp=[...p,i],c=ctl(pp),f=spec(n),b=n.f==null&&B(n.q);if(!f){return pc(esc(b.name),code(b),col(b),c)}
-    return `<div class="apc afr"><div class="aph" style="background:${b?col(b):'var(--raise)'}">${b?esc(b.name):'🧱 '+esc(f.name)}${c}</div>${f.seg.map((sg,j)=>(sg.trim()?`<pre>${esc(sg)}</pre>`:'')+(j<f.sl.length?slotH(n,pp,j,f):'')).join('')}</div>`}).join('')};
+    const top=!p.length&&SKI>=0?(pick&&pick.p==='top'?`<div class="apick">${bl.filter(b=>!has(b.q)).map(b=>`<button data-a="puttop" data-q="${b.q}" style="background:${col(b)}">${esc(b.name)}</button>`).join('')}<button data-a="cancel" data-p="top">닫기</button></div>`:'<button class="aadd" data-a="addtop" data-p="">＋ 시작 코드 위에 넣기</button>'):''; // 뼈대 위쪽 자리
+    return top+a.map((n,i)=>{const pp=[...p,i],c=n.f===SKI&&SKI>=0?'':ctl(pp),f=spec(n),b=n.f==null&&B(n.q);if(!f){return pc(esc(b.name),code(b),col(b),c)}
+    return `<div class="apc afr"><div class="aph" style="background:${b?col(b):'var(--raise)'}">${b?esc(b.name):(f.fixed?'':'🧱 ')+esc(f.name)}${c}</div>${f.seg.map((sg,j)=>(sg.trim()?`<pre>${n.f!=null?bh(sg,'f'+n.f+'.'+j):esc(sg)}</pre>`:'')+(j<f.sl.length?slotH(n,pp,j,f):'')).join('')}</div>`}).join('')};
   const draw=()=>{ch.innerHTML=(bl.length?bl.map(b=>{const on=has(b.q);return `<button class="achip${on?' on':''}" data-q="${b.q}" style="background:${col(b)}">${esc(b.name)}<span>${on?'붙임 ✔':'＋'}</span></button>`}).join(''):'<p style="color:var(--sub)">이 차시에 블록(다른 응용해보기 문제)이 없어요.</p>')
-      +FR.map((f,j)=>`<button class="achip afc" data-f="${j}">🧱 ${esc(f.name)}<span>틀 ＋</span></button>`).join('');
-    stk.innerHTML=(head.trim()?pc('시작 코드',head,'var(--raise)'):'')+(ord.length?list(ord,[]):'<div class="aslot">왼쪽 블록을 클릭해서 여기에 붙여요</div>')+(tail.trim()?pc('실행 코드',tail,'var(--raise)'):'');
+      +FR.map((f,j)=>f.fixed?'':`<button class="achip afc" data-f="${j}">🧱 ${esc(f.name)}<span>틀 ＋</span></button>`).join('');
+    stk.innerHTML=(head.trim()?pc('시작 코드',head,'var(--raise)','','h'):'')+(ord.length?list(ord,[]):'<div class="aslot">왼쪽 블록을 클릭해서 여기에 붙여요</div>')+(tail.trim()?pc('실행 코드',tail,'var(--raise)','','t'):'');
     ch.querySelectorAll('.achip').forEach(b=>b.onclick=()=>{if(b.dataset.f!=null)ord.push(nz([{f:+b.dataset.f}])[0]);else{const q=+b.dataset.q;if(!rmQ(ord,q))ord.push({q})}keep();draw()});
-    stk.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{const p=b.dataset.p.split('.').map(Number),k=b.dataset.a;
+    stk.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{const p=(b.dataset.p||'').split('.').map(Number),k=b.dataset.a;
+      if(k==='addtop'){pick={p:'top'};return draw()}
+      if(k==='puttop'){const q=+b.dataset.q;rmQ(ord,q);const x=ord.findIndex(n=>n.f===SKI);ord.splice(x<0?0:x,0,{q});pick=null;keep();return draw()}
       if(k==='add'){pick={p:b.dataset.p,s:+b.dataset.s};return draw()}if(k==='cancel'){pick=null;return draw()}
       if(k==='put'){const q=b.dataset.q!=null?+b.dataset.q:null,{a,i}=at(p),dst=a[i].k[+b.dataset.s];if(q!=null){rmQ(ord,q);dst.push({q})}else dst.push(nz([{f:+b.dataset.f}])[0]);pick=null;keep();return draw()}
       const {a,i}=at(p);pick=null;
@@ -988,10 +1005,12 @@ function asmInit(bx,it,items,no,act){
       else{const n=a.splice(i,1)[0];if(n.k)a.splice(i,0,...n.k.flat())} // 틀을 빼면 안에 있던 블록은 그 자리에 남음
       keep();draw()});
     if(cd.style.display!=='none')cd.textContent=all()};
-  draw();bx.addEventListener('pointerenter',draw); // 위에서 블록 코드를 고치고 오면 바로 반영
-  bx.querySelector('.arun').onclick=async()=>{draw();out.style.display='block';out.textContent='실행 중... (처음에는 10~30초 걸려요)';try{putOut(out,'출력:\n'+(await runPy(all(),bx.querySelector('.ain').value)||'(출력 없음)'))}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
+  stk.addEventListener('input',e=>{const i=e.target.closest&&e.target.closest('.asb');if(!i)return;BV[i.dataset.b]=i.value;try{localStorage.setItem(bk,JSON.stringify(BV))}catch(_){}
+    i.classList.remove('ok','no');const c=bcls(i.dataset.a,i.value).trim();if(c)i.classList.add(c);if(cd.style.display!=='none')cd.textContent=all()});
+  draw();bx.addEventListener('pointerenter',()=>{if(!stk.contains(document.activeElement))draw()}); // 위에서 블록 코드를 고치고 오면 바로 반영 (빈칸 쓰는 중에는 그대로 둠)
+  bx.querySelector('.arun').onclick=async()=>{draw();if(bmiss()){out.style.display='block';out.textContent='빈칸을 모두 채워야 실행할 수 있어요 !!';return}out.style.display='block';out.textContent='실행 중... (처음에는 10~30초 걸려요)';try{putOut(out,'출력:\n'+(await runPy(all(),bx.querySelector('.ain').value)||'(출력 없음)'))}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
   bx.querySelector('.aall').onclick=()=>{const on=cd.style.display==='none';cd.style.display=on?'block':'none';if(on)cd.textContent=all()};
-  bx.querySelector('.asv').onclick=async e=>{const b=e.currentTarget;if(!ord.length){m.className='msg no';m.textContent='블록을 먼저 붙여보세요 !!';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';const a=all(),x=await api('submit',{no,act,q:it.q,answer:a,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,a,true);m.className='msg ok';m.textContent='조립한 코드 저장 완료!'}}
+  bx.querySelector('.asv').onclick=async e=>{const b=e.currentTarget;if(!(SKI>=0?bl.some(b=>has(b.q)):ord.length)){m.className='msg no';m.textContent='블록을 먼저 붙여보세요 !!';return}if(bmiss()){m.className='msg no';m.textContent='빈칸을 모두 채워 보세요 !!';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';const a=all(),x=await api('submit',{no,act,q:it.q,answer:a,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,a,true);m.className='msg ok';m.textContent='조립한 코드 저장 완료!'}}
 /* 파이썬 실행 (브라우저 안, Pyodide) */
 /* 실행 과정 보기: 시트 칸에 ```trace ... ``` 로 쓰면 이 화면으로 바뀝니다 */
 const br=s=>s.replace(/\s*\/\/\s*/g,'<br>'),TRQ=/\{\{([^{}\n]*?)\}\}/g,norm=s=>String(s).replace(/\s/g,'').toLowerCase(),spl=s=>s.replace(/^( +)/,m=>m.replace(/ /g,'<span class="sp"> </span>'));
