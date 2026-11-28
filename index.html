@@ -402,7 +402,7 @@ html.nomk .cmk{border:0!important;background:none!important;padding:0!important;
 html.nomk .showsp .sp{background:none}html.nomk .showsp .sp::before{content:none}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v271</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v272</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -848,7 +848,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
     if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,q,a,x.correct);
     if(x.free){m.className='msg ok';m.innerHTML='제출 완료! 수정해서 다시 보내셔도 됩니다 ~ '+fmt(x.explain||'');return}
     m.className='msg '+(x.correct?'ok':'no');m.innerHTML=(x.correct?'✅ 정답! ':'❌ 다시 생각해봅시다. ')+fmt(x.explain||'')})}
-  if(act==='작성'){const PN=exNum(r.items);box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니니까, 가만히 있지 말고 뭐라도 해봐요!</p>`+r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);if(ASMQ.test(i.text))return asmBox(i);n=PN[n];const s=sv(i.q),g=stpG(i.text),sk=g!=null?r.items.filter(x=>stpG(x.text)===g).indexOf(i)+1:0;return `<div class="box" data-q="${i.q}"${sk?` data-stp="${sk}" data-stg="${esc(g)}"`:''}><h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${sk?` <span class="stpb">${sk}단계</span>`:''}</h3>${sk>1?`<p class="stpn">⬇ ${sk-1}단계 코드가 이어져 내려와요. ${sk-1}단계를 고치면 여기서 내가 안 건드린 줄만 같이 바뀌어요.</p>`:''}${fmt((sk?String(i.text).replace(STPQ,''):String(i.text)).replace(TPQ,'').replace(ASMS,''))}
+  if(act==='작성'){const PN=exNum(r.items);box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니니까, 가만히 있지 말고 뭐라도 해봐요!</p>`+r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);if(ASMQ.test(i.text))return asmBox(i);n=PN[n];const s=sv(i.q),g=stpG(i.text),sk=g!=null?r.items.filter(x=>stpG(x.text)===g).indexOf(i)+1:0;return `<div class="box" data-q="${i.q}"${sk?` data-stp="${sk}" data-stg="${esc(g)}"`:''}><h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${sk?` <span class="stpb">${sk}단계</span>`:''}</h3>${sk>1?`<p class="stpn">⬇ ${sk-1}단계 코드가 이어져 내려와요. ${sk-1}단계를 고치면 여기서 내가 안 건드린 줄만 같이 바뀌어요.</p>`:''}${fmt((sk?String(i.text).replace(STPQ,''):String(i.text)).replace(TPQ,'').replace(ASMS,'').replace(CPYQ,''))}
   <div class="tr2${i.hasSample?'':' one'}"><div class="tp"><h4>내가 짠 코드</h4><textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">저장</button>${String(i.hint||'').trim()?'<button class="ghost hb"></button>':''}</div><div class="hl"></div>${!i.hasSample&&S.user&&S.user.role==='관리자'?'<p style="color:var(--sub);font-size:12px;margin:6px 0">※ 관리자에게만 보이는 안내: 이 문제는 예시 코드가 비어 있어서 오른쪽 칸이 없어요. 응용해보기 시트의 <b>예시코드</b> 열 제목과 칸을 확인하세요.</p>':''}<pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.ok?'저장해 둔 코드예요':(s&&!s.submitted?'이어서 쓰던 코드가 있어요 (아직 저장 전)':'')}</div></div>
   ${i.hasSample?`<div class="tp"><h4>내 예시 코드</h4><div class="sm"><p style="margin:0 0 8px;color:var(--sub)">내가 알려 주는 비밀번호를 입력하면 열려요.</p><div class="row"><input type="password" class="sp2" placeholder="비밀번호" autocomplete="off" style="max-width:200px"><button class="main sk">열기</button></div><div class="err se"></div></div></div>`:''}</div></div>`}).join('');
     box.querySelectorAll('.box').forEach(bx=>{const it=r.items.find(x=>String(x.q)===bx.dataset.q);if(bx.dataset.asm)return asmInit(bx,it,r.items,no,act,r);const ta=bx.querySelector('textarea:not(.cnote)'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
@@ -864,7 +864,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
       ta.onkeydown=e=>{if(e.key==='Tab'){e.preventDefault();document.execCommand('insertText',false,'    ')}};
       bx.querySelector('.run').onclick=async()=>{out.style.display='block';out.textContent='실행 중...';try{putOut(out,await runPy(defWrap(ta),it.ins[0])||'(출력 없음)')}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
       bx.querySelector('.sub').onclick=async()=>{const b=bx.querySelector('.sub');if(!ta.value.trim()){m.className='msg no';m.textContent='코드를 먼저 써보세요 !!';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';
-        const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='저장 완료! 수정해서 다시 저장하셔도 됩니다 ~'}});stpInit(box,no,q=>!!sv(q))}if(act!=='개념')tpApply(box,r.items);noteBind(box,act,r,no)}
+        const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='저장 완료! 수정해서 다시 저장하셔도 됩니다 ~'}});stpInit(box,no,q=>!!sv(q));cpyInit(box,r,no,q=>!!sv(q))}if(act!=='개념')tpApply(box,r.items);noteBind(box,act,r,no)}
 
 /* v261: 내 주석 — 선생님 코드(```, ```run, ```코딩, ```trace, 해석 코드 칸) 아래에 학생이 자기가 이해한 대로 적어 두는 메모.
    서버 임시저장 탭에 활동 '주석', 문항 '활동|문항|그 문항의 몇 번째 코드'로 저장 (Code.gs v163). 나만 보이고, 다시 들어오면 그대로 보여요 */
@@ -924,6 +924,21 @@ function merge3(base,mine,theirs){const B=base.split('\n'),M=mine.split('\n'),T=
       ops.push({f:bm[h.s],t:bm[h.e-1]+1,l:h.l})}
     else{const p=h.s>0&&bm[h.s-1]>=0?bm[h.s-1]+1:h.s<B.length&&bm[h.s]>=0?bm[h.s]:h.s===0?0:h.s===B.length?M.length:-1;if(p>=0)ops.push({f:p,t:p,l:h.l})}});
   ops.sort((x,y)=>y.f-x.f||y.t-x.t).forEach(o=>M.splice(o.f,o.t-o.f,...o.l));return M.join('\n')}
+/* v272: [복사:문제번호] — 그 문제에서 짠 코드를 그대로 복사해 와서 고쳐 쓰는 문항. 학생이 이 칸을 직접 고치기 전까지는 원래 문제를 고치면 같이 바뀌고(연동),
+   한 번 고치면 그때부터 따로 움직임(이 기기에 localStorage 'cpy|…'로 기억, 저장해 둔 코드가 있으면 이미 따로). [복사]만 쓰면 바로 앞 문제 */
+const CPYQ=/\[\s*복사\s*(?:[:：]\s*(\d+))?\s*\]/;
+function cpyInit(box,r,no,has){const PN=exNum(r.items),ta=bx=>bx.querySelector('textarea:not(.cnote)');
+  r.items.forEach((it,k)=>{const m=CPYQ.exec(String(it.text||''));if(!m||EXQ.test(it.text))return;
+    const n=m[1]?+m[1]-1:PN[k]-1,si=PN.findIndex((p,j)=>p===n&&!EXQ.test(r.items[j].text));if(si<0||si===k)return;
+    const bx=box.querySelector(`.box[data-q="${it.q}"]`),sx=box.querySelector(`.box[data-q="${r.items[si].q}"]`);if(!bx||!sx)return;
+    const t=ta(bx),st=ta(sx),key=`cpy|${S.user.id}|${S.sub}|${no}|${it.q}`,nt=document.createElement('p');nt.className='stpn';
+    let off=has(it.q);try{if(localStorage.getItem(key)==='1')off=true}catch(e){}
+    const say=()=>{nt.textContent=off?`✂ 문제 ${n+1}번 코드에서 복사해 와서 고친 코드예요. 이제 문제 ${n+1}번을 고쳐도 여기는 안 바뀌어요.`:`🔗 문제 ${n+1}번 코드를 그대로 복사해 왔어요. 여기를 고치기 전까지는 문제 ${n+1}번을 고치면 같이 바뀌어요.`};say();
+    t.closest('.tp').insertBefore(nt,t);
+    const pull=()=>{if(off)return;if(st.value!==t.value){t.value=st.value;t.dispatchEvent(new CustomEvent('cpyupd'))}};
+    st.addEventListener('input',pull);st.addEventListener('cpyupd',pull);
+    t.addEventListener('input',e=>{if(off||!e.isTrusted)return;off=true;try{localStorage.setItem(key,'1')}catch(_){}say()});
+    if(!off&&st.value.trim())t.value=st.value})}
 function stpInit(box,no,has){const G={};box.querySelectorAll('.box[data-stp]').forEach(b=>(G[b.dataset.stg]=G[b.dataset.stg]||[]).push(b));Object.values(G).forEach(L=>stpOne(L.sort((a,b)=>a.dataset.stp-b.dataset.stp),no,has))}
 function stpOne(L,no,has){if(L.length<2)return;
   const ta=bx=>bx.querySelector('textarea:not(.cnote)'),key=bx=>`stp|${S.user.id}|${S.sub}|${no}|${bx.dataset.q}`;
