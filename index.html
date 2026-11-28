@@ -394,6 +394,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 .kbl b{display:block;font-size:14px;white-space:nowrap}
 .kbx{font-size:12px;color:var(--sub);word-break:keep-all}.kbx b{color:var(--no-ink)}
 @media(max-width:700px){.kbn{grid-template-columns:1fr 1fr}.kk{font-size:12px}.kk small{display:none}.kbc{flex-direction:column;gap:2px}}
+.tps>div>.box{box-shadow:none;background:var(--bg)}.tps>div>.box:last-child,.tps>div>.exb:last-child{margin-bottom:0}
 .cnw{margin:4px 0 12px}.cnt{color:var(--sub);align-self:center}.cln{display:inline-block;min-width:100%;cursor:text;border-radius:4px}@media(hover:hover){.cln:hover{background:var(--hover)}}.cln[data-n]::after{content:'💬 ' attr(data-n);font-family:'GangwonEduSaeeum','KoPubWorld Dotum',sans-serif;font-size:1.15em;line-height:1;color:var(--warn-ink);margin-left:18px;white-space:pre-wrap}.clin{display:inline-block;width:min(420px,60%);margin-left:14px;padding:2px 8px;font:15px 'KoPubWorld Dotum',sans-serif;background:var(--warn-bg)}.cnbar{display:flex;gap:6px;flex-wrap:wrap}.cnbar:not(:empty)+.cnar:not(:empty){margin-top:6px}.cnb{padding:3px 10px;font-size:13px}
 .cnh{font-size:13px;font-weight:bold;color:var(--warn-ink);margin:0 0 4px}.cnh small{font-weight:normal;color:var(--sub);margin-left:6px}
 .cnote{width:100%;box-sizing:border-box;min-height:0;font-family:inherit;font-size:15px;background:var(--warn-bg);border:1px solid var(--line);resize:vertical}
@@ -401,7 +402,7 @@ html.nomk .cmk{border:0!important;background:none!important;padding:0!important;
 html.nomk .showsp .sp{background:none}html.nomk .showsp .sp::before{content:none}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v266</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v267</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -835,7 +836,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
   const cd=(i,v)=>{if(i.type==='기타')return fmt(i.code||'');if(i.type!=='설명쓰기')return i.code?(/^\s*```\s*(trace|run)/.test(i.code)||/\[\s*분할/.test(i.code)?fmt(i.code):`<pre class="tcb">${hotCode(i.code)}</pre>`):'';let k=0;return '<pre class="bc">'+String(i.code||'').split(/(\/\*\s*\??\s*\*\/)/).map((p,x)=>x%2?`<input class="blank" placeholder="이 부분의 의미를 써 보세요" value="${esc(v[k++]||'')}">`:esc(p)).join('')+'</pre>'};
   const pn=exNum(r.items);box.innerHTML=r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);n=pn[n];const s=sv(i.q),f=isF(i),v=s&&i.type==='설명쓰기'?String(s.answer).split('\n').map(l=>l.replace(/^\d+:\s?/,'')):[];
     const inp=(i.type==='설명쓰기'||i.type==='기타')?'':i.choices?i.choices.map(c=>`<label class="choice"><input type="radio" name="q${i.q}" value="${esc(c)}" ${s&&String(s.answer)===c?'checked':''}>${esc(c)}</label>`).join(''):i.type==='서술'?`<textarea class="free" style="min-height:90px;font-family:inherit" placeholder="생각을 자유롭게 써 보세요">${esc(s?s.answer:'')}</textarea>`:`<input class="ans" placeholder="답을 입력하세요" value="${esc(s?s.answer:'')}">`;
-    const rq=i.req?' <span class="reqb">필수</span>':'';let bd=`<h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${rq}</h3>${fmt(i.text)}`+cd(i,v);const AK=/\[\s*답칸\s*\]/;bd=AK.test(bd)?bd.replace(AK,()=>inp).replace(/\[\s*답칸\s*\]/g,''):bd+inp;
+    const rq=i.req?' <span class="reqb">필수</span>':'';let bd=`<h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${rq}</h3>${fmt(String(i.text).replace(TPQ,''))}`+cd(i,v);const AK=/\[\s*답칸\s*\]/;bd=AK.test(bd)?bd.replace(AK,()=>inp).replace(/\[\s*답칸\s*\]/g,''):bd+inp;
     return `<div class="box" data-q="${i.q}"${i.type==='기타'?' data-etc="1"':''}${i.req?' data-req="1"':''}>${bd}<div class="row"><button class="main chk">${f?'제출하기':'정답 확인'}</button></div><div class="msg ${s&&s.submitted&&(f||s.ok)?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.submitted?(f?'이미 제출이 끝났어요! 수정해서 다시 보내셔도 됩니다 ~':(s.ok?'✅ 이전에 맞혔어요':'')):(s?'이어서 쓰던 내용이 있어요 (아직 제출 전)':'')}</div></div>`}).join('');
   box.querySelectorAll('.box[data-etc]').forEach(bx=>{const s=sv(+bx.dataset.q),mp={};if(s)String(s.answer).split('\n').forEach(l=>{const m=/^(\d+):\s?(.*)$/.exec(l);if(m)mp[m[1]]=m[2]});
     bx.querySelectorAll('.ib').forEach((el,k)=>{const v=mp[k+1];if(v!=null){if(el.type==='checkbox')el.checked=v==='1';else el.value=v;ibCheck(el)}});etcSync(bx);bx.addEventListener('change',()=>etcSync(bx))});
@@ -847,7 +848,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
     if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,q,a,x.correct);
     if(x.free){m.className='msg ok';m.innerHTML='제출 완료! 수정해서 다시 보내셔도 됩니다 ~ '+fmt(x.explain||'');return}
     m.className='msg '+(x.correct?'ok':'no');m.innerHTML=(x.correct?'✅ 정답! ':'❌ 다시 생각해봅시다. ')+fmt(x.explain||'')})}
-  if(act==='작성'){const PN=exNum(r.items);box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니니까, 가만히 있지 말고 뭐라도 해봐요!</p>`+r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);if(ASMQ.test(i.text))return asmBox(i);n=PN[n];const s=sv(i.q),g=stpG(i.text),sk=g!=null?r.items.filter(x=>stpG(x.text)===g).indexOf(i)+1:0;return `<div class="box" data-q="${i.q}"${sk?` data-stp="${sk}" data-stg="${esc(g)}"`:''}><h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${sk?` <span class="stpb">${sk}단계</span>`:''}</h3>${sk>1?`<p class="stpn">⬇ ${sk-1}단계 코드가 이어져 내려와요. ${sk-1}단계를 고치면 여기서 내가 안 건드린 줄만 같이 바뀌어요.</p>`:''}${fmt((sk?String(i.text).replace(STPQ,''):String(i.text)).replace(ASMS,''))}
+  if(act==='작성'){const PN=exNum(r.items);box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니니까, 가만히 있지 말고 뭐라도 해봐요!</p>`+r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);if(ASMQ.test(i.text))return asmBox(i);n=PN[n];const s=sv(i.q),g=stpG(i.text),sk=g!=null?r.items.filter(x=>stpG(x.text)===g).indexOf(i)+1:0;return `<div class="box" data-q="${i.q}"${sk?` data-stp="${sk}" data-stg="${esc(g)}"`:''}><h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${sk?` <span class="stpb">${sk}단계</span>`:''}</h3>${sk>1?`<p class="stpn">⬇ ${sk-1}단계 코드가 이어져 내려와요. ${sk-1}단계를 고치면 여기서 내가 안 건드린 줄만 같이 바뀌어요.</p>`:''}${fmt((sk?String(i.text).replace(STPQ,''):String(i.text)).replace(TPQ,'').replace(ASMS,''))}
   <div class="tr2${i.hasSample?'':' one'}"><div class="tp"><h4>내가 짠 코드</h4><textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">저장</button>${String(i.hint||'').trim()?'<button class="ghost hb"></button>':''}</div><div class="hl"></div>${!i.hasSample&&S.user&&S.user.role==='관리자'?'<p style="color:var(--sub);font-size:12px;margin:6px 0">※ 관리자에게만 보이는 안내: 이 문제는 예시 코드가 비어 있어서 오른쪽 칸이 없어요. 응용해보기 시트의 <b>예시코드</b> 열 제목과 칸을 확인하세요.</p>':''}<pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.ok?'저장해 둔 코드예요':(s&&!s.submitted?'이어서 쓰던 코드가 있어요 (아직 저장 전)':'')}</div></div>
   ${i.hasSample?`<div class="tp"><h4>내 예시 코드</h4><div class="sm"><p style="margin:0 0 8px;color:var(--sub)">내가 알려 주는 비밀번호를 입력하면 열려요.</p><div class="row"><input type="password" class="sp2" placeholder="비밀번호" autocomplete="off" style="max-width:200px"><button class="main sk">열기</button></div><div class="err se"></div></div></div>`:''}</div></div>`}).join('');
     box.querySelectorAll('.box').forEach(bx=>{const it=r.items.find(x=>String(x.q)===bx.dataset.q);if(bx.dataset.asm)return asmInit(bx,it,r.items,no,act);const ta=bx.querySelector('textarea:not(.cnote)'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
@@ -863,7 +864,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
       ta.onkeydown=e=>{if(e.key==='Tab'){e.preventDefault();document.execCommand('insertText',false,'    ')}};
       bx.querySelector('.run').onclick=async()=>{out.style.display='block';out.textContent='실행 중...';try{putOut(out,await runPy(defWrap(ta),it.ins[0])||'(출력 없음)')}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
       bx.querySelector('.sub').onclick=async()=>{const b=bx.querySelector('.sub');if(!ta.value.trim()){m.className='msg no';m.textContent='코드를 먼저 써보세요 !!';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';
-        const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='저장 완료! 수정해서 다시 저장하셔도 됩니다 ~'}});stpInit(box,no,q=>!!sv(q))}noteBind(box,act,r,no)}
+        const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='저장 완료! 수정해서 다시 저장하셔도 됩니다 ~'}});stpInit(box,no,q=>!!sv(q))}if(act!=='개념')tpApply(box,r.items);noteBind(box,act,r,no)}
 
 /* v261: 내 주석 — 선생님 코드(```, ```run, ```코딩, ```trace, 해석 코드 칸) 아래에 학생이 자기가 이해한 대로 적어 두는 메모.
    서버 임시저장 탭에 활동 '주석', 문항 '활동|문항|그 문항의 몇 번째 코드'로 저장 (Code.gs v163). 나만 보이고, 다시 들어오면 그대로 보여요 */
@@ -892,7 +893,13 @@ const mkLb=()=>'🖍 코드 표시 '+(document.documentElement.classList.contain
 function mkTog(){const off=document.documentElement.classList.toggle('nomk');try{off?localStorage.setItem('mkoff','1'):localStorage.removeItem('mkoff')}catch(e){}document.querySelectorAll('.mkb').forEach(b=>b.textContent=mkLb())}
 /* 문항 사이 설명: 해석해보기·응용해보기 문제 칸에 [설명]을 쓰면 문제가 아니라 설명 글로 보여요(번호·답칸 없음, 진도 계산에서도 빠짐 — Code.gs v147). 제목 칸이 있으면 위에 제목 */
 const EXQ=/\[\s*설명\s*\]/;
-const exBox=i=>`<div class="exb">${i.title?`<h4>${esc(i.title)}</h4>`:''}${fmt(String(i.text).replace(EXQ,'').replace(/^\s*\n/,''))}</div>`;
+/* v267: 문제 칸에 [대주제:이름]을 쓴 문항 위에 대주제 제목 줄이 생기고, 다음 [대주제:]가 나올 때까지 같은 대주제예요. 조립 문항은 같은 대주제의 블록만 가져와요 */
+const TPQ=/\[\s*대주제\s*[:：]\s*([^\]]*)\]\s*\n?/,tpList=items=>{let c;return items.map(x=>{const m=TPQ.exec(String(x.text));if(m)c=m[1].trim();return c})};
+function tpApply(box,items){const TL=tpList(items);if(TL.every(x=>x==null))return;let cur=null,inn=null; // 개념익히기 섹터(details.sec)와 같은 모양: 제목을 누르면 열고 닫음, 처음엔 닫혀 있음
+  items.forEach((x,k)=>{const el=box.querySelector(`[data-q="${x.q}"]`);if(!el)return;const tp=TL[k],mk=TPQ.test(String(x.text));if(tp==null){cur=null;inn=null;return}
+    if(mk||cur==null){const d=document.createElement('details');d.className='box sec tps';d.innerHTML=`<summary><h3>${esc(tp)}</h3></summary><div></div>`;el.before(d);inn=d.querySelector('div');cur=tp}inn.appendChild(el)});
+  secChk()}
+const exBox=i=>`<div class="exb" data-q="${i.q}">${i.title?`<h4>${esc(i.title)}</h4>`:''}${fmt(String(i.text).replace(TPQ,'').replace(EXQ,'').replace(/^\s*\n/,''))}</div>`;
 /* v260: 해석해보기 유형 '기타' 칸에서 [선택:…/기타]를 고를 때 → '기타'를 골랐을 때만 그 뒤 입력 칸을 쓸 수 있음.
    '필수' 문항이면 선택은 꼭 고르고, '기타'를 골랐으면 입력 칸도 채워야 제출됨 */
 const etcSel=bx=>[...bx.querySelectorAll('select.ib')].find(x=>[...x.options].some(o=>o.value==='기타'));
@@ -930,7 +937,7 @@ function stpOne(L,no,has){if(L.length<2)return;
    시작코드 칸: '# 블록' 한 줄 위 = 시작 코드, 아래 = 실행 코드 (둘 다 선생님 고정). 테스트입력 칸 = 입력값 처음 값. 붙인 순서는 이 기기에만 기억 */
 const ASMQ=/\[\s*조립\s*\]/,ASMS=/\[\s*시작\s*\]/, /* v266: 문제 칸에 [시작]이 있는 문항 = 시작 코드를 주석으로 설명하는 보통 문항. 조립 블록 목록에는 안 뜸 */ ASMC=['var(--mint)','var(--peach)','var(--butter)','var(--lav)','var(--sky)'];
 const asmName=(i,k)=>{const t=String(i.title||'').trim();return `문제 ${k+1}`+(t?' · '+(t.length>22?t.slice(0,22)+'…':t):'')};
-function asmBox(i){return `<div class="box asm" data-q="${i.q}" data-asm="1"><h3>조립하기</h3>${fmt(String(i.text).replace(ASMQ,''))}
+function asmBox(i){return `<div class="box asm" data-q="${i.q}" data-asm="1"><h3>조립하기</h3>${fmt(String(i.text).replace(TPQ,'').replace(ASMQ,''))}
   <div class="asw"><div><h4>내 블록 <small>(클릭하면 붙어요)</small></h4><div class="achips"></div><h4>입력값</h4><textarea class="ain" spellcheck="false" style="min-height:90px" placeholder="input()에 차례로 들어갈 값 (한 줄에 하나)">${esc(i.ins&&i.ins[0]||'')}</textarea></div>
   <div><h4>조립대</h4><div class="astk"></div><div class="row"><button class="main arun">▶ 프로젝트 실행</button><button class="ghost aall">합친 코드 보기</button><button class="ghost asv">저장</button></div><pre class="out" style="display:none"></pre><pre class="acd" style="display:none"></pre><div class="msg"></div></div></div></div>`}
 function asmInit(bx,it,items,no,act){
@@ -944,7 +951,7 @@ function asmInit(bx,it,items,no,act){
     return {name,...o}}).filter(f=>f.seg.join('').trim());
   const parts=(fi<0?src:src.slice(0,fi)).split(/^[ \t]*#[ \t]*블록[ \t]*$/m),head=(parts[0]||'').replace(/\s+$/,''),tail=(parts.slice(1).join('\n')||'').replace(/^\s*\n/,'').replace(/\s+$/,'');
   const PN=exNum(items),last={};items.forEach(x=>{const g=stpG(x.text);if(g!=null)last[g]=x}); // 단계 줄기는 마지막 단계(완성본)만 블록이 됨
-  const bl=[];items.forEach((x,k)=>{const g=stpG(x.text);if(x!==it&&!ASMQ.test(x.text)&&!ASMS.test(x.text)&&!EXQ.test(x.text)&&(g==null||last[g]===x))bl.push({k,q:x.q,name:asmName(x,PN[k])+(g!=null?' (완성)':'')})});
+  const TL=tpList(items),mine=TL[items.indexOf(it)],bl=[];items.forEach((x,k)=>{const g=stpG(x.text);if(TL[k]===mine&&x!==it&&!ASMQ.test(x.text)&&!ASMS.test(x.text)&&!EXQ.test(x.text)&&(g==null||last[g]===x))bl.push({k,q:x.q,name:asmName(x,PN[k])+(g!=null?' (완성)':'')})});
   const code=b=>{const t=document.querySelector(`#items .box[data-q="${b.q}"]:not(.asm) textarea:not(.cnote)`);return t?t.value.replace(/\s+$/,''):''};
   // 붙인 모양(트리): 블록 {q}, 틀 {f, k:[빈 자리마다 목록]}. 예전 저장(번호 목록, 빈 자리 하나짜리 틀)도 그대로 읽음
   const key=`asm|${S.user.id}|${S.sub}|${no}|${it.q}`,nz=a=>Array.isArray(a)?a.map(x=>{if(typeof x==='number')x={q:x};if(x&&x.f!=null&&FR[x.f]){const K=Array.isArray(x.k)?(x.k.length&&!Array.isArray(x.k[0])?[x.k]:x.k):[];return{f:x.f,k:FR[x.f].sl.map((_,j)=>nz(K[j]))}}return x&&x.q!=null?(Array.isArray(x.k)?{q:x.q,k:x.k.map(nz)}:{q:x.q}):null}).filter(x=>x&&(x.f!=null||bl.some(b=>b.q===x.q))):[];
