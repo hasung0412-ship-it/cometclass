@@ -330,7 +330,7 @@ div.lk{margin:10px 0 0;color:var(--sub);font-size:14px}.lw.locked{opacity:.45}.l
 .asw h4{margin:6px 0}.asw h4 small{color:var(--sub);font-weight:normal}
 .stpb{display:inline-block;font-size:13px;padding:2px 10px;border-radius:999px;background:var(--sky);margin-left:6px;vertical-align:middle}.stpn{color:var(--sub);font-size:13px;margin:4px 0 8px}
 .achip{display:flex;width:100%;align-items:center;gap:8px;text-align:left;border-radius:var(--r2);padding:9px 12px;margin-bottom:8px;border:2px solid transparent}.achip span{margin-left:auto;font-size:12px;color:var(--sub);white-space:nowrap}.achip.on{opacity:.5}
-.apc{border:1px solid var(--line);border-radius:var(--r2);overflow:hidden;margin-bottom:6px}.aph{display:flex;align-items:center;gap:8px;padding:4px 12px;font-size:14px}.apc pre{margin:0;border-radius:0;font-size:12px}
+.apc{border:1px solid var(--line);border-radius:var(--r2);overflow:hidden;margin-bottom:6px}.aph{display:flex;align-items:center;gap:8px;padding:4px 12px;font-size:14px}.apc pre{margin:0;border-radius:0;font-size:12px}.apc textarea.abe{display:block;width:100%;box-sizing:border-box;margin:0;border:0;border-radius:0;font-size:12px;line-height:1.5;resize:none;overflow:hidden;min-height:0}
 .actl{margin-left:auto;display:flex;gap:4px}.actl button{padding:0 8px;font-size:12px;border-radius:6px;background:var(--surface);border:1px solid var(--line)}
 .actl{flex-shrink:0}.asb{display:inline-block;width:auto;padding:0 6px;margin:0 2px;font:inherit;background:var(--raise);border:1px dashed var(--focus);border-radius:4px}.asb.ok{border:1px solid #4fae86}.asb.no{border:1px solid var(--no-ink)}.aadd{margin:2px 0 6px;padding:3px 12px;font-size:13px;border:2px dashed var(--line);background:transparent;color:var(--sub)}.apick{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 6px}.apick button{padding:3px 10px;font-size:13px}.asm .aph{flex-wrap:wrap;row-gap:4px}.actl button{white-space:nowrap}.anest{margin:6px 6px 6px 12px;padding-left:8px;border-left:3px dashed var(--line)}.afc{background:var(--raise);border:2px dashed var(--line)}
 .aslot{border:2px dashed var(--line);border-radius:var(--r2);padding:12px;text-align:center;color:var(--sub);margin-bottom:6px;font-size:14px}
@@ -402,7 +402,7 @@ html.nomk .cmk{border:0!important;background:none!important;padding:0!important;
 html.nomk .showsp .sp{background:none}html.nomk .showsp .sp::before{content:none}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v272</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v273</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -848,8 +848,8 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
     if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,q,a,x.correct);
     if(x.free){m.className='msg ok';m.innerHTML='제출 완료! 수정해서 다시 보내셔도 됩니다 ~ '+fmt(x.explain||'');return}
     m.className='msg '+(x.correct?'ok':'no');m.innerHTML=(x.correct?'✅ 정답! ':'❌ 다시 생각해봅시다. ')+fmt(x.explain||'')})}
-  if(act==='작성'){const PN=exNum(r.items);box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니니까, 가만히 있지 말고 뭐라도 해봐요!</p>`+r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);if(ASMQ.test(i.text))return asmBox(i);n=PN[n];const s=sv(i.q),g=stpG(i.text),sk=g!=null?r.items.filter(x=>stpG(x.text)===g).indexOf(i)+1:0;return `<div class="box" data-q="${i.q}"${sk?` data-stp="${sk}" data-stg="${esc(g)}"`:''}><h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${sk?` <span class="stpb">${sk}단계</span>`:''}</h3>${sk>1?`<p class="stpn">⬇ ${sk-1}단계 코드가 이어져 내려와요. ${sk-1}단계를 고치면 여기서 내가 안 건드린 줄만 같이 바뀌어요.</p>`:''}${fmt((sk?String(i.text).replace(STPQ,''):String(i.text)).replace(TPQ,'').replace(ASMS,'').replace(CPYQ,''))}
-  <div class="tr2${i.hasSample?'':' one'}"><div class="tp"><h4>내가 짠 코드</h4><textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row"><button class="ghost run">▶ 실행</button><button class="main sub">저장</button>${String(i.hint||'').trim()?'<button class="ghost hb"></button>':''}</div><div class="hl"></div>${!i.hasSample&&S.user&&S.user.role==='관리자'?'<p style="color:var(--sub);font-size:12px;margin:6px 0">※ 관리자에게만 보이는 안내: 이 문제는 예시 코드가 비어 있어서 오른쪽 칸이 없어요. 응용해보기 시트의 <b>예시코드</b> 열 제목과 칸을 확인하세요.</p>':''}<pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.ok?'저장해 둔 코드예요':(s&&!s.submitted?'이어서 쓰던 코드가 있어요 (아직 저장 전)':'')}</div></div>
+  if(act==='작성'){const PN=exNum(r.items),NR=asmBlockQs(r.items);box.innerHTML=`<p style="color:var(--sub)">파이썬은 처음 실행할 때 준비하는 데 10~30초 걸려요. 정답을 맞히는 문제가 아니니까, 가만히 있지 말고 뭐라도 해봐요!</p>`+r.items.map((i,n)=>{if(EXQ.test(i.text))return exBox(i);if(ASMQ.test(i.text))return asmBox(i);n=PN[n];const s=sv(i.q),g=stpG(i.text),sk=g!=null?r.items.filter(x=>stpG(x.text)===g).indexOf(i)+1:0;return `<div class="box" data-q="${i.q}"${sk?` data-stp="${sk}" data-stg="${esc(g)}"`:''}><h3>문제 ${n+1}${i.title?' | '+esc(i.title):''}${sk?` <span class="stpb">${sk}단계</span>`:''}</h3>${sk>1?`<p class="stpn">⬇ ${sk-1}단계 코드가 이어져 내려와요. ${sk-1}단계를 고치면 여기서 내가 안 건드린 줄만 같이 바뀌어요.</p>`:''}${fmt((sk?String(i.text).replace(STPQ,''):String(i.text)).replace(TPQ,'').replace(ASMS,'').replace(CPYQ,''))}
+  <div class="tr2${i.hasSample?'':' one'}"><div class="tp"><h4>내가 짠 코드</h4><textarea spellcheck="false">${esc(s?s.answer:i.start||'')}</textarea><div class="row">${NR.has(i.q)?'':'<button class="ghost run">▶ 실행</button>'}<button class="main sub">저장</button>${String(i.hint||'').trim()?'<button class="ghost hb"></button>':''}</div><div class="hl"></div>${!i.hasSample&&S.user&&S.user.role==='관리자'?'<p style="color:var(--sub);font-size:12px;margin:6px 0">※ 관리자에게만 보이는 안내: 이 문제는 예시 코드가 비어 있어서 오른쪽 칸이 없어요. 응용해보기 시트의 <b>예시코드</b> 열 제목과 칸을 확인하세요.</p>':''}<pre class="out" style="display:none"></pre><div class="msg ${s&&s.ok?'ok':(s&&!s.submitted?'wait':'')}">${s&&s.ok?'저장해 둔 코드예요':(s&&!s.submitted?'이어서 쓰던 코드가 있어요 (아직 저장 전)':'')}</div></div>
   ${i.hasSample?`<div class="tp"><h4>내 예시 코드</h4><div class="sm"><p style="margin:0 0 8px;color:var(--sub)">내가 알려 주는 비밀번호를 입력하면 열려요.</p><div class="row"><input type="password" class="sp2" placeholder="비밀번호" autocomplete="off" style="max-width:200px"><button class="main sk">열기</button></div><div class="err se"></div></div></div>`:''}</div></div>`}).join('');
     box.querySelectorAll('.box').forEach(bx=>{const it=r.items.find(x=>String(x.q)===bx.dataset.q);if(bx.dataset.asm)return asmInit(bx,it,r.items,no,act,r);const ta=bx.querySelector('textarea:not(.cnote)'),out=bx.querySelector('.out'),m=bx.querySelector('.msg');
       const hb=bx.querySelector('button.hb');if(hb){const hs=String(it.hint).split(/\r?\n---\r?\n/).map(x=>x.trim()).filter(Boolean),hl=bx.querySelector('.hl');let hn=0;
@@ -862,7 +862,7 @@ async function contentView(no,act){S.at={sub:S.sub,no,act};here('content',{sub:S
         bx.querySelector('.sk').onclick=()=>{if(pw.value.trim())open(pw.value.trim())};pw.addEventListener('keydown',e=>{if(e.key==='Enter')bx.querySelector('.sk').click()});
         let sv0=null,lk0=null;try{sv0=sessionStorage.getItem(sk);lk0=sessionStorage.getItem(sk+'|L')}catch(e){}if(lk0&&!(S.user&&S.user.role==='관리자'))lockMsg();else if(sv0!=null||(S.user&&S.user.role==='관리자'))open(sv0||'',true)}
       ta.onkeydown=e=>{if(e.key==='Tab'){e.preventDefault();document.execCommand('insertText',false,'    ')}};
-      bx.querySelector('.run').onclick=async()=>{out.style.display='block';out.textContent='실행 중...';try{putOut(out,await runPy(defWrap(ta),it.ins[0])||'(출력 없음)')}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
+      const rb=bx.querySelector('.run');if(rb)rb.onclick=async()=>{out.style.display='block';out.textContent='실행 중...';try{putOut(out,await runPy(defWrap(ta),it.ins[0])||'(출력 없음)')}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
       bx.querySelector('.sub').onclick=async()=>{const b=bx.querySelector('.sub');if(!ta.value.trim()){m.className='msg no';m.textContent='코드를 먼저 써보세요 !!';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';
         const x=await api('submit',{no,act,q:it.q,answer:ta.value,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,ta.value,true);m.className='msg ok';m.textContent='저장 완료! 수정해서 다시 저장하셔도 됩니다 ~'}});stpInit(box,no,q=>!!sv(q));cpyInit(box,r,no,q=>!!sv(q))}if(act!=='개념')tpApply(box,r.items);noteBind(box,act,r,no)}
 
@@ -937,7 +937,7 @@ function cpyInit(box,r,no,has){const PN=exNum(r.items),ta=bx=>bx.querySelector('
     t.closest('.tp').insertBefore(nt,t);
     const pull=()=>{if(off)return;if(st.value!==t.value){t.value=st.value;t.dispatchEvent(new CustomEvent('cpyupd'))}};
     st.addEventListener('input',pull);st.addEventListener('cpyupd',pull);
-    t.addEventListener('input',e=>{if(off||!e.isTrusted)return;off=true;try{localStorage.setItem(key,'1')}catch(_){}say()});
+    t.addEventListener('input',e=>{if(off||!(e.isTrusted||e.fromAsm))return;off=true;try{localStorage.setItem(key,'1')}catch(_){}say()});
     if(!off&&st.value.trim())t.value=st.value})}
 function stpInit(box,no,has){const G={};box.querySelectorAll('.box[data-stp]').forEach(b=>(G[b.dataset.stg]=G[b.dataset.stg]||[]).push(b));Object.values(G).forEach(L=>stpOne(L.sort((a,b)=>a.dataset.stp-b.dataset.stp),no,has))}
 function stpOne(L,no,has){if(L.length<2)return;
@@ -954,10 +954,13 @@ function stpOne(L,no,has){if(L.length<2)return;
 /* 블록 조립: 응용해보기 문제 칸에 [조립]이 있으면 그 문항은 '조립하기' 상자. 같은 차시의 다른 응용해보기 문항 = 블록(학생이 쓴 코드 그대로 가져옴).
    시작코드 칸: '# 블록' 한 줄 위 = 시작 코드, 아래 = 실행 코드 (둘 다 선생님 고정). 테스트입력 칸 = 입력값 처음 값. 붙인 순서는 이 기기에만 기억 */
 const ASMQ=/\[\s*조립\s*\]/,ASMS=/\[\s*시작\s*\]/, /* v266: 문제 칸에 [시작]이 있는 문항 = 시작 코드를 주석으로 설명하는 보통 문항. 조립 블록 목록에는 안 뜸 */ ASMC=['var(--mint)','var(--peach)','var(--butter)','var(--lav)','var(--sky)'];
+/* v273: 조립 블록이 되는 문항(같은 대주제·[조립] 있는 차시)은 단독 실행 버튼이 없음 — 블록만 보면 실행이 안 되는 경우가 많아서 */
+function asmBlockQs(items){const S2=new Set();if(!items.some(x=>ASMQ.test(x.text)))return S2;const TL=tpList(items),last={};items.forEach(x=>{const g=stpG(x.text);if(g!=null)last[g]=x});
+  items.forEach((a,i)=>{if(!ASMQ.test(a.text))return;items.forEach((x,k)=>{const g=stpG(x.text);if(TL[k]===TL[i]&&x!==a&&!ASMQ.test(x.text)&&!ASMS.test(x.text)&&!EXQ.test(x.text)&&(g==null||last[g]===x))S2.add(x.q)})});return S2}
 const asmName=(i,k)=>{const t=String(i.title||'').trim();return `문제 ${k+1}`+(t?' · '+(t.length>22?t.slice(0,22)+'…':t):'')};
 function asmBox(i){return `<div class="box asm" data-q="${i.q}" data-asm="1"><h3>조립하기</h3>${fmt(String(i.text).replace(TPQ,'').replace(ASMQ,''))}
   <div class="asw"><div><h4>내 블록 <small>(클릭하면 붙어요)</small></h4><div class="achips"></div><h4>입력값</h4><textarea class="ain" spellcheck="false" style="min-height:90px" placeholder="input()에 차례로 들어갈 값 (한 줄에 하나)">${esc(i.ins&&i.ins[0]||'')}</textarea></div>
-  <div><h4>조립대</h4><div class="astk"></div><div class="row"><button class="main arun">▶ 프로젝트 실행</button><button class="ghost aall">합친 코드 보기</button><button class="ghost asv">저장</button></div><pre class="out" style="display:none"></pre><pre class="acd" style="display:none"></pre><div class="msg"></div></div></div></div>`}
+  <div><h4>조립대 <small>(코드를 눌러 바로 고칠 수 있어요)</small></h4><div class="astk"></div><div class="row"><button class="main arun">▶ 프로젝트 실행</button><button class="ghost aall">합친 코드 보기</button><button class="ghost asv">저장</button></div><pre class="out" style="display:none"></pre><pre class="acd" style="display:none"></pre><div class="msg"></div></div></div></div>`}
 const asbW=(v,h)=>{const w=t=>[...String(t)].reduce((n,c)=>n+(/[\u1100-\u11ff\u3130-\u318f\uac00-\ud7af\u4e00-\u9fff\uff00-\uffef]/.test(c)?2:1),0);return Math.max(w(h)+6,w(v)+3,10)+'ch'}; // 빈칸 칸 너비: 비어 있으면 힌트 크기, 쓰면 글자 수만큼 같이 늘어남
 function asmInit(bx,it,items,no,act,r){const NT=r&&(r.notes=r.notes||{});
   /* v262~264: 틀 블록 — 시작코드 칸 아래쪽에 '# 틀: 이름' 줄로 시작하는 덩어리 = 선생님이 정한 틀(while·if·elif… 통째로).
@@ -1005,7 +1008,7 @@ function asmInit(bx,it,items,no,act,r){const NT=r&&(r.notes=r.notes||{});
     return `<div class="anest">${kid.length?list(kid,[...pp,j]):''}${pk}</div>`};
   const list=(a,p)=>{a.forEach((n,i)=>{const f=n.f==null&&spec(n);if(f&&f.spill){a.splice(i+1,0,...f.spill);keep()}}); // 블록에서 '# 블록' 줄을 지우면 안에 있던 블록은 바로 뒤로 나옴
     const top=!p.length&&SKI>=0?(pick&&pick.p==='top'?`<div class="apick">${bl.filter(b=>!has(b.q)).map(b=>`<button data-a="puttop" data-q="${b.q}" style="background:${col(b)}">${esc(b.name)}</button>`).join('')}<button data-a="cancel" data-p="top">닫기</button></div>`:'<button class="aadd" data-a="addtop" data-p="">＋ 시작 코드 위에 넣기</button>'):''; // 뼈대 위쪽 자리
-    return top+a.map((n,i)=>{const pp=[...p,i],c=n.f===SKI&&SKI>=0?'':ctl(pp),f=spec(n),b=n.f==null&&B(n.q);if(!f){return pc(esc(b.name),code(b),col(b),c)}
+    return top+a.map((n,i)=>{const pp=[...p,i],c=n.f===SKI&&SKI>=0?'':ctl(pp),f=spec(n),b=n.f==null&&B(n.q);if(!f){return `<div class="apc"><div class="aph" style="background:${col(b)}">${esc(b.name)}${c}</div><textarea class="abe" data-q="${b.q}" spellcheck="false" rows="${Math.max(1,code(b).split('\n').length)}">${esc(code(b))}</textarea></div>`}
     return `<div class="apc afr"><div class="aph" style="background:${b?col(b):'var(--raise)'}">${b?esc(b.name):(f.fixed?'':'🧱 ')+esc(f.name)}${c}</div>${f.seg.map((sg,j)=>(sg.trim()?`<pre${n.f!=null?` data-nk="f${n.f}.${j}"`:''}>${n.f!=null?bh(sg,'f'+n.f+'.'+j):esc(sg)}</pre>`:'')+(j<f.sl.length?slotH(n,pp,j,f):'')).join('')}</div>`}).join('')};
   const draw=()=>{ch.innerHTML=(bl.length?bl.map(b=>{const on=has(b.q);return `<button class="achip${on?' on':''}" data-q="${b.q}" style="background:${col(b)}">${esc(b.name)}<span>${on?'붙임 ✔':'＋'}</span></button>`}).join(''):'<p style="color:var(--sub)">이 차시에 블록(다른 응용해보기 문제)이 없어요.</p>')
       +FR.map((f,j)=>f.fixed?'':`<button class="achip afc" data-f="${j}">🧱 ${esc(f.name)}<span>틀 ＋</span></button>`).join('');
@@ -1021,12 +1024,17 @@ function asmInit(bx,it,items,no,act,r){const NT=r&&(r.notes=r.notes||{});
       else if(k==='out'){const P=at(p.slice(0,-2));P.a.splice(P.i+1,0,a.splice(i,1)[0])}
       else{const n=a.splice(i,1)[0];if(n.k)a.splice(i,0,...n.k.flat())} // 틀을 빼면 안에 있던 블록은 그 자리에 남음
       keep();draw()});
+    stk.querySelectorAll('textarea.abe').forEach(fitE);
     if(NT)stk.querySelectorAll('pre[data-nk]').forEach(q=>lineNotes(q,`${act}|${it.q}|${q.dataset.nk}`,NT,no)); // 시작 코드·틀 줄마다 내 주석
     if(cd.style.display!=='none')cd.textContent=all()};
-  stk.addEventListener('input',e=>{const i=e.target.closest&&e.target.closest('.asb');if(!i)return;BV[i.dataset.b]=i.value;try{localStorage.setItem(bk,JSON.stringify(BV))}catch(_){}
+  const fitE=t=>{t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px'};
+  stk.addEventListener('keydown',e=>{if(e.key==='Tab'&&e.target.classList&&e.target.classList.contains('abe')){e.preventDefault();document.execCommand('insertText',false,'    ')}});
+  stk.addEventListener('input',e=>{const ab=e.target.closest&&e.target.closest('.abe');if(ab){const src=document.querySelector(`#items .box[data-q="${ab.dataset.q}"]:not(.asm) textarea:not(.cnote)`);fitE(ab); // 조립창에서 고친 블록 코드는 원래 문제 칸에도 그대로 들어가고(저장·복사 연동 포함) 같은 곳에 남음
+      if(src){src.value=ab.value;const ev=new Event('input',{bubbles:true});ev.fromAsm=1;src.dispatchEvent(ev)}if(cd.style.display!=='none')cd.textContent=all();return}
+    const i=e.target.closest&&e.target.closest('.asb');if(!i)return;BV[i.dataset.b]=i.value;try{localStorage.setItem(bk,JSON.stringify(BV))}catch(_){}
     i.style.width=asbW(i.value,i.placeholder);i.classList.remove('ok','no');const c=bcls(i.dataset.ans,i.value).trim();if(c)i.classList.add(c);if(cd.style.display!=='none')cd.textContent=all()});
   draw();bx.addEventListener('pointerenter',()=>{if(!stk.contains(document.activeElement))draw()}); // 위에서 블록 코드를 고치고 오면 바로 반영 (빈칸 쓰는 중에는 그대로 둠)
-  bx.querySelector('.arun').onclick=async()=>{draw();if(bmiss()){out.style.display='block';out.textContent='빈칸을 모두 채워야 실행할 수 있어요 !!';return}out.style.display='block';out.textContent='실행 중... (처음에는 10~30초 걸려요)';try{putOut(out,'출력:\n'+(await runPy(all(),bx.querySelector('.ain').value)||'(출력 없음)'))}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
+  bx.querySelector('.arun').onclick=async()=>{draw();const ain=bx.querySelector('.ain');if(/\binput\s*\(/.test(all())&&!ain.value.trim()){toast('input에 값을 입력하세요!');ain.focus();return}if(bmiss()){out.style.display='block';out.textContent='빈칸을 모두 채워야 실행할 수 있어요 !!';return}out.style.display='block';out.textContent='실행 중... (처음에는 10~30초 걸려요)';try{putOut(out,'출력:\n'+(await runPy(all(),bx.querySelector('.ain').value)||'(출력 없음)'))}catch(e){out.textContent='파이썬을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}};
   bx.querySelector('.aall').onclick=()=>{const on=cd.style.display==='none';cd.style.display=on?'block':'none';if(on)cd.textContent=all()};
   bx.querySelector('.asv').onclick=async e=>{const b=e.currentTarget;if(!(SKI>=0?bl.some(b=>has(b.q)):ord.length)){m.className='msg no';m.textContent='블록을 먼저 붙여보세요 !!';return}if(bmiss()){m.className='msg no';m.textContent='빈칸을 모두 채워 보세요 !!';return}b.disabled=true;m.className='msg wait';m.textContent='저장 중...';const a=all(),x=await api('submit',{no,act,q:it.q,answer:a,ok:true});b.disabled=false;if(x.error){m.className='msg no';m.textContent=x.error;return}rec(no,act,it.q,a,true);m.className='msg ok';m.textContent='조립한 코드 저장 완료!'}}
 /* 파이썬 실행 (브라우저 안, Pyodide) */
