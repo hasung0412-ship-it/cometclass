@@ -401,7 +401,7 @@ html.nomk .cmk{border:0!important;background:none!important;padding:0!important;
 html.nomk .showsp .sp{background:none}html.nomk .showsp .sp::before{content:none}
 </style></head><body>
 <header><button class="ghost" id="tg" onclick="$('#toc').classList.toggle('open')">☰ 목차</button><b id="hm" role="button" tabindex="0" title="처음 화면으로" style="cursor:pointer">🌠 혜성특급</b><span id="acc"></span><span id="tm" class="tmc"></span><div id="hn" role="button" tabindex="0" title="공지 모두 보기"></div><div id="who"></div></header>
-<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v262</footer><div id="sv"></div>
+<div id="wrap"><aside id="toc"></aside><main id="app"></main><aside id="side"></aside></div><footer id="ft">배곧해솔중학교 | v263</footer><div id="sv"></div>
 <script>
 const API='https://script.google.com/macros/s/AKfycbwLLifk0o9iQ4pEEg1Owk8kzLDZc9b5xhTDTpzSzuRBdgkgqelYvBR_RpcgNHpUBqoA/exec';
 const $=s=>document.querySelector(s),app=$('#app');
@@ -951,7 +951,7 @@ function asmInit(bx,it,items,no,act){
   const ch=bx.querySelector('.achips'),stk=bx.querySelector('.astk'),out=bx.querySelector('.out'),cd=bx.querySelector('.acd'),m=bx.querySelector('.msg');
   const col=b=>ASMC[bl.indexOf(b)%ASMC.length],B=q=>bl.find(b=>b.q===q);
   const pc=(t,c,bg,ctl)=>`<div class="apc"><div class="aph" style="background:${bg}">${t}${ctl||''}</div><pre>${esc(c)||'<span style="color:var(--sub)">(아직 비어 있어요)</span>'}</pre></div>`;
-  const gen=n=>{if(n.f==null)return code(B(n.q));const f=FR[n.f],inn=n.k.map(gen).filter(x=>x.trim()).join('\n');return [f.pre,inn.trim()?indt(inn,f.ind):' '.repeat(f.ind)+'pass',f.post].filter(x=>x.trim()).join('\n')};
+  const gen=n=>{if(n.f==null)return code(B(n.q));const f=FR[n.f],inn=n.k.map(gen).filter(x=>x.trim()).join('\n');return [f.pre,inn.trim()?indt(inn,f.ind):f.pre.trim().split('\n').length>1||f.post.trim()?'':' '.repeat(f.ind)+'pass',f.post].filter(x=>x.trim()).join('\n')};
   const all=()=>[head,...ord.map(gen),tail].filter(x=>x.trim()).join('\n\n');
   const ctl=(p,a,i)=>{const d=p.join('.');return `<span class="actl"><button data-a="up" data-p="${d}">▲</button><button data-a="dn" data-p="${d}">▼</button>${i>0&&a[i-1].f!=null?`<button data-a="in" data-p="${d}">→ 안에 넣기</button>`:''}${p.length>1?`<button data-a="out" data-p="${d}">← 꺼내기</button>`:''}<button data-a="x" data-p="${d}">✕ 빼기</button></span>`};
   const list=(a,p)=>a.map((n,i)=>{const pp=[...p,i],c=ctl(pp,a,i);if(n.f==null){const b=B(n.q);return pc(esc(b.name),code(b),col(b),c)}const f=FR[n.f];
